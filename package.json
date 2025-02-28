@@ -11,9 +11,15 @@
     "test": "npm run test:comopnent"
   },
   "dependencies": {
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "next": "15.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "semantic-release": "^24.2.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
