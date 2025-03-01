@@ -75,7 +75,7 @@ jobs:
           def generate_title(branch_name, diff_output, temperature, provider_name, model_name):
               provider_class = get_provider_class(provider_name)
               prompt = (
-                  f"Please generate a concise, meaningful and descriptive title for this pull request using the diff and branch name. Please Annoate the title with e.g. 'Feat:', 'Chore:', 'Ref:', 'Ci:', 'Test:', 'Fix:' depending on the changes and branch name. Here is the diff of the pull request:\n"
+                  f"Please generate a concise, meaningful and descriptive title for this pull request using the diff and branch name. Please Annoate the title with e.g. 'Feat:', 'Chore:', 'Ref:', 'CI:', 'Test:', 'Fix:' depending on the changes and branch name. Here is the diff of the pull request:\n"
                   f"{diff_output}\n"
                   f"If needed, consider the branch name '{branch_name}' as context."
                   f"Note the title may not be longer than 12 words. You must only generate a title and no description."
