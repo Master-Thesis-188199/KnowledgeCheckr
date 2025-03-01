@@ -44,6 +44,7 @@ jobs:
           exit 0
 
       - name: Generate dynamic PR title using G4F (o1-mini)
+        if: steps.pr-check.outputs.result == 'false'
         id: generate-title
         env:
           BRANCH_NAME: ${{ github.ref_name }}
@@ -118,6 +119,7 @@ jobs:
           EOF
 
       - name: Generate dynamic PR description using G4F (o1-mini) with Diff
+        if: steps.pr-check.outputs.result == 'false'
         id: generate-description
         env:
           INPUT_TEMPERATURE: 0.7
@@ -198,6 +200,7 @@ jobs:
           EOF
 
       - name: Create pull request
+        if: steps.pr-check.outputs.result == 'false'
         id: open-pr
         uses: repo-sync/pull-request@v2
         with:
