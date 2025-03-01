@@ -7,7 +7,7 @@ on:
       - canary
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   BASE_BRANCH: canary
 
 jobs:
@@ -194,3 +194,12 @@ jobs:
           with open(os.environ["GITHUB_ENV"], "a") as env_file:
               env_file.write(f"PR_DESCRIPTION={description}\n")
           EOF
+
+      - name: Create pull request
+        id: open-pr
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch:  ${{ env.BASE_BRANCH }}
+          pr_title: ${{ env.PR_TITLE }}
+          pr_body: ${{ env.PR_DESCRIPTION }}
+          pr_draft: false
