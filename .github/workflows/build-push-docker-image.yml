@@ -42,7 +42,21 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
+      - name: Check if image with previous tag already exists
+        id: check-image
+        run: |
+          IMAGE="ghcr.io/${{ env.LOWER_REPO_NAME }}:${{ steps.previoustag.outputs.tag }}"
+          echo "Checking if image $IMAGE exists..."
+          if docker manifest inspect "$IMAGE" > /dev/null 2>&1; then
+            echo "Image exists. Skipping build and push."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Image does not exist. Proceeding with build and push."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and push multi-platform image
+      if: steps.check-image.outputs.exists == 'false'
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
