@@ -1,0 +1,114 @@
+name: "Auto Create PR Feature Branch"
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - canary
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Check if a PR already exists for this branch
+        id: pr-check
+        uses: actions/github-script@v6
+        env:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            const branchName = process.env.GITHUB_REF.replace('refs/heads/', '');
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branchName}`,
+              state: 'open'
+            });
+            core.info(`Found ${prs.length} open PR(s) for branch ${branchName}`);
+            return prs.length > 0;
+          result-encoding: string
+
+      - name: Exit if PR exists
+        if: steps.pr-check.outputs.result == 'true'
+        run: |
+          echo "A pull request already exists for this branch. Exiting."
+          exit 0
+
+      - name: Generate dynamic PR title using G4F (o1-mini)
+        id: generate-title
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          INPUT_TEMPERATURE: 0.7
+          INPUT_PROVIDER: auto
+          INPUT_MODEL: o1-mini
+        run: |
+          # Install required packages with pinned versions
+          pip install requests g4f==0.3.3.3 PyGithub==2.5.0
+          python - <<'EOF'
+          import os
+          import subprocess
+          import g4f
+          from g4f.client import Client
+          from g4f.Provider import BaseProvider
+
+          def get_provider_class(provider_name):
+              if provider_name == 'auto':
+                  return None
+              try:
+                  provider_class = getattr(g4f.Provider, provider_name.split('.')[-1])
+                  if not issubclass(provider_class, BaseProvider):
+                      raise ValueError(f"Invalid provider: {provider_name}")
+                  return provider_class
+              except AttributeError:
+                  raise ValueError(f"Provider not found: {provider_name}")
+
+          def generate_title(branch_name, diff_output, temperature, provider_name, model_name):
+              provider_class = get_provider_class(provider_name)
+              prompt = (
+                  f"Please generate a concise, meaningful and descriptive title for this pull request using the diff and branch name. Please Annoate the title with e.g. 'Feat:', 'Chore:', 'Ref:', 'Ci:', 'Test:', 'Fix:' depending on the changes and branch name. Here is the diff of the pull request:\n"
+                  f"{diff_output}\n"
+                  f"If needed, consider the branch name '{branch_name}' as context."
+                  f"Note the title may not be longer than 12 words. You must only generate a title and no description."
+              )
+              client = Client(provider=provider_class)
+              chat_completion = client.chat.completions.create(
+                  model=model_name,
+                  messages=[
+                      {
+                          'role': 'system',
+                          'content': 'You are a helpful assistant that generates pull request titles based on changes.'
+                      },
+                      {
+                          'role': 'user',
+                          'content': prompt
+                      },
+                  ],
+                  temperature=temperature,
+                  max_tokens=50,
+              )
+              title = chat_completion.choices[0].message.content.strip()
+              return title
+
+          branch_name = os.environ["BRANCH_NAME"]
+          temperature = float(os.getenv("INPUT_TEMPERATURE", "0.7"))
+          provider_name = os.getenv("INPUT_PROVIDER", "auto")
+          model_name = os.getenv("INPUT_MODEL", "o1-mini")
+
+          # Ensure the remote main branch is fetched
+          subprocess.run("git fetch origin main", shell=True, check=True)
+          try:
+              diff_output = subprocess.check_output("git diff origin/main HEAD", shell=True, encoding='utf-8')
+          except subprocess.CalledProcessError:
+              diff_output = ""
+
+          title = generate_title(branch_name, diff_output, temperature, provider_name, model_name)
+          print("Generated title:", title)
+          with open(os.environ["GITHUB_ENV"], "a") as env_file:
+              env_file.write(f"PR_TITLE={title}\n")
+          EOF
