@@ -26,7 +26,7 @@ WORKDIR /app
 # Copy only the necessary build artifacts from the builder stage
 COPY --from=builder /app/.next /app/.next
 COPY --from=builder /app/public /app/public
-COPY --from=builder /app/next.config.mjs /app/next.config.mjs
+COPY --from=builder /app/next.config.ts /app/next.config.ts
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package.json /app/package.json
 
