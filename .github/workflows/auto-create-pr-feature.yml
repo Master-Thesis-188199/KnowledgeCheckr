@@ -44,6 +44,7 @@ jobs:
         id: generate-title
         env:
           BRANCH_NAME: ${{ github.ref_name }}
+          BASE_BRANCH: canary
           INPUT_TEMPERATURE: 0.7
           INPUT_PROVIDER: auto
           INPUT_MODEL: o1-mini
@@ -96,14 +97,15 @@ jobs:
               return title
 
           branch_name = os.environ["BRANCH_NAME"]
+          base_branch = os.environ["BASE_BRANCH"]
           temperature = float(os.getenv("INPUT_TEMPERATURE", "0.7"))
           provider_name = os.getenv("INPUT_PROVIDER", "auto")
           model_name = os.getenv("INPUT_MODEL", "o1-mini")
 
           # Ensure the remote main branch is fetched
-          subprocess.run("git fetch origin main", shell=True, check=True)
+          subprocess.run(f"git fetch origin {base_branch}", shell=True, check=True)
           try:
-              diff_output = subprocess.check_output("git diff origin/main HEAD", shell=True, encoding='utf-8')
+              diff_output = subprocess.check_output(f"git diff origin/{base_branch} HEAD", shell=True, encoding='utf-8')
           except subprocess.CalledProcessError:
               diff_output = ""
 
