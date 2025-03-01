@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "predev": "rm -rf .babelrc.json .nyc_output coverage",
-    "dev:babel": "cp ./config/.babelrc.json .babelrc.json && next dev",
+    "dev:coverage": "cp ./config/.babelrc.json .babelrc.json && next dev",
+    "postdev:coverage": "rm -rf .babelrc.json .nyc_output",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
