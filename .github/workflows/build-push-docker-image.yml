@@ -2,7 +2,7 @@ name: Docker Image Build and Push on Release
 
 on:
   release:
-    types: [published]
+    types: [published, created, prereleased, released]
 
 permissions:
   contents: write
