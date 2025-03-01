@@ -42,7 +42,8 @@
     "lint-staged": "^15.4.3",
     "prettier": "3.5.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^8.0.2"
   },
   "husky": {
     "hooks": {
