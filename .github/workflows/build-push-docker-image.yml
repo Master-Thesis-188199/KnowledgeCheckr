@@ -1,8 +1,10 @@
 name: Docker Image Build and Push on Release
 
 on:
-  release:
-    types: [published, created, prereleased, released]
+  workflow_run:
+    workflows: [Automatic Semantic Versioning]
+    types:
+      - completed
 
 permissions:
   contents: write
