@@ -1,0 +1,36 @@
+name: Automatic Semantic Versioning
+
+on:
+  push:
+    branches:
+      - main
+      - canary
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+
+jobs:
+  semantic-versioning:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node 23.7
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run semantice release
+        run: |
+          npm run semantic-release

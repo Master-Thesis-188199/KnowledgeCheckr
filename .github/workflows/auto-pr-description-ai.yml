@@ -1,0 +1,25 @@
+name: Auto-generate PR Description
+
+permissions:
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [synchronize]
+
+jobs:
+  generate-pr-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # This fetches all branches and full history if needed
+
+      - name: Generate PR Description
+        uses: Marty-Byrde/auto-pr-description-g4f-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          temperature: 0.7
+          provider: auto
+          model: o1-mini
