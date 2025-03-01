@@ -8,6 +8,9 @@ on:
 permissions:
   pull-requests: write
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   auto-create-pull-request-for-canary:
     runs-on: ubuntu-latest
