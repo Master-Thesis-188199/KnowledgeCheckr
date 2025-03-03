@@ -27,7 +27,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "semantic-release": "^24.2.3",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
