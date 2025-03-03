@@ -29,7 +29,7 @@ export default function RenderSideBarItems() {
 }
 
 function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
-  const { isOpen, isAnimationEnabled, toggleAnimation } = useSidebarStore((state) => state)
+  const { isOpen, isAnimationEnabled, toggleAnimation, canDeviceHover } = useSidebarStore((state) => state)
 
   return (
     <Link href='#' className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'>
@@ -46,7 +46,10 @@ function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
         </motion.span>
 
         <div className='flex-1' />
-        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1, rotate: isAnimationEnabled ? 45 : 0 }} className='flex justify-end overflow-hidden' onClick={toggleAnimation}>
+        <motion.div
+          animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1, rotate: isAnimationEnabled ? 45 : 0 }}
+          className={tw('flex justify-end overflow-hidden', !canDeviceHover && 'hidden')}
+          onClick={toggleAnimation}>
           <Pin className={tw('size-5 stroke-1', !isAnimationEnabled && 'stroke-2')} />
         </motion.div>
       </>
