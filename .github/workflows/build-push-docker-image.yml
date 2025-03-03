@@ -1,11 +1,8 @@
 name: Docker Image Build and Push on Release
 
 on:
-  workflow_run:
-    workflows: ["Automatic Semantic Versioning"]
-    types:
-      - completed
-    branches: [main, canary]
+  release:
+    types: [published, prereleased, released]
   workflow_dispatch:
 
 permissions:
