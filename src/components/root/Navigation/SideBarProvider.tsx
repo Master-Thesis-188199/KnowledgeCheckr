@@ -1,11 +1,13 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
+import { SideBarProps } from '@/components/root/Navigation/SideBar'
 
 interface SideBarContextProps {
   isAnimationEnabled: boolean
   isOpen: boolean
   setOpen: (isOpen: boolean) => void
+  config: SideBarProps
 }
 
 const Context = createContext<SideBarContextProps>({} as never)
@@ -18,8 +20,8 @@ export function useSideBarContext() {
   return context
 }
 
-export default function SideBarProvider({ children, isAnimationEnabled }: { children: React.ReactNode } & Partial<Pick<SideBarContextProps, 'isAnimationEnabled'>>) {
+export default function SideBarProvider({ children, isAnimationEnabled, config }: { children: React.ReactNode; config: SideBarProps } & Partial<Pick<SideBarContextProps, 'isAnimationEnabled'>>) {
   const [isOpen, setOpen] = useState(false)
 
-  return <Context.Provider value={{ isOpen, setOpen, isAnimationEnabled: isAnimationEnabled || true }}>{children}</Context.Provider>
+  return <Context.Provider value={{ isOpen, setOpen, isAnimationEnabled: isAnimationEnabled || true, config }}>{children}</Context.Provider>
 }
