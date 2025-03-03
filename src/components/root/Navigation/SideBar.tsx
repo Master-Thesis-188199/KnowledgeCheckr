@@ -14,7 +14,7 @@ export interface SideBarProps {
   }>
 }
 
-export default async function SideBar({ children, initialStoreProps }: { initialStoreProps: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
+export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
       <div className='rounded-md flex flex-col md:flex-row pt-1.5 bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden h-[94vh]'>
