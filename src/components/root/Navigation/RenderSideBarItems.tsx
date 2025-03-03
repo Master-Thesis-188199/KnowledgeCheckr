@@ -66,7 +66,7 @@ export function RenderSideBarItem({ item, className, ...props }: { item: SideBar
           display: isAnimationEnabled ? (isOpen ? 'inline-block' : 'none') : 'inline-block',
           opacity: isAnimationEnabled ? (isOpen ? 1 : 0.0) : 1,
         }}
-        className='text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0'>
+        className='text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 whitespace-pre inline-block !p-0 !m-0 overflow-hidden'>
         {item.label}
       </motion.span>
     </Link>
