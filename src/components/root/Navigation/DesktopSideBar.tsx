@@ -1,16 +1,13 @@
 'use client'
 
-import { useSideBarContext } from '@/components/root/Navigation/SideBarProvider'
 import { motion } from 'framer-motion'
 import { twMerge as tw } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import RenderSideBarItems, { RenderSideBarItem } from '@/components/root/Navigation/RenderSideBarItems'
-import useDebounce from '@/hooks/Shared/useDebounce'
 import { UserIcon } from '@heroicons/react/24/outline'
 
 export const DesktopSidebar = ({ className, ...props }: React.ComponentProps<typeof motion.div>) => {
-  const { isOpen, isAnimationEnabled, setOpen: _setOpen } = useSideBarContext()
-  const CLOSE_DELAY = 500
-  const { debounce: setOpen } = useDebounce(CLOSE_DELAY, _setOpen, (isOpen) => isOpen)
+  const { isOpen, isAnimationEnabled, debounceClosure } = useSidebarStore((state) => state)
 
   return (
     <>
@@ -20,11 +17,11 @@ export const DesktopSidebar = ({ className, ...props }: React.ComponentProps<typ
         animate={{
           width: isAnimationEnabled ? (isOpen ? '300px' : '60px') : '300px',
         }}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onMouseEnter={() => debounceClosure(true)}
+        onMouseLeave={() => debounceClosure(false)}
         {...props}>
         <RenderSideBarItems />
-        {/*<div>*/}
+
         <RenderSideBarItem
           item={{
             label: 'Username',
@@ -32,7 +29,6 @@ export const DesktopSidebar = ({ className, ...props }: React.ComponentProps<typ
             icon: <UserIcon className='size-6 shrink-0 rounded-full' />,
           }}
         />
-        {/*</div>*/}
       </motion.div>
     </>
   )
