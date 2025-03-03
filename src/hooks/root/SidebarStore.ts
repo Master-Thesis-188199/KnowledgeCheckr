@@ -4,6 +4,7 @@ import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfig
 
 export type SidebarState = {
   isOpen: boolean
+  canDeviceHover: boolean
   isAnimationEnabled: boolean
   config: SideBarProps
 }
@@ -14,6 +15,7 @@ export type SidebarActions = {
   setOpen: (state: boolean) => void
   setAnimation: (state: boolean) => void
   debounceClosure: (new_open_state: boolean) => void
+  setDeviceHoverable: (hoverable: boolean) => void
 }
 
 export type SidebarStore = SidebarState & SidebarActions
@@ -22,6 +24,7 @@ export const defaultInitState: SidebarState = {
   isOpen: false,
   isAnimationEnabled: true,
   config: sideBarConfiguration,
+  canDeviceHover: true,
 }
 
 export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitState) => {
@@ -53,6 +56,7 @@ export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitS
           }, clousureDebounceTime)
         }
       },
+      setDeviceHoverable: (hoverable) => set((state) => ({ isAnimationEnabled: hoverable, canDeviceHover: hoverable })),
     }
   })
 }
