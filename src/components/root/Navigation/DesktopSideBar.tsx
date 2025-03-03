@@ -13,7 +13,7 @@ export const DesktopSidebar = ({ className, ...props }: React.ComponentProps<typ
     <>
       <motion.div
         className={tw('h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 max-w-[300px] flex-shrink-0', className)}
-        initial={{ width: '60px' }}
+        initial={{ width: isAnimationEnabled ? '60px' : '300px' }}
         animate={{
           width: isAnimationEnabled ? (isOpen ? '300px' : '60px') : '300px',
         }}
