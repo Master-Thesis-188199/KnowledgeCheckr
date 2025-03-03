@@ -7,7 +7,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
-import { RectangleGroupIcon } from '@heroicons/react/24/outline'
+import { Pin } from 'lucide-react'
 
 export default function RenderSideBarItems() {
   const {
@@ -45,8 +45,9 @@ function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
           {title}
         </motion.span>
 
-        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1 }} className='flex-1 flex justify-end overflow-hidden' onClick={toggleAnimation}>
-          <RectangleGroupIcon className={tw('size-6', !isAnimationEnabled && 'stroke-2')} />
+        <div className='flex-1' />
+        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1, rotate: isAnimationEnabled ? 45 : 0 }} className='flex justify-end overflow-hidden' onClick={toggleAnimation}>
+          <Pin className={tw('size-5 stroke-1', !isAnimationEnabled && 'stroke-2')} />
         </motion.div>
       </>
     </Link>
