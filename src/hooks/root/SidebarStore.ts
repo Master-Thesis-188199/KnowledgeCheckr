@@ -35,7 +35,7 @@ export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitS
     return {
       ...initState,
       toggleSidebar: () => set((state) => ({ isOpen: !state.isOpen })),
-      toggleAnimation: () => set((state) => ({ isAnimationEnabled: !state.isAnimationEnabled })),
+      toggleAnimation: () => set((state) => ({ isAnimationEnabled: state.canDeviceHover ? !state.isAnimationEnabled : state.isAnimationEnabled })),
       setOpen: (open_state) => set(() => ({ isOpen: open_state })),
       setAnimation: (animation_state) => set(() => ({ isAnimationEnabled: animation_state })),
       debounceClosure: (new_open_state) => {
