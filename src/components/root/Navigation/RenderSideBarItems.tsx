@@ -29,7 +29,7 @@ export default function RenderSideBarItems() {
 }
 
 function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
-  const { isOpen, isAnimationEnabled } = useSidebarStore((state) => state)
+  const { isOpen, isAnimationEnabled, toggleAnimation } = useSidebarStore((state) => state)
 
   return (
     <Link href='#' className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'>
@@ -45,9 +45,8 @@ function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
           {title}
         </motion.span>
 
-        {/*todo disable animation when pin is clicked*/}
-        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1 }} className='flex-1 flex justify-end overflow-hidden' onClick={() => console.log('Pin clicked...')}>
-          <RectangleGroupIcon className='size-6' />
+        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1 }} className='flex-1 flex justify-end overflow-hidden' onClick={toggleAnimation}>
+          <RectangleGroupIcon className={tw('size-6', !isAnimationEnabled && 'stroke-2')} />
         </motion.div>
       </>
     </Link>
