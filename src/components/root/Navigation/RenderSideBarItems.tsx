@@ -1,16 +1,18 @@
-import { useSideBarContext } from '@/components/root/Navigation/SideBarProvider'
+'use client'
+
 import { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import Link, { LinkProps } from 'next/link'
-import { RectangleGroupIcon } from '@heroicons/react/24/outline'
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { twMerge as tw } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import { RectangleGroupIcon } from '@heroicons/react/24/outline'
 
 export default function RenderSideBarItems() {
   const {
     config: { elements, title, icon },
-  } = useSideBarContext()
+  } = useSidebarStore((state) => state)
 
   return (
     <div className='flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
@@ -27,7 +29,7 @@ export default function RenderSideBarItems() {
 }
 
 function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
-  const { isOpen } = useSideBarContext()
+  const { isOpen } = useSidebarStore((state) => state)
 
   return (
     <Link href='#' className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'>
@@ -49,7 +51,7 @@ function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
 }
 
 export function RenderSideBarItem({ item, className, ...props }: { item: SideBarProps['elements'][number]; className?: string; props?: LinkProps }) {
-  const { isAnimationEnabled, isOpen } = useSideBarContext()
+  const { isAnimationEnabled, isOpen } = useSidebarStore((state) => state)
 
   return (
     <Link href={item.href || '#'} className={tw('flex items-center justify-start gap-3  group/sidebar py-2', className)} {...props}>
