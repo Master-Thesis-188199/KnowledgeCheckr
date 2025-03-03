@@ -2,6 +2,7 @@ import { DesktopSidebar } from '@/components/root/Navigation/DesktopSideBar'
 import MobileSideBar from '@/components/root/Navigation/MobileSideBar'
 import { ReactNode } from 'react'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
+import SidebarHoverabilityDetection from '@/components/root/Navigation/SidebarHoverabilityDetection'
 
 export interface SideBarProps {
   title: string
@@ -21,6 +22,7 @@ export default async function SideBar({ children, initialStoreProps }: { initial
         <MobileSideBar />
 
         <ContentPanel children={children} />
+        <SidebarHoverabilityDetection />
       </div>
     </SidebarStoreProvider>
   )
