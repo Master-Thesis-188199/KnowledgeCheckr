@@ -1,16 +1,18 @@
-import { useSideBarContext } from '@/components/root/Navigation/SideBarProvider'
+'use client'
+
 import { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import Link, { LinkProps } from 'next/link'
-import { RectangleGroupIcon } from '@heroicons/react/24/outline'
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { twMerge as tw } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import { Pin } from 'lucide-react'
 
 export default function RenderSideBarItems() {
   const {
     config: { elements, title, icon },
-  } = useSideBarContext()
+  } = useSidebarStore((state) => state)
 
   return (
     <div className='flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
@@ -27,29 +29,33 @@ export default function RenderSideBarItems() {
 }
 
 function SideBarHeader({ title, icon }: { title: string; icon: ReactNode }) {
-  const { isOpen } = useSideBarContext()
+  const { isOpen, isAnimationEnabled, toggleAnimation } = useSidebarStore((state) => state)
 
   return (
     <Link href='#' className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'>
-      {icon || <QuestionMarkCircleIcon className='size-7 ' />}
-      {isOpen && (
-        <>
-          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='font-medium text-black dark:text-white whitespace-pre'>
-            {title}
-          </motion.span>
+      {icon || <QuestionMarkCircleIcon className='size-7 min-w-7 min-h-7' />}
 
-          {/*todo disable animation when pin is clicked*/}
-          <div className='flex-1 flex justify-end' onClick={() => console.log('Pin clicked...')}>
-            <RectangleGroupIcon className='size-6' />
-          </div>
-        </>
-      )}
+      <>
+        <motion.span
+          animate={{
+            opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1,
+          }}
+          exit={{ opacity: 0.5 }}
+          className='font-medium text-black dark:text-white whitespace-pre overflow-hidden'>
+          {title}
+        </motion.span>
+
+        <div className='flex-1' />
+        <motion.div animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0.2) : 1, rotate: isAnimationEnabled ? 45 : 0 }} className='flex justify-end overflow-hidden' onClick={toggleAnimation}>
+          <Pin className={tw('size-5 stroke-1', !isAnimationEnabled && 'stroke-2')} />
+        </motion.div>
+      </>
     </Link>
   )
 }
 
 export function RenderSideBarItem({ item, className, ...props }: { item: SideBarProps['elements'][number]; className?: string; props?: LinkProps }) {
-  const { isAnimationEnabled, isOpen } = useSideBarContext()
+  const { isAnimationEnabled, isOpen } = useSidebarStore((state) => state)
 
   return (
     <Link href={item.href || '#'} className={tw('flex items-center justify-start gap-3  group/sidebar py-2', className)} {...props}>
@@ -60,7 +66,7 @@ export function RenderSideBarItem({ item, className, ...props }: { item: SideBar
           display: isAnimationEnabled ? (isOpen ? 'inline-block' : 'none') : 'inline-block',
           opacity: isAnimationEnabled ? (isOpen ? 1 : 0.0) : 1,
         }}
-        className='text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0'>
+        className='text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 duration-300 transition-transform whitespace-pre inline-block !p-0 !m-0 overflow-hidden'>
         {item.label}
       </motion.span>
     </Link>

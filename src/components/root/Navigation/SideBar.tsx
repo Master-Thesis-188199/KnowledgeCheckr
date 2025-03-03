@@ -1,7 +1,8 @@
 import { DesktopSidebar } from '@/components/root/Navigation/DesktopSideBar'
-import SideBarProvider from '@/components/root/Navigation/SideBarProvider'
 import MobileSideBar from '@/components/root/Navigation/MobileSideBar'
 import { ReactNode } from 'react'
+import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
+import SidebarHoverabilityDetection from '@/components/root/Navigation/SidebarHoverabilityDetection'
 
 export interface SideBarProps {
   title: string
@@ -13,16 +14,17 @@ export interface SideBarProps {
   }>
 }
 
-export default async function SideBar({ children, ...config }: SideBarProps & { children: ReactNode }) {
+export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
   return (
-    <SideBarProvider config={config}>
-      <div className='rounded-md flex flex-col md:flex-row pt-1.5 pr-1.5 pb-1.5 bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden h-[94vh]'>
+    <SidebarStoreProvider initialStoreProps={initialStoreProps}>
+      <div className='rounded-md flex flex-col md:flex-row pt-1.5 bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden h-[94vh]'>
         <DesktopSidebar />
         <MobileSideBar />
 
         <ContentPanel children={children} />
+        <SidebarHoverabilityDetection />
       </div>
-    </SideBarProvider>
+    </SidebarStoreProvider>
   )
 }
 
