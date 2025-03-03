@@ -1,8 +1,11 @@
 import { createStore } from 'zustand/vanilla'
+import { SideBarProps } from '@/components/root/Navigation/SideBar'
+import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
 
 export type SidebarState = {
   isOpen: boolean
   isAnimationEnabled: boolean
+  config: SideBarProps
 }
 
 export type SidebarActions = {
@@ -18,6 +21,7 @@ export type SidebarStore = SidebarState & SidebarActions
 export const defaultInitState: SidebarState = {
   isOpen: false,
   isAnimationEnabled: true,
+  config: sideBarConfiguration,
 }
 
 export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitState) => {
