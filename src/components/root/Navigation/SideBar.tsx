@@ -1,7 +1,7 @@
 import { DesktopSidebar } from '@/components/root/Navigation/DesktopSideBar'
-import MobileSideBar from '@/components/root/Navigation/MobileSideBar'
 import { ReactNode } from 'react'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
+import MobileSideBar from '@/components/root/Navigation/MobileSideBar'
 
 export interface SideBarProps {
   title: string
@@ -17,7 +17,7 @@ export default async function SideBar({ children, initialStoreProps }: { initial
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
       <DesktopSidebar children={children} className='hidden md:flex' />
-      <MobileSideBar className='flex md:hidden' />
+      <MobileSideBar visibilityBreakpoints='flex md:hidden opacity-100 md:opacity-0' />
     </SidebarStoreProvider>
   )
 }
