@@ -17,7 +17,7 @@ export interface SideBarProps {
 export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
-      <div className='flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto  border-neutral-200 dark:border-neutral-700 overflow-hidden h-[94vh]'>
+      <div className='mx-auto flex h-[94vh] w-full flex-1 flex-col overflow-hidden border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800'>
         <DesktopSidebar />
         <MobileSideBar />
 
@@ -30,8 +30,8 @@ export default async function SideBar({ children, initialStoreProps }: { initial
 
 function ContentPanel({ children }: { children?: React.ReactNode }) {
   return (
-    <div className='flex flex-1 '>
-      <div className='overflow-auto p-2 md:p-4 rounded-tl-2xl rounded-bl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900/60 flex flex-col gap-2 flex-1 w-full h-full'>
+    <div className='flex flex-1'>
+      <div className='flex h-full w-full flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-white p-2 md:p-4 dark:border-neutral-700 dark:bg-neutral-900/60'>
         {children}
       </div>
     </div>
