@@ -2,10 +2,12 @@
 import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
-import MobileSidebarToggleButton from '@/components/root/Navigation/mobile/MobilebarToggleButton'
 import MobileSideBarDialog from '@/components/root/Navigation/mobile/MobileSidebarDialog'
 import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
 import { ArrowDownNarrowWide } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Transition } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function MobileSideBar({ visibilityBreakpoints }: { visibilityBreakpoints?: string }) {
   const {
@@ -15,7 +17,7 @@ export default function MobileSideBar({ visibilityBreakpoints }: { visibilityBre
   return (
     <>
       <div id='mobile-sidebar-menubar' className={tw('w-full flex-row items-center justify-between bg-neutral-200/70 px-4 py-3 shadow shadow-neutral-300 dark:bg-neutral-800', visibilityBreakpoints)}>
-        <MobileSidebarToggleButton />
+        <OpenButton />
         <span className='text-xl font-semibold'>{title}</span>
         <ThemeSwitcher />
       </div>
@@ -24,7 +26,7 @@ export default function MobileSideBar({ visibilityBreakpoints }: { visibilityBre
           <div className='flex shrink-0 items-center justify-between border-solid border-gray-400 bg-neutral-200/70 px-2 py-4 pl-4 shadow shadow-neutral-300 dark:border-gray-200 dark:bg-neutral-900'>
             <ArrowDownNarrowWide className='size-6' />
             <span className='flex-1 pr-4 text-center text-lg leading-6 font-semibold text-gray-700 dark:text-gray-200'>Navigation</span>
-            <MobileSidebarToggleButton />
+            <CloseButton />
           </div>
 
           <div className='h-full px-[14px] text-gray-600 dark:text-gray-300/90'>
@@ -33,5 +35,33 @@ export default function MobileSideBar({ visibilityBreakpoints }: { visibilityBre
         </div>
       </MobileSideBarDialog>
     </>
+  )
+}
+
+export function OpenButton() {
+  const { toggleSidebar } = useSidebarStore((state) => state)
+
+  return (
+    <button type='button' className='group inline-block transition-transform hover:cursor-pointer active:scale-105 active:stroke-2 md:hidden' onClick={toggleSidebar}>
+      <motion.div animate={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.6 }}>
+        <Transition show={true} enter='transition duration-300' enterFrom='-rotate-20 opacity-50' enterTo='rotate-0 opacity-100' leave='hidden'>
+          <Bars3Icon className={tw('size-6 group-hover:stroke-black group-hover:stroke-2')} />
+        </Transition>
+      </motion.div>
+    </button>
+  )
+}
+
+export function CloseButton() {
+  const { toggleSidebar } = useSidebarStore((state) => state)
+
+  return (
+    <button type='button' className='group inline-block transition-transform hover:cursor-pointer active:scale-110 active:stroke-3 md:hidden' onClick={toggleSidebar}>
+      <motion.div animate={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.6 }}>
+        <Transition show={true} enter='transition duration-300' enterFrom='-rotate-20 opacity-50' enterTo='rotate-0 opacity-100' leave='hidden'>
+          <XMarkIcon className={tw('size-6 group-hover:scale-105 group-hover:stroke-red-400 group-hover:stroke-2')} />
+        </Transition>
+      </motion.div>
+    </button>
   )
 }
