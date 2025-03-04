@@ -17,7 +17,7 @@ export default function RenderSideBarItems() {
       {/* todo externalize header from <RenderSideBarItem> */}
       <PinSidebarButton />
 
-      <div className='mt-8 flex flex-col gap-2'>
+      <div className='mt-8 flex flex-col gap-2 md:gap-3'>
         {elements.map((item, idx) => (
           <RenderSideBarItem key={idx} item={item} />
         ))}
