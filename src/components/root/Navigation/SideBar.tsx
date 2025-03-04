@@ -16,9 +16,8 @@ export interface SideBarProps {
 export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
-      <DesktopSidebar children={children} />
-
-      <MobileSideBar />
+      <DesktopSidebar children={children} className='hidden md:flex' />
+      <MobileSideBar className='flex md:hidden' />
     </SidebarStoreProvider>
   )
 }

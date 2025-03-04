@@ -12,12 +12,12 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
   const { isOpen, isAnimationEnabled, debounceClosure } = useSidebarStore((state) => state)
 
   return (
-    <div className='hidden h-screen flex-col md:flex'>
+    <div className={tw('h-screen flex-col', className)}>
       <MenuBar />
 
       <div id='desktop-sidebar-container' className='mx-auto flex w-full flex-1 flex-col overflow-hidden border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800'>
         <motion.div
-          className={tw('hidden h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-4 py-4 md:flex md:flex-col dark:bg-neutral-800', className)}
+          className={tw('flex h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-4 py-4 md:flex-col dark:bg-neutral-800', className)}
           initial={{ width: isAnimationEnabled ? '60px' : '300px' }}
           animate={{
             width: isAnimationEnabled ? (isOpen ? '300px' : '60px') : '300px',
