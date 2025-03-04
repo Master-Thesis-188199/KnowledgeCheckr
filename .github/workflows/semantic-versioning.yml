@@ -64,7 +64,7 @@ jobs:
         with:
           install: true
           platforms: linux/amd64,linux/arm64
-          config: buildkitd.toml
+          buildkitd-config : buildkitd.toml
 
       - name: Set lowercase repository name as environment variable
         run: echo "LOWER_REPO_NAME=$(echo ${{ env.REPO_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
