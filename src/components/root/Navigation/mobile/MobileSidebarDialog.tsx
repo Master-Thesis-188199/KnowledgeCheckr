@@ -14,35 +14,45 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
   const { isOpen, toggleSidebar } = useSidebarStore((state) => state)
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
-      <div className={twMerge('relative z-50', visibilityBreakpoints)}>
-        <Transition.Child
-          as={Fragment}
-          enter='transition-opacity ease-linear duration-300'
-          enterFrom='opacity-0'
-          enterTo='opacity-100'
-          leave='transition-opacity ease-linear duration-300'
-          leaveFrom='opacity-100'
-          leaveTo='opacity-0'>
-          <div className='fixed inset-0 bg-neutral-900/80' onClick={toggleSidebar} />
-        </Transition.Child>
+    <>
+      <Transition.Root show={isOpen} as={Fragment}>
+        <div className={twMerge('relative z-50', visibilityBreakpoints)}>
+          <Transition.Child
+            as={Fragment}
+            enter='transition-opacity ease-linear duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='transition-opacity ease-linear duration-300'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'>
+            <div className='fixed inset-0 bg-neutral-900/80' onClick={toggleSidebar} />
+          </Transition.Child>
+        </div>
+      </Transition.Root>
 
-        <motion.div className='fixed inset-0 flex' animate={{ opacity: isOpen ? 1 : 0, position: isOpen ? 'fixed' : 'static', transition: { delay: 0.5 } }}>
-          <motion.div
-            className='relative flex w-full max-w-xs flex-10 sm:max-w-sm'
-            initial={{ translateX: '-100%' }}
-            animate={{
-              transition: {
-                type: 'spring',
-                bounce: 0,
+      <motion.div
+        className={twMerge('fixed inset-0 z-50 flex', visibilityBreakpoints)}
+        initial={{ display: 'none' }}
+        animate={{ display: isOpen ? 'flex' : 'none', transition: { delay: 0, delayChildren: 0 } }}>
+        <motion.div
+          className='relative flex w-full max-w-xs flex-10 sm:max-w-sm'
+          initial={{ translateX: '-100%' }}
+          animate={{
+            transition: {
+              type: 'spring',
+              bounce: 0,
+              translate: {
+                duration: 1.5,
               },
-              translateX: isOpen ? '0%' : '-100%',
-            }}>
-            {children}
-          </motion.div>
-          <div className='flex-1' onClick={toggleSidebar} />
+              opacity: {}, // sets some value for the opacity animation -> if removed that the animation is not as smooth.
+            },
+            translateX: isOpen ? '0%' : '-100%',
+            opacity: isOpen ? 1 : 0,
+          }}>
+          {children}
         </motion.div>
-      </div>
-    </Transition.Root>
+        <div className='flex-1' onClick={toggleSidebar} />
+      </motion.div>
+    </>
   )
 }
