@@ -56,7 +56,7 @@ export function OpenButton() {
     <button type='button' className='group inline-block transition-transform hover:cursor-pointer active:scale-105 active:stroke-2 md:hidden' onClick={toggleSidebar}>
       <motion.div animate={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.6 }}>
         <Transition show={true} enter='transition duration-300' enterFrom='-rotate-20 opacity-50' enterTo='rotate-0 opacity-100' leave='hidden'>
-          <Bars3Icon className={tw('size-6 group-hover:stroke-black group-hover:stroke-2')} />
+          <Bars3Icon className={tw('size-6 group-hover:stroke-black group-hover:stroke-2 dark:group-hover:stroke-white')} />
         </Transition>
       </motion.div>
     </button>
