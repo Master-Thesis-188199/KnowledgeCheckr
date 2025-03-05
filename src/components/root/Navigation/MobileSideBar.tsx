@@ -10,25 +10,13 @@ import { Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
-  const {
-    config: { title },
-  } = useSidebarStore((state) => state)
-
   return (
     <>
       <div className='flex h-screen flex-col md:hidden dark:bg-neutral-800'>
-        <div
-          id='mobile-sidebar-menubar'
-          className={tw(
-            'w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600',
-            visibilityBreakpoints,
-          )}>
-          <OpenButton />
-          <span className='text-xl font-semibold'>{title}</span>
-          <ThemeSwitcher />
-        </div>
+        <Menubar />
         <div className='flex-1 bg-gray-100 dark:bg-neutral-900/60'>{children}</div>
       </div>
+
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
         <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-white pb-2 dark:bg-neutral-800'>
           <div className='flex shrink-0 items-center justify-between border-solid border-gray-400 bg-neutral-200/70 px-2 py-4 pl-4 shadow shadow-neutral-300 dark:border-gray-200 dark:bg-neutral-900'>
@@ -43,6 +31,21 @@ export default function MobileSideBar({ children, visibilityBreakpoints }: { vis
         </div>
       </MobileSideBarDialog>
     </>
+  )
+}
+
+export function Menubar() {
+  const {
+    config: { title },
+  } = useSidebarStore((state) => state)
+  return (
+    <div
+      id='mobile-sidebar-menubar'
+      className='flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
+      <OpenButton />
+      <span className='text-xl font-semibold'>{title}</span>
+      <ThemeSwitcher />
+    </div>
   )
 }
 
