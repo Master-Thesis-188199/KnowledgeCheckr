@@ -17,7 +17,7 @@ export default async function SideBar({ children, initialStoreProps }: { initial
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
       <DesktopSidebar children={children} className='hidden md:flex' />
-      <MobileSideBar visibilityBreakpoints='flex md:hidden md:static opacity-100 md:opacity-0' />
+      <MobileSideBar children={children} visibilityBreakpoints='flex md:hidden md:static opacity-100 md:opacity-0' />
     </SidebarStoreProvider>
   )
 }

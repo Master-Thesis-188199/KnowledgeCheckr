@@ -9,17 +9,22 @@ import { motion } from 'motion/react'
 import { Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-export default function MobileSideBar({ visibilityBreakpoints }: { visibilityBreakpoints?: string }) {
+export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
   const {
     config: { title },
   } = useSidebarStore((state) => state)
 
   return (
     <>
-      <div id='mobile-sidebar-menubar' className={tw('w-full flex-row items-center justify-between bg-neutral-200/70 px-4 py-3 shadow shadow-neutral-300 dark:bg-neutral-800', visibilityBreakpoints)}>
-        <OpenButton />
-        <span className='text-xl font-semibold'>{title}</span>
-        <ThemeSwitcher />
+      <div className='flex h-screen flex-col'>
+        <div
+          id='mobile-sidebar-menubar'
+          className={tw('w-full flex-row items-center justify-between bg-neutral-200/70 px-4 py-3 shadow shadow-neutral-300 dark:bg-neutral-800', visibilityBreakpoints)}>
+          <OpenButton />
+          <span className='text-xl font-semibold'>{title}</span>
+          <ThemeSwitcher />
+        </div>
+        <div className='flex-1'>{children}</div>
       </div>
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
         <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-white pb-2 dark:bg-neutral-800'>
