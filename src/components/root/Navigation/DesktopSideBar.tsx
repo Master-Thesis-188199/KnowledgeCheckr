@@ -15,7 +15,7 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
     <div className={tw('h-screen flex-col', className)}>
       <MenuBar />
 
-      <div id='desktop-sidebar-container' className='mx-auto flex w-full flex-1 flex-col overflow-hidden border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800'>
+      <div id='desktop-sidebar-container' className='mx-auto flex w-full flex-1 flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800'>
         <motion.div
           className={tw('flex h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-4 py-4 md:flex-col dark:bg-neutral-800', className)}
           initial={{ width: isAnimationEnabled ? '60px' : '300px' }}
