@@ -16,28 +16,23 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
 
   const EXIT_ANIMATION_TIME = 1.8
 
-  const animateOpen = async () => {
+  const animateDialog = async () => {
     const { current } = scope
     if (!current) return
 
-    animate(current, { x: '100%' }, { duration: 0.4 })
-    await animate(current, { opacity: 1 }, { duration: 0.4 })
-  }
+    if (isOpen) {
+      animate(current, { x: '100%' }, { duration: 0.4 })
+      await animate(current, { opacity: 1 }, { duration: 0.4 })
 
-  const animateClosure = async () => {
-    const { current } = scope
-    if (!current) return
+      return
+    }
 
     animate(current, { x: '-80%' }, { duration: EXIT_ANIMATION_TIME })
     await animate(current, { opacity: 0 }, { duration: EXIT_ANIMATION_TIME * 0.25 })
   }
 
   useEffect(() => {
-    if (isOpen) {
-      animateOpen()
-    } else {
-      animateClosure()
-    }
+    animateDialog()
   }, [isOpen])
 
   return (
