@@ -16,15 +16,18 @@ export default function MobileSideBar({ children, visibilityBreakpoints }: { vis
 
   return (
     <>
-      <div className='flex h-screen flex-col'>
+      <div className='flex h-screen flex-col md:hidden dark:bg-neutral-800'>
         <div
           id='mobile-sidebar-menubar'
-          className={tw('w-full flex-row items-center justify-between bg-neutral-200/70 px-4 py-3 shadow shadow-neutral-300 dark:bg-neutral-800', visibilityBreakpoints)}>
+          className={tw(
+            'w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600',
+            visibilityBreakpoints,
+          )}>
           <OpenButton />
           <span className='text-xl font-semibold'>{title}</span>
           <ThemeSwitcher />
         </div>
-        <div className='flex-1'>{children}</div>
+        <div className='flex-1 bg-gray-100 dark:bg-neutral-900/60'>{children}</div>
       </div>
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
         <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-white pb-2 dark:bg-neutral-800'>
