@@ -14,7 +14,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
   const { isOpen, toggleSidebar } = useSidebarStore((state) => state)
   const [scope, animate] = useAnimate()
 
-  const EXIT_ANIMATION_TIME = 1.8
+  const EXIT_ANIMATION_TIME = 1.6
 
   const animateDialog = async () => {
     const { current } = scope
@@ -28,7 +28,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
     }
 
     animate(current, { x: '-80%' }, { duration: EXIT_ANIMATION_TIME })
-    await animate(current, { opacity: 0 }, { duration: EXIT_ANIMATION_TIME * 0.25 })
+    await animate(current, { opacity: 0 }, { duration: EXIT_ANIMATION_TIME * 0.35 })
   }
 
   useEffect(() => {
