@@ -11,8 +11,15 @@
   --foreground: #171717;
 }
 
+/* Override variables when data-theme is explicitly set to dark */
+html[data-theme='dark'] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* If no data-theme is set, fallback to system preference */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #0a0a0a;
     --foreground: #ededed;
   }

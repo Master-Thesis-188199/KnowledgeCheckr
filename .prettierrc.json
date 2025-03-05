@@ -9,5 +9,6 @@
   "proseWrap": "preserve",
   "quoteProps": "consistent",
   "trailingComma": "all",
-  "singleQuote": true
+  "singleQuote": true,
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

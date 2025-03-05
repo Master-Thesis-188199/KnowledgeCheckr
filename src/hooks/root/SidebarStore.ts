@@ -52,7 +52,7 @@ export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitS
             clearTimeout(closeTimer)
           }
           closeTimer = setTimeout(() => {
-            set(() => ({ isOpen: false }))
+            set((state) => ({ isOpen: state.isAnimationEnabled ? false : state.isOpen }))
           }, clousureDebounceTime)
         }
       },
