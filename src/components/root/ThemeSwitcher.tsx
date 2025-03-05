@@ -5,10 +5,12 @@ import { parseCookies, setCookie } from 'nookies'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { Transition } from '@headlessui/react'
 import { twMerge } from 'tailwind-merge'
+import { useRootStore } from '@/components/root/RootStoreProvider'
 
 type ThemeOption = 'light' | 'dark' | undefined
 
-export default function ThemeSwitcher({ defaultValue }: { defaultValue: ThemeOption } = { defaultValue: undefined }) {
+export default function ThemeSwitcher() {
+  const { theme_cookie: defaultValue } = useRootStore((state) => state)
   const { theme, toggleTheme } = ThemeHandler(defaultValue)
   const Icon = theme === 'light' ? SunIcon : MoonIcon
 

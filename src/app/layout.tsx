@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import PageHeader from '@/components/root/PageHeader'
 import SideBar from '@/components/root/Navigation/SideBar'
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
 import getTheme from '@/lib/Shared/getTheme'
+import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,8 +31,9 @@ export default async function RootLayout({
   return (
     <html lang='en' data-theme={theme}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <PageHeader />
-        <SideBar {...sideBarConfiguration}>{children}</SideBar>
+        <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
+          <SideBar {...sideBarConfiguration}>{children}</SideBar>
+        </RootStoreProvider>
       </body>
     </html>
   )
