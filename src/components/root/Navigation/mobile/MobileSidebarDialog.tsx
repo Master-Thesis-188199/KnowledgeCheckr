@@ -53,7 +53,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
       </Transition.Root>
 
       <motion.div
-        className={twMerge('fixed inset-0 z-50 flex', visibilityBreakpoints)}
+        className={twMerge('fixed inset-0 z-50 flex md:inset-full', visibilityBreakpoints)}
         initial={{ display: 'none' }}
         animate={{ display: isOpen ? 'flex' : 'none', transition: { delay: isOpen ? 0 : 0.3, delayChildren: 0 } }}>
         <motion.div className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
