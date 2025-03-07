@@ -4,6 +4,7 @@ import './globals.css'
 import PageHeader from '@/components/root/PageHeader'
 import SideBar from '@/components/root/Navigation/SideBar'
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
+import '@/lib/Shared/Env'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
