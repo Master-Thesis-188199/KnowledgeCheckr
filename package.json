@@ -20,7 +20,9 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
     "@auth/mongodb-adapter": "^3.8.0",
+    "next-auth": "^4.24.11",
     "@heroicons/react": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -31,7 +33,7 @@
     "mongodb": "^6.14.2",
     "motion": "^12.4.7",
     "next": "15.2.0",
-    "next-auth": "^4.24.11",
+    "nookies": "^2.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "semantic-release": "^24.2.3",
@@ -55,6 +57,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^15.4.3",
     "prettier": "3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
     "typescript": "^5",
     "wait-on": "^8.0.2"

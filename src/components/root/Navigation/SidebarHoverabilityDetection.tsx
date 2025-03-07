@@ -12,6 +12,10 @@ export default function SidebarHoverabilityDetection() {
 
   useEffect(() => {
     if (primaryPointer === undefined) return
+    const desktop_variant = document.getElementById('desktop-sidebar-container')
+    const isDesktop = desktop_variant?.checkVisibility() === true
+
+    if (!isDesktop) return
 
     if (primaryPointer === 'fine' && !hasStylus) {
       setDeviceHoverable(true)
