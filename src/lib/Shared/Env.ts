@@ -1,4 +1,3 @@
-import 'server-only'
 import { z } from 'zod'
 
 export const envSchema = z.object({
@@ -16,6 +15,12 @@ export const envSchema = z.object({
     .string()
     .regex(/^(?:[^&=]+=[^&=]+)(?:&[^&=]+=[^&=]+)*$/g, "Invalid URI Argument Format. Must be in the form 'key=value' joined by '&'.")
     .optional(),
+
+  NEXTAUTH_GITHUB_ID: z.string().min(1, 'NEXTAUTH_GITHUB_ID cannot be empty!'),
+  NEXTAUTH_GITHUB_SECRET: z.string().min(1, 'NEXTAUTH_GITHUB_SECRET cannot be empty!'),
+
+  NEXTAUTH_GOOGLE_ID: z.string().min(1, 'NEXTAUTH_GOOGLE_ID cannot be empty!'),
+  NEXTAUTH_GOOGLE_SECRET: z.string().min(1, 'NEXTAUTH_GOOGLE_SECRET cannot be empty!'),
 })
 
 const res = envSchema.safeParse(process.env)
