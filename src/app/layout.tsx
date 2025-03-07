@@ -6,6 +6,7 @@ import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfig
 import getTheme from '@/lib/Shared/getTheme'
 import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
+import AuthProvider from '@/components/root/AuthProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,7 +34,9 @@ export default async function RootLayout({
     <html lang='en' data-theme={theme}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
-          <SideBar {...sideBarConfiguration}>{children}</SideBar>
+          <AuthProvider>
+            <SideBar {...sideBarConfiguration}>{children}</SideBar>
+          </AuthProvider>
         </RootStoreProvider>
       </body>
     </html>
