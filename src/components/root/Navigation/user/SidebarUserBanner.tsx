@@ -28,7 +28,12 @@ function LoginBanner() {
 
 function Banner({ children, user, className, ...props }: { children: React.ReactNode; className?: string; user: Partial<User> | undefined } & LinkProps) {
   return (
-    <Link {...props} className={twMerge('group/sidebar flex items-center justify-start gap-4 py-2 dark:hover:bg-neutral-600', className)}>
+    <Link
+      {...props}
+      className={twMerge(
+        'group/sidebar -mx-2 flex items-center justify-start gap-4 rounded-md px-2 py-2 hover:cursor-pointer hover:bg-neutral-200/75 hover:font-semibold dark:hover:bg-neutral-700',
+        className,
+      )}>
       <BannerIcon user={user} />
       <SidebarBannerContent>{children}</SidebarBannerContent>
     </Link>
@@ -38,5 +43,5 @@ function Banner({ children, user, className, ...props }: { children: React.React
 function BannerIcon({ user }: { user: Partial<User> | undefined }) {
   if (!user || !user.image) return <DynamicIcon name='user-round' className='size-6 shrink-0' />
 
-  return <Image src={user.image} alt='User Profile' width={24} height={24} />
+  return <Image src={user.image} alt='User Profile' width={24} height={24} className='rounded-full' />
 }
