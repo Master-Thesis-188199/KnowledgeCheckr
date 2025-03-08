@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'motion/react'
 import Link, { LinkProps } from 'next/link'
+import { motion } from 'motion/react'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
@@ -13,7 +13,7 @@ export default function RenderSideBarItems() {
   } = useSidebarStore((state) => state)
 
   return (
-    <div className='relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto'>
+    <div className='relative flex flex-1 flex-col overflow-y-auto'>
       {/* todo externalize header from <RenderSideBarItem> */}
       <PinSidebarButton />
 
