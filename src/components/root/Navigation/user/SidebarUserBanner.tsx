@@ -1,44 +1,28 @@
-import { getServerSession, User } from 'next-auth'
+import { getServerSession } from 'next-auth'
 import { options } from '@/app/api/auth/[...nextauth]/options'
-import { twMerge } from 'tailwind-merge'
-import SidebarBannerContent from '@/components/root/Navigation/user/SidebarBannerContent'
-import { DynamicIcon } from 'lucide-react/dynamic'
-import Link, { LinkProps } from 'next/link'
 import Image from 'next/image'
+import SidebarElement from '@/components/root/Navigation/elements/SidebarElement'
+import { iconClasses } from '@/components/root/Navigation/SideBarConfiguration'
+import { UserRound } from 'lucide-react'
 
 export default async function SidebarUserBanner() {
   const session = await getServerSession(options)
 
-  if (!session) return LoginBanner()
+  if (!session || !session.user) return LoginBanner()
+
+  const UserAvatar = <Image src={session.user.image || ''} alt='User Avatar' height={24} width={24} className={iconClasses} />
 
   return (
-    <Banner user={session.user} href={'api/auth/signout'}>
+    <SidebarElement icon={UserAvatar} href={'api/auth/signout'}>
       {session.user?.name}
-    </Banner>
+    </SidebarElement>
   )
 }
 
 function LoginBanner() {
   return (
-    <Banner href='/api/auth/signin' user={undefined}>
+    <SidebarElement href='/api/auth/signin' icon={<UserRound className={iconClasses} />}>
       <span>Please Sign In</span>
-    </Banner>
+    </SidebarElement>
   )
-}
-
-function Banner({ children, user, className, ...props }: { children: React.ReactNode; className?: string; user: Partial<User> | undefined } & LinkProps) {
-  return (
-    <Link
-      {...props}
-      className={twMerge('group/sidebar flex items-center justify-start gap-4 rounded-md py-2 hover:cursor-pointer hover:bg-neutral-200/75 hover:font-semibold dark:hover:bg-neutral-700', className)}>
-      <BannerIcon user={user} />
-      <SidebarBannerContent>{children}</SidebarBannerContent>
-    </Link>
-  )
-}
-
-function BannerIcon({ user }: { user: Partial<User> | undefined }) {
-  if (!user || !user.image) return <DynamicIcon name='user-round' className='ml-[9px] size-6 shrink-0' />
-
-  return <Image src={user.image} alt='User Profile' width={24} height={24} className='ml-[9px] rounded-full' />
 }
