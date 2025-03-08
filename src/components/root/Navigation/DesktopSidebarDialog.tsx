@@ -9,7 +9,7 @@ export default function DesktopSidebarDialog({ children, visibilityBreakpoints }
 
   return (
     <motion.div
-      className={tw('flex h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-4 py-4 md:flex-col dark:bg-neutral-800', visibilityBreakpoints)}
+      className={tw('flex h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-2 py-2 md:flex-col dark:bg-neutral-800', visibilityBreakpoints)}
       initial={{ width: isAnimationEnabled ? '60px' : '300px' }}
       animate={{
         width: isAnimationEnabled ? (isOpen ? '300px' : '60px') : '300px',
