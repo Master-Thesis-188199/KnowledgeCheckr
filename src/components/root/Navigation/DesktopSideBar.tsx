@@ -1,9 +1,9 @@
 import { twMerge as tw } from 'tailwind-merge'
-import RenderSideBarItems, { RenderSideBarItem } from '@/components/root/Navigation/RenderSideBarItems'
-import { UserIcon } from '@heroicons/react/24/outline'
+import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
 import SidebarHoverabilityDetection from '@/components/root/Navigation/SidebarHoverabilityDetection'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import DesktopSidebarDialog from '@/components/root/Navigation/DesktopSidebarDialog'
+import SidebarUserBanner from '@/components/root/Navigation/user/SidebarUserBanner'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
@@ -14,13 +14,7 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
         <DesktopSidebarDialog visibilityBreakpoints={className}>
           <RenderSideBarItems />
 
-          <RenderSideBarItem
-            item={{
-              label: 'Username',
-              href: '#',
-              icon: <UserIcon className='size-6 shrink-0 rounded-full' />,
-            }}
-          />
+          <SidebarUserBanner />
         </DesktopSidebarDialog>
 
         <ContentPanel children={children} />
