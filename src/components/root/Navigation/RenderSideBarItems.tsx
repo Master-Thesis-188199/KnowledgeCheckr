@@ -44,7 +44,7 @@ export function RenderSideBarItem({ item, className, ...props }: { item: SideBar
   const { isAnimationEnabled, isOpen } = useSidebarStore((state) => state)
 
   return (
-    <Link href={item.href || '#'} className={tw('group/sidebar flex items-center justify-start gap-3 py-2', className)} {...props}>
+    <Link href={item.href || '#'} className={tw('group/sidebar flex items-center justify-start gap-4 py-2', className)} {...props}>
       {item.icon}
 
       <motion.span
