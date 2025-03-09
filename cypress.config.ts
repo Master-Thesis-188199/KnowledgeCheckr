@@ -18,4 +18,21 @@ export default defineConfig({
       return config
     },
   },
+
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      ccTask(on, config)
+
+      on('before:browser:launch', (browser, launchOptions) => {
+        const removeFlags = ['--enable-automation']
+        launchOptions.args = launchOptions.args.filter((value) => !removeFlags.includes(value))
+        return launchOptions
+      })
+
+      return config
+    },
+    baseUrl: 'http://localhost:3000',
+    chromeWebSecurity: false,
+  },
 })
