@@ -33,6 +33,10 @@ export default defineConfig({
       on('before:browser:launch', (browser, launchOptions) => {
         const removeFlags = ['--enable-automation']
         launchOptions.args = launchOptions.args.filter((value) => !removeFlags.includes(value))
+
+        launchOptions.args.push('--no-sandbox')
+        launchOptions.args.push('--disable-setuid-sandbox')
+
         return launchOptions
       })
 
