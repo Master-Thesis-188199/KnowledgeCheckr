@@ -1,7 +1,9 @@
 import { defineConfig } from 'cypress'
 import ccTask from '@cypress/code-coverage/task'
+import { GitHubSocialLogin, GoogleSocialLogin } from 'cypress-social-logins/src/Plugins'
 
 export default defineConfig({
+  chromeWebSecurity: false,
   env: {
     codeCoverage: {
       url: 'http://localhost:3000/api/coverage',
@@ -18,11 +20,15 @@ export default defineConfig({
       return config
     },
   },
-
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
       ccTask(on, config)
+
+      on('task', {
+        GoogleSocialLogin: GoogleSocialLogin,
+        GitHubSocialLogin: GitHubSocialLogin,
+      })
 
       on('before:browser:launch', (browser, launchOptions) => {
         const removeFlags = ['--enable-automation']
