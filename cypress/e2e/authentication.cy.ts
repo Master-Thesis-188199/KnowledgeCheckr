@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 describe('NextAuth Authenthication - ', () => {
-  it('Login using Github', () => {
+  it('Login using Google', () => {
     const username = Cypress.env('GOOGLE_USERNAME')
     const password = Cypress.env('GOOGLE_PASSWORD')
     const cookieName = 'next-auth.session-token'
