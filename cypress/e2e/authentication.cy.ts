@@ -17,10 +17,10 @@ describe('NextAuth Authenthication - ', () => {
       // loginUrl: 'http://localhost:3000/api/auth/signin',
       loginUrl: baseUrl + '/api/auth/signin',
       cookieName,
-      logs: true,
       headless: true,
       loginSelector: `form[action='http://localhost:3000/api/auth/signin/google']`,
       postLoginSelector: '#yDmH0d > c-wiz > div > div.JYXaTc.F8PBrb > div > div > div:nth-child(2) > div > div > button > span',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
       // @ts-ignore
       .then(({ cookies }) => {
