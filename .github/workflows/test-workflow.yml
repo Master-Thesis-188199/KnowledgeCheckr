@@ -26,6 +26,20 @@ jobs:
         with:
           node-version: 23.7
 
+      - name: Install Cypress Dependencies
+        run: |
+          sudo apt-get update  
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb  
+
+      - name: Create Cypress Environment File
+        run: |
+          echo '{  
+            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
+            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
+            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}"  
+          }' > cypress.env.json      
+
+
       - name: Install Dependencies
         run: yarn install
 
