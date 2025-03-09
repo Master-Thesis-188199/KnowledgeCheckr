@@ -1,39 +1,21 @@
-'use client'
-
-import { motion } from 'framer-motion'
 import { twMerge as tw } from 'tailwind-merge'
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
-import RenderSideBarItems, { RenderSideBarItem } from '@/components/root/Navigation/RenderSideBarItems'
-import { UserIcon } from '@heroicons/react/24/outline'
+import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
 import SidebarHoverabilityDetection from '@/components/root/Navigation/SidebarHoverabilityDetection'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
+import DesktopSidebarDialog from '@/components/root/Navigation/DesktopSidebarDialog'
+import SidebarUserBanner from '@/components/root/Navigation/user/SidebarUserBanner'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
-  const { isOpen, isAnimationEnabled, debounceClosure } = useSidebarStore((state) => state)
-
   return (
     <div className={tw('h-screen flex-col', className)}>
       <MenuBar />
 
       <div id='desktop-sidebar-container' className='mx-auto flex w-full flex-1 flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800'>
-        <motion.div
-          className={tw('flex h-full max-w-[300px] flex-shrink-0 bg-neutral-100 px-4 py-4 md:flex-col dark:bg-neutral-800', className)}
-          initial={{ width: isAnimationEnabled ? '60px' : '300px' }}
-          animate={{
-            width: isAnimationEnabled ? (isOpen ? '300px' : '60px') : '300px',
-          }}
-          onMouseEnter={() => debounceClosure(true)}
-          onMouseLeave={() => debounceClosure(false)}>
+        <DesktopSidebarDialog visibilityBreakpoints={className}>
           <RenderSideBarItems />
 
-          <RenderSideBarItem
-            item={{
-              label: 'Username',
-              href: '#',
-              icon: <UserIcon className='size-6 shrink-0 rounded-full' />,
-            }}
-          />
-        </motion.div>
+          <SidebarUserBanner />
+        </DesktopSidebarDialog>
 
         <ContentPanel children={children} />
         <SidebarHoverabilityDetection />

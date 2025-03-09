@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
+    "@auth/mongodb-adapter": "^3.8.0",
+    "next-auth": "^4.24.11",
     "@heroicons/react": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -28,6 +30,7 @@
     "@semantic-release/release-notes-generator": "^14.0.3",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "lucide-react": "^0.477.0",
+    "mongodb": "^6.14.2",
     "motion": "^12.4.7",
     "next": "15.2.0",
     "nookies": "^2.5.2",
@@ -35,6 +38,7 @@
     "react-dom": "^19.0.0",
     "semantic-release": "^24.2.3",
     "tailwind-merge": "^3.0.2",
+    "zod": "^3.24.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
