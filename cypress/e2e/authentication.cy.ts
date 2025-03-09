@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 describe('NextAuth Authenthication - ', () => {
+  it('Examplary e2e Test', () => {
+    cy.visit('/')
+    cy.contains('Please Sign In')
+  })
+
   it('Login using Google', () => {
     const username = Cypress.env('GOOGLE_USERNAME')
     const password = Cypress.env('GOOGLE_PASSWORD')
