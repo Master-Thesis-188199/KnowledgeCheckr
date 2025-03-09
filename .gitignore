@@ -24,6 +24,8 @@
 # misc
 .DS_Store
 *.pem
+.nyc_output
+.babelrc.json
 
 # debug
 npm-debug.log*
@@ -33,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+*.env*
 
 # IDEs
 /.idea
