@@ -8,6 +8,7 @@ import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
 import AuthProvider from '@/components/root/AuthProvider'
 
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],

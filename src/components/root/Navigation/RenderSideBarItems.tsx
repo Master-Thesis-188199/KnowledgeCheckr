@@ -1,6 +1,8 @@
 'use client'
 
 import { motion } from 'motion/react'
+import Link, { LinkProps } from 'next/link'
+import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { Pin } from 'lucide-react'
