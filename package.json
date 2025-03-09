@@ -20,9 +20,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
     "@auth/mongodb-adapter": "^3.8.0",
-    "next-auth": "^4.24.11",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -33,6 +32,7 @@
     "mongodb": "^6.14.2",
     "motion": "^12.4.7",
     "next": "15.2.0",
+    "next-auth": "^4.24.11",
     "nookies": "^2.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -52,6 +52,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-istanbul": "^7.0.0",
     "cypress": "^14.1.0",
+    "cypress-social-logins": "^1.14.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "husky": "^8.0.0",
