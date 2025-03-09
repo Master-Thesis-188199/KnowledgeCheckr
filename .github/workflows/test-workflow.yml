@@ -54,9 +54,9 @@ jobs:
           }' > cypress.env.json      
 
 
-      - name: Install Dependencies
-        run: yarn install
-
-      - name: Run Test Script
-        run: npm run test
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run test:start-server
+          browser: chrome
 
