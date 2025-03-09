@@ -64,6 +64,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create .env File
+        run: |
+          echo "NEXTAUTH_URL=${{ env.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}" >> .env
+          
+          echo "NEXTAUTH_MONGODB_HOST_NAME=\"mongo\"" >> .env
+          echo "NEXTAUTH_MONGODB_PORT=27017" >> .env
+          echo "NEXTAUTH_MONGODB_DATABASE_NAME=${{ secrets.NEXTAUTH_MONGODB_DATABASE_NAME }}" >> .env
+          
+          echo "NEXTAUTH_GITHUB_ID=${{ secrets.NEXTAUTH_GITHUB_ID }}" >> .env
+          echo "NEXTAUTH_GITHUB_SECRET=${{ secrets.NEXTAUTH_GITHUB_SECRET }}" >> .env
+          
+          echo "NEXTAUTH_GOOGLE_ID=${{ secrets.NEXTAUTH_GOOGLE_ID }}" >> .env
+          echo "NEXTAUTH_GOOGLE_SECRET=${{ secrets.NEXTAUTH_GOOGLE_SECRET }}" >> .env
+
+
       - name: Create BuildKit Configuration
         run: |
           echo "[worker.oci]
