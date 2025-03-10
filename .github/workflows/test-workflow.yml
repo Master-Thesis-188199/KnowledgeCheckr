@@ -69,6 +69,9 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Download Cypress Binaries
+        run: cypress install
+
       - name: Cache Nextjs Build Cache
         uses: actions/cache@v4
         with:
