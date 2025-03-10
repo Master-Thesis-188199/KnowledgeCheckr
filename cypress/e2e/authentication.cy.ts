@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 describe('NextAuth Authenthication - ', () => {
-  it('Login using Github', () => {
+  it('Login using Google', () => {
+    cy.skip('Test Skipped (SkipOnCI: true', Cypress.env('SkipOnCi'))
+
     const username = Cypress.env('GOOGLE_USERNAME')
     const password = Cypress.env('GOOGLE_PASSWORD')
     const cookieName = 'next-auth.session-token'
@@ -12,10 +14,10 @@ describe('NextAuth Authenthication - ', () => {
       // loginUrl: 'http://localhost:3000/api/auth/signin',
       loginUrl: baseUrl + '/api/auth/signin',
       cookieName,
-      logs: true,
       headless: true,
       loginSelector: `form[action='http://localhost:3000/api/auth/signin/google']`,
       postLoginSelector: '#yDmH0d > c-wiz > div > div.JYXaTc.F8PBrb > div > div > div:nth-child(2) > div > div > button > span',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
       // @ts-ignore
       .then(({ cookies }) => {
