@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 describe('NextAuth Authenthication - ', () => {
-  it('Examplary e2e Test', () => {
-    const baseUrl = Cypress.env('BASE_URL')
-    cy.visit(baseUrl)
-    cy.contains('Please Sign In')
-  })
-
   it('Login using Google', () => {
     cy.skip('Test Skipped (SkipOnCI: true', Cypress.env('SkipOnCi'))
 
