@@ -7,10 +7,7 @@ describe('NextAuth Authenthication - ', () => {
   })
 
   it('Login using Google', () => {
-    if (Cypress.env('SkipOnCi') === true) {
-      cy.log('Test Skipped (SkipOnCI: true')
-      return
-    }
+    cy.skip('Test Skipped (SkipOnCI: true', Cypress.env('SkipOnCi'))
 
     const username = Cypress.env('GOOGLE_USERNAME')
     const password = Cypress.env('GOOGLE_PASSWORD')
