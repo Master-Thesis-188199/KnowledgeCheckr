@@ -68,8 +68,8 @@ jobs:
 
       - name: Create .env File
         run: |
-          echo "NEXTAUTH_URL=${{ env.NEXTAUTH_URL }}" >> .env
-          echo "NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           
           echo "NEXTAUTH_MONGODB_HOST_NAME=\"mongo\"" >> .env
           echo "NEXTAUTH_MONGODB_PORT=27017" >> .env
