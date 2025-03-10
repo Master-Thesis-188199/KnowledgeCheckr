@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "pretest:start-server": "rm -rf .babelrc.json .nyc_output coverage",
-    "test:start-server": "cp ./config/.babelrc.json .babelrc.json && next dev",
+    "test:start-server": "cp ./config/.babelrc.json .babelrc.json && npm run production",
     "test:component": "cypress run --component",
     "test:e2e": "cypress run",
     "pretest": "npm run test:start-server &",
