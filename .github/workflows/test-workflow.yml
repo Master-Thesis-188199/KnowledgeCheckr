@@ -50,7 +50,8 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}"  
+            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}", 
+            "SkipOnCi": true 
           }' > cypress.env.json      
 
 
