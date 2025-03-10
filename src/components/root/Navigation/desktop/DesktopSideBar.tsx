@@ -1,8 +1,8 @@
 import { twMerge as tw } from 'tailwind-merge'
 import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
-import SidebarHoverabilityDetection from '@/components/root/Navigation/SidebarHoverabilityDetection'
+import SidebarHoverabilityDetection from '@/components/root/Navigation/desktop/SidebarHoverabilityDetection'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
-import DesktopSidebarDialog from '@/components/root/Navigation/DesktopSidebarDialog'
+import DesktopSidebarDialog from '@/components/root/Navigation/desktop/DesktopSidebarDialog'
 import SidebarUserBanner from '@/components/root/Navigation/user/SidebarUserBanner'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
