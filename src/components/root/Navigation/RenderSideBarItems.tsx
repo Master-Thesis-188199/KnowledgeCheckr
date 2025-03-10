@@ -1,17 +1,9 @@
-'use client'
-
-import { motion } from 'motion/react'
-import Link, { LinkProps } from 'next/link'
-import { SideBarProps } from '@/components/root/Navigation/SideBar'
-import { twMerge as tw } from 'tailwind-merge'
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
-import { Pin } from 'lucide-react'
 import SidebarElement from '@/components/root/Navigation/elements/SidebarElement'
+import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
+import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
 
 export default function RenderSideBarItems() {
-  const {
-    config: { elements, title, icon },
-  } = useSidebarStore((state) => state)
+  const { elements } = sideBarConfiguration
 
   return (
     <div className='relative flex flex-1 flex-col overflow-y-auto'>
@@ -24,19 +16,5 @@ export default function RenderSideBarItems() {
         ))}
       </div>
     </div>
-  )
-}
-
-function PinSidebarButton() {
-  const { isOpen, isAnimationEnabled, toggleAnimation, canDeviceHover } = useSidebarStore((state) => state)
-
-  return (
-    <motion.div
-      initial={{ opacity: isAnimationEnabled ? 0 : 1 }}
-      animate={{ opacity: isAnimationEnabled ? (isOpen ? 1 : 0) : 1, rotate: isAnimationEnabled ? 45 : 0 }}
-      className={tw('absolute top-1.5 right-1.5 hidden md:flex', !canDeviceHover && 'hidden')}
-      onClick={toggleAnimation}>
-      <Pin className={tw('size-5 stroke-1', !isAnimationEnabled && 'stroke-2')} />
-    </motion.div>
   )
 }
