@@ -17,7 +17,24 @@ env:
   NEXTAUTH_GOOGLE_SECRET: ${{ secrets.NEXTAUTH_GOOGLE_SECRET }}
 
 jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Check for relevant changes
+        id: check
+        uses: ./.github/actions/check-changed-files
+        with:
+          base: ${{ github.event.before }}
+
   run-all-tests:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant == 'true'
+
     runs-on: ubuntu-latest
 
     services:
@@ -73,3 +90,26 @@ jobs:
       - name: Run Test Script
         run: npm run test
 
+  skip-tests:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Create "No Relevant Changes" Check Run
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Relevant Changes Check",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion: "success",
+              output: {
+                title: "No Relevant Changes Detected",
+                summary: "Running Tests Skipped - the most recent changes did not change / touch any files with the extensions (.js, .jsx, .ts, .tsx, .json, .css, .scss, .mjs), so re-testing was skipped."
+              }
+            })
