@@ -2,7 +2,7 @@ import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfig
 import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
 import Link from 'next/link'
 import { twMerge } from 'tailwind-merge'
-import SidebarBannerContent from '@/components/root/Navigation/user/SidebarBannerContent'
+import SidebarElementContent from '@/components/root/Navigation/user/SidebarElementContent'
 
 export default function RenderSideBarItems() {
   const { elements } = sideBarConfiguration
@@ -27,7 +27,7 @@ export function SidebarElement({ children, icon, className, href }: { children: 
       href={href}
       className={twMerge('group/sidebar flex items-center justify-start gap-4 rounded-md py-2 hover:cursor-pointer hover:bg-neutral-200/75 hover:font-semibold dark:hover:bg-neutral-700', className)}>
       {icon}
-      <SidebarBannerContent>{children}</SidebarBannerContent>
+      <SidebarElementContent>{children}</SidebarElementContent>
     </Link>
   )
 }
