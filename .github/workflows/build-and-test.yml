@@ -1,6 +1,7 @@
-name: Run Tests
+name: Build NextJS Application
 
 on: push
+
 
 env:
   NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
@@ -15,6 +16,7 @@ env:
 
   NEXTAUTH_GOOGLE_ID: ${{ secrets.NEXTAUTH_GOOGLE_ID }}
   NEXTAUTH_GOOGLE_SECRET: ${{ secrets.NEXTAUTH_GOOGLE_SECRET }}
+
 
 jobs:
   check-file-changes:
@@ -34,7 +36,7 @@ jobs:
         with:
           base: ${{ github.event.before }}
 
-  run-all-tests:
+  run-tests:
     needs: check-file-changes
     runs-on: ubuntu-latest
 
@@ -101,11 +103,52 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
 
-  Skip-Tests-No-Relevant-File-Changes:
+  build-nextjs-application:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Run Linting
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run lint
+
+      - name: Run Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run build
+
+
+  Skip-Build-Test-No-Changes:
     needs: check-file-changes
     if: needs.check-file-changes.outputs.relevant != 'true'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Skip Tests
-        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
+      - name: Skip Build And Test
+        run: echo "Skipping build and test execution because no relevant files were modified by the last commit / pushed commits"
