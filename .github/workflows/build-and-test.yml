@@ -1,4 +1,4 @@
-name: Build NextJS Application
+name: Build and Test
 
 on: push
 
@@ -103,7 +103,7 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
 
-  build-nextjs-application:
+  build:
     runs-on: ubuntu-latest
 
     services:
@@ -144,7 +144,7 @@ jobs:
         run: npm run build
 
 
-  Skip-Build-Test-No-Changes:
+  Skip-Executions:
     needs: check-file-changes
     if: needs.check-file-changes.outputs.relevant != 'true'
     runs-on: ubuntu-latest
