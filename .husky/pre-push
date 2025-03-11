@@ -1,4 +1,21 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run test
+if npm run test; then
+  echo "Tests passed."
+
+  # Check if running on macOS
+  if [ "$(uname)" = "Darwin" ]; then
+    osascript -e 'display notification "Pushing changes now" with title "Pre-Push Hook Success" sound name "Frog"'
+  else
+    echo "Non-macOS system detected. Skipping notification."
+  fi
+else
+  if [ "$(uname)" = "Darwin" ]; then
+    osascript -e 'display notification "Tests failed, Aborting Push" with title "Pre-Push hook Failure" sound name "Submarine"'
+  else
+    echo "Non-macOS system detected. Skipping notification."
+  fi
+  echo "Tests failed. Aborting push."
+  exit 1
+fi
