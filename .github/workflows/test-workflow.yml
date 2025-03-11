@@ -36,8 +36,6 @@ jobs:
 
   run-all-tests:
     needs: check-file-changes
-    if: needs.check-file-changes.outputs.relevant == 'true'
-
     runs-on: ubuntu-latest
 
     services:
