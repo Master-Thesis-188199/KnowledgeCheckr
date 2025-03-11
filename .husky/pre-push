@@ -1,21 +1,45 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-if npm run test; then
-  echo "Tests passed."
+# File Extensions for which to run tests
+EXTENSIONS_REGEX="\.(js|jsx|ts|tsx|json|css|scss|mjs)$"
 
-  # Check if running on macOS
-  if [ "$(uname)" = "Darwin" ]; then
-    osascript -e 'display notification "Pushing changes now" with title "Pre-Push Hook Success" sound name "Frog"'
+CHANGED_FILES=""
+
+while read local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    RANGE="$local_sha"
   else
-    echo "Non-macOS system detected. Skipping notification."
+    RANGE="$remote_sha..$local_sha"
+  fi
+  echo "Checking commit range: $RANGE"
+
+  CHANGED_FILES="$CHANGED_FILES
+$(git diff --name-only "$RANGE")"
+done
+
+# Check if any changed file matches the specified extensions
+if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
+  echo "Detected changes in files matching $EXTENSIONS_REGEX. Running tests..."
+  if npm run test; then
+    echo "Tests passed."
+    # Check if running on macOS for notifications
+    if [ "$(uname)" = "Darwin" ]; then
+      osascript -e 'display notification "Pushing changes now" with title "Pre-Push Hook Success" sound name "Frog"'
+    else
+      echo "Non-macOS system detected. Skipping notification."
+    fi
+  else
+    if [ "$(uname)" = "Darwin" ]; then
+      osascript -e 'display notification "Tests failed, Aborting Push" with title "Pre-Push hook Failure" sound name "Submarine"'
+    else
+      echo "Non-macOS system detected. Skipping notification."
+    fi
+    echo "Tests failed. Aborting push."
+    exit 1
   fi
 else
-  if [ "$(uname)" = "Darwin" ]; then
-    osascript -e 'display notification "Tests failed, Aborting Push" with title "Pre-Push hook Failure" sound name "Submarine"'
-  else
-    echo "Non-macOS system detected. Skipping notification."
-  fi
-  echo "Tests failed. Aborting push."
-  exit 1
+  echo "No changes in files with the specified extensions. Skipping tests."
 fi
+
+exit 0
