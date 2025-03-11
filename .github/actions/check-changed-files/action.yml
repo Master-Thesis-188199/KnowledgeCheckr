@@ -16,19 +16,24 @@ runs:
         if [ "${{ inputs.base }}" = "" ] || [ "${{ inputs.base }}" = "0000000000000000000000000000000000000000" ]; then
           echo "New branch or initial commit. Considering changes relevant."
           echo "relevant=true" >> $GITHUB_OUTPUT
+          echo "relevant=true" >> $GITHUB_ENV
         else
           CHANGED_FILES=$(git diff --name-only ${{ inputs.base }} ${{ github.sha }})
           echo "Changed files: $CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
             echo "Relevant changes detected."
             echo "relevant=true" >> $GITHUB_OUTPUT
+            echo "relevant=true" >> $GITHUB_ENV
           else
             echo "No relevant changes detected."
             echo "relevant=false" >> $GITHUB_OUTPUT
+            echo "relevant=false" >> $GITHUB_ENV
           fi
         fi
       shell: bash
       id: check
 
 outputs:
-  relevant: ${{ steps.check.outputs.relevant }}
+  relevant:
+    description: "Whether relevant file changes were detected"
+    value: ${{ env.relevant }}
