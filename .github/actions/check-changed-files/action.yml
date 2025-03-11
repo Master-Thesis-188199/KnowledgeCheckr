@@ -36,4 +36,4 @@ runs:
 outputs:
   relevant:
     description: "Whether relevant file changes were detected"
-    value: ${{ env.relevant }}
+    value: ${{ steps.check.outputs.relevant }}
