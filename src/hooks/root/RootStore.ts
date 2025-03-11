@@ -7,5 +7,5 @@ export type RootState = {
 export type RootStore = RootState
 
 export const createRootStore = (initialState?: RootState) => {
-  return createStore<RootStore>()((set) => initialState || ({} as RootState))
+  return createStore<RootStore>()(() => initialState || ({} as RootState))
 }

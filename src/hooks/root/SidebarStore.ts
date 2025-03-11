@@ -56,7 +56,7 @@ export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitS
           }, clousureDebounceTime)
         }
       },
-      setDeviceHoverable: (hoverable) => set((state) => ({ isAnimationEnabled: hoverable, canDeviceHover: hoverable })),
+      setDeviceHoverable: (hoverable) => set(() => ({ isAnimationEnabled: hoverable, canDeviceHover: hoverable })),
     }
   })
 }
