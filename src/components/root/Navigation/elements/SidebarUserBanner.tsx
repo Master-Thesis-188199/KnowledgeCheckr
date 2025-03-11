@@ -1,9 +1,9 @@
 import { getServerSession } from 'next-auth'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import Image from 'next/image'
-import SidebarElement from '@/components/root/Navigation/elements/SidebarElement'
 import { iconClasses } from '@/components/root/Navigation/SideBarConfiguration'
 import { UserRound } from 'lucide-react'
+import { SidebarElement } from '@/components/root/Navigation/elements/RenderSideBarItems'
 
 export default async function SidebarUserBanner() {
   const session = await getServerSession(options)

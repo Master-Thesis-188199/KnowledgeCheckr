@@ -1,7 +1,7 @@
-import { DesktopSidebar } from '@/components/root/Navigation/DesktopSideBar'
+import { DesktopSidebar } from '@/components/root/Navigation/desktop/DesktopSideBar'
 import { ReactNode } from 'react'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
-import MobileSideBar from '@/components/root/Navigation/MobileSideBar'
+import MobileSideBar from '@/components/root/Navigation/mobile/MobileSideBar'
 
 export interface SideBarProps {
   title: string

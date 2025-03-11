@@ -1,0 +1,154 @@
+name: Build and Test
+
+on: push
+
+
+env:
+  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+
+  NEXTAUTH_MONGODB_HOST_NAME: 'mongo'
+  NEXTAUTH_MONGODB_PORT: 27017
+  NEXTAUTH_MONGODB_DATABASE_NAME: ${{ secrets.NEXTAUTH_MONGODB_DATABASE_NAME }}
+
+  NEXTAUTH_GITHUB_ID: ${{ secrets.NEXTAUTH_GITHUB_ID}}
+  NEXTAUTH_GITHUB_SECRET: ${{ secrets.NEXTAUTH_GITHUB_SECRET }}
+
+  NEXTAUTH_GOOGLE_ID: ${{ secrets.NEXTAUTH_GOOGLE_ID }}
+  NEXTAUTH_GOOGLE_SECRET: ${{ secrets.NEXTAUTH_GOOGLE_SECRET }}
+
+
+jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for relevant changes
+        id: check
+        uses: ./.github/actions/check-changed-files
+        with:
+          base: ${{ github.event.before }}
+
+  run-tests:
+    needs: check-file-changes
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"  
+          --health-interval 10s  
+          --health-timeout 5s  
+          --health-retries 5  
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Skip Tests when nothing changed
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install Cypress Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: |
+          sudo apt-get update  
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb  
+
+      - name: Create Cypress Environment File
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: |
+          echo '{  
+            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
+            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
+            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}", 
+            "SkipOnCi": true 
+          }' > cypress.env.json      
+
+      - name: Install Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Cache Nextjs Build Cache
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package.json') }}-
+
+      - name: Run Test Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run test
+
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Run Linting
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run lint
+
+      - name: Run Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run build
+
+
+  Skip-Executions:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant != 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip Build And Test
+        run: echo "Skipping build and test execution because no relevant files were modified by the last commit / pushed commits"

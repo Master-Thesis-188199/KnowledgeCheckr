@@ -4,7 +4,7 @@ import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvid
 import { motion } from 'motion/react'
 import { twMerge } from 'tailwind-merge'
 
-export default function SidebarBannerContent({ children }: { children: React.ReactNode }) {
+export default function SidebarElementContent({ children }: { children: React.ReactNode }) {
   const { isOpen, isAnimationEnabled } = useSidebarStore((state) => state)
 
   return (

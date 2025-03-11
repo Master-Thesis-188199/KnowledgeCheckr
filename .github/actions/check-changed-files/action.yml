@@ -1,0 +1,39 @@
+name: Check for Relevant Changes
+
+description: "Checks if relevant files were modified by the last push event (diff)"
+inputs:
+  base:
+    description: "The base commit to compare against"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        EXTENSIONS_REGEX="\.((js)|(jsx)|(ts)|(tsx)|(json)|(css)|(scss)|(mjs))$"
+        
+        # For a new branch or initial commit, treat as relevant
+        if [ "${{ inputs.base }}" = "" ] || [ "${{ inputs.base }}" = "0000000000000000000000000000000000000000" ]; then
+          echo "New branch or initial commit. Considering changes relevant."
+          echo "relevant=true" >> $GITHUB_OUTPUT
+          echo "relevant=true" >> $GITHUB_ENV
+        else
+          CHANGED_FILES=$(git diff --name-only ${{ inputs.base }} ${{ github.sha }})
+          echo "Changed files: $CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
+            echo "Relevant changes detected."
+            echo "relevant=true" >> $GITHUB_OUTPUT
+            echo "relevant=true" >> $GITHUB_ENV
+          else
+            echo "No relevant changes detected."
+            echo "relevant=false" >> $GITHUB_OUTPUT
+            echo "relevant=false" >> $GITHUB_ENV
+          fi
+        fi
+      shell: bash
+      id: check
+
+outputs:
+  relevant:
+    description: "Whether relevant file changes were detected"
+    value: ${{ env.relevant }}
