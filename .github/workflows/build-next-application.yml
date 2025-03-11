@@ -3,6 +3,24 @@ name: Build NextJS Application
 on: push
 
 jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for relevant changes
+        id: check
+        uses: ./.github/actions/check-changed-files
+        with:
+          base: ${{ github.event.before }}
+
+
   build-nextjs-application:
     runs-on: ubuntu-latest
 
@@ -36,16 +54,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
       - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 23.7
 
       - name: Install dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn
 
       - name: Run Linting
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run lint
 
       - name: Run Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run build
+
+
+  Skip-Build-No-Relevant-File-Changes:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant != 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip Build
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
