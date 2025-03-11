@@ -105,3 +105,7 @@ jobs:
     needs: check-file-changes
     if: needs.check-file-changes.outputs.relevant != 'true'
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip Tests
+        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
