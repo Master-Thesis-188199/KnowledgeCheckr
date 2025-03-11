@@ -55,17 +55,38 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Skip Tests when nothing changed
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Report skipped test status
+        if: needs.check-file-changes.outputs.relevant != 'true'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: "success",
+              context: "Test Execution",
+              description: "No relevant files modified; Tests Skipped."
+            });
+
       - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 23.7
 
       - name: Install Cypress Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: |
           sudo apt-get update  
           sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb  
 
       - name: Create Cypress Environment File
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: |
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
@@ -75,9 +96,11 @@ jobs:
           }' > cypress.env.json      
 
       - name: Install Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn install --frozen-lockfile
 
       - name: Cache Nextjs Build Cache
+        if: needs.check-file-changes.outputs.relevant == 'true'
         uses: actions/cache@v4
         with:
           # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
@@ -91,28 +114,5 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package.json') }}-
 
       - name: Run Test Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
-
-  skip-tests:
-    needs: check-file-changes
-    if: needs.check-file-changes.outputs.relevant != 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-      - name: Create "No Relevant Changes" Check Run
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: "Relevant Changes Check",
-              head_sha: context.sha,
-              status: "completed",
-              conclusion: "success",
-              output: {
-                title: "No Relevant Changes Detected",
-                summary: "Running Tests Skipped - the most recent changes did not change / touch any files with the extensions (.js, .jsx, .ts, .tsx, .json, .css, .scss, .mjs), so re-testing was skipped."
-              }
-            })
