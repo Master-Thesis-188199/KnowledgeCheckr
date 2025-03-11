@@ -59,17 +59,13 @@ jobs:
 
       - name: Report skipped test status
         if: needs.check-file-changes.outputs.relevant != 'true'
-        uses: actions/github-script@v6
+        uses: billyjbryant/create-status-check@v2
         with:
-          script: |
-            await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: context.sha,
-              state: "success",
-              context: "Test Execution",
-              description: "No relevant files modified; Tests Skipped."
-            });
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: 'Test Execution'
+          description: 'No relevant files modified; Tests Skipped.'
+          state: 'success'
+          sha: ${{ github.sha }}
 
       - name: Set up Node 23.7
         if: needs.check-file-changes.outputs.relevant == 'true'
