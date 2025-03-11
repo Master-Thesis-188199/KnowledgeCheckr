@@ -1,7 +1,7 @@
 import MobileSideBarDialog from '@/components/root/Navigation/mobile/MobileSidebarDialog'
-import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
 import { ArrowDownNarrowWide } from 'lucide-react'
 import { MobileCloseButton, MobileMenubar } from '@/components/root/Navigation/mobile/MobileSidebarComponents'
+import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
 
 export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
   return (

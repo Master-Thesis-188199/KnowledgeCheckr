@@ -2,7 +2,7 @@ import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfig
 import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
 import Link from 'next/link'
 import { twMerge } from 'tailwind-merge'
-import SidebarElementContent from '@/components/root/Navigation/user/SidebarElementContent'
+import SidebarElementContent from '@/components/root/Navigation/elements/SidebarElementContent'
 
 export default function RenderSideBarItems() {
   const { elements } = sideBarConfiguration
