@@ -35,3 +35,11 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('skip', (message = 'Test skipped using cy.skip()', condition: boolean = true) => {
+  if (!condition) return
+
+  cy.log(message)
+  // @ts-ignore
+  cy.state('runnable').ctx.skip()
+})

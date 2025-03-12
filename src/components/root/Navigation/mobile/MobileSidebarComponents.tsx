@@ -1,40 +1,13 @@
 'use client'
-import { twMerge as tw } from 'tailwind-merge'
+
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
-import MobileSideBarDialog from '@/components/root/Navigation/mobile/MobileSidebarDialog'
-import RenderSideBarItems from '@/components/root/Navigation/RenderSideBarItems'
-import { ArrowDownNarrowWide } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { twMerge as tw } from 'tailwind-merge'
 
-export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
-  return (
-    <>
-      <div className='flex h-screen flex-col md:hidden dark:bg-neutral-800'>
-        <Menubar />
-        <div className='flex-1 bg-gray-100 dark:bg-neutral-900/60'>{children}</div>
-      </div>
-
-      <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
-        <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-white pb-2 dark:bg-neutral-800'>
-          <div className='flex shrink-0 items-center justify-between border-solid border-gray-400 bg-neutral-200/70 px-2 py-4 pl-4 shadow shadow-neutral-300 dark:border-gray-200 dark:bg-neutral-900'>
-            <ArrowDownNarrowWide className='size-6' />
-            <span className='flex-1 pr-4 text-center text-lg leading-6 font-semibold text-gray-700 dark:text-gray-200'>Navigation</span>
-            <CloseButton />
-          </div>
-
-          <div className='h-full px-[14px] text-gray-600 dark:text-gray-300/90'>
-            <RenderSideBarItems />
-          </div>
-        </div>
-      </MobileSideBarDialog>
-    </>
-  )
-}
-
-export function Menubar() {
+export function MobileMenubar() {
   const {
     config: { title },
   } = useSidebarStore((state) => state)
@@ -49,7 +22,7 @@ export function Menubar() {
   )
 }
 
-export function OpenButton() {
+function OpenButton() {
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   return (
@@ -63,7 +36,7 @@ export function OpenButton() {
   )
 }
 
-export function CloseButton() {
+export function MobileCloseButton() {
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   return (

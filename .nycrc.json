@@ -3,6 +3,6 @@
   "check-coverage": true,
   "instrument": true,
   "reporter": ["text-summary", "lcov"],
-  "include": ["src/app/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["src/app/api/coverage/**"]
 }

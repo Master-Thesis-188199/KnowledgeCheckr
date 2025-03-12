@@ -10,6 +10,8 @@ on:
 permissions:
   contents: write
   packages: write
+  issues: write
+  pull-requests: write
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -29,7 +31,7 @@ jobs:
           node-version: 23.7
 
       - name: Install dependencies
-        run: yarn
+        run: yarn --frozen-lockfile
 
       - name: Run semantice release
         run: |
@@ -40,6 +42,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: [semantic-versioning]
 
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -53,6 +65,22 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create .env File
+        run: |
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          
+          echo "NEXTAUTH_MONGODB_HOST_NAME=\"mongo\"" >> .env
+          echo "NEXTAUTH_MONGODB_PORT=27017" >> .env
+          echo "NEXTAUTH_MONGODB_DATABASE_NAME=${{ secrets.NEXTAUTH_MONGODB_DATABASE_NAME }}" >> .env
+          
+          echo "NEXTAUTH_GITHUB_ID=${{ secrets.NEXTAUTH_GITHUB_ID }}" >> .env
+          echo "NEXTAUTH_GITHUB_SECRET=${{ secrets.NEXTAUTH_GITHUB_SECRET }}" >> .env
+          
+          echo "NEXTAUTH_GOOGLE_ID=${{ secrets.NEXTAUTH_GOOGLE_ID }}" >> .env
+          echo "NEXTAUTH_GOOGLE_SECRET=${{ secrets.NEXTAUTH_GOOGLE_SECRET }}" >> .env
+
 
       - name: Create BuildKit Configuration
         run: |
