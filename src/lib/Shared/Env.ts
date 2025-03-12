@@ -21,6 +21,11 @@ export const envSchema = z.object({
 
   NEXTAUTH_GOOGLE_ID: z.string().min(1, 'NEXTAUTH_GOOGLE_ID cannot be empty!'),
   NEXTAUTH_GOOGLE_SECRET: z.string().min(1, 'NEXTAUTH_GOOGLE_SECRET cannot be empty!'),
+
+  SHOW_APP_VERSION: z
+    .string()
+    .transform((val) => val.toLowerCase().trim() === 'true')
+    .optional(),
 })
 
 const res = envSchema.safeParse(process.env)

@@ -101,6 +101,10 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
+      - name: "Store Version Information"
+        run: |
+          echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
+
       - name: Check if image with previous tag already exists
         id: check-image
         run: |
@@ -117,8 +121,18 @@ jobs:
       - name: Build and Push Multi-Platform Image
         if: steps.check-image.outputs.exists == 'false'
         run: |
+          TAG="${{ steps.previoustag.outputs.tag }}"
+          
+          Extra_Docker_Build_Args=""
+          # Check if the tag is stable (e.g., v1.2.3)
+          if [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Stable release detected - adding 'stable' tag."
+            Extra_Docker_Build_Args="-t ghcr.io/${{ env.LOWER_REPO_NAME }}:stable"
+          fi
+          
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t ghcr.io/${{ env.LOWER_REPO_NAME }}:latest \
             -t ghcr.io/${{ env.LOWER_REPO_NAME }}:${{ steps.previoustag.outputs.tag }} \
+            $Extra_Docker_Build_Args \
             --push .
