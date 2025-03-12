@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+if [ "$CI" = "true" ]; then
+  echo "CI environment detected. Skipping pre-push hook."
+  exit 0
+fi
 # File Extensions for which to run tests
 EXTENSIONS_REGEX="\.(js|jsx|ts|tsx|json|css|scss|mjs)$"
 
