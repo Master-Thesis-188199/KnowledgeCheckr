@@ -101,6 +101,10 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
+      - name: "Store Version Information"
+        run: |
+          echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
+
       - name: Check if image with previous tag already exists
         id: check-image
         run: |
