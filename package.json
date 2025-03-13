@@ -16,9 +16,11 @@
     "posttest": "rm -rf .babelrc.json .nyc_output",
     "semantic-release": "semantic-release",
     "production": "npm run production:build && npm run production:start",
+    "preproduction:start": "npm run validateEnvironment",
     "production:start": "node .next/standalone/server.js",
     "production:build": "next build",
     "postproduction:build": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+    "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
     "prepare": "husky install"
   },
   "dependencies": {
