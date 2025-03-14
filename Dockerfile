@@ -29,6 +29,18 @@ COPY --from=builder app/yarn.lock /app/yarn.lock
 COPY --from=builder app/next.config.ts /app/next.config.ts
 COPY --from=builder app/.next/standalone /app/.next/standalone
 
+# Environmental Variable Validation at Runtime in Production
+COPY --from=builder app/tsconfig.json /app/tsconfig.json
+COPY --from=builder app/tsconfig.env.json /app/tsconfig.env.json
+COPY --from=builder app/src/lib/Shared/Env.ts /app/src/lib/Shared/Env.ts
+COPY --from=builder app/node_modules/ts-node /app/node_modules/ts-node
+COPY --from=builder app/node_modules/zod /app/node_modules/zod
+COPY --from=builder app/node_modules/process /app/node_modules/process
+COPY --from=builder app/node_modules/@types/node /app/node_modules/@types/node
+
+RUN ["npm", "install", "ts-node", "-g"]
+
+
 EXPOSE 3000
 
 # Start the Next.js application
