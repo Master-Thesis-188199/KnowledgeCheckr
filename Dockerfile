@@ -34,6 +34,7 @@ COPY --from=builder app/tsconfig.json /app/tsconfig.json
 COPY --from=builder app/tsconfig.env.json /app/tsconfig.env.json
 COPY --from=builder app/src/lib/Shared/Env.ts /app/src/lib/Shared/Env.ts
 COPY --from=builder app/node_modules/ts-node /app/node_modules/ts-node
+COPY --from=builder app/node_modules/dotenv /app/node_modules/dotenv
 COPY --from=builder app/node_modules/zod /app/node_modules/zod
 COPY --from=builder app/node_modules/process /app/node_modules/process
 COPY --from=builder app/node_modules/@types/node /app/node_modules/@types/node
