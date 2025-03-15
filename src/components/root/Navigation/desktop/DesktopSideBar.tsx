@@ -4,6 +4,7 @@ import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import DesktopSidebarDialog from '@/components/root/Navigation/desktop/DesktopSidebarDialog'
 import SidebarUserBanner from '@/components/root/Navigation/elements/SidebarUserBanner'
 import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
+import AppVersion from '@/components/Shared/AppVersion'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
@@ -15,6 +16,7 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
           <RenderSideBarItems />
 
           <SidebarUserBanner />
+          <AppVersion />
         </DesktopSidebarDialog>
 
         <ContentPanel children={children} />

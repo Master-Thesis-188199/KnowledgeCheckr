@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27018:27017
+
+
+  knowledgeCheckr:
+    image: ghcr.io/master-thesis-188199/knowledgecheckr:latest
+    restart: no
+    ports:
+      - 3000:3000
+    environment:
+      NEXTAUTH_MONGODB_HOST_NAME: mongo
+      NEXTAUTH_MONGODB_PORT: 27017
+
+    env_file:
+      - .env

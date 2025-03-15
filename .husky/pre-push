@@ -25,6 +25,18 @@ done
 # Check if any changed file matches the specified extensions
 if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
   echo "Detected changes in files matching $EXTENSIONS_REGEX. Running tests..."
+
+  # Check if port 3000 is already in use
+  if lsof -i :3000 | grep LISTEN > /dev/null; then
+    echo "Error: Another app is already running on PORT 3000. Aborting push."
+    if [ "$(uname)" = "Darwin" ]; then
+      osascript -e 'display notification "Another app is already running on PORT 3000. Aborting push." with title "Pre-Push Hook Error" sound name "Submarine"'
+    else
+      echo "Non-macOS system detected. No notification will be shown."
+    fi
+    exit 1
+  fi
+
   if npm run test; then
     echo "Tests passed."
     # Check if running on macOS for notifications

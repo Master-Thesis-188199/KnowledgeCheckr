@@ -16,9 +16,11 @@
     "posttest": "rm -rf .babelrc.json .nyc_output",
     "semantic-release": "semantic-release",
     "production": "npm run production:build && npm run production:start",
+    "preproduction:start": "npm run validateEnvironment",
     "production:start": "node .next/standalone/server.js",
     "production:build": "next build",
     "postproduction:build": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+    "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -55,6 +57,7 @@
     "babel-plugin-istanbul": "^7.0.0",
     "cypress": "^14.1.0",
     "cypress-social-logins": "^1.14.2",
+    "dotenv": "^16.4.7",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "husky": "^8.0.0",
@@ -62,6 +65,7 @@
     "prettier": "3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
     "wait-on": "^8.0.2"
   },
