@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 
 const KnowledgeCheckSchema = z
   .object({
@@ -34,3 +35,6 @@ const KnowledgeCheckSchema = z
   })
 
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
+
+const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<KnowledgeCheck>(KnowledgeCheckSchema)
+export { validateKnowledgeCheck, instantiateKnowledgeCheck, safeParseKnowledgeCheck }
