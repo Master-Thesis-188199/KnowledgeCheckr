@@ -1,4 +1,5 @@
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Fragment } from 'react'
 
 export default async function ChecksPage() {
   const checks = Array.from({ length: 4 }).map(() => instantiateKnowledgeCheck())
@@ -12,6 +13,28 @@ export default async function ChecksPage() {
         ))}
       </div>
     </main>
+  )
+}
+
+function RenderCheckGrid(check: KnowledgeCheck) {
+  return (
+    <div className='relative flex flex-col gap-2 rounded-md bg-neutral-200/60 p-4 ring-1 ring-neutral-400/60 hover:cursor-pointer hover:bg-neutral-300/50 hover:ring-2 hover:ring-neutral-400/80 dark:bg-neutral-700/40 dark:ring-neutral-600 dark:hover:bg-neutral-700 dark:hover:ring-neutral-500'>
+      <div className='absolute top-0 right-0 rounded-bl-2xl bg-neutral-400/30 pt-1 pr-1 pb-1.5 pl-2 text-sm tracking-wide dark:bg-blue-600/40'>#{check.id}</div>
+      <div className='check-header flex items-center justify-between gap-2 border-b border-b-neutral-400/60 pb-2 dark:border-b-neutral-500'>
+        <span>{check.name}</span>
+      </div>
+      <div className='grid grid-cols-[auto_1fr] gap-x-6 gap-y-4'>
+        {Object.entries(check)
+          .filter(([key, value]) => !!value && typeof value !== 'object')
+          .filter(([key]) => !['id', 'name'].includes(key))
+          .map(([key, value], i) => (
+            <Fragment key={i}>
+              <span className='text-neutral-700 capitalize dark:text-neutral-300'>{key}:</span>
+              <span className='text-neutral-500 dark:text-neutral-400'>{String(value)}</span>
+            </Fragment>
+          ))}
+      </div>
+    </div>
   )
 }
 
