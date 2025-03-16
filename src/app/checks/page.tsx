@@ -7,7 +7,7 @@ export default async function ChecksPage() {
   return (
     <main>
       <h1 className='mb-8 text-[22px] font-semibold tracking-wider'>Your Checks</h1>
-      <div className='checks-grid grid grid-cols-1 gap-4 @[800px]:grid-cols-2 @[1200px]:grid-cols-3'>
+      <div className='checks-grid grid grid-cols-1 gap-6 @[800px]:grid-cols-2 @[1200px]:grid-cols-3'>
         {checks.map((check, i) => (
           <RenderCheck key={i} {...check} />
         ))}
