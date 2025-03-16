@@ -22,7 +22,7 @@ const KnowledgeCheckSchema = z
       .optional()
       .default((Math.floor(Math.random() * 1000) % 10) + 1),
 
-    questions: z.array(QuestionSchema),
+    questions: z.array(QuestionSchema).min(1, 'Please provide at least one question.'),
     questionCategories: z
       .array(CategorySchema)
       .optional()
