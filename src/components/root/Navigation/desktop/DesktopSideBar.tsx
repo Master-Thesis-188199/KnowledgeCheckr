@@ -39,7 +39,7 @@ function ContentPanel({ children }: { children?: React.ReactNode }) {
 function MenuBar() {
   return (
     <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
-      <span className='text-xl font-semibold'>KnowledgeCheckr</span>
+      <span className='tracking-widest'>KnowledgeCheckr</span>
       <div className='flex items-center gap-2'>
         <ThemeSwitcher />
       </div>
