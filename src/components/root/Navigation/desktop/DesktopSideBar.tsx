@@ -28,8 +28,10 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
 
 function ContentPanel({ children }: { children?: React.ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-gray-100 p-2 md:p-4 dark:border-neutral-700 dark:bg-neutral-900/60'>
-      {children}
+    <div className='@container flex flex-1'>
+      <div className='flex flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-gray-100 p-2 md:p-4 dark:border-neutral-700 dark:bg-neutral-900/60'>
+        {children}
+      </div>
     </div>
   )
 }
