@@ -20,7 +20,13 @@ type StripZodDefault<T extends z.ZodTypeAny> =
                 ? Items extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
                   ? z.ZodTuple<MapTuple<Items>>
                   : never
-                : T
+                : T extends z.ZodIntersection<infer Left, infer Right>
+                  ? z.ZodIntersection<StripZodDefault<Left>, StripZodDefault<Right>>
+                  : T extends z.ZodDiscriminatedUnion<infer Disc, infer Options>
+                    ? Options extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
+                      ? z.ZodDiscriminatedUnion<Disc, MapTuple<Options>>
+                      : never
+                    : T
 
 type MapTuple<T extends readonly any[]> = T extends readonly [any, ...any[]] ? { [K in keyof T]: StripZodDefault<T[K]> } : never
 
@@ -106,6 +112,20 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
     case z.ZodFirstPartyTypeKind.ZodEffects: {
       const effectsSchema = schema as unknown as z.ZodEffects<z.ZodTypeAny>
       return stripZodDefault(effectsSchema._def.schema) as StripZodDefault<Schema>
+    }
+
+    case z.ZodFirstPartyTypeKind.ZodIntersection: {
+      const intersectionSchema = schema as unknown as z.ZodIntersection<z.ZodTypeAny, z.ZodTypeAny>
+      const leftStripped = stripZodDefault(intersectionSchema._def.left)
+      const rightStripped = stripZodDefault(intersectionSchema._def.right)
+      return z.intersection(leftStripped, rightStripped) as StripZodDefault<Schema>
+    }
+
+    // For discriminated unions, strip each option and rebuild the discriminated union.
+    case z.ZodFirstPartyTypeKind.ZodDiscriminatedUnion: {
+      const discUnion = schema as any // treat as ZodDiscriminatedUnion
+      const strippedOptions = discUnion._def.options.map((option: z.ZodTypeAny) => stripZodDefault(option))
+      return z.discriminatedUnion(discUnion._def.discriminator, strippedOptions) as unknown as StripZodDefault<Schema>
     }
 
     // For all other types (primitives, etc.), return the schema unchanged.
