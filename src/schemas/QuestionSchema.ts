@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
+import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 
-export const QuestionSchema = z.object({
+const baseQuestion = z.object({
   id: z.string().default(Math.floor(Math.random() * 1000).toString()),
   points: z
     .number()
@@ -18,22 +19,39 @@ export const QuestionSchema = z.object({
         .split('\n')
         .join(''),
     ),
-
-  answers: z
-    .array(
-      z.object({
-        text: z.string(),
-        correctAnswer: z.boolean().default(false),
-      }),
-    )
-    .min(1, 'Please provide at least one answer')
-    .refine((answers) => !answers.some((answer) => answer.correctAnswer), { message: 'At least one answer has been correct.' })
-    .default([
-      { text: 'Answer 1', correctAnswer: false },
-      { text: 'Answer 2', correctAnswer: true },
-      { text: 'Answer 3', correctAnswer: false },
-      { text: 'Answer 4', correctAnswer: false },
-    ]),
 })
 
-export type QuestionSchema = z.infer<typeof QuestionSchema>
+const questionAnswerTypes = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('single-choice'),
+    answers: z
+      .array(z.object({ answer: z.string(), correct: z.boolean() }))
+      .min(1, 'Please provide at least one answer')
+      .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
+      .default([
+        { answer: 'Answer 1', correct: false },
+        { answer: 'Answer 2', correct: true },
+        { answer: 'Answer 3', correct: false },
+        { answer: 'Answer 4', correct: false },
+      ]),
+  }),
+
+  z.object({
+    type: z.literal('multiple-choice'),
+    answers: z
+      .array(z.object({ answer: z.string(), correct: z.boolean() }))
+      .min(1, 'Please provide at least one answer')
+      .refine((answers) => !answers.some((answer) => answer.correct), { message: 'At least one answer has been correct.' }),
+  }),
+
+  z.object({ type: z.literal('drag-drop'), answers: z.array(z.object({ answer: z.string(), position: z.number().positive() })) }),
+
+  z.object({ type: z.literal('open-question'), expectation: z.string().optional() }),
+])
+
+export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
+
+export type Question = z.infer<typeof QuestionSchema>
+
+const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities<Question>(QuestionSchema)
+export { validateQuestion, instantiateQuestion, safeParseQuestion }
