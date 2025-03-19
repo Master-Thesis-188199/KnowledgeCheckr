@@ -28,6 +28,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .array(z.object({ answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
       .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers to a question must be unique (no duplication)!' })
       .default([
         { answer: 'Answer 1', correct: false },
         { answer: 'Answer 2', correct: true },
@@ -41,10 +42,16 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
     answers: z
       .array(z.object({ answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
-      .refine((answers) => !answers.some((answer) => answer.correct), { message: 'At least one answer has been correct.' }),
+      .refine((answers) => !answers.some((answer) => answer.correct), { message: 'At least one answer has been correct.' })
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers to a question must be unique (no duplication)!' }),
   }),
 
-  z.object({ type: z.literal('drag-drop'), answers: z.array(z.object({ answer: z.string(), position: z.number().positive() })) }),
+  z.object({
+    type: z.literal('drag-drop'),
+    answers: z
+      .array(z.object({ answer: z.string(), position: z.number().positive() }))
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers to a question must be unique (no duplication)!' }),
+  }),
 
   z.object({ type: z.literal('open-question'), expectation: z.string().optional() }),
 ])
