@@ -123,6 +123,22 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
       return tupleItems.map((item: ZodTypeAny) => schemaDefaults(item, options)) as unknown as z.TypeOf<Schema>
     }
 
+    case z.ZodFirstPartyTypeKind.ZodIntersection: {
+      const intersectionSchema = schema as z.ZodIntersection<ZodTypeAny, ZodTypeAny>
+      const leftDefaults = schemaDefaults(intersectionSchema._def.left, options)
+      const rightDefaults = schemaDefaults(intersectionSchema._def.right, options)
+      // Merge the left and right results (right properties override left if overlapping)
+      return { ...leftDefaults, ...rightDefaults } as z.TypeOf<Schema>
+    }
+
+    case (z.ZodFirstPartyTypeKind as any).ZodDiscriminatedUnion: {
+      // The discriminated union internally stores a tuple of options just like a union.
+      const discUnion = schema as any // ZodDiscriminatedUnion<any, any>
+      const optionsArr = discUnion._def.options
+      const randomOptionIndex = Math.floor(Math.random() * optionsArr.length)
+      return schemaDefaults(optionsArr[randomOptionIndex], options)
+    }
+
     default:
       throw new Error(`[SchemaDefaults]: Unsupported type ${(schema as any)._def.typeName}`)
   }
