@@ -29,6 +29,7 @@ export default function ChoiceQuestionOption({ id, answer }: ChoiceAnswer & Pick
           selection.length >= (maxSelection || 0) ? 'bg-red-400/20 text-red-700/80 dark:bg-red-700/20 dark:text-red-200/70' : '',
           (maxSelection === undefined || selection.length === 0) && 'hidden',
           maxSelection === 1 && 'hidden', // Single Choice Questions
+          !isSelected(answer) && 'hidden',
         )}>
         {selection.length} / {maxSelection}
       </div>
