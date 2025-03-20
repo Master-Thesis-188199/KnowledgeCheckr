@@ -10,9 +10,9 @@ export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multip
  * This component renders a choice question and allows the user to select between its answers.
  * @param maxChoices Defines the maximum number of answers the user can select. If undefined, the user can select as many as they want.
  */
-export default function ChoiceQuestion({ id, type, question, points, category, answers, maxChoices }: ChoiceQuestion & { maxChoices: number | undefined }) {
+export default function ChoiceQuestion({ id, type, question, points, category, answers, maxChoices }: ChoiceQuestion & { maxChoices?: number }) {
   return (
-    <QuestionSelectionProvider maxSelection={maxChoices} autoSwitchAnswer={maxChoices === 1}>
+    <QuestionSelectionProvider maxSelection={maxChoices ? maxChoices : type === 'single-choice' ? 1 : undefined} autoSwitchAnswer={maxChoices === 1 || type === 'single-choice'}>
       <Card className='question flex flex-col gap-6 hover:bg-none' disableHoverStyles>
         <div className='header mb-2 flex flex-col border-b border-neutral-400 p-2 dark:border-neutral-500'>
           <div className='flex items-center justify-between'>
