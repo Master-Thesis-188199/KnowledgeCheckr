@@ -21,14 +21,14 @@ export function useQuestionSelectionContext() {
   return context
 }
 
-export default function QuestionSelectionProvider({ children, maxSelection }: { maxSelection?: number; children: React.ReactNode }) {
+export default function QuestionSelectionProvider({ children, maxSelection, autoSwitchAnswer }: { maxSelection?: number; children: React.ReactNode; autoSwitchAnswer?: boolean }) {
   const [selection, setSelection] = useState<string[]>([])
-  const handlers = SelectionHandler(selection, setSelection, maxSelection)
+  const handlers = SelectionHandler(selection, setSelection, { maxSelection, autoSwitchAnswer })
 
   return <QuestionSelectionContext.Provider value={{ selection, ...handlers, maxSelection }}>{children}</QuestionSelectionContext.Provider>
 }
 
-function SelectionHandler(selection: string[], setSelection: (prev: string[]) => void, maxSelection?: number) {
+function SelectionHandler(selection: string[], setSelection: (prev: string[]) => void, { maxSelection, autoSwitchAnswer }: { maxSelection?: number; autoSwitchAnswer?: boolean }) {
   const removeSelection = (identifier: string) => setSelection(selection.filter((sel) => sel !== identifier))
 
   const addSelection = (identifier: string) => {
@@ -36,7 +36,10 @@ function SelectionHandler(selection: string[], setSelection: (prev: string[]) =>
       setSelection([...selection.filter((sel) => sel !== identifier), identifier])
       return
     }
-    if (selection.length >= maxSelection) return
+
+    if (autoSwitchAnswer && selection.length >= maxSelection) {
+      return setSelection([...selection.slice(0, selection.length - 1), identifier])
+    } else if (selection.length >= maxSelection) return
 
     setSelection([...selection.slice(selection.length - maxSelection - 1, selection.length), identifier])
   }
