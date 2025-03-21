@@ -43,7 +43,13 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .array(z.object({ answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
       .refine((answers) => !answers.some((answer) => answer.correct), { message: 'At least one answer has been correct.' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers to a question must be unique (no duplication)!' }),
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers to a question must be unique (no duplication)!' })
+      .default([
+        { answer: 'Answer 1', correct: false },
+        { answer: 'Answer 2', correct: true },
+        { answer: 'Answer 3', correct: false },
+        { answer: 'Answer 4', correct: false },
+      ]),
   }),
 
   z.object({
