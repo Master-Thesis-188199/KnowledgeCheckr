@@ -28,8 +28,8 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
 
 function ContentPanel({ children }: { children?: React.ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-gray-100 p-2 md:p-4 dark:border-neutral-700 dark:bg-neutral-900/60'>
-      {children}
+    <div className='@container flex flex-1'>
+      <div className='flex flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-gray-100 p-5 dark:border-neutral-700 dark:bg-neutral-900/60'>{children}</div>
     </div>
   )
 }
@@ -37,7 +37,7 @@ function ContentPanel({ children }: { children?: React.ReactNode }) {
 function MenuBar() {
   return (
     <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
-      <span className='text-xl font-semibold'>KnowledgeCheckr</span>
+      <span className='tracking-widest'>KnowledgeCheckr</span>
       <div className='flex items-center gap-2'>
         <ThemeSwitcher />
       </div>

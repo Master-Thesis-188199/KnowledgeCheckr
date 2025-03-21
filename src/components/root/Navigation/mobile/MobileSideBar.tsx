@@ -10,7 +10,7 @@ export default function MobileSideBar({ children, visibilityBreakpoints }: { vis
     <>
       <div className='flex h-screen flex-col md:hidden dark:bg-neutral-800'>
         <MobileMenubar />
-        <div className='flex-1 bg-gray-100 dark:bg-neutral-900/60'>{children}</div>
+        <div className='flex-1 bg-gray-100 p-4 dark:bg-neutral-900/60'>{children}</div>
       </div>
 
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
