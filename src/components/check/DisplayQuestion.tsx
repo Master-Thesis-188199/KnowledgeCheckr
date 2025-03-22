@@ -2,7 +2,7 @@ import type { Question } from '@/schemas/QuestionSchema'
 import { LayoutGrid } from 'lucide-react'
 import Card from '@/components/Shared/Card'
 import React from 'react'
-import { ChoiceQuestionAnswerOptions, OpenQuestionAnswerOption } from '@/components/check/QuestionVariants'
+import { ChoiceQuestionAnswerOptions, DragDropAnswerOptions, OpenQuestionAnswerOption } from '@/components/check/QuestionVariants'
 
 export default function DisplayQuestion({ ...props }: Question) {
   switch (props.type) {
@@ -16,7 +16,7 @@ export default function DisplayQuestion({ ...props }: Question) {
       return <RenderQuestion question={props} answeringOptions={OpenQuestionAnswerOption} />
 
     case 'drag-drop':
-      return <RenderQuestion question={props} answeringOptions={(q) => <div>todo...</div>} />
+      return <RenderQuestion question={props} answeringOptions={DragDropAnswerOptions} />
 
     default:
       return null
