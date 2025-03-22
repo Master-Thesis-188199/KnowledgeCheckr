@@ -26,6 +26,18 @@ export default async function CheckPage() {
   }
   return (
     <div className='grid grid-cols-1 gap-8 @[1000px]:grid-cols-2 @[1400px]:grid-cols-3 @[1400px]:gap-14'>
+      <DisplayQuestion
+        {...OpenQuestion}
+        type='drag-drop'
+        question='Put the following activities in order of occurrence'
+        answers={[
+          { answer: 'Waking up early', position: 1 },
+          { answer: 'Brushing teeth', position: 2 },
+          { answer: 'Going to bed', position: 4 },
+          { answer: 'Eating breakfast', position: 3 },
+        ]}
+      />
+
       <DisplayQuestion {...OpenQuestion} />
       <DisplayQuestion
         {...SingleChoice}
