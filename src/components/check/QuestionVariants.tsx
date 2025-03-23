@@ -11,7 +11,7 @@ export function OpenQuestionAnswerOption() {
 export function ChoiceQuestionAnswerOptions(question: ChoiceQuestion) {
   return (
     <QuestionSelectionProvider maxSelection={question.type === 'single-choice' ? 1 : undefined} autoSwitchAnswer={question.type === 'single-choice'}>
-      <div className='flex flex-1 flex-col gap-6'>
+      <div className='answers flex flex-1 flex-col gap-6'>
         {question.answers.map((answer, i) => (
           <ChoiceQuestionOption key={i + question.id} id={question.id} {...answer} />
         ))}
@@ -22,7 +22,7 @@ export function ChoiceQuestionAnswerOptions(question: ChoiceQuestion) {
 
 export function DragDropAnswerOptions(question: DragDropQuestion) {
   return (
-    <DragDropContainer className='flex flex-1 flex-col gap-6 select-none' dragAxis='y'>
+    <DragDropContainer className='answers flex flex-1 flex-col gap-6 select-none' dragAxis='y'>
       {question.answers.map((answer, i) => (
         <div data-swapy-slot={i.toString(36)} key={i}>
           <div
