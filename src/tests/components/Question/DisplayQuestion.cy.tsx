@@ -37,4 +37,39 @@ describe('<DisplayQuestion />', () => {
     // verify that the first answer is unchecked (single-choice
     cy.get('.question').contains(question.answers.at(0)!.answer).children().should('not.be.checked')
   })
+
+  it('Verify multiple choice question - multiple answers can be selected at once', () => {
+    const question: ChoiceQuestion = {
+      id: '10',
+      type: 'multiple-choice',
+      points: 5,
+      category: 'general',
+      question: 'What are the colors of the French flag?',
+      answers: [
+        { answer: 'Red', correct: true },
+        { answer: 'White', correct: true },
+        { answer: 'Blue', correct: true },
+        { answer: 'Green', correct: false },
+      ],
+    }
+
+    cy.mount(<DisplayQuestion {...question} />)
+
+    cy.get('.question').should('exist')
+    cy.get('.question').contains(question.question).should('be.visible')
+    cy.get('.question').children().get('.answers').children().should('have.length', question.answers.length)
+
+    for (const { answer } of question.answers) {
+      cy.get('.question').contains(answer).should('be.visible')
+    }
+
+    cy.get('.question').contains(question.answers.at(0)!.answer).click()
+    cy.get('.question').contains(question.answers.at(0)!.answer).children().should('be.checked')
+
+    cy.get('.question').contains(question.answers.at(1)!.answer).click()
+    cy.get('.question').contains(question.answers.at(1)!.answer).children().should('be.checked')
+
+    cy.get('.question').contains(question.answers.at(2)!.answer).click()
+    cy.get('.question').contains(question.answers.at(2)!.answer).children().should('be.checked')
+  })
 })
