@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChoiceQuestion, DragDropQuestion } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/schemas/QuestionSchema'
 import DisplayQuestion from '@/components/check/DisplayQuestion'
 
 function verifyQuestionAndAnswerShown({ question, answers }: Pick<ChoiceQuestion, 'question' | 'answers'> | Pick<DragDropQuestion, 'question' | 'answers'>) {
@@ -100,5 +100,26 @@ describe('<DisplayQuestion />', () => {
     dragAndDrop(cy.get('.question').contains(question.answers.at(0)!.answer).parent(), cy.get('.question').contains(question.answers.at(1)!.answer).parent())
     cy.get('.question').contains(question.answers.at(0)!.answer).parent().children('.current-position').should('include.text', '2')
     cy.get('.question').contains(question.answers.at(1)!.answer).parent().children('.current-position').should('include.text', '1')
+  })
+
+  it('Verify open question - answer can be typed in', () => {
+    const question: OpenQuestion = {
+      id: '10',
+      type: 'open-question',
+      points: 5,
+      category: 'general',
+      question: 'What is the capital of France?',
+      expectation: 'Paris',
+    }
+
+    cy.mount(<DisplayQuestion {...question} />)
+
+    cy.get('.question').should('exist')
+    cy.get('.question').contains(question.question).should('be.visible')
+
+    cy.get('textarea').should('be.visible')
+
+    cy.get('textarea').type(question.expectation!, { delay: 10 })
+    cy.get('.question textarea', { timeout: 2000 }).should('have.value', question.expectation)
   })
 })
