@@ -1,7 +1,6 @@
 import ChoiceQuestionOption from '@/components/check/ChoiceQuestionOption'
-import { ChoiceQuestion } from '@/components/check/ChoiceQuestion'
 import QuestionSelectionProvider from '@/components/check/QuestionSelectionProvider'
-import { Question } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/schemas/QuestionSchema'
 import DragDropContainer from '@/components/Shared/DragDropContainer'
 import { MoveIcon } from 'lucide-react'
 
@@ -21,7 +20,7 @@ export function ChoiceQuestionAnswerOptions(question: ChoiceQuestion) {
   )
 }
 
-export function DragDropAnswerOptions(question: Extract<Question, { type: 'drag-drop' }>) {
+export function DragDropAnswerOptions(question: DragDropQuestion) {
   return (
     <DragDropContainer className='flex flex-1 flex-col gap-6 select-none' dragAxis='y'>
       {question.answers.map((answer, i) => (

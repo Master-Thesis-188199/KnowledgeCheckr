@@ -1,9 +1,8 @@
 'use client'
 
-import { Question } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion, Question } from '@/schemas/QuestionSchema'
 import { useQuestionSelectionContext } from '@/components/check/QuestionSelectionProvider'
 import { twMerge } from 'tailwind-merge'
-import { ChoiceQuestion } from '@/components/check/ChoiceQuestion'
 
 type ChoiceAnswer = ChoiceQuestion['answers'][number]
 
