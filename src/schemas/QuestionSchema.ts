@@ -68,3 +68,15 @@ export type Question = z.infer<typeof QuestionSchema>
 
 const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities<Question>(QuestionSchema)
 export { validateQuestion, instantiateQuestion, safeParseQuestion }
+
+export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
+const { validate: validateChoiceQuestion, instantiate: instantiateChoiceQuestion, safeParse: safeParseChoiceQuestion } = schemaUtilities<ChoiceQuestion>(QuestionSchema)
+export { validateChoiceQuestion, instantiateChoiceQuestion, safeParseChoiceQuestion }
+
+export type OpenQuestion = Extract<Question, { type: 'open-question' }>
+const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities<OpenQuestion>(QuestionSchema)
+export { validateOpenQuestion, instantiateOpenQuestion, safeParseOpenQuestion }
+
+export type DragDropQuestion = Extract<Question, { type: 'drag-drop' }>
+const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = schemaUtilities<DragDropQuestion>(QuestionSchema)
+export { validateDragDropQuestion, instantiateDragDropQuestion, safeParseDragDropQuestion }

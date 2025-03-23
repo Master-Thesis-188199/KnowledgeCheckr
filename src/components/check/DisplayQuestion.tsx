@@ -4,19 +4,19 @@ import Card from '@/components/Shared/Card'
 import React from 'react'
 import { ChoiceQuestionAnswerOptions, DragDropAnswerOptions, OpenQuestionAnswerOption } from '@/components/check/QuestionVariants'
 
-export default function DisplayQuestion({ ...props }: Question) {
-  switch (props.type) {
+export default function DisplayQuestion(question: Question) {
+  switch (question.type) {
     case 'single-choice':
-      return <RenderQuestion question={props} answeringOptions={ChoiceQuestionAnswerOptions} />
+      return <RenderQuestion question={question} answeringOptions={ChoiceQuestionAnswerOptions} />
 
     case 'multiple-choice':
-      return <RenderQuestion question={props} answeringOptions={ChoiceQuestionAnswerOptions} />
+      return <RenderQuestion question={question} answeringOptions={ChoiceQuestionAnswerOptions} />
 
     case 'open-question':
-      return <RenderQuestion question={props} answeringOptions={OpenQuestionAnswerOption} />
+      return <RenderQuestion question={question} answeringOptions={OpenQuestionAnswerOption} />
 
     case 'drag-drop':
-      return <RenderQuestion question={props} answeringOptions={DragDropAnswerOptions} />
+      return <RenderQuestion question={question} answeringOptions={DragDropAnswerOptions} />
 
     default:
       return null
