@@ -2,6 +2,16 @@ import React from 'react'
 import { ChoiceQuestion, DragDropQuestion } from '@/schemas/QuestionSchema'
 import DisplayQuestion from '@/components/check/DisplayQuestion'
 
+function verifyQuestionAndAnswerShown({ question, answers }: Pick<ChoiceQuestion, 'question' | 'answers'> | Pick<DragDropQuestion, 'question' | 'answers'>) {
+  cy.get('.question').should('exist')
+  cy.get('.question').contains(question).should('be.visible')
+  cy.get('.answers').children().should('have.length', answers.length)
+
+  for (const { answer } of answers) {
+    cy.get('.question').contains(answer).should('be.visible')
+  }
+}
+
 describe('<DisplayQuestion />', () => {
   it('Verify single choice question - only one answer can be selected at once', () => {
     const question: ChoiceQuestion = {
@@ -19,14 +29,7 @@ describe('<DisplayQuestion />', () => {
     }
 
     cy.mount(<DisplayQuestion {...question} />)
-
-    cy.get('.question').should('exist')
-    cy.get('.question').contains(question.question).should('be.visible')
-    cy.get('.question').children().get('.answers').children().should('have.length', question.answers.length)
-
-    for (const { answer } of question.answers) {
-      cy.get('.question').contains(answer).should('be.visible')
-    }
+    verifyQuestionAndAnswerShown({ question: question.question, answers: question.answers })
 
     cy.get('.question').contains(question.answers.at(0)!.answer).click()
     cy.get('.question').contains(question.answers.at(0)!.answer).children().should('be.checked')
@@ -54,14 +57,7 @@ describe('<DisplayQuestion />', () => {
     }
 
     cy.mount(<DisplayQuestion {...question} />)
-
-    cy.get('.question').should('exist')
-    cy.get('.question').contains(question.question).should('be.visible')
-    cy.get('.question').children().get('.answers').children().should('have.length', question.answers.length)
-
-    for (const { answer } of question.answers) {
-      cy.get('.question').contains(answer).should('be.visible')
-    }
+    verifyQuestionAndAnswerShown({ question: question.question, answers: question.answers })
 
     cy.get('.question').contains(question.answers.at(0)!.answer).click()
     cy.get('.question').contains(question.answers.at(0)!.answer).children().should('be.checked')
@@ -90,13 +86,7 @@ describe('<DisplayQuestion />', () => {
 
     cy.mount(<DisplayQuestion {...question} />)
 
-    cy.get('.question').should('exist')
-    cy.get('.question').contains(question.question).should('be.visible')
-    cy.get('.answers').children().should('have.length', question.answers.length)
-
-    for (const { answer } of question.answers) {
-      cy.get('.question').contains(answer).should('be.visible')
-    }
+    verifyQuestionAndAnswerShown({ question: question.question, answers: question.answers })
 
     cy.get('.question').contains(question.answers.at(0)!.answer)
     cy.get('.question').contains(question.answers.at(0)!.answer).parent().children().get('.current-position').should('include.text', '1')
