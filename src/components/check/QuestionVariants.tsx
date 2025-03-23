@@ -13,7 +13,7 @@ export function ChoiceQuestionAnswerOptions(question: ChoiceQuestion) {
     <QuestionSelectionProvider maxSelection={question.type === 'single-choice' ? 1 : undefined} autoSwitchAnswer={question.type === 'single-choice'}>
       <div className='answers flex flex-1 flex-col gap-6'>
         {question.answers.map((answer, i) => (
-          <ChoiceQuestionOption key={i + question.id} id={question.id} {...answer} />
+          <ChoiceQuestionOption key={i + question.id} {...answer} />
         ))}
       </div>
     </QuestionSelectionProvider>

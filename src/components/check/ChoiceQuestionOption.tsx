@@ -1,12 +1,12 @@
 'use client'
 
-import { ChoiceQuestion, Question } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion } from '@/schemas/QuestionSchema'
 import { useQuestionSelectionContext } from '@/components/check/QuestionSelectionProvider'
 import { twMerge } from 'tailwind-merge'
 
 type ChoiceAnswer = ChoiceQuestion['answers'][number]
 
-export default function ChoiceQuestionOption({ id, answer }: ChoiceAnswer & Pick<Question, 'id'>) {
+export default function ChoiceQuestionOption({ answer }: ChoiceAnswer) {
   const { isSelected, toggleSelection, maxSelection, selection } = useQuestionSelectionContext()
 
   return (
