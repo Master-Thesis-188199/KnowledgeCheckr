@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChoiceQuestion } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/schemas/QuestionSchema'
 import DisplayQuestion from '@/components/check/DisplayQuestion'
 
 describe('<DisplayQuestion />', () => {
@@ -71,5 +71,44 @@ describe('<DisplayQuestion />', () => {
 
     cy.get('.question').contains(question.answers.at(2)!.answer).click()
     cy.get('.question').contains(question.answers.at(2)!.answer).children().should('be.checked')
+  })
+
+  it('Verify drag and drop question - answers can be reordered', () => {
+    const question: DragDropQuestion = {
+      id: '10',
+      type: 'drag-drop',
+      points: 5,
+      category: 'general',
+      question: 'Put the following activities in order of occurrence',
+      answers: [
+        { answer: 'Waking up early', position: 1 },
+        { answer: 'Brushing teeth', position: 2 },
+        { answer: 'Going to bed', position: 4 },
+        { answer: 'Eating breakfast', position: 3 },
+      ],
+    }
+
+    cy.mount(<DisplayQuestion {...question} />)
+
+    cy.get('.question').should('exist')
+    cy.get('.question').contains(question.question).should('be.visible')
+    cy.get('.answers').children().should('have.length', question.answers.length)
+
+    for (const { answer } of question.answers) {
+      cy.get('.question').contains(answer).should('be.visible')
+    }
+
+    cy.get('.question').contains(question.answers.at(0)!.answer)
+    cy.get('.question').contains(question.answers.at(0)!.answer).parent().children().get('.current-position').should('include.text', '1')
+
+    const dragAndDrop = (dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>) => {
+      dragLocator.realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(200)
+      dropLocator.realMouseMove(0, 0, { position: 'center' }).realMouseUp()
+    }
+
+    // Switch Answer 1 with Answer 2
+    dragAndDrop(cy.get('.question').contains(question.answers.at(0)!.answer).parent(), cy.get('.question').contains(question.answers.at(1)!.answer).parent())
+    cy.get('.question').contains(question.answers.at(0)!.answer).parent().children('.current-position').should('include.text', '2')
+    cy.get('.question').contains(question.answers.at(1)!.answer).parent().children('.current-position').should('include.text', '1')
   })
 })
