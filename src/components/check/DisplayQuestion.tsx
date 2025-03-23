@@ -17,9 +17,6 @@ export default function DisplayQuestion(question: Question) {
 
     case 'drag-drop':
       return <RenderQuestion question={question} answeringOptions={DragDropAnswerOptions} />
-
-    default:
-      return null
   }
 }
 
