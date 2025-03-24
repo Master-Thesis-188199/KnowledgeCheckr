@@ -14,7 +14,7 @@ export default async function CreateCheckPage() {
               <h2 className=''>General Information</h2>
             </div>
           </div>
-          <div className='grid grid-cols-[90px_1fr] items-center gap-9 p-2'>
+          <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
             <InputGroup label='Name' placeholder='Enter the name of your knowledge check' />
             <InputGroup label='Description' className='min-h-20 resize-none' as='textarea' placeholder='Describe the concept of your knowledge check using a few words.' />
             <InputGroup
