@@ -9,7 +9,7 @@ export default async function CreateCheckPage() {
       <PageHeading title='Create KnowledgeCheck' />
       <div className='columns-xl gap-12 space-y-12'>
         <Card className='@container p-3' disableHoverStyles>
-          <div className='header -m-3 mb-4 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-700/60 p-2 px-3 dark:border-neutral-500 dark:text-neutral-300'>
+          <div className='header -m-3 mb-4 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
             <div className='flex items-center justify-between'>
               <h2 className=''>General Information</h2>
             </div>
@@ -26,8 +26,9 @@ export default async function CreateCheckPage() {
                 .reverse()
                 .map((el) => (el.length < 2 ? '0' + el : el))
                 .join('-')}
-              className='text-sm dark:text-neutral-400 dark:placeholder:text-neutral-500'
+              className='text-sm text-neutral-500 dark:text-neutral-400'
             />
+            <InputGroup label='Administrators' />
           </div>
         </Card>
         <Card disableHoverStyles className='break-inside-avoid'>
@@ -52,12 +53,12 @@ function InputGroup<E extends ElementType>({ label, as, ...props }: { label: str
 
   return (
     <>
-      <label className='dark:text-neutral-400'>{label}</label>
+      <label className='text-neutral-600 dark:text-neutral-400'>{label}</label>
       <Element
         placeholder='Enter some text'
         {...props}
         className={twMerge(
-          'rounded-md px-3 py-1.5 ring-1 outline-none focus:ring-[1.5] dark:text-neutral-400 dark:ring-neutral-500 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
+          'rounded-md px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:text-neutral-400 dark:ring-neutral-500 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
           props.className,
         )}
       />
