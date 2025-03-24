@@ -6,6 +6,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+label:has(+ input:required):after {
+  content: ' *';
+  color: var(--color-red-500);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -15,6 +20,10 @@
 html[data-theme='dark'] {
   --background: #0a0a0a;
   --foreground: #ededed;
+
+  label:has(+ input:required):after {
+    color: var(--color-red-400);
+  }
 }
 
 /* If no data-theme is set, fallback to system preference */
