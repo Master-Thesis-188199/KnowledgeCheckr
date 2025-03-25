@@ -1,8 +1,11 @@
 import PageHeading from '@/components/Shared/PageHeading'
-import { ElementType, InputHTMLAttributes } from 'react'
+import React, { ElementType, InputHTMLAttributes, ReactNode } from 'react'
 import Card from '@/components/Shared/Card'
 import { twMerge } from 'tailwind-merge'
-import { Info } from 'lucide-react'
+import { Info, List, MousePointer, SquareDashedMousePointer, Type } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
+import { Close } from '@radix-ui/react-popover'
+import { cn } from '@/lib/Shared/utils'
 
 export default async function CreateCheckPage() {
   return (
@@ -49,9 +52,36 @@ export default async function CreateCheckPage() {
             </div>
           </div>
           <div className='flex justify-center gap-8'>
-            <button className='mx-4 w-72 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-blue-400/70 dark:text-neutral-300'>
-              Add Question
-            </button>
+            <Popover>
+              <PopoverTrigger className='mx-4 w-72 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-neutral-300/70 dark:text-neutral-300 dark:hover:bg-neutral-500/30'>
+                Add Question
+              </PopoverTrigger>
+              <PopoverContent side='bottom' sideOffset={20} className='border-0 p-0 dark:bg-neutral-900'>
+                <div className='rounded-md border border-neutral-400/40 bg-neutral-200 p-3.5 shadow-md shadow-neutral-300 dark:border-neutral-600 dark:bg-neutral-700/50 dark:text-neutral-200 dark:shadow-neutral-900'>
+                  <ul className='space-y-4'>
+                    <QuestionPopoverOption>
+                      <MousePointer className='size-4' />
+                      Single Choice Question
+                    </QuestionPopoverOption>
+
+                    <QuestionPopoverOption>
+                      <List className='size-4' />
+                      Multiple Choice Question
+                    </QuestionPopoverOption>
+
+                    <QuestionPopoverOption>
+                      <Type className='size-4' />
+                      <span>Open Answer Question</span>
+                    </QuestionPopoverOption>
+
+                    <QuestionPopoverOption>
+                      <SquareDashedMousePointer className='size-4' />
+                      Drag Drop Question
+                    </QuestionPopoverOption>
+                  </ul>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </Card>
         <Card className='h-60 break-inside-avoid' children={<></>} disableHoverStyles></Card>
@@ -75,5 +105,20 @@ function InputGroup<E extends ElementType>({ label, as, ...props }: { label: str
         )}
       />
     </>
+  )
+}
+
+function QuestionPopoverOption({ children }: { children: ReactNode }) {
+  return (
+    <li>
+      <Close
+        className={cn(
+          'flex w-full items-center gap-4 rounded-md p-2 px-3 hover:cursor-pointer hover:ring-[1.5px]',
+          'bg-neutral-300/60 ring-neutral-400/70',
+          'ring-1 dark:bg-neutral-800/60 dark:text-neutral-200/80 dark:ring-neutral-600/80 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-200 dark:hover:ring-neutral-500/90',
+        )}>
+        {children}
+      </Close>
+    </li>
   )
 }
