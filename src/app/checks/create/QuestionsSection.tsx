@@ -4,6 +4,7 @@ import { Info, Plus } from 'lucide-react'
 import { DynamicIcon, IconName } from 'lucide-react/dynamic'
 import { cn } from '@/lib/Shared/utils'
 import React from 'react'
+import { Question } from '@/schemas/QuestionSchema'
 
 export default function QuestionsSection() {
   return (
@@ -29,10 +30,10 @@ export default function QuestionsSection() {
           <PopoverContent side='bottom' sideOffset={20} className='border-0 p-0 dark:bg-neutral-900'>
             <div className='rounded-md border border-neutral-400/40 bg-neutral-200 p-3.5 shadow-md shadow-neutral-300 dark:border-neutral-600 dark:bg-neutral-700/50 dark:text-neutral-200 dark:shadow-neutral-900'>
               <ul className='space-y-4'>
-                <QuestionPopoverOption text='Single Choice Question' icon='mouse-pointer' />
-                <QuestionPopoverOption text='Multiple Choice Question' icon='list' />
-                <QuestionPopoverOption text='Open Answer Question' icon='type' />
-                <QuestionPopoverOption text='Drag Drop Question' icon='square-dashed-mouse-pointer' />
+                <QuestionPopoverOption type='single-choice' icon='mouse-pointer' />
+                <QuestionPopoverOption type='multiple-choice' icon='list' />
+                <QuestionPopoverOption type='open-question' icon='type' />
+                <QuestionPopoverOption type='drag-drop' icon='square-dashed-mouse-pointer' />
               </ul>
             </div>
           </PopoverContent>
@@ -42,7 +43,7 @@ export default function QuestionsSection() {
   )
 }
 
-export function QuestionPopoverOption({ icon, text }: { text: string; icon: IconName }) {
+export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Question['type'] }) {
   return (
     <li>
       <div
@@ -52,7 +53,11 @@ export function QuestionPopoverOption({ icon, text }: { text: string; icon: Icon
           'ring-1 dark:bg-neutral-800/60 dark:text-neutral-200/80 dark:ring-neutral-600/80 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-200 dark:hover:ring-neutral-500/90',
         )}>
         <DynamicIcon name={icon} className='size-4' />
-        {text}
+        {type
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}{' '}
+        Question
       </div>
     </li>
   )
