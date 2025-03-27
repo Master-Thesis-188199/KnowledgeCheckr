@@ -1,3 +1,6 @@
+'use client'
+
+import DisplayQuestion from '@/components/check/DisplayQuestion'
 import Card from '@/components/Shared/Card'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
 import { Info, Plus } from 'lucide-react'
@@ -9,6 +12,8 @@ import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvid
 import { Close } from '@radix-ui/react-popover'
 
 export default function QuestionsSection() {
+  const { questions } = useCreateCheckStore((state) => state)
+
   return (
     <Card disableHoverStyles className='break-inside-avoid'>
       <div className='header -m-3 mb-0 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
@@ -17,9 +22,14 @@ export default function QuestionsSection() {
         </div>
       </div>
       <div className='questions'>
-        <div className='if-no-questions-show-empty-container my-20 flex flex-col items-center justify-center gap-6'>
+        <div className={cn('my-20 flex flex-col items-center justify-center gap-6', questions.length > 0 && 'hidden')}>
           <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
           <span className='tracking-wide text-neutral-500 dark:text-neutral-400'>Currently there are no questions associated to this quiz</span>
+        </div>
+        <div className={cn('my-4 grid grid-cols-1 gap-6')}>
+          {questions.map((question, i) => (
+            <DisplayQuestion key={i + question.id} {...question} />
+          ))}
         </div>
       </div>
       <div className='flex justify-center gap-8'>
