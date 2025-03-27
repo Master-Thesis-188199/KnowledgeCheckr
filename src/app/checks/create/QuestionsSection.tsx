@@ -4,7 +4,9 @@ import { Info, Plus } from 'lucide-react'
 import { DynamicIcon, IconName } from 'lucide-react/dynamic'
 import { cn } from '@/lib/Shared/utils'
 import React from 'react'
-import { Question } from '@/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/schemas/QuestionSchema'
+import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { Close } from '@radix-ui/react-popover'
 
 export default function QuestionsSection() {
   return (
@@ -44,9 +46,56 @@ export default function QuestionsSection() {
 }
 
 export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Question['type'] }) {
+  const { addQuestion } = useCreateCheckStore((state) => state)
+
+  const handleClick = () => {
+    const question: Question = {
+      id: Math.random().toString(36).slice(2),
+      type,
+      question: '',
+      points: 0,
+      category: 'general',
+      answers: [],
+    }
+
+    switch (type) {
+      case 'single-choice':
+        ;(question as ChoiceQuestion).answers = [
+          { answer: 'Answer A', correct: false },
+          { answer: 'Answer B', correct: false },
+          { answer: 'Answer C', correct: false },
+          { answer: 'Answer D', correct: false },
+        ]
+        break
+      case 'multiple-choice':
+        ;(question as ChoiceQuestion).answers = [
+          { answer: 'Answer A', correct: false },
+          { answer: 'Answer B', correct: false },
+          { answer: 'Answer C', correct: false },
+          { answer: 'Answer D', correct: false },
+        ]
+        break
+
+      case 'open-question':
+        ;(question as OpenQuestion).expectation = 'Expected Answer here'
+        break
+
+      case 'drag-drop':
+        ;(question as DragDropQuestion).answers = [
+          { answer: 'Answer A', position: 1 },
+          { answer: 'Answer B', position: 2 },
+          { answer: 'Answer C', position: 3 },
+          { answer: 'Answer D', position: 4 },
+        ]
+        break
+    }
+
+    addQuestion(question)
+  }
   return (
     <li>
-      <div
+      <Close
+        onClick={handleClick}
         className={cn(
           'flex w-full items-center gap-4 rounded-md p-2 px-3 hover:cursor-pointer hover:ring-[1.5px]',
           'bg-neutral-300/60 ring-neutral-400/70',
@@ -58,7 +107,7 @@ export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Qu
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ')}{' '}
         Question
-      </div>
+      </Close>
     </li>
   )
 }
