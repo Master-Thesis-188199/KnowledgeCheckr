@@ -32,6 +32,6 @@ const defaultInitState: CreateCheckState = {
 export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
   return createStore<CreateCheckStore>()((set) => ({
     ...initialState,
-    addQuestion: (question: Question) => set(() => ({ questions: [...initialState.questions, question] })),
+    addQuestion: (question: Question) => set((prev) => ({ questions: [...prev.questions, question] })),
   }))
 }
