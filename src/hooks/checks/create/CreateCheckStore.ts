@@ -10,7 +10,26 @@ export type CreateCheckActions = {
 
 export type CreateCheckStore = CreateCheckState & CreateCheckActions
 
-export const createCheckCreateStore = (initialState: CreateCheckState = {} as CreateCheckState) => {
+const defaultInitState: CreateCheckState = {
+  id: crypto.randomUUID(),
+  name: '',
+  questions: [],
+  description: '',
+  questionCategories: [
+    {
+      id: crypto.randomUUID(),
+      name: 'general',
+      skipOnMissingPrequisite: false,
+    },
+  ],
+
+  closeDate: null,
+  difficulty: 0,
+  openDate: new Date(Date.now()).toLocaleDateString('de'),
+  share_key: null,
+}
+
+export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
   return createStore<CreateCheckStore>()((set) => ({
     ...initialState,
     addQuestion: (question: Question) => set(() => ({ questions: [...initialState.questions, question] })),
