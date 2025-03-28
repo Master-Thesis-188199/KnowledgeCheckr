@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const envSchema = z.object({
   NEXTAUTH_URL: z.string().startsWith('http').includes('://'),

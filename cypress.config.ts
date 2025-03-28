@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   component: {
+    defaultBrowser: 'chrome',
     devServer: {
       framework: 'next',
       bundler: 'webpack',
