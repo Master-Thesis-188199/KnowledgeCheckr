@@ -5,6 +5,8 @@ import DesktopSidebarDialog from '@/components/root/Navigation/desktop/DesktopSi
 import SidebarUserBanner from '@/components/root/Navigation/elements/SidebarUserBanner'
 import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
 import AppVersion from '@/components/Shared/AppVersion'
+import Image from 'next/image'
+import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
@@ -37,7 +39,10 @@ function ContentPanel({ children }: { children?: React.ReactNode }) {
 function MenuBar() {
   return (
     <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
-      <span className='tracking-widest'>KnowledgeCheckr</span>
+      <div className='2 flex items-center gap-4'>
+        <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-8' />
+        <span className='tracking-widest'>KnowledgeCheckr</span>
+      </div>
       <div className='flex items-center gap-2'>
         <ThemeSwitcher />
       </div>
