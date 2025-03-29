@@ -9,7 +9,7 @@ import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/sc
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Info, Plus, Trash2 } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { FieldErrors, useFieldArray, useForm } from 'react-hook-form'
 
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
@@ -96,10 +96,22 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     name: 'answers',
   })
 
-  const FieldError = <Type extends Question>({ field }: { field: keyof Type }) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return <div className='text-[15px] text-red-400 dark:text-red-400/80'>{errors[field] && errors[field].message}</div>
+  const FieldError = <Type extends Question>({ field }: { field: keyof FieldErrors<Type> }) => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    if (Object.keys(errors).length === 0) return null
+
+    let error: { message?: string } | undefined = errors as any
+
+    const fields = field.toString().split('.')
+
+    for (const field of fields) {
+      if (!error) continue
+
+      error = (error as any)[field]
+    }
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+
+    return error?.message ? <div className='text-[15px] text-red-400 dark:text-red-400/80'>{error.message}</div> : null
   }
 
   const resetForm = () => {
@@ -191,7 +203,6 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                   {fields.map((field, index) => (
                     <div key={field.id} className='flex items-center gap-2'>
                       <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                      {/* Checkbox for marking the answer as correct */}
                       <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' />
                       <button type='button' onClick={() => remove(index)} className='flex items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                         <Trash2 className='size-5 dark:text-red-400/60' />
@@ -200,13 +211,14 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                   ))}
                 </div>
 
+                <FieldError<ChoiceQuestion> field='answers' />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                <FieldError<any> field='answers.root' />
+
                 <button type='button' onClick={() => append({ answer: '', correct: false })} className='flex max-w-fit items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                   <Plus className='size-4' />
                   Add Answer
                 </button>
-                <FieldError<ChoiceQuestion> field='answers' />
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {(errors as unknown as any).answers?.root && <div>{(errors as unknown as any).answers.root.message}</div>}
               </>
             )}
 
