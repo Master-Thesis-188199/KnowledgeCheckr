@@ -264,10 +264,10 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             )}
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
+            <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-neutral-400/30' type='button'>
               Cancel
             </button>
-            <button className='dark:from:bg-blue-500/25 rounded-md bg-gradient-to-b from-blue-500/15 to-blue-700/20 px-4 py-2 ring-2 hover:cursor-pointer dark:ring-blue-400/30' type='submit'>
+            <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:bg-neutral-700 dark:ring-neutral-500/60' type='submit'>
               {isSubmitting ? 'Loading' : 'Add'}
             </button>
             {errors.root && <div>{JSON.stringify(errors.root)}</div>}
