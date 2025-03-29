@@ -3,13 +3,14 @@
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Input from '@/src/components/Shared/form/Input'
 import { Info, Pen, Plus } from 'lucide-react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
     <Card disableHoverStyles className='break-inside-avoid'>
@@ -41,7 +42,7 @@ export default function QuestionsSection() {
                     <span className='text-neutral-400 dark:text-neutral-400'>{question.type}</span>
                   </div>
                 </div>
-                <CreateQuestionDialog>
+                <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
                   <div className='my-auto flex max-h-10 items-center gap-4 rounded-md p-3 hover:cursor-pointer dark:bg-neutral-600/70'>
                     <Pen className='size-4 dark:text-orange-400/70' />
                   </div>
@@ -52,7 +53,7 @@ export default function QuestionsSection() {
         </div>
       </div>
       <div className='flex justify-center gap-8'>
-        <CreateQuestionDialog>
+        <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
           <div className='mx-4 flex w-72 items-center justify-center gap-2 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-neutral-300/70 dark:text-neutral-300 dark:hover:bg-neutral-500/30'>
             <Plus className='size-5' />
             Create Question
@@ -63,13 +64,15 @@ export default function QuestionsSection() {
   )
 }
 
-function CreateQuestionDialog({ children }: { children: ReactNode }) {
+function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion } = useCreateCheckStore((state) => state)
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className='max-w-md dark:border-neutral-600 dark:bg-neutral-800' id='question-dialog'>
+    <Dialog open={open}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
+        {children}
+      </DialogTrigger>
+      <DialogContent onEscapeKeyDown={() => setOpen(false)} className='max-w-md dark:border-neutral-600 dark:bg-neutral-800' id='question-dialog'>
         <form className='grid gap-6 py-1'>
           <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
             <DialogTitle>Create Question</DialogTitle>
@@ -114,11 +117,9 @@ function CreateQuestionDialog({ children }: { children: ReactNode }) {
             </button>
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <DialogClose asChild>
-              <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
-                Cancel
-              </button>
-            </DialogClose>
+            <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
+              Cancel
+            </button>
             <button
               onClick={() =>
                 addQuestion({
