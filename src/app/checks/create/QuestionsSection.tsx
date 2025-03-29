@@ -241,7 +241,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                           <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                           <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
                         </label>
-                        <button type='button' onClick={() => remove(index)} className='flex items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                        <button type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                           <Trash2 className='size-5 dark:text-red-400/60' />
                         </button>
                       </div>
@@ -255,7 +255,10 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <FieldError<any> field='answers.root' />
 
-                <button type='button' onClick={() => append({ answer: '', correct: false })} className='flex max-w-fit items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                <button
+                  type='button'
+                  onClick={() => append({ answer: '', correct: false })}
+                  className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
                   <Plus className='size-4' />
                   Add Answer
                 </button>
