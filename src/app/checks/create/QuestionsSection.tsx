@@ -3,12 +3,9 @@
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
-import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/schemas/QuestionSchema'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Input from '@/src/components/Shared/form/Input'
-import { Close } from '@radix-ui/react-popover'
 import { Info, Pen, Plus } from 'lucide-react'
-import { DynamicIcon, IconName } from 'lucide-react/dynamic'
 import { ReactNode } from 'react'
 
 export default function QuestionsSection() {
@@ -63,73 +60,6 @@ export default function QuestionsSection() {
         </CreateQuestionDialog>
       </div>
     </Card>
-  )
-}
-
-export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Question['type'] }) {
-  const { addQuestion } = useCreateCheckStore((state) => state)
-
-  const handleClick = () => {
-    const question: Question = {
-      id: Math.random().toString(36).slice(2),
-      type,
-      question: '',
-      points: 1,
-      category: 'general',
-      answers: [],
-    }
-
-    switch (type) {
-      case 'single-choice':
-        ;(question as ChoiceQuestion).answers = [
-          { answer: 'Answer A', correct: false },
-          { answer: 'Answer B', correct: false },
-          { answer: 'Answer C', correct: false },
-          { answer: 'Answer D', correct: false },
-        ]
-        break
-      case 'multiple-choice':
-        ;(question as ChoiceQuestion).answers = [
-          { answer: 'Answer A', correct: false },
-          { answer: 'Answer B', correct: false },
-          { answer: 'Answer C', correct: false },
-          { answer: 'Answer D', correct: false },
-        ]
-        break
-
-      case 'open-question':
-        ;(question as OpenQuestion).expectation = 'Expected Answer here'
-        break
-
-      case 'drag-drop':
-        ;(question as DragDropQuestion).answers = [
-          { answer: 'Answer A', position: 1 },
-          { answer: 'Answer B', position: 2 },
-          { answer: 'Answer C', position: 3 },
-          { answer: 'Answer D', position: 4 },
-        ]
-        break
-    }
-
-    addQuestion(question)
-  }
-  return (
-    <li>
-      <Close
-        onClick={handleClick}
-        className={cn(
-          'flex w-full items-center gap-4 rounded-md p-2 px-3 hover:cursor-pointer hover:ring-[1.5px]',
-          'bg-neutral-300/60 ring-neutral-400/70',
-          'ring-1 dark:bg-neutral-800/60 dark:text-neutral-200/80 dark:ring-neutral-600/80 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-200 dark:hover:ring-neutral-500/90',
-        )}>
-        <DynamicIcon name={icon} className='size-4' />
-        {type
-          .split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')}{' '}
-        Question
-      </Close>
-    </li>
   )
 }
 
