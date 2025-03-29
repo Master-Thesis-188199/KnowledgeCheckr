@@ -140,11 +140,11 @@ function CreateQuestionDialog({ children }: { children: ReactNode }) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='max-w-md dark:border-neutral-600 dark:bg-neutral-800' id='question-dialog'>
-        <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
-          <DialogTitle>Create Question</DialogTitle>
-          <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
-        </DialogHeader>
-        <div className='grid gap-6 py-1'>
+        <form className='grid gap-6 py-1'>
+          <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+            <DialogTitle>Create Question</DialogTitle>
+            <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
+          </DialogHeader>
           <input id='id' value={crypto.randomUUID()} onChange={() => null} className='hidden' />
 
           <div className='grid items-center gap-2'>
@@ -183,14 +183,12 @@ function CreateQuestionDialog({ children }: { children: ReactNode }) {
               Add Answer
             </button>
           </div>
-        </div>
-        <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-          <DialogClose asChild>
-            <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
-              Cancel
-            </button>
-          </DialogClose>
-          <DialogClose asChild>
+          <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
+            <DialogClose asChild>
+              <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
+                Cancel
+              </button>
+            </DialogClose>
             <button
               onClick={() =>
                 addQuestion({
@@ -206,8 +204,8 @@ function CreateQuestionDialog({ children }: { children: ReactNode }) {
               type='submit'>
               Add
             </button>
-          </DialogClose>
-        </DialogFooter>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
