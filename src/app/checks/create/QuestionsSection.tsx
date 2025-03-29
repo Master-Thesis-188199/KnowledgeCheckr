@@ -1,15 +1,15 @@
 'use client'
 
-import DisplayQuestion from '@/components/check/DisplayQuestion'
-import Card from '@/components/Shared/Card'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
-import { Info, Plus } from 'lucide-react'
-import { DynamicIcon, IconName } from 'lucide-react/dynamic'
-import { cn } from '@/lib/Shared/utils'
-import React from 'react'
-import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/schemas/QuestionSchema'
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import Card from '@/components/Shared/Card'
+import { cn } from '@/lib/Shared/utils'
+import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/schemas/QuestionSchema'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
+import Input from '@/src/components/Shared/form/Input'
 import { Close } from '@radix-ui/react-popover'
+import { Info, Pen, Plus } from 'lucide-react'
+import { DynamicIcon, IconName } from 'lucide-react/dynamic'
+import { ReactNode } from 'react'
 
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
@@ -28,28 +28,39 @@ export default function QuestionsSection() {
         </div>
         <div className={cn('my-4 grid grid-cols-1 gap-6')}>
           {questions.map((question, i) => (
-            <DisplayQuestion key={i + question.id} {...question} />
+            <div key={i + question.id}>
+              <Card className='question flex gap-3 p-2 hover:bg-none'>
+                <div className='header flex flex-1 flex-col p-1'>
+                  <div className='flex items-center justify-between'>
+                    <h2 className=''>{question.question || `Question ${i + 1}`}</h2>
+                    <span className='dark:text-neutral-200'>
+                      {question.points} point{question.points > 1 && 's'}
+                    </span>
+                  </div>
+                  <div className='flex justify-between text-xs'>
+                    <div className='flex items-center gap-1 text-neutral-400 dark:text-neutral-400'>
+                      <span className='lowercase'>{question.category}</span>
+                    </div>
+                    <span className='text-neutral-400 dark:text-neutral-400'>{question.type}</span>
+                  </div>
+                </div>
+                <CreateQuestionDialog>
+                  <div className='my-auto flex max-h-10 items-center gap-4 rounded-md p-3 hover:cursor-pointer dark:bg-neutral-600/70'>
+                    <Pen className='size-4 dark:text-orange-400/70' />
+                  </div>
+                </CreateQuestionDialog>
+              </Card>
+            </div>
           ))}
         </div>
       </div>
       <div className='flex justify-center gap-8'>
-        <Popover>
-          <PopoverTrigger className='mx-4 flex w-72 items-center justify-center gap-2 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-neutral-300/70 dark:text-neutral-300 dark:hover:bg-neutral-500/30'>
+        <CreateQuestionDialog>
+          <div className='mx-4 flex w-72 items-center justify-center gap-2 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-neutral-300/70 dark:text-neutral-300 dark:hover:bg-neutral-500/30'>
             <Plus className='size-5' />
-            Add Question
-          </PopoverTrigger>
-
-          <PopoverContent side='bottom' sideOffset={20} className='border-0 p-0 dark:bg-neutral-900'>
-            <div className='rounded-md border border-neutral-400/40 bg-neutral-200 p-3.5 shadow-md shadow-neutral-300 dark:border-neutral-600 dark:bg-neutral-700/50 dark:text-neutral-200 dark:shadow-neutral-900'>
-              <ul className='space-y-4'>
-                <QuestionPopoverOption type='single-choice' icon='mouse-pointer' />
-                <QuestionPopoverOption type='multiple-choice' icon='list' />
-                <QuestionPopoverOption type='open-question' icon='type' />
-                <QuestionPopoverOption type='drag-drop' icon='square-dashed-mouse-pointer' />
-              </ul>
-            </div>
-          </PopoverContent>
-        </Popover>
+            Create Question
+          </div>
+        </CreateQuestionDialog>
       </div>
     </Card>
   )
@@ -63,7 +74,7 @@ export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Qu
       id: Math.random().toString(36).slice(2),
       type,
       question: '',
-      points: 0,
+      points: 1,
       category: 'general',
       answers: [],
     }
@@ -119,5 +130,85 @@ export function QuestionPopoverOption({ icon, type }: { icon: IconName; type: Qu
         Question
       </Close>
     </li>
+  )
+}
+
+function CreateQuestionDialog({ children }: { children: ReactNode }) {
+  const { addQuestion } = useCreateCheckStore((state) => state)
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className='max-w-md dark:border-neutral-600 dark:bg-neutral-800' id='question-dialog'>
+        <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+          <DialogTitle>Create Question</DialogTitle>
+          <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
+        </DialogHeader>
+        <div className='grid gap-6 py-1'>
+          <input id='id' value={crypto.randomUUID()} onChange={() => null} className='hidden' />
+
+          <div className='grid items-center gap-2'>
+            <label htmlFor='question' className='dark:text-neutral-300/90'>
+              Question
+            </label>
+            <Input id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
+          </div>
+          <div className='grid grid-cols-2 gap-12'>
+            <div className='grid items-center gap-2'>
+              <label htmlFor='points' className='dark:text-neutral-300/90'>
+                Points
+              </label>
+              <Input id='points' type='number' placeholder='How many points is this question worth?' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+            </div>
+            <div className='grid items-center gap-2'>
+              <label htmlFor='type' className='dark:text-neutral-300/90'>
+                Question Type
+              </label>
+              <Input id='type' placeholder='choice, open-question, ....' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+            </div>
+          </div>
+          <div className='grid items-center gap-2'>
+            <label htmlFor='category' className='dark:text-neutral-300/90'>
+              Category
+            </label>
+            <Input id='category' type='select' placeholder='What category does this question belong to?' defaultValue='general' className='-ml-0.5 placeholder:text-[15px]' />
+          </div>
+          <div className='grid items-center gap-2'>
+            <label htmlFor='answers' className='dark:text-neutral-300/90'>
+              Answering Options
+            </label>
+            <Input id='answers' placeholder='Formulate one possible answer to this question' className='-ml-0.5 placeholder:text-[15px]' />
+            <button className='flex max-w-fit items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+              <Plus className='size-4' />
+              Add Answer
+            </button>
+          </div>
+        </div>
+        <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
+          <DialogClose asChild>
+            <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
+              Cancel
+            </button>
+          </DialogClose>
+          <DialogClose asChild>
+            <button
+              onClick={() =>
+                addQuestion({
+                  id: crypto.randomUUID(),
+                  question: 'Some question',
+                  category: 'general',
+                  type: 'multiple-choice',
+                  points: 10,
+                  answers: [],
+                })
+              }
+              className='dark:from:bg-blue-500/25 rounded-md bg-gradient-to-b from-blue-500/15 to-blue-700/20 px-4 py-2 ring-2 hover:cursor-pointer dark:ring-blue-400/30'
+              type='submit'>
+              Add
+            </button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
