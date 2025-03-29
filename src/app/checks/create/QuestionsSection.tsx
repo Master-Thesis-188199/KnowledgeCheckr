@@ -5,8 +5,11 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Input from '@/src/components/Shared/form/Input'
-import { Info, Pen, Plus } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Info, Plus, Trash2 } from 'lucide-react'
+import { ReactNode, useEffect, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
@@ -42,11 +45,11 @@ export default function QuestionsSection() {
                     <span className='text-neutral-400 dark:text-neutral-400'>{question.type}</span>
                   </div>
                 </div>
-                <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
+                {/* <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
                   <div className='my-auto flex max-h-10 items-center gap-4 rounded-md p-3 hover:cursor-pointer dark:bg-neutral-600/70'>
                     <Pen className='size-4 dark:text-orange-400/70' />
                   </div>
-                </CreateQuestionDialog>
+                </CreateQuestionDialog> */}
               </Card>
             </div>
           ))}
@@ -66,75 +69,162 @@ export default function QuestionsSection() {
 
 function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion } = useCreateCheckStore((state) => state)
+  const {
+    register,
+    handleSubmit,
+    clearErrors,
+    formState: { errors, isSubmitting },
+    reset: resetInputs,
+    watch,
+    control,
+  } = useForm<Question>({
+    resolver: zodResolver(QuestionSchema),
+    defaultValues: {
+      points: 1,
+      type: 'multiple-choice',
+      answers: [
+        { answer: 'Answer A', correct: true },
+        { answer: 'Answer B', correct: false },
+        { answer: 'Answer C', correct: false },
+        { answer: 'Answer D', correct: false },
+      ],
+    },
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'answers',
+  })
+
+  const FieldError = <Type extends Question>({ field }: { field: keyof Type }) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return <div className='text-[15px] text-red-400 dark:text-red-400/80'>{errors[field] && errors[field].message}</div>
+  }
+
+  const resetForm = () => {
+    resetInputs()
+    if (fields.length > 1) {
+      remove(fields.slice(1, fields.length).map((_, i) => i + 1))
+    }
+  }
+
+  const onSubmitV2 = (data: Question) => {
+    console.log(JSON.stringify(data, null, 2))
+    addQuestion(data)
+    setOpen(false)
+    resetForm()
+  }
+
+  useEffect(() => {
+    if (!open) {
+      clearErrors()
+    }
+  }, [open])
 
   return (
     <Dialog open={open}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
-      <DialogContent onEscapeKeyDown={() => setOpen(false)} className='max-w-md dark:border-neutral-600 dark:bg-neutral-800' id='question-dialog'>
-        <form className='grid gap-6 py-1'>
+      <DialogContent
+        onEscapeKeyDown={() => {
+          setOpen(false)
+          resetForm()
+        }}
+        className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
+        id='question-dialog'>
+        <form onSubmit={handleSubmit(onSubmitV2)} className='grid gap-6 py-1'>
           <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
             <DialogTitle>Create Question</DialogTitle>
             <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
           </DialogHeader>
-          <input id='id' value={crypto.randomUUID()} onChange={() => null} className='hidden' />
+          <input {...register('id')} id='id' value={crypto.randomUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className='dark:text-neutral-300/90'>
               Question
             </label>
-            <Input id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
+            <Input {...register('question')} id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
+            <FieldError field='question' />
           </div>
-          <div className='grid grid-cols-2 gap-12'>
+          <div className='grid grid-cols-2 items-baseline gap-12'>
             <div className='grid items-center gap-2'>
               <label htmlFor='points' className='dark:text-neutral-300/90'>
                 Points
               </label>
-              <Input id='points' type='number' placeholder='How many points is this question worth?' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+              <Input
+                {...register('points', {
+                  setValueAs: (value: string) => Number(value),
+                })}
+                id='points'
+                type='number'
+                placeholder='How many points is this question worth?'
+                min={1}
+                className='-ml-0.5 placeholder:text-[15px]'
+              />
+              <FieldError field='points' />
             </div>
             <div className='grid items-center gap-2'>
               <label htmlFor='type' className='dark:text-neutral-300/90'>
                 Question Type
               </label>
-              <Input id='type' placeholder='choice, open-question, ....' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+              <Input {...register('type')} id='type' placeholder='choice, open-question, ....' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+              <FieldError field='type' />
             </div>
           </div>
           <div className='grid items-center gap-2'>
             <label htmlFor='category' className='dark:text-neutral-300/90'>
               Category
             </label>
-            <Input id='category' type='select' placeholder='What category does this question belong to?' defaultValue='general' className='-ml-0.5 placeholder:text-[15px]' />
+            <Input {...register('category')} id='category' type='select' placeholder='What category does this question belong to?' defaultValue='general' className='-ml-0.5 placeholder:text-[15px]' />
+            <FieldError field='category' />
           </div>
           <div className='grid items-center gap-2'>
             <label htmlFor='answers' className='dark:text-neutral-300/90'>
-              Answering Options
+              Answers
             </label>
-            <Input id='answers' placeholder='Formulate one possible answer to this question' className='-ml-0.5 placeholder:text-[15px]' />
-            <button className='flex max-w-fit items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-              <Plus className='size-4' />
-              Add Answer
-            </button>
+
+            {(watch('type') === 'single-choice' || watch('type') === 'multiple-choice') && (
+              <>
+                <div className='grid gap-4'>
+                  {fields.map((field, index) => (
+                    <div key={field.id} className='flex items-center gap-2'>
+                      <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+                      {/* Checkbox for marking the answer as correct */}
+                      <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' />
+                      <button type='button' onClick={() => remove(index)} className='flex items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                        <Trash2 className='size-5 dark:text-red-400/60' />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button type='button' onClick={() => append({ answer: '', correct: false })} className='flex max-w-fit items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                  <Plus className='size-4' />
+                  Add Answer
+                </button>
+                <FieldError<ChoiceQuestion> field='answers' />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(errors as unknown as any).answers?.root && <div>{(errors as unknown as any).answers.root.message}</div>}
+              </>
+            )}
+
+            {watch('type') === 'open-question' && (
+              <>
+                <Input {...register('expectation')} id='expectation' placeholder='What answer are you looking expecting' className='-ml-0.5 placeholder:text-[15px]' />
+                <FieldError<OpenQuestion> field='expectation' />
+              </>
+            )}
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
             <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-red-400/30' type='button'>
               Cancel
             </button>
-            <button
-              onClick={() =>
-                addQuestion({
-                  id: crypto.randomUUID(),
-                  question: 'Some question',
-                  category: 'general',
-                  type: 'multiple-choice',
-                  points: 10,
-                  answers: [],
-                })
-              }
-              className='dark:from:bg-blue-500/25 rounded-md bg-gradient-to-b from-blue-500/15 to-blue-700/20 px-4 py-2 ring-2 hover:cursor-pointer dark:ring-blue-400/30'
-              type='submit'>
-              Add
+            <button className='dark:from:bg-blue-500/25 rounded-md bg-gradient-to-b from-blue-500/15 to-blue-700/20 px-4 py-2 ring-2 hover:cursor-pointer dark:ring-blue-400/30' type='submit'>
+              {isSubmitting ? 'Loading' : 'Add'}
             </button>
+            {errors.root && <div>{JSON.stringify(errors.root)}</div>}
           </DialogFooter>
         </form>
       </DialogContent>
