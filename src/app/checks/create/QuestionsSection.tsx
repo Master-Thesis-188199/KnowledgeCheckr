@@ -136,7 +136,30 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
   useEffect(() => {
     if (!open) {
       clearErrors()
+      return
     }
+
+    const clickListener = () => setOpen(false)
+
+    new Promise((resolve, reject) => {
+      setTimeout(() => reject('Question Dialog - Exit button not found!'), 1000)
+
+      const interval = setInterval(() => {
+        if (document.querySelector('#question-dialog > button') === null) return
+
+        resolve(true)
+        clearInterval(interval)
+      }, 50)
+    }).then(() => {
+      const exitButton = document.querySelector('#question-dialog > button')
+      console.log('Manually adding close-event to dialog-button')
+
+      if (!exitButton) return
+
+      exitButton!.addEventListener('click', clickListener)
+    })
+
+    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', clickListener)
   }, [open])
 
   return (
