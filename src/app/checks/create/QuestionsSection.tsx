@@ -163,6 +163,8 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', clickListener)
   }, [open])
 
+  const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
+
   return (
     <Dialog open={open}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
@@ -184,7 +186,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
           <input {...register('id')} id='id' value={crypto.randomUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
-            <label htmlFor='question' className='dark:text-neutral-300/90'>
+            <label htmlFor='question' className={twMerge(label_classes)}>
               Question
             </label>
             <Input {...register('question')} id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
@@ -192,7 +194,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
           </div>
           <div className='grid grid-cols-2 items-baseline gap-12'>
             <div className='grid items-center gap-2'>
-              <label htmlFor='points' className='dark:text-neutral-300/90'>
+              <label htmlFor='points' className={twMerge(label_classes)}>
                 Points
               </label>
               <Input
@@ -208,7 +210,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
               <FieldError field='points' />
             </div>
             <div className='grid items-center gap-2'>
-              <label htmlFor='type' className='dark:text-neutral-300/90'>
+              <label htmlFor='type' className={twMerge(label_classes)}>
                 Question Type
               </label>
               <Input {...register('type')} id='type' placeholder='choice, open-question, ....' min={1} className='-ml-0.5 placeholder:text-[15px]' />
@@ -216,14 +218,14 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             </div>
           </div>
           <div className='grid items-center gap-2'>
-            <label htmlFor='category' className='dark:text-neutral-300/90'>
+            <label htmlFor='category' className={twMerge(label_classes)}>
               Category
             </label>
             <Input {...register('category')} id='category' type='select' placeholder='What category does this question belong to?' defaultValue='general' className='-ml-0.5 placeholder:text-[15px]' />
             <FieldError field='category' />
           </div>
           <div className='grid items-center gap-2'>
-            <label htmlFor='answers' className='dark:text-neutral-300/90'>
+            <label htmlFor='answers' className={twMerge(label_classes)}>
               Answers
             </label>
 
