@@ -168,6 +168,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
         {children}
       </DialogTrigger>
       <DialogContent
+        onPointerDownOutside={() => setOpen(false)}
         onEscapeKeyDown={() => {
           setOpen(false)
           resetForm()
