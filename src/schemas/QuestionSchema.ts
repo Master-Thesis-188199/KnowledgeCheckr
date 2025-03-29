@@ -42,7 +42,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
     answers: z
       .array(z.object({ answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
-      .refine((answers) => !answers.some((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
+      .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
       .default([
         { answer: 'Answer 1', correct: false },
