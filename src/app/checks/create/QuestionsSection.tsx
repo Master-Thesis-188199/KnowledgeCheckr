@@ -117,7 +117,12 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
   const resetForm = () => {
     resetInputs()
     if (fields.length > 1) {
-      remove(fields.slice(1, fields.length).map((_, i) => i + 1))
+      // remove(fields.slice(1, fields.length).map((_, i) => i + 1))
+      remove(Array.from({ length: fields.length }, (_, i) => i))
+      append({ answer: 'Answer A', correct: true })
+      append({ answer: 'Answer B', correct: false })
+      append({ answer: 'Answer C', correct: false })
+      append({ answer: 'Answer D', correct: false })
     }
   }
 
