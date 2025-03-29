@@ -231,16 +231,20 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
               <>
                 <div className='grid gap-4'>
                   {fields.map((field, index) => (
-                    <div key={field.id} className='flex items-center gap-2'>
-                      <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                      <label className='flex items-center p-2 hover:scale-150 hover:cursor-pointer'>
-                        <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                        <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                        <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
-                      </label>
-                      <button type='button' onClick={() => remove(index)} className='flex items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                        <Trash2 className='size-5 dark:text-red-400/60' />
-                      </button>
+                    <div key={field.id} className='grid gap-2'>
+                      <div className='flex items-center gap-2'>
+                        <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+                        <label className='flex items-center p-2 hover:scale-150 hover:cursor-pointer'>
+                          <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                          <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                          <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
+                        </label>
+                        <button type='button' onClick={() => remove(index)} className='flex items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                          <Trash2 className='size-5 dark:text-red-400/60' />
+                        </button>
+                      </div>
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      <FieldError<any> field={`answers.${index}.answer`} />
                     </div>
                   ))}
                 </div>
