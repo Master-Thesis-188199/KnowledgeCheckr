@@ -4,7 +4,7 @@ import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvid
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
-import CreateableSelect from '@/src/components/Shared/form/CreateableSelect'
+import CreateableSelect from '@/src/components/Shared/form/Select'
 import Input from '@/src/components/Shared/form/Input'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { Tooltip } from '@heroui/tooltip'
