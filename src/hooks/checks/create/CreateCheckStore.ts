@@ -1,6 +1,6 @@
-import { createStore } from 'zustand/vanilla'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
+import { createStore } from 'zustand/vanilla'
 
 export type CreateCheckState = KnowledgeCheck
 
@@ -32,6 +32,20 @@ const defaultInitState: CreateCheckState = {
 export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
   return createStore<CreateCheckStore>()((set) => ({
     ...initialState,
-    addQuestion: (question: Question) => set((prev) => ({ questions: [...prev.questions, question] })),
+    addQuestion: (question: Question) =>
+      set((prev) => {
+        const { questionCategories } = prev
+
+        // Add new category if not part of check-categories
+        if (!questionCategories.find((category) => category.name === question.category)) {
+          questionCategories.push({
+            id: crypto.randomUUID(),
+            name: question.category,
+            skipOnMissingPrequisite: false,
+          })
+        }
+
+        return { questions: [...prev.questions, question], questionCategories }
+      }),
   }))
 }
