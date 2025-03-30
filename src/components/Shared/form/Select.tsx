@@ -152,7 +152,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                     break
 
                   case 'Enter':
-                    if (!state.query) {
+                    if (!state.query || state.newOptions.filter((o) => o.value.includes(state.query)).length > 0) {
                       dispatch({ type: 'SET_OPEN', payload: false })
                       if (onChange) onChange(state.value)
                     } else {
