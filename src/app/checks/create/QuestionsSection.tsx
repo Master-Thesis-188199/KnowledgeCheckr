@@ -13,7 +13,7 @@ import { Check, Info, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { FieldErrors, useFieldArray, useForm } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-
+import { v4 as uuid } from 'uuid'
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -186,7 +186,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             <DialogTitle>Create Question</DialogTitle>
             <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
           </DialogHeader>
-          <input {...register('id')} id='id' value={crypto.randomUUID()} className='hidden' />
+          <input {...register('id')} id='id' value={uuid()} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
