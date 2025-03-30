@@ -7,6 +7,7 @@ import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Input from '@/src/components/Shared/form/Input'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, Info, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
@@ -253,11 +254,21 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                     <div key={field.id} className='grid gap-2'>
                       <div className='flex items-center gap-2'>
                         <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                        <label className='flex items-center p-2 hover:scale-150 hover:cursor-pointer'>
-                          <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                          <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                          <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
-                        </label>
+                        <Tooltip
+                          showArrow={true}
+                          shouldFlip={true}
+                          closeDelay={0}
+                          delay={250}
+                          color='primary'
+                          content={`Answer is ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
+                          offset={-10}
+                          className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
+                          <label className='flex items-center p-2 hover:scale-150 hover:cursor-pointer'>
+                            <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                            <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                            <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
+                          </label>
+                        </Tooltip>
                         <button type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                           <Trash2 className='size-5 dark:text-red-400/60' />
                         </button>
