@@ -99,8 +99,12 @@ export default function Select({ options, defaultValue, isLoading = false, name,
   }, [])
 
   const createOption = () => {
-    const newOption = { value: state.query, label: state.query }
-    dispatch({ type: 'ADD_OPTION', payload: newOption })
+    if (!state.newOptions.find((o) => o.value === state.query)) {
+      const newOption = { value: state.query, label: state.query }
+      dispatch({ type: 'ADD_OPTION', payload: newOption })
+      console.log(`Creating new option => ${newOption.value}`)
+    }
+
     dispatch({ type: 'SET_OPEN', payload: false })
 
     setKeySelection(state.newOptions.findIndex((o) => o.value === state.query))
