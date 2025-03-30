@@ -2,6 +2,7 @@
 
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/Shared/form/Select'
 import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Input from '@/src/components/Shared/form/Input'
@@ -165,6 +166,8 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
+  console.log(watch('type'))
+
   return (
     <Dialog open={open}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
@@ -213,7 +216,21 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
               <label htmlFor='type' className={twMerge(label_classes)}>
                 Question Type
               </label>
-              <Input {...register('type')} id='type' placeholder='choice, open-question, ....' min={1} className='-ml-0.5 placeholder:text-[15px]' />
+              <Select onValueChange={(value) => register('type').onChange({ target: { value: value, name: 'type' } })} defaultValue='multiple-choice'>
+                <SelectTrigger className='w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600 dark:hover:bg-transparent dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80'>
+                  <SelectValue placeholder='multiple-choice' />
+                </SelectTrigger>
+                <SelectContent className='border-0 ring-1 dark:bg-neutral-800 dark:text-neutral-400 dark:ring-neutral-600 dark:hover:ring-neutral-300/40'>
+                  <SelectGroup className='*:text-sm *:hover:cursor-pointer dark:*:hover:bg-neutral-600/40 dark:*:hover:text-neutral-200 dark:*:focus:bg-neutral-600/40 dark:*:focus:text-neutral-200'>
+                    <SelectItem onChange={(e) => console.log('Value changed to: ', e.target)} value='single-choice'>
+                      Single Choice
+                    </SelectItem>
+                    <SelectItem value='multiple-choice'>Multiple Choice</SelectItem>
+                    <SelectItem value='open-question'>Open Question</SelectItem>
+                    <SelectItem value='drag-drop'>Drag Drop</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <FieldError field='type' />
             </div>
           </div>
