@@ -4,8 +4,8 @@ import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvid
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
-import CreateableSelect from '@/src/components/Shared/form/Select'
 import Input from '@/src/components/Shared/form/Input'
+import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -71,7 +71,7 @@ export default function QuestionsSection() {
 }
 
 function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
-  const { addQuestion } = useCreateCheckStore((state) => state)
+  const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
   const {
     register,
     handleSubmit,
@@ -91,6 +91,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
         { answer: 'Answer C', correct: false },
         { answer: 'Answer D', correct: false },
       ],
+      category: 'general',
     },
   })
 
@@ -231,7 +232,14 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             <label htmlFor='category' className={twMerge(label_classes)}>
               Category
             </label>
-            <Input {...register('category')} id='category' type='select' placeholder='What category does this question belong to?' defaultValue='general' className='-ml-0.5 placeholder:text-[15px]' />
+            <Select
+              selectTriggerClassname='-ml-0.5'
+              popoverContentClassname='w-[470px]'
+              onChange={(category) => register('category').onChange({ target: { value: category, name: 'category' } })}
+              options={[...questionCategories.map((cat) => ({ label: cat.name, value: cat.name }))]}
+              createable
+              defaultValue={{ label: watch('category'), value: watch('category') }}
+            />
             <FieldError field='category' />
           </div>
           <div className='grid items-center gap-2'>
