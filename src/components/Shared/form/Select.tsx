@@ -164,25 +164,6 @@ export default function Select({ options, defaultValue, isLoading = false, name,
               }}
             />
             <CommandGroup className='mb-1 *:space-y-1'>
-              {createable && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
-                <CommandItem
-                  key={state.query}
-                  value={state.query}
-                  className={cn(
-                    'hover:cursor-pointer dark:text-neutral-400 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
-                    'mb-2 rounded-b-none border-b-[1.5px] border-dashed pb-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
-                  )}
-                  onSelect={() => createOption()}>
-                  Create category &quot;{state.query}&quot;
-                  <Plus
-                    className='ml-auto h-4 w-4 cursor-pointer'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      dispatch({ type: 'SET_QUERY', payload: '' })
-                    }}
-                  />
-                </CommandItem>
-              )}
               {state.newOptions
                 .filter((o) => o.value.includes(state.query))
                 .map((option, i) => (
@@ -207,6 +188,25 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   <SearchX className='size-4' />
                   No Categories found
                 </div>
+              )}
+              {createable && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
+                <CommandItem
+                  key={state.query}
+                  value={state.query}
+                  className={cn(
+                    'hover:cursor-pointer dark:text-neutral-400 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
+                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
+                  )}
+                  onSelect={() => createOption()}>
+                  Create category &quot;{state.query}&quot;
+                  <Plus
+                    className='ml-auto h-4 w-4 cursor-pointer'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      dispatch({ type: 'SET_QUERY', payload: '' })
+                    }}
+                  />
+                </CommandItem>
               )}
             </CommandGroup>
           </Command>
