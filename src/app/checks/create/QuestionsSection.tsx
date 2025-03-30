@@ -99,7 +99,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     name: 'answers',
   })
 
-  const FieldError = <Type extends Question>({ field }: { field: keyof FieldErrors<Type> }) => {
+  const FieldError = <Type extends Question>({ field, className }: { field: keyof FieldErrors<Type>; className?: string }) => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     if (Object.keys(errors).length === 0) return null
 
@@ -114,7 +114,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     }
     /* eslint-enable @typescript-eslint/no-explicit-any */
 
-    return error?.message ? <div className='text-[15px] text-red-400 dark:text-red-400/80'>{error.message}</div> : null
+    return error?.message ? <div className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>{error.message}</div> : null
   }
 
   const resetForm = () => {
@@ -208,10 +208,9 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                 id='points'
                 type='number'
                 placeholder='How many points is this question worth?'
-                min={1}
                 className='-ml-0.5 placeholder:text-[15px]'
               />
-              <FieldError field='points' />
+              <FieldError field='points' className='whitespace-nowrap' />
             </div>
             <div className='grid items-center gap-2'>
               <label htmlFor='type' className={twMerge(label_classes)}>
