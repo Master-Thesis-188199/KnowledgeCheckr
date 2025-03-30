@@ -145,3 +145,7 @@ html[data-theme='dark'] {
     @apply bg-background text-foreground;
   }
 }
+
+input[type='number']::-webkit-inner-spin-button {
+  opacity: 0.8;
+}
