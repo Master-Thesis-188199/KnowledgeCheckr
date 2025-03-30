@@ -2,7 +2,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Pop
 import { cn } from '@/lib/Shared/utils'
 import { Button } from '@/src/components/shadcn/button'
 import { Command, CommandGroup, CommandInput, CommandItem } from '@/src/components/shadcn/command'
-import { Check, ChevronDown, Loader2Icon, X } from 'lucide-react'
+import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
 import * as React from 'react'
 
 /*
@@ -159,11 +159,18 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 }
               }}
             />
-            <CommandGroup className='*:space-y-1'>
+            <CommandGroup className='mb-1 *:space-y-1'>
               {createable && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
-                <CommandItem key={state.query} value={state.query} className='hover:cursor-pointer dark:hover:bg-neutral-600 dark:focus:bg-neutral-600' onSelect={() => createOption()}>
-                  Create &quot;{state.query}&quot;
-                  <X
+                <CommandItem
+                  key={state.query}
+                  value={state.query}
+                  className={cn(
+                    'hover:cursor-pointer dark:text-neutral-400 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
+                    'mb-2 rounded-b-none border-b-[1.5px] border-dashed pb-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
+                  )}
+                  onSelect={() => createOption()}>
+                  Create category &quot;{state.query}&quot;
+                  <Plus
                     className='ml-auto h-4 w-4 cursor-pointer'
                     onClick={(e) => {
                       e.stopPropagation()
@@ -172,23 +179,31 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   />
                 </CommandItem>
               )}
-              {state.newOptions.map((option, i) => (
-                <CommandItem
-                  className={cn(
-                    'cursor-pointer text-sm hover:ring-1 dark:text-neutral-400 dark:hover:ring-neutral-300/40',
-                    state.value === option.value ? 'ring-1 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
-                  )}
-                  key={option.value}
-                  value={option.value}
-                  onSelect={() => {
-                    // dispatch({ type: 'SET_VALUE', payload: option.value })
-                    setKeySelection(i)
-                    dispatch({ type: 'SET_OPEN', payload: false })
-                  }}>
-                  {option.label}
-                  <Check className={cn('ml-auto h-4 w-4 hover:cursor-pointer', state.value === option.value ? 'opacity-100' : 'opacity-0')} />
-                </CommandItem>
-              ))}
+              {state.newOptions
+                .filter((o) => o.value.includes(state.query))
+                .map((option, i) => (
+                  <CommandItem
+                    className={cn(
+                      'cursor-pointer text-sm hover:ring-1 dark:text-neutral-400 dark:hover:ring-neutral-300/40',
+                      state.value === option.value ? 'ring-1 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
+                    )}
+                    key={option.value + i}
+                    value={option.value}
+                    onSelect={() => {
+                      // dispatch({ type: 'SET_VALUE', payload: option.value })
+                      setKeySelection(i)
+                      dispatch({ type: 'SET_OPEN', payload: false })
+                    }}>
+                    {option.label}
+                    <Check className={cn('ml-auto h-4 w-4 hover:cursor-pointer', state.value === option.value ? 'opacity-100' : 'opacity-0')} />
+                  </CommandItem>
+                ))}
+              {state.newOptions.filter((option) => matches(option.value, state.query)).length === 0 && (
+                <div className='flex items-center gap-2 px-2 text-sm dark:text-neutral-400'>
+                  <SearchX className='size-4' />
+                  No Categories found
+                </div>
+              )}
             </CommandGroup>
           </Command>
         </PopoverContent>
