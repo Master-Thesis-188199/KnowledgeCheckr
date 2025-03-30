@@ -98,6 +98,14 @@ export default function Select({ options, defaultValue, isLoading = false, name,
     dispatch({ type: 'SET_VALUE', payload: defaultValue?.value || '' })
   }, [])
 
+  const createOption = () => {
+    const newOption = { value: state.query, label: state.query }
+    dispatch({ type: 'ADD_OPTION', payload: newOption })
+    dispatch({ type: 'SET_OPEN', payload: false })
+
+    setKeySelection(state.newOptions.findIndex((o) => o.value === state.query))
+  }
+
   return (
     <>
       <input
@@ -140,23 +148,20 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                     break
 
                   case 'Enter':
-                    dispatch({ type: 'SET_OPEN', payload: false })
-                    if (onChange) onChange(state.value)
+                    if (!state.query) {
+                      dispatch({ type: 'SET_OPEN', payload: false })
+                      if (onChange) onChange(state.value)
+                    } else {
+                      createOption()
+                    }
+
                     break
                 }
               }}
             />
             <CommandGroup className='*:space-y-1'>
               {createable && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
-                <CommandItem
-                  key={state.query}
-                  value={state.query}
-                  className='hover:cursor-pointer dark:hover:bg-neutral-600 dark:focus:bg-neutral-600'
-                  onSelect={() => {
-                    const newOption = { value: state.query, label: state.query }
-                    dispatch({ type: 'ADD_OPTION', payload: newOption })
-                    dispatch({ type: 'SET_OPEN', payload: false })
-                  }}>
+                <CommandItem key={state.query} value={state.query} className='hover:cursor-pointer dark:hover:bg-neutral-600 dark:focus:bg-neutral-600' onSelect={() => createOption()}>
                   Create &quot;{state.query}&quot;
                   <X
                     className='ml-auto h-4 w-4 cursor-pointer'
