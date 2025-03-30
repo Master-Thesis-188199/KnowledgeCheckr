@@ -14,7 +14,7 @@ interface Option {
   label: string
 }
 
-interface CreatableSelectProps {
+interface CreatableSelectProps extends Classnames {
   options: Option[]
   defaultValue?: Option
   isLoading?: boolean
@@ -23,6 +23,11 @@ interface CreatableSelectProps {
   onChange?: (value: string) => void
   createable?: boolean
   reset?: boolean
+}
+
+interface Classnames {
+  selectTriggerClassname?: string
+  popoverContentClassname?: string
 }
 
 interface State {
@@ -62,7 +67,7 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function Select({ options, defaultValue, isLoading = false, name, id, onChange, createable }: CreatableSelectProps) {
+export default function Select({ options, defaultValue, isLoading = false, name, id, onChange, createable, popoverContentClassname, selectTriggerClassname }: CreatableSelectProps) {
   const [keySelection, setKeySelection] = React.useState<number>(options.findIndex((o) => o.value === defaultValue?.value) || -1)
 
   const initialState: State = {
@@ -110,13 +115,14 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600 dark:hover:bg-transparent dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
             state.open && 'dark:ring-neutral-300/80',
             'focus-visible:ring-1 focus-visible:ring-neutral-300/80',
+            selectTriggerClassname,
           )}>
           <Button id={id} variant='outline' role='combobox' aria-expanded={state.open} className='w-full justify-between font-normal capitalize hover:text-inherit' disabled={isLoading}>
             {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-[210px] overflow-auto p-0 dark:border-neutral-600 dark:bg-transparent'>
+        <PopoverContent className={cn('w-[210px] overflow-auto p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
           <Command className='dark:bg-neutral-800'>
             <CommandInput
               value={state.query}
