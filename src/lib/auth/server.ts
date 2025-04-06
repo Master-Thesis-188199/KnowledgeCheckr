@@ -1,6 +1,8 @@
 import env from '@/lib/Shared/Env'
 import { betterAuth } from 'better-auth'
+import { nextCookies } from 'better-auth/next-js'
 import { createPool } from 'mysql2/promise'
+import { headers } from 'next/headers'
 
 export const auth = betterAuth({
   database: createPool({
@@ -14,7 +16,6 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 12,
     autoSignIn: true,
-    requireEmailVerification: true,
   },
   socialProviders: {
     github: {
@@ -22,4 +23,9 @@ export const auth = betterAuth({
       clientSecret: env.AUTH_GITHUB_SECRET,
     },
   },
+  plugins: [nextCookies()],
 })
+
+export async function getServerSession() {
+  return auth.api.getSession({ headers: await headers() })
+}
