@@ -1,6 +1,4 @@
-import NextAuth from 'next-auth'
-import { options } from '@/app/api/auth/[...nextauth]/options'
+import { auth } from '@/lib/auth' // path to your auth file
+import { toNextJsHandler } from 'better-auth/next-js'
 
-const handler = NextAuth(options)
-
-export { handler as POST, handler as GET }
+export const { POST, GET } = toNextJsHandler(auth)
