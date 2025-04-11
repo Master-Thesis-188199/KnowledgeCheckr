@@ -2,6 +2,7 @@ import AppleIcon from '@/public/icons/social/AppleIcon'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
+import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
 import { getServerSession } from '@/src/lib/auth/server'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -33,20 +34,20 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
 
         <div className='mx-auto flex w-full max-w-64 items-center justify-center gap-5 text-neutral-200/90'>
-          <SocialButton icon={GoogleIcon} />
-          <SocialButton icon={AppleIcon} />
-          <SocialButton icon={GithubSvg} />
+          <SocialButton icon={GoogleIcon} provider='google' />
+          <SocialButton icon={AppleIcon} provider='apple' />
+          <SocialButton icon={GithubSvg} provider='github' />
         </div>
       </form>
     </div>
   )
 }
 
-function SocialButton({ icon: Icon, iconClassName, ...props }: { icon: React.ComponentType<{ className?: string }>; iconClassName?: string } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+function SocialButton({ icon: Icon, iconClassName, ...props }: { icon: React.ComponentType<{ className?: string }>; iconClassName?: string } & ProviderButtonProps) {
   return (
-    <button className='flex items-center justify-evenly gap-4 rounded-sm bg-neutral-800/50 px-3 py-2.5 tracking-wide ring-1 ring-neutral-600 hover:cursor-pointer' {...props}>
+    <ProviderButton type='button' className='flex items-center justify-evenly gap-4 rounded-sm bg-neutral-800/50 px-3 py-2.5 tracking-wide ring-1 ring-neutral-600 hover:cursor-pointer' {...props}>
       <Icon className={twMerge('size-6', iconClassName)} />
-    </button>
+    </ProviderButton>
   )
 }
 function FormHeader({ title, subTitle }: { title: string; subTitle?: string }) {
