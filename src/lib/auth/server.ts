@@ -1,5 +1,5 @@
 import env from '@/lib/Shared/Env'
-import { betterAuth } from 'better-auth'
+import { betterAuth, Session, User } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
 import { createPool } from 'mysql2/promise'
 import { headers } from 'next/headers'
@@ -26,6 +26,8 @@ export const auth = betterAuth({
   plugins: [nextCookies()],
 })
 
-export async function getServerSession() {
-  return auth.api.getSession({ headers: await headers() })
+export async function getServerSession(): Promise<{ session?: Session; user?: User }> {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  return session || {}
 }
