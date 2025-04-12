@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "cypress:open": "npm run test:instrumentation && next dev & cypress open",
     "test:instrumentation": "cp ./config/.babelrc.json .babelrc.json ",
     "pretest:start-server": "rm -rf .babelrc.json .nyc_output coverage",
     "test:start-server": "npm run test:instrumentation && npm run production",
