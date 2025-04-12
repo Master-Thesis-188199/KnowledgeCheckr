@@ -5,5 +5,7 @@ declare namespace Cypress {
     login(email: string, password: string): void
     signUp(username: string, email: string, password: string): void
     signOut(): void
+
+    removeDBUser(email: string, username: string): void
   }
 }

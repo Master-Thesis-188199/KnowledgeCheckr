@@ -84,3 +84,7 @@ Cypress.Commands.add('signOut', () => {
 
   cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
 })
+
+Cypress.Commands.add('removeDBUser', (email: string, username: string) => {
+  cy.task('removeDBUser', { email, username })
+})
