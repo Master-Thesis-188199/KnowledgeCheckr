@@ -45,8 +45,8 @@ export default defineConfig({
           return new Promise(async (resolve, reject) => {
             connection.beginTransaction(console.error)
 
-            connection.query(`DELETE s FROM session s JOIN user u ON s.userId = u.id WHERE u.name = '${username}' AND u.email = '${email}';`)
-            connection.query(`DELETE a FROM account a JOIN user u ON a.userId = u.id WHERE u.name = '${username}' AND u.email = '${email}';`)
+            connection.query(`DELETE s FROM session s JOIN user u ON s.user_id = u.id WHERE u.name = '${username}' AND u.email = '${email}';`)
+            connection.query(`DELETE a FROM account a JOIN user u ON a.user_id = u.id WHERE u.name = '${username}' AND u.email = '${email}';`)
             const result = await connection.promise().query(`DELETE FROM user WHERE name = '${username}' AND email = '${email}';`)
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
