@@ -41,15 +41,19 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mongo:
-        image: mongo:latest
+      mysql:
+        image: mysql:latest
         ports:
-          - 27017:27017
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"  
-          --health-interval 10s  
-          --health-timeout 5s  
-          --health-retries 5
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -77,7 +81,7 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}", 
+            "BASE_URL": "${{ env.BASE_URL }}", 
             "SkipOnCi": true 
           }' > cypress.env.json
 
@@ -108,15 +112,19 @@ jobs:
     needs: check-file-changes
 
     services:
-      mongo:
-        image: mongo:latest
+      mysql:
+        image: mysql:latest
         ports:
-          - 27017:27017
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout
