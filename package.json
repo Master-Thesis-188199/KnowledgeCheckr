@@ -26,7 +26,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@auth/mongodb-adapter": "^3.8.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
@@ -40,7 +39,6 @@
     "mysql2": "^3.14.0",
     "motion": "^12.4.7",
     "next": "15.2.0",
-    "next-auth": "^4.24.11",
     "nookies": "^2.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
