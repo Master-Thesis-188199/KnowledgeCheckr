@@ -3,6 +3,7 @@ declare namespace Cypress {
   interface Chainable<Subject = any> {
     skip(message?: string, skipCondition?: boolean): void
     login(email: string, password: string): void
-    signup(username: string, email: string, password: string): void
+    signUp(username: string, email: string, password: string): void
+    signOut(): void
   }
 }

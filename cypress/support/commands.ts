@@ -58,7 +58,7 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   cy.get('button[type="submit"]').filter(':visible').click()
 })
 
-Cypress.Commands.add('signup', (username: string, email: string, password: string) => {
+Cypress.Commands.add('signUp', (username: string, email: string, password: string) => {
   if (!username || !email || !password) {
     cy.log('Skipping signup because username, email or password is not provided')
   }
@@ -70,4 +70,17 @@ Cypress.Commands.add('signup', (username: string, email: string, password: strin
   cy.get('input[name="password"]').filter(':visible').type(password)
 
   cy.get('button[type="submit"]').filter(':visible').click()
+})
+
+Cypress.Commands.add('signOut', () => {
+  cy.visit('/account')
+  const url = String(cy.url())
+  if (url === Cypress.config('baseUrl')) {
+    cy.log(' Signout Aborted: User is not logged in!')
+    return
+  }
+
+  cy.get('main * button').contains('Signout').filter(':visible').click()
+
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
 })
