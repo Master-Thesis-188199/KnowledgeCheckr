@@ -22,6 +22,10 @@ export const auth = betterAuth({
       clientId: env.AUTH_GITHUB_ID,
       clientSecret: env.AUTH_GITHUB_SECRET,
     },
+    google: {
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
+    },
   },
   plugins: [nextCookies()],
 })
