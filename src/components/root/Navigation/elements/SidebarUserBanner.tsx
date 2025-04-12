@@ -11,7 +11,7 @@ export default async function SidebarUserBanner() {
   if (!session || !session.user) return LoginBanner()
 
   return (
-    <SidebarElement icon={UserAvatar({ user: session.user })} href={'/api/auth/signout'}>
+    <SidebarElement icon={UserAvatar({ user: session.user })} href={'/account'}>
       {session.user?.name}
     </SidebarElement>
   )
@@ -19,7 +19,7 @@ export default async function SidebarUserBanner() {
 
 function LoginBanner() {
   return (
-    <SidebarElement href='/api/auth/signin' icon={<UserRound className={iconClasses} />}>
+    <SidebarElement href='/account/login' icon={<UserRound className={iconClasses} />}>
       <span>Please Sign In</span>
     </SidebarElement>
   )
