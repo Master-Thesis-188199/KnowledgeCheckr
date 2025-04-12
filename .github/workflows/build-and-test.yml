@@ -6,7 +6,7 @@ env:
   BASE_URL: ${{ secrets.BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
-  DATABASE_HOST: 'mysql'
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
   DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
   DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
   DATABASE_USER: root
