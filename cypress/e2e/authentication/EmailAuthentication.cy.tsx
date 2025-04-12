@@ -57,4 +57,9 @@ describe('Better Auth: Email Authentication - ', () => {
       username: USERNAME,
     })
   })
+
+  it("verify that users that are not logged in can't access the account page", () => {
+    cy.visit('/account')
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
+  })
 })
