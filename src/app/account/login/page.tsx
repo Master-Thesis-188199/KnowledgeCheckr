@@ -26,6 +26,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   type = type || 'signin'
 
   const { user } = await getServerSession()
+  if (user) {
+    return redirect('/account')
+  }
 
   return (
     <div className='flex h-full flex-1 items-center justify-center'>
