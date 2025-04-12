@@ -5,6 +5,24 @@ import { createPool } from 'mysql2/promise'
 import { headers } from 'next/headers'
 
 export const auth = betterAuth({
+  user: {
+    modelName: 'User',
+  },
+  account: {
+    modelName: 'Account',
+    fields: {
+      userId: 'user_id',
+    },
+  },
+  session: {
+    modelName: 'Session',
+    fields: {
+      userId: 'user_id',
+    },
+  },
+  verification: {
+    modelName: 'Verification',
+  },
   database: createPool({
     host: env.DATABASE_HOST,
     port: env.DATABASE_PORT,
