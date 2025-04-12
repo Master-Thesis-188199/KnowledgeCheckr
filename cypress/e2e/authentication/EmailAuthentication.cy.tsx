@@ -50,4 +50,22 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.visit('/account')
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
   })
+
+  it.only('verify that users that are logged in cannot access sign- in/up page', () => {
+    const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
+    const USERNAME = `Test User`
+
+    cy.signUp(USERNAME, EMAIL, '1234567890')
+
+    // Verify redirect after signup
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+
+    cy.visit('/account/login?type=signin')
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/account`)
+
+    cy.visit('/account/login?type=signup')
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/account`)
+
+    cy.removeDBUser(EMAIL, USERNAME)
+  })
 })
