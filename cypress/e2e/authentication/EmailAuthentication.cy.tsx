@@ -51,7 +51,7 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
   })
 
-  it.only('verify that users that are logged in cannot access sign- in/up page', () => {
+  it('verify that users that are logged in cannot access sign- in/up page', () => {
     const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
     const USERNAME = `Test User`
 
@@ -67,5 +67,17 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account`)
 
     cy.removeDBUser(EMAIL, USERNAME)
+  })
+
+  it.only('verify that users can sign-in using email and password after having signed up', () => {
+    const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
+    const USERNAME = `Test User`
+
+    cy.signUp(USERNAME, EMAIL, '1234567890')
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+    cy.signOut()
+
+    cy.login(EMAIL, '1234567890')
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
   })
 })
