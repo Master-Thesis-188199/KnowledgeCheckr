@@ -1,5 +1,3 @@
-import cypress from 'cypress'
-
 describe('Better Auth: Email Authentication - ', () => {
   it('verify that users can switch between login and signup', () => {
     cy.visit('/account/login?type=signin')
@@ -15,7 +13,7 @@ describe('Better Auth: Email Authentication - ', () => {
     const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
     const USERNAME = `Test User`
 
-    cy.signup(USERNAME, EMAIL, '1234567890')
+    cy.signUp(USERNAME, EMAIL, '1234567890')
 
     // Verify redirect after signup
     cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
@@ -30,7 +28,7 @@ describe('Better Auth: Email Authentication - ', () => {
     const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
     const USERNAME = `Test User`
 
-    cy.signup(USERNAME, EMAIL, '1234567890')
+    cy.signUp(USERNAME, EMAIL, '1234567890')
 
     // Verify redirect after signup
     cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
@@ -38,7 +36,7 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.visit('/account')
     cy.get('main * span').filter(':visible').contains(EMAIL).should('be.visible')
     cy.get('main * span').filter(':visible').contains(USERNAME).should('be.visible')
-    cy.get('main * button').contains('Signout').filter(':visible').click()
+    cy.signOut()
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
 
