@@ -50,6 +50,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
+          --volume ${{ github.workspace }}/database/schema/init.sql:/docker-entrypoint-initdb.d/init-database.sql
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
@@ -121,6 +122,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
+          --volume ${{ github.workspace }}/database/schema/init.sql:/docker-entrypoint-initdb.d/init-database.sql
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
