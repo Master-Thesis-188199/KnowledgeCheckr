@@ -1,4 +1,14 @@
 describe('Better Auth: Email Authentication - ', () => {
+  it('verify that users can switch between login and signup', () => {
+    cy.visit('/account/login?type=signin')
+    cy.get('main * a[href*="/account/login"]').filter(':visible').click()
+
+    cy.url().should('include', '/account/login?type=signup')
+    cy.get('main * a[href*="/account/login"]').filter(':visible').click()
+
+    cy.url().should('include', '/account/login?type=signin')
+  })
+
   it('verify that users can signup', () => {
     const random_email = `test${Math.floor(Math.random() * 10000)}@example.com`
     cy.visit('/account/login?type=signup')
