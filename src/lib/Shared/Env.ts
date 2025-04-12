@@ -7,7 +7,12 @@ export const envSchema = z.object({
   BASE_URL: z.string().startsWith('http').includes('://'),
   AUTH_SECRET: z.string().base64(),
 
-  DATABASE_HOST: z.union([z.string().ip({ message: 'Please provide a valid database host url / ip' }), z.string().url({ message: 'Please provide a valid database host url / ip' })]),
+  DATABASE_HOST: z.union([
+    z.string().regex(/^\S*$/, { message: 'When using the service-name as the database host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
+    z.string().ip({ message: 'Please provide a valid database host url / ip / service-name' }),
+    z.string().url({ message: 'Please provide a valid database host url / ip / service-name' }),
+    // .min(1, 'The database host must not be empty!')
+  ]),
   DATABASE_PORT: z
     .string()
     .min(1, 'AUTH_MONGODB_HOST_PORT cannot be empty!')
