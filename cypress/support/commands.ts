@@ -56,6 +56,7 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   cy.get('input[name="password"]').filter(':visible').type(password)
 
   cy.get('button[type="submit"]').filter(':visible').click()
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
 })
 
 Cypress.Commands.add('signUp', (username: string, email: string, password: string) => {
@@ -70,6 +71,7 @@ Cypress.Commands.add('signUp', (username: string, email: string, password: strin
   cy.get('input[name="password"]').filter(':visible').type(password)
 
   cy.get('button[type="submit"]').filter(':visible').click()
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
 })
 
 Cypress.Commands.add('signOut', () => {

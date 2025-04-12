@@ -15,9 +15,6 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.signUp(USERNAME, EMAIL, '1234567890')
 
-    // Verify redirect after signup
-    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
-
     cy.task('removeDBUser', {
       email: EMAIL,
       username: USERNAME,
@@ -29,9 +26,6 @@ describe('Better Auth: Email Authentication - ', () => {
     const USERNAME = `Test User`
 
     cy.signUp(USERNAME, EMAIL, '1234567890')
-
-    // Verify redirect after signup
-    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
 
     cy.visit('/account')
     cy.get('main * span').filter(':visible').contains(EMAIL).should('be.visible')
@@ -57,9 +51,6 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.signUp(USERNAME, EMAIL, '1234567890')
 
-    // Verify redirect after signup
-    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
-
     cy.visit('/account/login?type=signin')
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account`)
 
@@ -74,10 +65,8 @@ describe('Better Auth: Email Authentication - ', () => {
     const USERNAME = `Test User`
 
     cy.signUp(USERNAME, EMAIL, '1234567890')
-    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
     cy.signOut()
 
     cy.login(EMAIL, '1234567890')
-    cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
   })
 })
