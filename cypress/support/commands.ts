@@ -40,6 +40,34 @@ Cypress.Commands.add('skip', (message = 'Test skipped using cy.skip()', conditio
   if (!condition) return
 
   cy.log(message)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   cy.state('runnable').ctx.skip()
+})
+
+Cypress.Commands.add('login', (email: string, password: string) => {
+  if (!email || !password) {
+    cy.log('Skipping signup because username, email or password is not provided')
+  }
+
+  cy.visit('/account/login?type=signin')
+
+  cy.get('input[name="email"]').filter(':visible').type(email)
+  cy.get('input[name="password"]').filter(':visible').type(password)
+
+  cy.get('button[type="submit"]').filter(':visible').click()
+})
+
+Cypress.Commands.add('signup', (username: string, email: string, password: string) => {
+  if (!username || !email || !password) {
+    cy.log('Skipping signup because username, email or password is not provided')
+  }
+
+  cy.visit('/account/login?type=signup')
+
+  cy.get('input[name="name"]').filter(':visible').type(username)
+  cy.get('input[name="email"]').filter(':visible').type(email)
+  cy.get('input[name="password"]').filter(':visible').type(password)
+
+  cy.get('button[type="submit"]').filter(':visible').click()
 })
