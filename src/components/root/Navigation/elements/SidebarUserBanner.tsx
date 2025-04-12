@@ -26,7 +26,10 @@ function LoginBanner() {
 }
 
 export function UserAvatar({ user: { image, name }, className }: { user: User; className?: string }) {
-  if (!image) return <Image src={`https://ui-avatars.com/api/?name=${encodeURI(name)}`} className={twMerge(iconClasses, 'rounded-full', className)} alt='User Avatar' height={256} width={256} />
+  if (!image)
+    return (
+      <Image src={`https://ui-avatars.com/api/?name=${encodeURI(name)}`} unoptimized={true} className={twMerge(iconClasses, 'rounded-full', className)} alt='User Avatar' height={256} width={256} />
+    )
 
   return <Image src={image} alt='User Avatar' height={128} width={128} className={twMerge(iconClasses, className)} />
 }
