@@ -15,10 +15,7 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.signUp(USERNAME, EMAIL, '1234567890')
 
-    cy.task('removeDBUser', {
-      email: EMAIL,
-      username: USERNAME,
-    })
+    cy.removeDBUser(EMAIL, USERNAME)
   })
 
   it('verify that users can logout again after signup', () => {
@@ -34,10 +31,7 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
 
-    cy.task('removeDBUser', {
-      email: EMAIL,
-      username: USERNAME,
-    })
+    cy.removeDBUser(EMAIL, USERNAME)
   })
 
   it("verify that users that are not logged in can't access the account page", () => {
