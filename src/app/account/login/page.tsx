@@ -3,16 +3,29 @@ import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
-import { getServerSession } from '@/src/lib/auth/server'
+import { auth, getServerSession } from '@/src/lib/auth/server'
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
+
+const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
+})
+
+const SignupSChema = LoginSchema.merge(
+  z.object({
+    name: z.string().min(4, 'The username must be at least 4 characters long!').max(48, 'The username cannot bet longer than 48 characters!'),
+  }),
+)
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin' }> }) {
   let { type } = await searchParams
   type = type || 'signin'
 
-  const { session, user } = await getServerSession()
+  const { user } = await getServerSession()
 
   return (
     <div className='flex h-full flex-1 items-center justify-center'>
@@ -70,15 +83,18 @@ function LoginFields() {
 
       <label className='flex flex-col gap-2'>
         Email
-        <input placeholder='your@email.com' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='email' />
+        <input name='email' placeholder='your@email.com' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='email' />
       </label>
       <label className='flex flex-col gap-2'>
         Password
-        <input placeholder='your password' type='password' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' />
+        <input name='password' placeholder='your password' type='password' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' />
       </label>
 
       <div className='mt-2 flex flex-col items-center justify-center gap-3'>
-        <button className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
+        <button
+          type='submit'
+          formAction={signin}
+          className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
           Login
         </button>
         <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
@@ -99,19 +115,22 @@ function SignupFields() {
 
       <label className='flex flex-col gap-2'>
         Username
-        <input placeholder='Alexander' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='text' />
+        <input name='name' placeholder='Alexander' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='text' />
       </label>
       <label className='flex flex-col gap-2'>
         Email
-        <input placeholder='your@email.com' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='email' />
+        <input name='email' placeholder='your@email.com' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' type='email' />
       </label>
       <label className='flex flex-col gap-2'>
         Password
-        <input placeholder='your password' type='password' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' />
+        <input name='password' placeholder='your password' type='password' className='rounded-md px-3 py-1.5 ring-1 ring-neutral-700 outline-0 focus:ring-[1.5px] focus:ring-neutral-600' />
       </label>
 
       <div className='mt-2 flex flex-col items-center justify-center gap-3'>
-        <button className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
+        <button
+          type='submit'
+          formAction={signup}
+          className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
           Login
         </button>
         <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
@@ -123,4 +142,40 @@ function SignupFields() {
       </div>
     </>
   )
+}
+
+async function signin(formData: FormData) {
+  'use server'
+
+  // todo: client-side & server-side validation
+
+  const email = formData.get('email')
+  const password = formData.get('password')
+
+  const result = LoginSchema.safeParse({ email, password })
+  if (result.success === false) {
+    console.log('Validation failed', result.error.format())
+    return
+  }
+
+  await auth.api.signInEmail({ body: { ...result.data } })
+  await redirect('/')
+}
+async function signup(formData: FormData) {
+  'use server'
+
+  // todo: client-side & server-side validation
+
+  const email = formData.get('email')
+  const password = formData.get('password')
+  const name = formData.get('name')
+
+  const result = SignupSChema.safeParse({ email, password, name })
+  if (result.success === false) {
+    console.log('Validation failed', result.error.format())
+    return
+  }
+
+  await auth.api.signUpEmail({ body: { ...result.data } })
+  await redirect('/')
 }
