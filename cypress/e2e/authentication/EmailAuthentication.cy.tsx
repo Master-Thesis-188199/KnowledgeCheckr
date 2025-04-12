@@ -54,7 +54,7 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.removeDBUser(EMAIL, USERNAME)
   })
 
-  it.only('verify that users can sign-in using email and password after having signed up', () => {
+  it('verify that users can sign-in using email and password after having signed up', () => {
     const EMAIL = `test${Math.floor(Math.random() * 10000)}@example.com`
     const USERNAME = `Test User`
 
