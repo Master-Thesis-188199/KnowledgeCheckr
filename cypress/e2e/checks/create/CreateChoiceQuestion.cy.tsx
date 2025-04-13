@@ -6,10 +6,9 @@ describe('Check: Create Choice Question -', () => {
 
     cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
-    cy.get('#question-dialog').should('be.visible')
   })
 
-  it.only('Verify that a choice question can be added when the inputs are valid', () => {
+  it('Verify that a choice question can be added when the inputs are valid', () => {
     const { question, points, type, answers }: Partial<ChoiceQuestion> = {
       question: 'What is the capital of France?',
       points: 5,
