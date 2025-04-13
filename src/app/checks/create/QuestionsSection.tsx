@@ -36,7 +36,7 @@ export default function QuestionsSection() {
               <Card className='question flex gap-3 p-2 hover:bg-none'>
                 <div className='header flex flex-1 flex-col p-1'>
                   <div className='flex items-center justify-between'>
-                    <h2 className=''>{question.question || `Question ${i + 1}`}</h2>
+                    <h2 className=''>{question.question}</h2>
                     <span className='dark:text-neutral-200'>
                       {question.points} point{question.points > 1 && 's'}
                     </span>
