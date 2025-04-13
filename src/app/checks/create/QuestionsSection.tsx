@@ -216,6 +216,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                 Question Type
               </label>
               <CreateableSelect
+                name='type'
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => register('type').onChange({ target: { value: type, name: 'type' } })}
                 options={[
@@ -242,7 +243,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             />
             <FieldError field='category' />
           </div>
-          <div className='grid items-center gap-2'>
+          <div className='grid items-center gap-2' id='question-answers'>
             <label htmlFor='answers' className={twMerge(label_classes)}>
               Answers
             </label>
