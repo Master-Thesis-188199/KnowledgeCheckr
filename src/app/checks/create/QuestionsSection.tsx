@@ -143,7 +143,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
       return
     }
 
-    const clickListener = () => setOpen(false)
+    const closeDialogClickListener = () => setOpen(false)
 
     new Promise((resolve, reject) => {
       setTimeout(() => reject('Question Dialog - Exit button not found!'), 1000)
@@ -160,10 +160,10 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
 
       if (!exitButton) return
 
-      exitButton!.addEventListener('click', clickListener)
+      exitButton!.addEventListener('click', closeDialogClickListener)
     })
 
-    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', clickListener)
+    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', closeDialogClickListener)
   }, [open])
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
