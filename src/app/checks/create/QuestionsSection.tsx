@@ -115,7 +115,11 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     }
     /* eslint-enable @typescript-eslint/no-explicit-any */
 
-    return error?.message ? <div className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>{error.message}</div> : null
+    return error?.message ? (
+      <div aria-label={`field-error-${field.toString()}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>
+        {error.message}
+      </div>
+    ) : null
   }
 
   const resetForm = () => {
