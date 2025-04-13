@@ -1,17 +1,20 @@
 name: Check for Relevant Changes
 
-description: "Checks if relevant files were modified by the last push event (diff)"
+description: 'Checks if relevant files were modified by the last push event (diff)'
 inputs:
   base:
-    description: "The base commit to compare against"
+    description: 'The base commit to compare against'
+    required: false
+  disable-workflow-skips:
+    description: 'Overrides the output to always return relevant = true'
     required: false
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - run: |
         EXTENSIONS_REGEX="\.((js)|(jsx)|(ts)|(tsx)|(json)|(css)|(scss)|(mjs))$"
-        
+
         # For a new branch or initial commit, treat as relevant
         if [ "${{ inputs.base }}" = "" ] || [ "${{ inputs.base }}" = "0000000000000000000000000000000000000000" ]; then
           echo "New branch or initial commit. Considering changes relevant."
@@ -30,10 +33,18 @@ runs:
             echo "relevant=false" >> $GITHUB_ENV
           fi
         fi
+
+        if [ "$DISABLE_WORKFLOW_SKIPS" = "1" ]; then
+          echo "Repository secret disable-workflow-skips is true. Overriding relevant flag to true."
+          echo "relevant=true" >> $GITHUB_OUTPUT
+          echo "relevant=true" >> $GITHUB_ENV
+        fi
       shell: bash
+      env:
+        DISABLE_WORKFLOW_SKIPS: ${{ inputs.disable-workflow-skips }}
       id: check
 
 outputs:
   relevant:
-    description: "Whether relevant file changes were detected"
+    description: 'Whether relevant file changes were detected'
     value: ${{ steps.check.outputs.relevant }}

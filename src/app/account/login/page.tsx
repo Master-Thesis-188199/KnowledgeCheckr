@@ -1,4 +1,3 @@
-import AppleIcon from '@/public/icons/social/AppleIcon'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
@@ -50,9 +49,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
 
         <div className='mx-auto flex w-full max-w-64 items-center justify-center gap-5 text-neutral-200/90'>
-          <SocialButton icon={GoogleIcon} provider='google' />
-          <SocialButton icon={AppleIcon} provider='apple' />
-          <SocialButton icon={GithubSvg} provider='github' />
+          <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
+          <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
         </div>
       </form>
     </div>

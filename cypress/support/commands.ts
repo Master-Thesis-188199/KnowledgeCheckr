@@ -40,6 +40,53 @@ Cypress.Commands.add('skip', (message = 'Test skipped using cy.skip()', conditio
   if (!condition) return
 
   cy.log(message)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   cy.state('runnable').ctx.skip()
+})
+
+Cypress.Commands.add('login', (email: string, password: string) => {
+  if (!email || !password) {
+    cy.log('Skipping signup because username, email or password is not provided')
+  }
+
+  cy.visit('/account/login?type=signin')
+
+  cy.get('input[name="email"]').filter(':visible').type(email)
+  cy.get('input[name="password"]').filter(':visible').type(password)
+
+  cy.get('button[type="submit"]').filter(':visible').click()
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+})
+
+Cypress.Commands.add('signUp', (username: string, email: string, password: string) => {
+  if (!username || !email || !password) {
+    cy.log('Skipping signup because username, email or password is not provided')
+  }
+
+  cy.visit('/account/login?type=signup')
+
+  cy.get('input[name="name"]').filter(':visible').type(username)
+  cy.get('input[name="email"]').filter(':visible').type(email)
+  cy.get('input[name="password"]').filter(':visible').type(password)
+
+  cy.get('button[type="submit"]').filter(':visible').click()
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+})
+
+Cypress.Commands.add('signOut', () => {
+  cy.visit('/account')
+  const url = String(cy.url())
+  if (url === Cypress.config('baseUrl')) {
+    cy.log(' Signout Aborted: User is not logged in!')
+    return
+  }
+
+  cy.get('main * button').contains('Signout').filter(':visible').click()
+
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/account/login`)
+})
+
+Cypress.Commands.add('removeDBUser', (email: string, username: string) => {
+  cy.task('removeDBUser', { email, username })
 })
