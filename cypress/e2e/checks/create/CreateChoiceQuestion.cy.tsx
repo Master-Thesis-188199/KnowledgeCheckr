@@ -47,4 +47,25 @@ describe('Check: Create Choice Question -', () => {
 
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
   })
+
+  it.only('Verify that answers can be added and removed', () => {
+    cy.get('#question-answers').should('exist')
+
+    cy.get('#question-answers * input')
+      .filter(':visible')
+      .its('length')
+      .then((count) => {
+        for (let i = 0; i < count; i++) {
+          cy.get(`#question-answers * button[aria-label='delete answer']`).last().click({ force: true })
+        }
+      })
+
+    cy.get('#question-answers * input').should('not.exist')
+
+    const addedQuestionCount = 3
+    for (let i = 0; i < addedQuestionCount; i++) {
+      cy.get('#question-answers > button[aria-label="Add Answer"]').click({ force: true })
+    }
+    cy.get('#question-answers * input').filter(':visible').should('have.length', addedQuestionCount)
+  })
 })
