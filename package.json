@@ -16,7 +16,7 @@
     "test:e2e": "cypress run",
     "pretest": "npm run test:start-server &",
     "test": "wait-on tcp:3000 && npm run test:component --browser chrome --headless && npm run test:e2e --browser chrome --headless",
-    "posttest": "rm -rf .babelrc.json .nyc_output && kill -9 $(lsof -ti:3000)",
+    "posttest": "rm -rf .babelrc.json .nyc_output",
     "semantic-release": "semantic-release",
     "production": "npm run production:build && npm run production:start",
     "preproduction:start": "npm run validateEnvironment",
