@@ -124,7 +124,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
         <PopoverTrigger
           asChild
           className={cn(
-            'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600 dark:hover:bg-transparent dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
+            'w-full border-0 bg-neutral-100/90 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600 dark:hover:bg-transparent dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
             state.open && 'dark:ring-neutral-300/80',
             'focus-visible:ring-1 focus-visible:ring-neutral-300/80',
             selectTriggerClassname,
