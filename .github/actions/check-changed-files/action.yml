@@ -5,6 +5,9 @@ inputs:
   base:
     description: 'The base commit to compare against'
     required: false
+  disable-workflow-skips:
+    description: 'Overrides the output to always return relevant = true'
+    required: false
 
 runs:
   using: 'composite'
@@ -38,7 +41,7 @@ runs:
         fi
       shell: bash
       env:
-        DISABLE_WORKFLOW_SKIPS: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
+        DISABLE_WORKFLOW_SKIPS: ${{ inputs.disable-workflow-skips }}
       id: check
 
 outputs:
