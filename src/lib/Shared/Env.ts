@@ -1,29 +1,31 @@
-import { z } from 'zod'
 import dotenv from 'dotenv'
+import { z } from 'zod'
 
 dotenv.config()
 
 export const envSchema = z.object({
-  NEXTAUTH_URL: z.string().startsWith('http').includes('://'),
-  NEXTAUTH_SECRET: z.string().base64(),
+  BASE_URL: z.string().startsWith('http').includes('://'),
+  AUTH_SECRET: z.string().base64(),
 
-  NEXTAUTH_MONGODB_HOST_NAME: z.string().min(1, 'NEXTAUTH_MONGODB_HOST_NAME cannot be empty!'),
-
-  NEXTAUTH_MONGODB_PORT: z
+  DATABASE_HOST: z.union([
+    z.string().regex(/^\S*$/, { message: 'When using the service-name as the database host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
+    z.string().ip({ message: 'Please provide a valid database host url / ip / service-name' }),
+    z.string().url({ message: 'Please provide a valid database host url / ip / service-name' }),
+    // .min(1, 'The database host must not be empty!')
+  ]),
+  DATABASE_PORT: z
     .string()
-    .min(1, 'NEXTAUTH_MONGODB_HOST_PORT cannot be empty!')
+    .min(1, 'AUTH_MONGODB_HOST_PORT cannot be empty!')
     .transform((val) => parseInt(val)),
-  NEXTAUTH_MONGODB_DATABASE_NAME: z.string().min(1, 'NEXTAUTH_MONGODB_DATABASE_NAME cannot be empty!'),
-  NEXTAUTH_MONGODB_EXTRA_URI_ARGS: z
-    .string()
-    .regex(/^(?:[^&=]+=[^&=]+)(?:&[^&=]+=[^&=]+)*$/g, "Invalid URI Argument Format. Must be in the form 'key=value' joined by '&'.")
-    .optional(),
+  DATABASE_NAME: z.string().min(1, 'AUTH_MONGODB_HOST_NAME cannot be empty!'),
+  DATABASE_USER: z.string().min(1, 'The database user must not be empty!'),
+  DATABASE_PASSWORD: z.string().optional(),
 
-  NEXTAUTH_GITHUB_ID: z.string().min(1, 'NEXTAUTH_GITHUB_ID cannot be empty!'),
-  NEXTAUTH_GITHUB_SECRET: z.string().min(1, 'NEXTAUTH_GITHUB_SECRET cannot be empty!'),
+  AUTH_GITHUB_ID: z.string().min(1, 'NEXTAUTH_GITHUB_ID cannot be empty!'),
+  AUTH_GITHUB_SECRET: z.string().min(1, 'NEXTAUTH_GITHUB_SECRET cannot be empty!'),
 
-  NEXTAUTH_GOOGLE_ID: z.string().min(1, 'NEXTAUTH_GOOGLE_ID cannot be empty!'),
-  NEXTAUTH_GOOGLE_SECRET: z.string().min(1, 'NEXTAUTH_GOOGLE_SECRET cannot be empty!'),
+  AUTH_GOOGLE_ID: z.string().min(1, 'NEXTAUTH_GOOGLE_ID cannot be empty!'),
+  AUTH_GOOGLE_SECRET: z.string().min(1, 'NEXTAUTH_GOOGLE_SECRET cannot be empty!'),
 
   SHOW_APP_VERSION: z
     .string()

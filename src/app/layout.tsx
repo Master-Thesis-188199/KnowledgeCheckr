@@ -1,11 +1,10 @@
-import type { Metadata } from 'next'
-import './globals.css'
 import SideBar from '@/components/root/Navigation/SideBar'
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
-import getTheme from '@/lib/Shared/getTheme'
 import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
-import AuthProvider from '@/components/root/AuthProvider'
+import getTheme from '@/lib/Shared/getTheme'
+import type { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: {
@@ -26,9 +25,7 @@ export default async function RootLayout({
     <html lang='en' data-theme={theme}>
       <body className={`antialiased`}>
         <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
-          <AuthProvider>
-            <SideBar {...sideBarConfiguration}>{children}</SideBar>
-          </AuthProvider>
+          <SideBar {...sideBarConfiguration}>{children}</SideBar>
         </RootStoreProvider>
       </body>
     </html>
