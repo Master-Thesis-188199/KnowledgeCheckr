@@ -34,7 +34,7 @@ runs:
           fi
         fi
 
-        if [ "$DISABLE_WORKFLOW_SKIPS" = "true" ]; then
+        if [ "$DISABLE_WORKFLOW_SKIPS" = "1" ]; then
           echo "Repository secret disable-workflow-skips is true. Overriding relevant flag to true."
           echo "relevant=true" >> $GITHUB_OUTPUT
           echo "relevant=true" >> $GITHUB_ENV
