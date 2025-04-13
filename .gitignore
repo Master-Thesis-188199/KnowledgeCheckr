@@ -26,6 +26,7 @@
 *.pem
 .nyc_output
 .babelrc.json
+/mysql_data
 
 # debug
 npm-debug.log*

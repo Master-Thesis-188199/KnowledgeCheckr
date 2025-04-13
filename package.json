@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "cypress:open": "npm run test:instrumentation && next dev & cypress open",
     "test:instrumentation": "cp ./config/.babelrc.json .babelrc.json ",
     "pretest:start-server": "rm -rf .babelrc.json .nyc_output coverage",
     "test:start-server": "npm run test:instrumentation && npm run production",
@@ -26,7 +27,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@auth/mongodb-adapter": "^3.8.0",
+    "@babel/runtime": "^7.27.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@heroui/system": "^2.4.12",
@@ -48,9 +49,10 @@
     "framer-motion": "^12.6.2",
     "lucide-react": "^0.485.0",
     "mongodb": "^6.14.2",
+    "better-auth": "^1.2.5",
+    "mysql2": "^3.14.0",
     "motion": "^12.4.7",
     "next": "15.2.0",
-    "next-auth": "^4.24.11",
     "nookies": "^2.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

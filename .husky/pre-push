@@ -42,6 +42,13 @@ if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
     # Check if running on macOS for notifications
     if [ "$(uname)" = "Darwin" ]; then
       osascript -e 'display notification "Pushing changes now" with title "Pre-Push Hook Success" sound name "Frog"'
+
+      if [ "$CI" = "false" ]; then
+        echo "Terminating production process..."
+        # Terminate production process that is running in the background
+        kill -9 $(lsof -ti:3000)
+        exit 0
+      fi
     else
       echo "Non-macOS system detected. Skipping notification."
     fi

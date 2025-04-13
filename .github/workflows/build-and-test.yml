@@ -2,21 +2,21 @@ name: Build and Test
 
 on: push
 
-
 env:
-  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  BASE_URL: ${{ secrets.BASE_URL }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
-  NEXTAUTH_MONGODB_HOST_NAME: 'mongo'
-  NEXTAUTH_MONGODB_PORT: 27017
-  NEXTAUTH_MONGODB_DATABASE_NAME: ${{ secrets.NEXTAUTH_MONGODB_DATABASE_NAME }}
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
+  DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_USER: root
+  DATABASE_PASSWORD: 123
 
-  NEXTAUTH_GITHUB_ID: ${{ secrets.NEXTAUTH_GITHUB_ID}}
-  NEXTAUTH_GITHUB_SECRET: ${{ secrets.NEXTAUTH_GITHUB_SECRET }}
+  AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID}}
+  AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
 
-  NEXTAUTH_GOOGLE_ID: ${{ secrets.NEXTAUTH_GOOGLE_ID }}
-  NEXTAUTH_GOOGLE_SECRET: ${{ secrets.NEXTAUTH_GOOGLE_SECRET }}
-
+  AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+  AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
 jobs:
   check-file-changes:
@@ -35,21 +35,26 @@ jobs:
         uses: ./.github/actions/check-changed-files
         with:
           base: ${{ github.event.before }}
+          disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
 
   run-tests:
     needs: check-file-changes
     runs-on: ubuntu-latest
 
     services:
-      mongo:
-        image: mongo:latest
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
         ports:
-          - 27017:27017
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"  
-          --health-interval 10s  
-          --health-timeout 5s  
-          --health-retries 5  
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -69,7 +74,7 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: |
           sudo apt-get update  
-          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb  
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
 
       - name: Create Cypress Environment File
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -77,9 +82,9 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "BASE_URL": "${{ secrets.NEXTAUTH_URL }}", 
+            "BASE_URL": "${{ env.BASE_URL }}", 
             "SkipOnCi": true 
-          }' > cypress.env.json      
+          }' > cypress.env.json
 
       - name: Install Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -108,15 +113,19 @@ jobs:
     needs: check-file-changes
 
     services:
-      mongo:
-        image: mongo:latest
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
         ports:
-          - 27017:27017
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout
@@ -143,7 +152,6 @@ jobs:
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run build
-
 
   Skip-Executions:
     needs: check-file-changes
