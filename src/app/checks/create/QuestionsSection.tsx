@@ -270,7 +270,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                           </label>
                         </Tooltip>
                         <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                        <button type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                        <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                           <Trash2 className='size-5 dark:text-red-400/60' />
                         </button>
                       </div>
@@ -286,6 +286,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
 
                 <button
                   type='button'
+                  aria-label='Add Answer'
                   onClick={() => append({ answer: '', correct: false })}
                   className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
                   <Plus className='size-4' />
