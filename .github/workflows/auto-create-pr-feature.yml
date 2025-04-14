@@ -213,49 +213,8 @@ jobs:
           pr_body: ${{ env.PR_DESCRIPTION }}
           pr_draft: false
 
-      - name: Link PR to Project
-        if: steps.pr-check.outputs.result == 'false'
-        uses: actions/github-script@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add pull request to project
+        uses: actions/add-to-project@v1.0.2
         with:
-          script: |
-            const projectName = process.env.PROJECT_NAME;
-
-            // Retrieve projects from the current repository (requires the preview header)
-            const { data: projects } = await github.request("GET /repos/{owner}/{repo}/projects", {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              headers: { accept: "application/vnd.github.inertia-preview+json" }
-            });
-
-            // Find the project with the name matching PROJECT_NAME
-            const project = projects.find(p => p.name === projectName);
-            if (!project) {
-              core.info(`Project "${projectName}" not found.`);
-              return;
-            }
-
-            // Retrieve the columns for the found project
-            const { data: columns } = await github.request("GET /projects/{project_id}/columns", {
-              project_id: project.id,
-              headers: { accept: "application/vnd.github.inertia-preview+json" }
-            });
-
-            if (columns.length === 0) {
-              core.info(`No columns found in project "${projectName}".`);
-              return;
-            }
-
-            // Use the first available column for the new card
-            const columnId = columns[0].id;
-            const prUrl = "${{ steps.open-pr.outputs.pull_request_url }}";
-
-            // Create a project card linking the pull request
-            await github.request("POST /projects/columns/{column_id}/cards", {
-              column_id: columnId,
-              content_url: prUrl,
-              headers: { accept: "application/vnd.github.inertia-preview+json" }
-            });
-
-            core.info(`Linked the newly created PR to project "${projectName}".`);
+          project-url: https://github.com/orgs/Master-Thesis-188199/projects/1
+          github-token: ${{ secrets.GH_TOKEN }}
