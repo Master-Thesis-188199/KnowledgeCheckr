@@ -3,6 +3,9 @@ name: 'Auto Link Pull Request + Assign Author'
 on:
   pull_request:
     types: [opened, labeled, reopened]
+    branches-ignore:
+      - main
+      - canary
 
 permissions:
   pull-requests: write
