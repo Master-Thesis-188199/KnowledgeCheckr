@@ -1,0 +1,15 @@
+name: 'Auto Link Pull Request to Project'
+
+on:
+  pull_request:
+    types: opened
+
+jobs:
+  auto-link-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add pull request to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/Master-Thesis-188199/projects/1
+          github-token: ${{ secrets.GH_TOKEN }}

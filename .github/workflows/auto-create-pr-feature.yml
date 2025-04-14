@@ -9,7 +9,6 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   BASE_BRANCH: canary
-  PROJECT_NAME: 'KnowledgeCheckr Project'
 
 jobs:
   create-pr:
@@ -212,9 +211,3 @@ jobs:
           pr_title: ${{ env.PR_TITLE }}
           pr_body: ${{ env.PR_DESCRIPTION }}
           pr_draft: false
-
-      - name: Add pull request to project
-        uses: actions/add-to-project@v1.0.2
-        with:
-          project-url: https://github.com/orgs/Master-Thesis-188199/projects/1
-          github-token: ${{ secrets.GH_TOKEN }}
