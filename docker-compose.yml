@@ -1,12 +1,19 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  mongo:
-    image: mongo:latest
+  db:
+    image: ghcr.io/master-thesis-188199/knowledgecheckr-database:1.0.0
     restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '123'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: KnowledgeCheckr
+      MYSQL_USER: test
+      MYSQL_PASSWORD: pass
+    volumes:
+      - ./mysql_data:/var/lib/mysql
     ports:
-      - 27018:27017
-
+      - '3305:3306'
 
   knowledgeCheckr:
     image: ghcr.io/master-thesis-188199/knowledgecheckr:latest
@@ -14,8 +21,11 @@ services:
     ports:
       - 3000:3000
     environment:
-      NEXTAUTH_MONGODB_HOST_NAME: mongo
-      NEXTAUTH_MONGODB_PORT: 27017
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_USER: root
+      DATABASE_PASSWORD: 123
+      DATABASE_NAME: KnowledgeCheckr
 
     env_file:
       - .env

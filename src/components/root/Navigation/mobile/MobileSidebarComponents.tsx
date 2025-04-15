@@ -16,7 +16,7 @@ export function MobileMenubar() {
       id='mobile-sidebar-menubar'
       className='flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
       <OpenButton />
-      <span className='text-xl font-semibold'>{title}</span>
+      <span className='tracking-widest'>{title}</span>
       <ThemeSwitcher />
     </div>
   )
