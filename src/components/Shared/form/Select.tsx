@@ -123,6 +123,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
       <Popover open={state.open} onOpenChange={(open) => dispatch({ type: 'SET_OPEN', payload: open })}>
         <PopoverTrigger
           asChild
+          aria-label={`popover-trigger-${name}`}
           className={cn(
             'w-full border-0 bg-neutral-100/90 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600 dark:hover:bg-transparent dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
             state.open && 'dark:ring-neutral-300/80',
@@ -134,7 +135,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className={cn('w-[210px] overflow-auto p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
+        <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
           <Command className='dark:bg-neutral-800'>
             <CommandInput
               value={state.query}

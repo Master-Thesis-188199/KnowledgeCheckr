@@ -36,7 +36,7 @@ export default function QuestionsSection() {
               <Card className='question flex gap-3 p-2 hover:bg-none'>
                 <div className='header flex flex-1 flex-col p-1'>
                   <div className='flex items-center justify-between'>
-                    <h2 className=''>{question.question || `Question ${i + 1}`}</h2>
+                    <h2 className=''>{question.question}</h2>
                     <span className='dark:text-neutral-200'>
                       {question.points} point{question.points > 1 && 's'}
                     </span>
@@ -115,7 +115,11 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     }
     /* eslint-enable @typescript-eslint/no-explicit-any */
 
-    return error?.message ? <div className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>{error.message}</div> : null
+    return error?.message ? (
+      <div aria-label={`field-error-${field.toString()}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>
+        {error.message}
+      </div>
+    ) : null
   }
 
   const resetForm = () => {
@@ -143,7 +147,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
       return
     }
 
-    const clickListener = () => setOpen(false)
+    const closeDialogClickListener = () => setOpen(false)
 
     new Promise((resolve, reject) => {
       setTimeout(() => reject('Question Dialog - Exit button not found!'), 1000)
@@ -160,10 +164,10 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
 
       if (!exitButton) return
 
-      exitButton!.addEventListener('click', clickListener)
+      exitButton!.addEventListener('click', closeDialogClickListener)
     })
 
-    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', clickListener)
+    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', closeDialogClickListener)
   }, [open])
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
@@ -216,6 +220,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                 Question Type
               </label>
               <CreateableSelect
+                name='type'
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => register('type').onChange({ target: { value: type, name: 'type' } })}
                 options={[
@@ -242,7 +247,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             />
             <FieldError field='category' />
           </div>
-          <div className='grid items-center gap-2'>
+          <div className='grid items-center gap-2' id='question-answers'>
             <label htmlFor='answers' className={twMerge(label_classes)}>
               Answers
             </label>
@@ -269,7 +274,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                           </label>
                         </Tooltip>
                         <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                        <button type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                        <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                           <Trash2 className='size-5 dark:text-red-400/60' />
                         </button>
                       </div>
@@ -285,6 +290,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
 
                 <button
                   type='button'
+                  aria-label='Add Answer'
                   onClick={() => append({ answer: '', correct: false })}
                   className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
                   <Plus className='size-4' />
