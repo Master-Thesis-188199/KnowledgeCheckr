@@ -85,11 +85,6 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     defaultValues: getDefaultValues('multiple-choice'),
   })
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'answers',
-  })
-
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setOpen(false)
     if (reset) {
@@ -104,7 +99,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     }
   }, [watch('type')])
 
-  const onSubmitV2 = (data: Question) => {
+  const onSubmit = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
     closeDialog({ reset: true })
@@ -129,7 +124,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
         onEscapeKeyDown={() => closeDialog({ reset: true })}
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
-        <form onSubmit={handleSubmit(onSubmitV2)} className='grid gap-6 py-1'>
+        <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
             <DialogTitle>Create Question</DialogTitle>
             <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
