@@ -149,3 +149,10 @@ html[data-theme='dark'] {
 input[type='number']::-webkit-inner-spin-button {
   opacity: 0.8;
 }
+
+input.hidden-spin-button::-webkit-inner-spin-button,
+input.hidden-spin-button::-webkit-outer-spin-button {
+  opacity: 0 !important;
+  appearance: none;
+  margin: 0;
+}
