@@ -13,6 +13,8 @@ import { twMerge } from 'tailwind-merge'
 import { v4 as uuid } from 'uuid'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
+  const closeDialog = () => setOpen(false)
+
   const {
     register,
     handleSubmit,
@@ -56,37 +58,14 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   const onSubmitV2 = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
-    setOpen(false)
+    closeDialog()
     resetForm()
   }
 
   useEffect(() => {
     if (!open) {
       clearErrors()
-      return
     }
-
-    const closeDialogClickListener = () => setOpen(false)
-
-    new Promise((resolve, reject) => {
-      setTimeout(() => reject('Question Dialog - Exit button not found!'), 1000)
-
-      const interval = setInterval(() => {
-        if (document.querySelector('#question-dialog > button') === null) return
-
-        resolve(true)
-        clearInterval(interval)
-      }, 50)
-    }).then(() => {
-      const exitButton = document.querySelector('#question-dialog > button')
-      console.log('Manually adding close-event to dialog-button')
-
-      if (!exitButton) return
-
-      exitButton!.addEventListener('click', closeDialogClickListener)
-    })
-
-    return () => document.querySelector('#question-dialog > button')!.removeEventListener('click', closeDialogClickListener)
   }, [open])
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
@@ -97,9 +76,10 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
         {children}
       </DialogTrigger>
       <DialogContent
-        onPointerDownOutside={() => setOpen(false)}
+        onClose={closeDialog}
+        onPointerDownOutside={closeDialog}
         onEscapeKeyDown={() => {
-          setOpen(false)
+          closeDialog()
           resetForm()
         }}
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
