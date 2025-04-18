@@ -13,7 +13,6 @@ import { twMerge } from 'tailwind-merge'
 import { v4 as uuid } from 'uuid'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
-  const closeDialog = () => setOpen(false)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> => {
     const baseValues: Partial<Pick<Question, 'category' | 'id' | 'points' | 'question'>> = {
@@ -91,8 +90,11 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     name: 'answers',
   })
 
-  const resetForm = () => {
-    resetInputs()
+  const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
+    setOpen(false)
+    if (reset) {
+      resetInputs()
+    }
   }
 
   useEffect(() => {
@@ -105,8 +107,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   const onSubmitV2 = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
-    closeDialog()
-    resetForm()
+    closeDialog({ reset: true })
   }
 
   useEffect(() => {
@@ -123,12 +124,9 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
         {children}
       </DialogTrigger>
       <DialogContent
-        onClose={closeDialog}
-        onPointerDownOutside={closeDialog}
-        onEscapeKeyDown={() => {
-          closeDialog()
-          resetForm()
-        }}
+        onClose={() => closeDialog()}
+        onPointerDownOutside={() => closeDialog()}
+        onEscapeKeyDown={() => closeDialog({ reset: true })}
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmitV2)} className='grid gap-6 py-1'>
