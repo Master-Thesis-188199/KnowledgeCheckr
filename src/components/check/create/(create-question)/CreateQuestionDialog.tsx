@@ -6,7 +6,7 @@ import { default as CreateableSelect, default as Select } from '@/src/components
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, Plus, Trash2, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect } from 'react'
 import { FormState, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -14,6 +14,64 @@ import { v4 as uuid } from 'uuid'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
   const closeDialog = () => setOpen(false)
+
+  const getDefaultValues = (type: Question['type']): Partial<Question> => {
+    const baseValues: Partial<Pick<Question, 'category' | 'id' | 'points' | 'question'>> = {
+      points: 1,
+      category: 'general',
+    }
+
+    switch (type) {
+      case 'multiple-choice':
+        return {
+          ...baseValues,
+          // question: 'Which of the following is a programming language?',
+          type,
+          answers: [
+            { answer: 'Python', correct: true },
+            { answer: 'ASCII', correct: false },
+            { answer: 'ByteCode', correct: false },
+            { answer: 'JavaScript', correct: true },
+          ],
+        }
+      case 'single-choice':
+        return {
+          ...baseValues,
+          // question: 'What does RGB stand for?',
+          type,
+          answers: [
+            { answer: 'Red, Green, Blue', correct: true },
+            { answer: 'Red, Green, Black', correct: false },
+            { answer: 'Red, Green, Yellow', correct: false },
+            { answer: 'Red, Green, White', correct: false },
+          ],
+        }
+
+      case 'open-question':
+        return {
+          ...baseValues,
+          // question: 'Describe the essential parts of a computer.',
+          type,
+          expectation: 'A computer consists of hardware and software components that work together to perform tasks. This includes components like the CPU, memory, storage, and input/output devices.',
+        }
+
+      case 'drag-drop':
+        return {
+          ...baseValues,
+          // question: 'Move these activities based the order in which they should be performed',
+          type,
+          answers: [
+            { answer: 'Prepare the workspace', position: 1 },
+            { answer: 'Gather materials', position: 2 },
+            { answer: 'Follow the instructions', position: 3 },
+            { answer: 'Clean up', position: 4 },
+          ],
+        }
+
+      default:
+        return {}
+    }
+  }
 
   const {
     register,
@@ -25,17 +83,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     control,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: {
-      points: 1,
-      type: 'multiple-choice',
-      answers: [
-        { answer: 'Answer A', correct: true },
-        { answer: 'Answer B', correct: false },
-        { answer: 'Answer C', correct: false },
-        { answer: 'Answer D', correct: false },
-      ],
-      category: 'general',
-    },
+    defaultValues: getDefaultValues('multiple-choice'),
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -45,15 +93,14 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
 
   const resetForm = () => {
     resetInputs()
-    if (fields.length > 1) {
-      // remove(fields.slice(1, fields.length).map((_, i) => i + 1))
-      remove(Array.from({ length: fields.length }, (_, i) => i))
-      append({ answer: 'Answer A', correct: true })
-      append({ answer: 'Answer B', correct: false })
-      append({ answer: 'Answer C', correct: false })
-      append({ answer: 'Answer D', correct: false })
-    }
   }
+
+  useEffect(() => {
+    const type = watch('type')
+    if (type) {
+      resetInputs(getDefaultValues(type))
+    }
+  }, [watch('type')])
 
   const onSubmitV2 = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
@@ -183,6 +230,9 @@ function AnswerOptions(options: AnswerOptionProps) {
     case 'open-question':
       return <OpenQuestionAnswers {...options} />
 
+    case 'drag-drop':
+      return <DragDropQuestionAnswers {...options} />
+
     default:
       return <>Not yet implemented</>
   }
@@ -247,6 +297,66 @@ function OpenQuestionAnswers({ register, errors }: AnswerOptionProps) {
     <>
       <Input {...register('expectation')} id='expectation' placeholder='What answer are you looking expecting' className='-ml-0.5 placeholder:text-[15px]' />
       <FieldError<OpenQuestion> field='expectation' errors={errors} />
+    </>
+  )
+}
+
+function DragDropQuestionAnswers({ register, errors, control, watch }: AnswerOptionProps) {
+  const { fields, append, remove, move } = useFieldArray({
+    control,
+    name: 'answers',
+  })
+
+  return (
+    <>
+      <div className='grid gap-4'>
+        {fields.map((field, index) => (
+          <div key={field.id} className='grid gap-2'>
+            <div className='flex items-center gap-3'>
+              <Tooltip
+                showArrow={true}
+                shouldFlip={true}
+                closeDelay={0}
+                delay={500}
+                color='primary'
+                content={`The correct position for this answer`}
+                // offset={-10}
+                className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
+                <label className='group flex size-6 items-center justify-center rounded-full p-1 text-sm text-neutral-300/80 ring-1 group-focus:ring-2 hover:cursor-text dark:ring-neutral-500'>
+                  <input type='number' value={index + 1} disabled {...register(`answers.${index}.position` as const)} className='hidden-spin-button text-center outline-0' />
+                </label>
+              </Tooltip>
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <div className='flex gap-2'>
+                <button aria-label=' answer' type='button' onClick={() => move(index, index - 1)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                  <ArrowUp className='size-5 hover:scale-110 active:scale-125 dark:hover:text-neutral-300/80' />
+                </button>
+                <button aria-label=' answer' type='button' onClick={() => move(index, index + 1)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                  <ArrowDown className='size-5 hover:scale-110 active:scale-125 dark:hover:text-neutral-300/80' />
+                </button>
+                <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                  <Trash2 className='size-5 dark:text-red-400/60' />
+                </button>
+              </div>
+            </div>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
+          </div>
+        ))}
+      </div>
+
+      <FieldError<ChoiceQuestion> field='answers' errors={errors} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <FieldError<any> field='answers.root' errors={errors} />
+
+      <button
+        type='button'
+        aria-label='Add Answer'
+        onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
+        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
+        <Plus className='size-4' />
+        Add Answer
+      </button>
     </>
   )
 }
