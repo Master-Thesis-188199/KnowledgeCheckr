@@ -8,7 +8,7 @@ import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { FormState, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuid } from 'uuid'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
@@ -151,59 +151,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
               Answers
             </label>
 
-            {(watch('type') === 'single-choice' || watch('type') === 'multiple-choice') && (
-              <>
-                <div className='grid gap-4'>
-                  {fields.map((field, index) => (
-                    <div key={field.id} className='grid gap-2'>
-                      <div className='flex items-center gap-3'>
-                        <Tooltip
-                          showArrow={true}
-                          shouldFlip={true}
-                          closeDelay={0}
-                          delay={500}
-                          color='primary'
-                          content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
-                          offset={-10}
-                          className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
-                          <label className='flex size-6 items-center rounded-full p-1 ring-1 hover:cursor-pointer dark:ring-neutral-500'>
-                            <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                            <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                            <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
-                          </label>
-                        </Tooltip>
-                        <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-                        <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                          <Trash2 className='size-5 dark:text-red-400/60' />
-                        </button>
-                      </div>
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
-                    </div>
-                  ))}
-                </div>
-
-                <FieldError<ChoiceQuestion> field='answers' errors={errors} />
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <FieldError<any> field='answers.root' errors={errors} />
-
-                <button
-                  type='button'
-                  aria-label='Add Answer'
-                  onClick={() => append({ answer: '', correct: false })}
-                  className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
-                  <Plus className='size-4' />
-                  Add Answer
-                </button>
-              </>
-            )}
-
-            {watch('type') === 'open-question' && (
-              <>
-                <Input {...register('expectation')} id='expectation' placeholder='What answer are you looking expecting' className='-ml-0.5 placeholder:text-[15px]' />
-                <FieldError<OpenQuestion> field='expectation' errors={errors} />
-              </>
-            )}
+            <AnswerOptions control={control} watch={watch} register={register} errors={errors} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
             <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-neutral-400/30' type='button'>
@@ -217,5 +165,88 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
         </form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+interface AnswerOptionProps extends Pick<UseFormReturn<Question>, 'control' | 'watch' | 'register'> {
+  errors: FormState<Question>['errors']
+}
+
+function AnswerOptions(options: AnswerOptionProps) {
+  switch (options.watch('type') as Question['type']) {
+    case 'multiple-choice':
+      return <ChoiceQuestionAnswers {...options} />
+
+    case 'single-choice':
+      return <ChoiceQuestionAnswers {...options} />
+
+    case 'open-question':
+      return <OpenQuestionAnswers {...options} />
+
+    default:
+      return <>Not yet implemented</>
+  }
+}
+
+function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptionProps) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'answers',
+  })
+
+  return (
+    <>
+      <div className='grid gap-4'>
+        {fields.map((field, index) => (
+          <div key={field.id} className='grid gap-2'>
+            <div className='flex items-center gap-3'>
+              <Tooltip
+                showArrow={true}
+                shouldFlip={true}
+                closeDelay={0}
+                delay={500}
+                color='primary'
+                content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
+                offset={-10}
+                className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
+                <label className='flex size-6 items-center rounded-full p-1 ring-1 hover:cursor-pointer dark:ring-neutral-500'>
+                  <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                  <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                  <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
+                </label>
+              </Tooltip>
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+                <Trash2 className='size-5 dark:text-red-400/60' />
+              </button>
+            </div>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
+          </div>
+        ))}
+      </div>
+
+      <FieldError<ChoiceQuestion> field='answers' errors={errors} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <FieldError<any> field='answers.root' errors={errors} />
+
+      <button
+        type='button'
+        aria-label='Add Answer'
+        onClick={() => append({ answer: '', correct: false })}
+        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
+        <Plus className='size-4' />
+        Add Answer
+      </button>
+    </>
+  )
+}
+
+function OpenQuestionAnswers({ register, errors }: AnswerOptionProps) {
+  return (
+    <>
+      <Input {...register('expectation')} id='expectation' placeholder='What answer are you looking expecting' className='-ml-0.5 placeholder:text-[15px]' />
+      <FieldError<OpenQuestion> field='expectation' errors={errors} />
+    </>
   )
 }
