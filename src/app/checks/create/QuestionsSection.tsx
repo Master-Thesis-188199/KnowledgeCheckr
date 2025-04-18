@@ -4,6 +4,7 @@ import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvid
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
+import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -11,7 +12,7 @@ import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, Info, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
-import { FieldErrors, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { v4 as uuid } from 'uuid'
 export default function QuestionsSection() {
@@ -100,28 +101,6 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
     name: 'answers',
   })
 
-  const FieldError = <Type extends Question>({ field, className }: { field: keyof FieldErrors<Type>; className?: string }) => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    if (Object.keys(errors).length === 0) return null
-
-    let error: { message?: string } | undefined = errors as any
-
-    const fields = field.toString().split('.')
-
-    for (const field of fields) {
-      if (!error) continue
-
-      error = (error as any)[field]
-    }
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-
-    return error?.message ? (
-      <div aria-label={`field-error-${field.toString()}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>
-        {error.message}
-      </div>
-    ) : null
-  }
-
   const resetForm = () => {
     resetInputs()
     if (fields.length > 1) {
@@ -197,7 +176,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
               Question
             </label>
             <Input {...register('question')} id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
-            <FieldError field='question' />
+            <FieldError field='question' errors={errors} />
           </div>
           <div className='grid grid-cols-2 items-baseline gap-12'>
             <div className='grid items-center gap-2'>
@@ -213,7 +192,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                 placeholder='How many points is this question worth?'
                 className='-ml-0.5 placeholder:text-[15px]'
               />
-              <FieldError field='points' className='whitespace-nowrap' />
+              <FieldError field='points' className='whitespace-nowrap' errors={errors} />
             </div>
             <div className='grid items-center gap-2'>
               <label htmlFor='type' className={twMerge(label_classes)}>
@@ -230,7 +209,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                   { label: 'Drag Drop', value: 'drag-drop' },
                 ]}
               />
-              <FieldError field='type' />
+              <FieldError field='type' errors={errors} />
             </div>
           </div>
           <div className='grid items-center gap-2'>
@@ -245,7 +224,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
               createable
               defaultValue={{ label: watch('category'), value: watch('category') }}
             />
-            <FieldError field='category' />
+            <FieldError field='category' errors={errors} />
           </div>
           <div className='grid items-center gap-2' id='question-answers'>
             <label htmlFor='answers' className={twMerge(label_classes)}>
@@ -279,14 +258,14 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
                         </button>
                       </div>
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      <FieldError<any> field={`answers.${index}.answer`} />
+                      <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
                     </div>
                   ))}
                 </div>
 
-                <FieldError<ChoiceQuestion> field='answers' />
+                <FieldError<ChoiceQuestion> field='answers' errors={errors} />
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <FieldError<any> field='answers.root' />
+                <FieldError<any> field='answers.root' errors={errors} />
 
                 <button
                   type='button'
@@ -302,7 +281,7 @@ function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode
             {watch('type') === 'open-question' && (
               <>
                 <Input {...register('expectation')} id='expectation' placeholder='What answer are you looking expecting' className='-ml-0.5 placeholder:text-[15px]' />
-                <FieldError<OpenQuestion> field='expectation' />
+                <FieldError<OpenQuestion> field='expectation' errors={errors} />
               </>
             )}
           </div>
