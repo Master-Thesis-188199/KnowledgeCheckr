@@ -321,11 +321,21 @@ function DragDropQuestionAnswers({ register, errors, control, watch }: AnswerOpt
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <div className='flex gap-2'>
-                <button aria-label=' answer' type='button' onClick={() => move(index, index - 1)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                  <ArrowUp className='size-5 hover:scale-110 active:scale-125 dark:hover:text-neutral-300/80' />
+                <button
+                  aria-label=' answer'
+                  type='button'
+                  onClick={() => move(index, index - 1)}
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'
+                  disabled={index - 1 < 0}>
+                  <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
-                <button aria-label=' answer' type='button' onClick={() => move(index, index + 1)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                  <ArrowDown className='size-5 hover:scale-110 active:scale-125 dark:hover:text-neutral-300/80' />
+                <button
+                  aria-label='move answer down'
+                  type='button'
+                  disabled={index + 1 >= fields.length}
+                  onClick={() => move(index, index + 1)}
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
+                  <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
                 <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
                   <Trash2 className='size-5 dark:text-red-400/60' />
