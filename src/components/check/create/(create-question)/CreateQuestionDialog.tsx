@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,7 +11,6 @@ import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect } from 'react'
 import { FormState, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-import { v4 as uuid } from 'uuid'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
 
@@ -82,7 +82,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     control,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: getDefaultValues('multiple-choice'),
+    defaultValues: getDefaultValues('drag-drop'),
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
@@ -129,7 +129,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
             <DialogTitle>Create Question</DialogTitle>
             <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
           </DialogHeader>
-          <input {...register('id')} id='id' value={uuid()} className='hidden' />
+          <input {...register('id')} id='id' value={getUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
