@@ -94,7 +94,7 @@ describe('Check: Create Choice Question -', () => {
   it('Verify that answers can be added and removed', () => {
     cy.get('#question-answers').should('exist')
 
-    cy.get('#question-answers * input')
+    cy.get('#question-answers * input[name$=".answer"]')
       .filter(':visible')
       .its('length')
       .then((count) => {
@@ -109,6 +109,6 @@ describe('Check: Create Choice Question -', () => {
     for (let i = 0; i < addedQuestionCount; i++) {
       cy.get('#question-answers > button[aria-label="Add Answer"]').click({ force: true })
     }
-    cy.get('#question-answers * input').filter(':visible').should('have.length', addedQuestionCount)
+    cy.get('#question-answers * input[name$=".answer"]').filter(':visible').should('have.length', addedQuestionCount)
   })
 })
