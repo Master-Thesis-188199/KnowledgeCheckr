@@ -96,7 +96,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   useEffect(() => {
     const type = watch('type')
     if (type) {
-      resetInputs(getDefaultValues(type))
+      resetInputs({ ...getDefaultValues(type), question: watch('question'), points: watch('points'), category: watch('category') })
     }
   }, [watch('type')])
 
