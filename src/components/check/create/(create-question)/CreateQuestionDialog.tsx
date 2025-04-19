@@ -80,6 +80,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     reset: resetInputs,
     watch,
     control,
+    setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: getDefaultValues('drag-drop'),
@@ -191,7 +192,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
               Answers
             </label>
 
-            <AnswerOptions control={control} watch={watch} register={register} errors={errors} />
+            <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
             <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-neutral-400/30' type='button'>
@@ -208,7 +209,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   )
 }
 
-interface AnswerOptionProps extends Pick<UseFormReturn<Question>, 'control' | 'watch' | 'register'> {
+interface AnswerOptionProps extends Pick<UseFormReturn<Question>, 'control' | 'watch' | 'register' | 'setValue'> {
   errors: FormState<Question>['errors']
 }
 
@@ -294,7 +295,7 @@ function OpenQuestionAnswers({ register, errors }: AnswerOptionProps) {
   )
 }
 
-function DragDropQuestionAnswers({ register, errors, control, watch }: AnswerOptionProps) {
+function DragDropQuestionAnswers({ register, errors, control, watch, setValue }: AnswerOptionProps) {
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: 'answers',
@@ -316,15 +317,26 @@ function DragDropQuestionAnswers({ register, errors, control, watch }: AnswerOpt
                 // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
                 <label className='group flex size-6 items-center justify-center rounded-full p-1 text-sm text-neutral-300/80 ring-1 group-focus:ring-2 hover:cursor-text dark:ring-neutral-500'>
-                  <input type='number' value={index + 1} disabled {...register(`answers.${index}.position` as const)} className='hidden-spin-button text-center outline-0' />
+                  <input
+                    type='number'
+                    value={index + 1}
+                    disabled
+                    {...register(`answers.${index}.position` as const)}
+                    onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
+                    className='hidden-spin-button text-center outline-0'
+                  />
                 </label>
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <div className='flex gap-2'>
                 <button
-                  aria-label=' answer'
+                  aria-label='move answer up'
                   type='button'
-                  onClick={() => move(index, index - 1)}
+                  onClick={() => {
+                    move(index, index - 1)
+                    setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
+                    setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
+                  }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'
                   disabled={index - 1 < 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
@@ -333,7 +345,11 @@ function DragDropQuestionAnswers({ register, errors, control, watch }: AnswerOpt
                   aria-label='move answer down'
                   type='button'
                   disabled={index + 1 >= fields.length}
-                  onClick={() => move(index, index + 1)}
+                  onClick={() => {
+                    move(index, index + 1)
+                    setValue(`answers.${index}.position`, index + 1)
+                    setValue(`answers.${index + 1}.position`, index + 2)
+                  }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
                   <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
