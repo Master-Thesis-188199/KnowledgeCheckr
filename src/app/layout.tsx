@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang='en' data-theme={theme}>
-      <body className={`antialiased`}>
+      <body className={`antialiased dark:[color-scheme:dark]`}>
         <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
           <SideBar {...sideBarConfiguration}>{children}</SideBar>
         </RootStoreProvider>
