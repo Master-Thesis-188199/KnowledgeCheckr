@@ -3,7 +3,7 @@ name: Build and Test
 on: push
 
 env:
-  BASE_URL: ${{ secrets.BASE_URL }}
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
   DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
@@ -82,7 +82,7 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "BASE_URL": "${{ env.BASE_URL }}", 
+            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
             "SkipOnCi": true 
           }' > cypress.env.json
 
