@@ -108,6 +108,15 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
 
+      - name: Upload Coverage to Codecov
+        if: ${{ !env.ACT }} # Do not run locally
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: /coverage/**/lcov.info
+          fail_ci_if_error: true
+          verbose: true
+
   build:
     runs-on: ubuntu-latest
     needs: check-file-changes
