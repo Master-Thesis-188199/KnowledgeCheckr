@@ -71,17 +71,30 @@ jobs:
           node-version: 23.7
 
       - uses: awalsh128/cache-apt-pkgs-action@latest
+        if: needs.check-file-changes.outputs.relevant == 'true'
         with:
           packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
           version: 1.0
 
       - name: Cypress run
+        if: needs.check-file-changes.outputs.relevant == 'true'
         uses: cypress-io/github-action@v6
         with:
           install: true
           runTests: false
 
+      - name: Create Cypress Environment File
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: |
+          echo '{  
+            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
+            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
+            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
+            "SkipOnCi": true 
+          }' > cypress.env.json
+
       - name: Run Cypress Tests
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
 
   build:
