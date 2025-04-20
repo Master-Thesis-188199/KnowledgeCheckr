@@ -78,9 +78,11 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: npm run test:start-server
-          wait-on: 'tcp:3000'
           install: true
+          runTests: false
+
+      - name: Run Cypress Tests
+        run: npm run test
 
   build:
     runs-on: ubuntu-latest
