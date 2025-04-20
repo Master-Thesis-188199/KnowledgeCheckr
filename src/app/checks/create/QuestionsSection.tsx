@@ -9,7 +9,7 @@ import { Info, Plus } from 'lucide-react'
 import { useState } from 'react'
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
-  const [dialogOpen, setDialogOpen] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
     <Card disableHoverStyles className='break-inside-avoid'>
