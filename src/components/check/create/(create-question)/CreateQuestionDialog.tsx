@@ -10,7 +10,7 @@ import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect } from 'react'
-import { FormState, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
+import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
@@ -261,9 +261,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 </label>
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-              <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                <Trash2 className='size-5 dark:text-red-400/60' />
-              </button>
+              <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
@@ -357,9 +355,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
                   <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
-                <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                  <Trash2 className='size-5 dark:text-red-400/60' />
-                </button>
+                <DeleteAnswerOptionButton index={index} remove={remove} />
               </div>
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -381,5 +377,13 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         Add Answer
       </button>
     </>
+  )
+}
+
+function DeleteAnswerOptionButton({ index, remove }: { index: number; remove: UseFieldArrayReturn<Question>['remove'] }) {
+  return (
+    <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+      <Trash2 className='size-5 text-red-600/60 dark:text-red-400/60' />
+    </button>
   )
 }
