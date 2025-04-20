@@ -1,4 +1,5 @@
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
@@ -195,12 +196,12 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
             <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-neutral-400/30' type='button'>
+            <Button size='lg' variant='outline' onClick={() => setOpen(false)} type='button'>
               Cancel
-            </button>
-            <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:bg-neutral-700 dark:ring-neutral-500/60' type='submit'>
-              {isSubmitting ? 'Loading' : 'Add'}
-            </button>
+            </Button>
+            <Button size='lg' variant='primary' type='submit'>
+              {isSubmitting ? 'Processing' : 'Add Question'}
+            </Button>
             {errors.root && <div>{JSON.stringify(errors.root)}</div>}
           </DialogFooter>
         </form>
