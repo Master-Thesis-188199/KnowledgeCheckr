@@ -320,10 +320,11 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   <input
                     type='number'
                     value={index + 1}
+                    readOnly
                     disabled
                     {...register(`answers.${index}.position` as const)}
                     onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
-                    className='hidden-spin-button text-center outline-0'
+                    className='hidden-spin-button field-sizing-content text-center outline-0'
                   />
                 </label>
               </Tooltip>
