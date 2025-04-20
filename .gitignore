@@ -27,6 +27,8 @@
 .nyc_output
 .babelrc.json
 /mysql_data
+/runner-results
+cypress/parallel-weights.json
 
 # debug
 npm-debug.log*
