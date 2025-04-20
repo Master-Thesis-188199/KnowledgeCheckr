@@ -4,6 +4,7 @@ import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvid
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
+import { Button } from '@/src/components/shadcn/button'
 import { Info, Plus } from 'lucide-react'
 import { useState } from 'react'
 export default function QuestionsSection() {
@@ -52,10 +53,10 @@ export default function QuestionsSection() {
       </div>
       <div className='flex justify-center gap-8'>
         <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
-          <div className='mx-4 flex w-72 items-center justify-center gap-2 rounded-md border-2 border-dashed border-blue-500/70 p-3 tracking-wider hover:cursor-pointer dark:border-neutral-300/70 dark:text-neutral-300 dark:hover:bg-neutral-500/30'>
+          <Button variant='outline' size='lg'>
             <Plus className='size-5' />
             Create Question
-          </div>
+          </Button>
         </CreateQuestionDialog>
       </div>
     </Card>

@@ -4,7 +4,7 @@ import { z } from 'zod'
 dotenv.config()
 
 export const envSchema = z.object({
-  BASE_URL: z.string().startsWith('http').includes('://'),
+  NEXT_PUBLIC_BASE_URL: z.string().startsWith('http').includes('://'),
   AUTH_SECRET: z.string().base64(),
 
   DATABASE_HOST: z.union([

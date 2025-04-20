@@ -1,9 +1,11 @@
-import PageHeading from '@/components/Shared/PageHeading'
-import React, { ElementType, InputHTMLAttributes } from 'react'
-import Card from '@/components/Shared/Card'
-import { twMerge } from 'tailwind-merge'
 import QuestionsSection from '@/app/checks/create/QuestionsSection'
 import { CreateCheckStoreProvider } from '@/components/check/create/CreateCheckProvider'
+import Card from '@/components/Shared/Card'
+import PageHeading from '@/components/Shared/PageHeading'
+import { Textarea } from '@/src/components/shadcn/textarea'
+import Input from '@/src/components/Shared/form/Input'
+import { ComponentType, InputHTMLAttributes } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 export default async function CreateCheckPage() {
   return (
@@ -19,7 +21,7 @@ export default async function CreateCheckPage() {
             </div>
             <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
               <InputGroup label='Name' placeholder='Enter the name of your knowledge check' />
-              <InputGroup label='Description' className='min-h-20 resize-none' as='textarea' placeholder='Describe the concept of your knowledge check using a few words.' />
+              <InputGroup label='Description' className='min-h-20 resize-none' as={Textarea} placeholder='Describe the concept of your knowledge check using a few words.' />
               <InputGroup
                 label='Deadline'
                 type='date'
@@ -46,8 +48,8 @@ export default async function CreateCheckPage() {
   )
 }
 
-function InputGroup<E extends ElementType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
-  const Element = as || 'input'
+function InputGroup<E extends ComponentType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
+  const Element = as || Input
 
   return (
     <>

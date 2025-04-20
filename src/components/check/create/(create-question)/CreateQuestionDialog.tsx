@@ -1,4 +1,5 @@
 import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
@@ -9,7 +10,7 @@ import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect } from 'react'
-import { FormState, useFieldArray, useForm, UseFormReturn } from 'react-hook-form'
+import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
@@ -195,12 +196,12 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
             <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <button onClick={() => setOpen(false)} className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:ring-neutral-400/30' type='button'>
+            <Button size='lg' variant='outline' onClick={() => setOpen(false)} type='button'>
               Cancel
-            </button>
-            <button className='rounded-md px-4 py-2 ring-2 hover:cursor-pointer dark:bg-neutral-700 dark:ring-neutral-500/60' type='submit'>
-              {isSubmitting ? 'Loading' : 'Add'}
-            </button>
+            </Button>
+            <Button size='lg' variant='primary' type='submit'>
+              {isSubmitting ? 'Processing' : 'Add Question'}
+            </Button>
             {errors.root && <div>{JSON.stringify(errors.root)}</div>}
           </DialogFooter>
         </form>
@@ -251,18 +252,16 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 delay={500}
                 color='primary'
                 content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
-                offset={-10}
+                // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
-                <label className='flex size-6 items-center rounded-full p-1 ring-1 hover:cursor-pointer dark:ring-neutral-500'>
-                  <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                  <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                <label className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
+                  <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                  <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                   <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
                 </label>
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
-              <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                <Trash2 className='size-5 dark:text-red-400/60' />
-              </button>
+              <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
@@ -308,6 +307,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
               <Tooltip
+                tabIndex={-1}
                 showArrow={true}
                 shouldFlip={true}
                 closeDelay={0}
@@ -316,14 +316,16 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 content={`The correct position for this answer`}
                 // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
-                <label className='group flex size-6 items-center justify-center rounded-full p-1 text-sm text-neutral-300/80 ring-1 group-focus:ring-2 hover:cursor-text dark:ring-neutral-500'>
+                <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
                   <input
+                    tabIndex={-1}
                     type='number'
                     value={index + 1}
+                    readOnly
                     disabled
                     {...register(`answers.${index}.position` as const)}
                     onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
-                    className='hidden-spin-button text-center outline-0'
+                    className='hidden-spin-button field-sizing-content text-center outline-0'
                   />
                 </label>
               </Tooltip>
@@ -337,7 +339,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                     setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
                     setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
                   }}
-                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
                   disabled={index - 1 < 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
@@ -350,12 +352,10 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                     setValue(`answers.${index}.position`, index + 1)
                     setValue(`answers.${index + 1}.position`, index + 2)
                   }}
-                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 disabled:cursor-not-allowed dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
-                  <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
+                  <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:hover:text-neutral-600/80 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
-                <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-                  <Trash2 className='size-5 dark:text-red-400/60' />
-                </button>
+                <DeleteAnswerOptionButton index={index} remove={remove} />
               </div>
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -377,5 +377,13 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         Add Answer
       </button>
     </>
+  )
+}
+
+function DeleteAnswerOptionButton({ index, remove }: { index: number; remove: UseFieldArrayReturn<Question>['remove'] }) {
+  return (
+    <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
+      <Trash2 className='size-5 text-red-600/60 dark:text-red-400/60' />
+    </button>
   )
 }
