@@ -70,43 +70,17 @@ jobs:
         with:
           node-version: 23.7
 
-      - name: Install Cypress Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: |
-          sudo apt-get update  
-          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
-
-      - name: Create Cypress Environment File
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: |
-          echo '{  
-            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
-            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
-            "SkipOnCi": true 
-          }' > cypress.env.json
-
-      - name: Install Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
-
-      - name: Cache Nextjs Build Cache
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/cache@v4
+      - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package.json') }}-
+          packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+          version: 1.0
 
-      - name: Run Test Script
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run test
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run test:start-server
+          wait-on: 'http://localhost:3000'
+          install: true
 
   build:
     runs-on: ubuntu-latest
