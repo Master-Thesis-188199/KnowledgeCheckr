@@ -252,11 +252,11 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 delay={500}
                 color='primary'
                 content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
-                offset={-10}
+                // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
-                <label className='flex size-6 items-center rounded-full p-1 ring-1 hover:cursor-pointer dark:ring-neutral-500'>
-                  <Check className={twMerge('size-5 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                  <X className={twMerge('size-5 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                <label className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
+                  <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                  <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                   <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
                 </label>
               </Tooltip>
@@ -309,6 +309,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
               <Tooltip
+                tabIndex={-1}
                 showArrow={true}
                 shouldFlip={true}
                 closeDelay={0}
@@ -317,8 +318,9 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 content={`The correct position for this answer`}
                 // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
-                <label className='group flex size-6 items-center justify-center rounded-full p-1 text-sm text-neutral-300/80 ring-1 group-focus:ring-2 hover:cursor-text dark:ring-neutral-500'>
+                <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
                   <input
+                    tabIndex={-1}
                     type='number'
                     value={index + 1}
                     readOnly
