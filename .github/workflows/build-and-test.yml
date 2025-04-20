@@ -109,7 +109,7 @@ jobs:
         run: npm run test
 
       - name: Upload Coverage to Codecov
-        if: needs.check-file-changes.outputs.relevant == 'true' && ${{ !env.ACT }} # Do not run locally
+        if: needs.check-file-changes.outputs.relevant == 'true'
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
