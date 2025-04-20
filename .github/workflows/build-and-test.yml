@@ -79,7 +79,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: npm run test:start-server
-          wait-on: 'http://localhost:3000'
+          wait-on: 'tcp:3000'
           install: true
 
   build:
