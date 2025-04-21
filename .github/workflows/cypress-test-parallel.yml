@@ -71,10 +71,6 @@ jobs:
           # 2) optional: lowercase for consistency
           key="${key,,}"
 
-          # 3) replace any character NOT in [0-9a-zA-Z-_.] with a hyphen
-          #    tr -c = complement, so non-matching chars are mapped to '-'
-          key="$(printf '%s' "$key" | tr -c '[:alnum:]-_.' '-')"
-
           # Export the final cache key
           echo "cache-key=${{ github.job }}-$key" >> $GITHUB_ENV
 
