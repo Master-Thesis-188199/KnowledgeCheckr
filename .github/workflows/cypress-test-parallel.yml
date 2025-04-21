@@ -84,3 +84,4 @@ jobs:
           command: npx cypress run -b chrome --spec=${{ matrix.chunk }}
           browser: chrome
           cache-key: ${{ env.cache-key }}
+          install: false
