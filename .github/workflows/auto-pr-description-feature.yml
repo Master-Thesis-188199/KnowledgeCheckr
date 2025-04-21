@@ -8,10 +8,9 @@ on:
     types: [synchronize]
     branches-ignore:
       - main
-      - canary
 
 jobs:
-  generate-pr-description:
+  generate-pr-description-feature:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
