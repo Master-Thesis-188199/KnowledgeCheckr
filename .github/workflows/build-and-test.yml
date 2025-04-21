@@ -108,6 +108,16 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: npm run test
 
+      - name: Upload Coverage to Codecov
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Master-Thesis-188199/KnowledgeCheckr
+          files: /coverage/**/lcov.info
+          fail_ci_if_error: true
+          verbose: true
+
   build:
     runs-on: ubuntu-latest
     needs: check-file-changes
