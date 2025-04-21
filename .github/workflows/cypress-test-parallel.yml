@@ -62,6 +62,7 @@ jobs:
           }' > cypress.env.json
 
       - name: Unique Cache-Key
+        shell: bash
         run: |
           raw="${{ matrix.chunk }}"
 
