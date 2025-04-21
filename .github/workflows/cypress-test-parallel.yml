@@ -38,6 +38,22 @@ jobs:
 
   run-cypress-tests:
     needs: setup
+
+    services:
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     name: (PR) Running Specs 🧑‍💻 - ${{ matrix.chunk }}
     runs-on: ubuntu-latest
     container:
