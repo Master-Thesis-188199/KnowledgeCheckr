@@ -110,7 +110,7 @@ jobs:
 
       - name: Upload Coverage to Codecov
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Master-Thesis-188199/KnowledgeCheckr
