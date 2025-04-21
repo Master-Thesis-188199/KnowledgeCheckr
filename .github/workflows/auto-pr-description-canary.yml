@@ -7,10 +7,10 @@ on:
   pull_request:
     types: [synchronize]
     branches:
-      - canary
+      - main
 
 jobs:
-  generate-pr-description:
+  generate-pr-description-canary:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
