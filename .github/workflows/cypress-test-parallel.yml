@@ -69,3 +69,4 @@ jobs:
           # --spec here will just contain a string with multiple spec files returned by the split logic from the setup job
           command: npx cypress run -b chrome --spec=${{ matrix.chunk }}
           browser: chrome
+          cache-key: ${{ github.job }}-${{ matrix.chunk }}
