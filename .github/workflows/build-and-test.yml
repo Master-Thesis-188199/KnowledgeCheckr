@@ -8,7 +8,7 @@ env:
 
   DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
   DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-  DATABASE_NAME: KnowledgeCheckr-DB
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
   DATABASE_USER: root
   DATABASE_PASSWORD: 123
 
@@ -43,7 +43,7 @@ jobs:
 
     services:
       mysql:
-        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:2.0.0-beta
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
         ports:
           - 3306:3306
         env:
