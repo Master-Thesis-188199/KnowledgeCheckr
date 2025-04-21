@@ -43,7 +43,7 @@ jobs:
 
     services:
       mysql:
-        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:2.0.0-beta
         ports:
           - 3306:3306
         env:
