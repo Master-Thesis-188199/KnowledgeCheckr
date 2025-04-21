@@ -113,6 +113,7 @@ jobs:
         with:
           start: npm run prestart-test-instance-ci
           wait-on: http://localhost:3000
+          wait-on-timeout: 120
 
           browser: chrome
           cache-key: ${{ env.cache-key }}
