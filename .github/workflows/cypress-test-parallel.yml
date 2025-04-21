@@ -106,15 +106,14 @@ jobs:
           # Export the final cache key
           echo "cache-key=${{ github.job }}-$key" >> $GITHUB_ENV
 
-      - name: Start Application
-        run: npm run test
-
       #  run all Cypress tests
       - name: Cypress run 🧪
         uses: cypress-io/github-action@v3
         if: github.event_name == 'pull_request'
         with:
-          # --spec here will just contain a string with multiple spec files returned by the split logic from the setup job
+          start: npm run prestart-test-instance-ci
+          wait-on: http://localhost:3000
+
           browser: chrome
           cache-key: ${{ env.cache-key }}
           install: false
