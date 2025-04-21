@@ -50,10 +50,7 @@ jobs:
           version: 1.0
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          install: true
-          runTests: false
+        run: yarn install --frozen-lockfile
 
       - name: Create Cypress Environment File
         run: |
