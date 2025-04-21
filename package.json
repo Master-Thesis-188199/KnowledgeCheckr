@@ -18,7 +18,7 @@
     "test:component": "cypress run --component",
     "test:e2e": "cypress run",
     "pretest": "npm run test:start-server &",
-    "prestart-test-instance-ci": "npm run pretest",
+    "prestart-test-instance-ci": "npm run test:start-server &",
     "start-test-instance-ci": "wait-on tcp:3000",
     "test": "wait-on tcp:3000 && npm run test:component --browser chrome --headless && npm run test:e2e --browser chrome --headless",
     "posttest": "rm -rf .babelrc.json .nyc_output",
