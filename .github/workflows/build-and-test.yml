@@ -95,7 +95,7 @@ jobs:
 
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run test
+        run: npm run test:parallel
 
   build:
     runs-on: ubuntu-latest
