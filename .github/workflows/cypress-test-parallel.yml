@@ -6,6 +6,21 @@ on:
 env:
   APP_NAME: ${{ github.event.repository.name }}
 
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
+  DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_USER: root
+  DATABASE_PASSWORD: 123
+
+  AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID}}
+  AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+
+  AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+  AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+
 jobs:
   setup:
     name: (PR) Setup 🔧
