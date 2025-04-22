@@ -106,6 +106,13 @@ jobs:
           # Export the final cache key
           echo "cache-key=${{ github.job }}-$key" >> $GITHUB_ENV
 
+      - name: get runner ip addresses
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - run: |
+          echo "Runner IP: ${{ steps.ip.outputs.ip }}"
+
       #  run all Cypress tests
       - name: Cypress run 🧪
         uses: cypress-io/github-action@v3
