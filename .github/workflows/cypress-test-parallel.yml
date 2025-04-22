@@ -111,7 +111,7 @@ jobs:
         uses: haythem/public-ip@v1.2
 
       - run: |
-          echo "Runner IP: ${{ steps.ip.outputs.ip }}"
+          echo "Runner IP: ${{ steps.ip.outputs.ipv4 }}"
 
       #  run all Cypress tests
       - name: Cypress run 🧪
@@ -119,7 +119,7 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           start: npm run prestart-test-instance-ci
-          wait-on: '${{ steps.ip.outputs.ip }}:3000'
+          wait-on: '${{ steps.ip.outputs.ipv4 }}:3000'
 
           browser: chrome
           cache-key: ${{ env.cache-key }}
