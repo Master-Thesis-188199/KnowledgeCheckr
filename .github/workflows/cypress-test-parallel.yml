@@ -119,6 +119,7 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           start: npm run prestart-test-instance-ci
+          wait-on: ${{ steps.ip.outputs.ip }}:3000
 
           browser: chrome
           cache-key: ${{ env.cache-key }}
