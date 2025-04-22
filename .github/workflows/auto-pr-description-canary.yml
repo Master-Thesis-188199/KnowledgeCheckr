@@ -1,0 +1,32 @@
+name: Auto-generate PR Description Canary
+
+permissions:
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches:
+      - canary
+
+jobs:
+  generate-pr-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate PR Description
+        uses: Marty-Byrde/auto-pr-description-g4f-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          temperature: 0.7
+          provider: auto
+          model: o1-mini
+          prompt: 'Please generate a **Pull Request description** for the provided diff, following these rules: \n
+            - The generated description should be in **Markdown** format. \n
+            - The generated description should have this format: "It merges the changes made in #X, #Y and #Z into the main branch" where X,Y,Z should be replaced with the pull-request-ids that were merged into the current branch. Note that, the description should mention all merged pull-request-ids for clarity. \n
+            - The generated description should not include any other text except the one mentioned in the previous point. \n
+            '

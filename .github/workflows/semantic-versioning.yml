@@ -1,0 +1,140 @@
+name: Automatic Semantic Versioning
+
+on:
+  push:
+    branches:
+      - main
+      - canary
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  issues: write
+  pull-requests: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  REPO_NAME: ${{ github.repository }}
+
+jobs:
+  semantic-versioning:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Set up Node 23.7
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Run semantice release
+        run: |
+          npm run semantic-release
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    needs: [semantic-versioning]
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create .env File
+        run: |
+          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
+          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
+
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+
+          echo "AUTH_GITHUB_ID=${{ secrets.AUTH_GITHUB_ID }}" >> .env
+          echo "AUTH_GITHUB_SECRET=${{ secrets.AUTH_GITHUB_SECRET }}" >> .env
+
+          echo "AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID }}" >> .env
+          echo "AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET }}" >> .env
+
+      - name: Create BuildKit Configuration
+        run: |
+          echo "[worker.oci]
+            max-parallelism = 1" > buildkitd.toml
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          platforms: linux/amd64,linux/arm64
+          buildkitd-config: buildkitd.toml
+
+      - name: Set lowercase repository name as environment variable
+        run: echo "LOWER_REPO_NAME=$(echo ${{ env.REPO_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+
+      - name: 'Store Version Information'
+        run: |
+          echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
+
+      - name: Check if image with previous tag already exists
+        id: check-image
+        run: |
+          IMAGE="ghcr.io/${{ env.LOWER_REPO_NAME }}:${{ steps.previoustag.outputs.tag }}"
+          echo "Checking if image $IMAGE exists..."
+          if docker manifest inspect "$IMAGE" > /dev/null 2>&1; then
+            echo "Image exists. Skipping build and push."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Image does not exist. Proceeding with build and push."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Push Multi-Platform Image
+        if: steps.check-image.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.previoustag.outputs.tag }}"
+
+          Extra_Docker_Build_Args=""
+          # Check if the tag is stable (e.g., v1.2.3)
+          if [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Stable release detected - adding 'stable' tag."
+            Extra_Docker_Build_Args="-t ghcr.io/${{ env.LOWER_REPO_NAME }}:stable"
+          fi
+
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/${{ env.LOWER_REPO_NAME }}:latest \
+            -t ghcr.io/${{ env.LOWER_REPO_NAME }}:${{ steps.previoustag.outputs.tag }} \
+            $Extra_Docker_Build_Args \
+            --push .

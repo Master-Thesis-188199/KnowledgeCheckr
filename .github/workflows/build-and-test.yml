@@ -1,0 +1,152 @@
+name: Build and Test
+
+on: push
+
+env:
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
+  DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_USER: root
+  DATABASE_PASSWORD: 123
+
+  AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID}}
+  AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+
+  AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+  AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+
+jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for relevant changes
+        id: check
+        uses: ./.github/actions/check-changed-files
+        with:
+          base: ${{ github.event.before }}
+          disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
+
+  run-tests:
+    needs: check-file-changes
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Skip Tests when nothing changed
+        if: needs.check-file-changes.outputs.relevant == 'false'
+        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        with:
+          packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+          version: 1.0
+
+      - name: Cypress run
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: cypress-io/github-action@v6
+        with:
+          install: true
+          runTests: false
+
+      - name: Create Cypress Environment File
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: |
+          echo '{  
+            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
+            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
+            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
+            "SkipOnCi": true 
+          }' > cypress.env.json
+
+      - name: Run Cypress Tests
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: check-file-changes
+
+    services:
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant == 'false'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Install dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Run Linting
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run lint
+
+      - name: Run Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: npm run build
+
+  Skip-Executions:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant == 'false'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip Build And Test
+        run: echo "Skipping build and test execution because no relevant files were modified by the last commit / pushed commits"
