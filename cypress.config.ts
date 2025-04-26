@@ -10,7 +10,7 @@ export default defineConfig({
   chromeWebSecurity: false,
   env: {
     codeCoverage: {
-      url: 'http://localhost:3000/api/coverage',
+      url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
   },
   component: {
@@ -67,7 +67,7 @@ export default defineConfig({
 
       return config
     },
-    baseUrl: 'http://localhost:3000',
+    baseUrl: env.NEXT_PUBLIC_BASE_URL,
     chromeWebSecurity: false,
   },
 })
