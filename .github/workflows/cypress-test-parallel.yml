@@ -94,7 +94,7 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
+            "NEXT_PUBLIC_BASE_URL": "http://${{ env.container_id }}:3000", 
             "SkipOnCi": true 
           }' > cypress.env.json
 
