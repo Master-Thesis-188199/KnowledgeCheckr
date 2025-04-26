@@ -6,10 +6,8 @@ on:
 env:
   APP_NAME: ${{ github.event.repository.name }}
 
-  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
-  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
   DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
   DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
   DATABASE_USER: root
@@ -74,6 +72,8 @@ jobs:
         id: container_id
         run: |
           echo "container_id=$(hostname)" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_BASE_URL=http://$(hostname):3000" >> $GITHUB_ENV
+          echo "DATABASE_HOST=http://$(hostname)" >> $GITHUB_ENV
           echo "Container ID: $container_id"
 
       - name: Set up Node 23.7
