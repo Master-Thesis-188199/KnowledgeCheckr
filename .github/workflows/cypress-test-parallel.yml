@@ -70,6 +70,10 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
+      - name: Get Container ID
+        id: container_id
+        run: echo "container_id=$(docker container ls  | grep '(PR) Running Specs 🧑‍💻 - ${{ matrix.chunk }}' | awk '{print $1}')" >> $GITHUB_ENV
+
       - name: Set up Node 23.7
         uses: actions/setup-node@v3
         with:
