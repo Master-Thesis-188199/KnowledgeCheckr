@@ -72,7 +72,11 @@ jobs:
 
       - name: Get Container ID
         id: container_id
-        run: echo "container_id=$(cat etc/hostname)" >> $GITHUB_ENV
+        run: |
+          echo "container_id=$(cat etc/hostname)" >> $GITHUB_ENV
+          echo "$(hostname)"
+          echo "$(uname -n)"
+          echo "$(cat /etc/host)"
 
       - name: Get Container ID from Host
         id: container_id_from_host
