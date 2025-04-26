@@ -125,7 +125,7 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           start: npm run prestart-test-instance-ci
-          wait-on: 'npx wait-on --timeout 120000 ${{ env.container_id }}:3000'
+          wait-on: 'npx wait-on --timeout 120000 http://${{ env.container_id }}:3000'
           wait-on-timeout: 120
 
           browser: chrome
