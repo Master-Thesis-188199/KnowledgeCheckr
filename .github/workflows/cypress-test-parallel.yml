@@ -74,6 +74,13 @@ jobs:
         id: container_id
         run: echo "container_id=$(cat etc/hostname)" >> $GITHUB_ENV
 
+      - name: Get Container ID from Host
+        id: container_id_from_host
+        run: |
+          container_id=$(docker ps -qf "name=(PR) Running Specs 🧑‍💻 - ${{ matrix.chunk }}")
+          echo "container_id_from_host=$container_id" >> $GITHUB_ENV
+          echo "Container ID: $container_id"
+
       - name: Set up Node 23.7
         uses: actions/setup-node@v3
         with:
