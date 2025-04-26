@@ -87,10 +87,11 @@ jobs:
           version: 1.0
 
       - name: Cache Node Modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: node_modules
+          key: node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: node_modules-
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
