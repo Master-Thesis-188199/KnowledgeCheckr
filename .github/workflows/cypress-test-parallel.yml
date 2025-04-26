@@ -8,6 +8,7 @@ env:
 
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
+  DATABASE_HOST: mysql
   DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
   DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
   DATABASE_USER: root
@@ -73,7 +74,6 @@ jobs:
         run: |
           echo "container_id=$(hostname)" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_BASE_URL=http://$(hostname):3000" >> $GITHUB_ENV
-          echo "DATABASE_HOST=$(hostname)" >> $GITHUB_ENV
           echo "Container ID: $container_id"
 
       - name: Set up Node 23.7
