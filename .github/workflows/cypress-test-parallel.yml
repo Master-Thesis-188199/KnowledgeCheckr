@@ -6,6 +6,7 @@ on:
 env:
   APP_NAME: ${{ github.event.repository.name }}
 
+  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
   DATABASE_HOST: mysql
@@ -53,11 +54,8 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: (PR) Running Specs 🧑‍💻 - ${{ matrix.chunk }}
+    name: (Cypress) Running E2E - ${{ matrix.chunk }}
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
-      options: --user 1001
 
     strategy:
       fail-fast: false
@@ -68,13 +66,6 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-
-      - name: Get Container ID
-        id: container_id
-        run: |
-          echo "container_id=$(hostname)" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_BASE_URL=http://$(hostname):3000" >> $GITHUB_ENV
-          echo "Container ID: $container_id"
 
       - name: Set up Node 23.7
         uses: actions/setup-node@v3
@@ -101,7 +92,7 @@ jobs:
           echo '{  
             "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
             "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "NEXT_PUBLIC_BASE_URL": "http://${{ env.container_id }}:3000", 
+            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
             "SkipOnCi": true 
           }' > cypress.env.json
 
@@ -119,13 +110,12 @@ jobs:
           # Export the final cache key
           echo "cache-key=${{ github.job }}-$key" >> $GITHUB_ENV
 
-      #  run all Cypress tests
       - name: Cypress run 🧪
         uses: cypress-io/github-action@v3
         if: github.event_name == 'pull_request'
         with:
           start: npm run prestart-test-instance-ci
-          wait-on: 'npx wait-on --timeout 120000 http://${{ env.container_id }}:3000'
+          wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
           wait-on-timeout: 120
 
           browser: chrome
