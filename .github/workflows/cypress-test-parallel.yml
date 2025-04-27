@@ -112,7 +112,6 @@ jobs:
 
       - name: Cypress run 🧪
         uses: cypress-io/github-action@v3
-        if: github.event_name == 'pull_request'
         with:
           start: npm run prestart-test-instance-ci
           wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
