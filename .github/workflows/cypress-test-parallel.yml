@@ -77,16 +77,6 @@ jobs:
           packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
           version: 1.0
 
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node_modules-${{hashFiles('yarn.lock')}}
-          restore-keys: node_modules-
-
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-
       - name: Create Cypress Environment File
         run: |
           echo '{  
