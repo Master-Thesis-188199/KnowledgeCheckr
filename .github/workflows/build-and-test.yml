@@ -37,7 +37,7 @@ jobs:
           base: ${{ github.event.before }}
           disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
 
-  run-tests:
+  run-component-tests:
     needs: check-file-changes
     runs-on: ubuntu-latest
 
@@ -95,7 +95,7 @@ jobs:
 
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run test
+        run: npm run test:standalone-component
 
   build:
     runs-on: ubuntu-latest
@@ -172,7 +172,7 @@ jobs:
               | jq -s -c
           )" >> $GITHUB_OUTPUT
 
-  run-cypress-tests:
+  run-e2e-tests:
     needs: [check-file-changes, setup]
 
     services:
@@ -190,7 +190,7 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: ${{ matrix.chunk.short }}
+    name: 'E2E Tests: ${{ matrix.chunk.short }}'
     runs-on: ubuntu-latest
 
     strategy:
