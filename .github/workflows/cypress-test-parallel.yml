@@ -1,4 +1,4 @@
-name: (PR) Run E2E in Parallel
+name: Cypress E2E Parallel
 
 on:
   push:
@@ -23,7 +23,7 @@ env:
 
 jobs:
   setup:
-    name: (PR) Setup 🔧
+    name: Setup Test Chunks
     runs-on: ubuntu-latest
     outputs:
       # will contain a json string with an array of n elements, each being a string of spec files delimited by ,
@@ -54,7 +54,7 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: (Cypress) Running E2E - ${{ matrix.chunk }}
+    name: ${{ matrix.chunk }}
     runs-on: ubuntu-latest
 
     strategy:
