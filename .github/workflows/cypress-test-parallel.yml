@@ -77,10 +77,12 @@ jobs:
           packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
           version: 1.0
 
-      - name: Cache Node Modules
+      - name: Cache node_modules + Cypress Cache
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            .cache/Cypress
           key: node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: node_modules-
 
@@ -118,6 +120,5 @@ jobs:
           wait-on-timeout: 120
 
           browser: chrome
-          cache-key: ${{ env.cache-key }}
-          install: true
+          install: false
           spec: ${{ matrix.chunk }}
