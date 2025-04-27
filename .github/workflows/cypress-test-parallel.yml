@@ -1,7 +1,7 @@
 name: (PR) Run E2E in Parallel
 
 on:
-  pull_request:
+  push:
 
 env:
   APP_NAME: ${{ github.event.repository.name }}
