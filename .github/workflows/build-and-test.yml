@@ -136,6 +136,57 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn build
 
+  instrumented-build:
+    runs-on: ubuntu-latest
+    needs: check-file-changes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant == 'false'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Set up Node 23.7
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.7
+
+      - name: Cache node_modules + Cypress Cache
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-${{hashFiles('yarn.lock')}}
+          restore-keys: node_modules-
+
+      - name: Install Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Cache Next.js (instrumented) Build
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
+
   setup:
     name: Setup Test Chunks
     runs-on: ubuntu-latest
