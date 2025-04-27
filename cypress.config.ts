@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   component: {
+    specPattern: 'src/tests/components/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
     devServer: {
       framework: 'next',
@@ -26,6 +27,7 @@ export default defineConfig({
     },
   },
   e2e: {
+    specPattern: 'src/tests/e2e/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
     setupNodeEvents(on, config) {
       const connection = mysql.createConnection({

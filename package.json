@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "pretest:parallel": "npm run pretest && wait-on tcp:3000",
-    "test:parallel": "cypress-parallel -s test:e2e -t 8 -d 'cypress/e2e/**/*.tsx' && npm run test:component",
+    "test:parallel": "cypress-parallel -s test:e2e -t 8 -d 'src/tests/e2e/**/*.tsx' && npm run test:component",
     "posttest:parallel": "npm run posttest && kill -9 $(lsof -ti:3000)",
     "cypress:open": "npm run test:instrumentation && next dev & cypress open",
     "test:instrumentation": "cp ./config/.babelrc.json .babelrc.json ",

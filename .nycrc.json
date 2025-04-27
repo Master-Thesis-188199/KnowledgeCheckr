@@ -4,5 +4,5 @@
   "instrument": true,
   "reporter": ["text-summary", "lcov"],
   "include": ["src/**/*"],
-  "exclude": ["src/app/api/coverage/**"]
+  "exclude": ["src/app/api/coverage/**", "src/tests/**"]
 }
