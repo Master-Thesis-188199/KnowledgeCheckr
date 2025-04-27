@@ -35,7 +35,9 @@ jobs:
         # get all spec files from the e2e directory, group them to be at most 3 at a time and transform them to json
         run: |
           echo "test-chunks=$(
-            find cypress/e2e -type f -name '*.cy.tsx' \ | xargs -n3 \ | while read -r group; do
+            find cypress/e2e -type f -name '*.cy.tsx' \
+              | xargs -n3 \
+              | while read -r group; do
                   # 1) make it comma-separated
                   paths=$(echo "$group" | tr ' ' ',')
                   # 2) strip the static prefix & suffix, but leave commas
