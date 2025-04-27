@@ -38,11 +38,11 @@ jobs:
             find cypress/e2e -type f -name '*.cy.tsx' \
               | xargs -n3 \
               | while read -r group; do
-                  # 1) make it comma-separated
+                  # full, comma-separated paths (for spec:)
                   paths=$(echo "$group" | tr ' ' ',')
-                  # 2) strip the static prefix & suffix, but leave commas
-                  short=$(echo "$paths" | sed -E 's#cypress/e2e/##g; s#\.cy\.tsx##g')
-                  # 3) emit a JSON object with both fields
+                  # strip prefix/suffix AND swap commas for " + "
+                  short=$(echo "$paths" \
+                    | sed -E 's#cypress/e2e/##g; s#\.cy\.tsx##g; s#,# + #g')
                   jq -n --arg paths "$paths" --arg short "$short" \
                     '{paths: $paths, short: $short}'
                 done \
