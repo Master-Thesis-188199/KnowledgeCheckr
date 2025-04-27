@@ -38,6 +38,7 @@ jobs:
           disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
 
   run-component-tests:
+    name: Run Component Tests
     needs: check-file-changes
     runs-on: ubuntu-latest
 
@@ -88,7 +89,7 @@ jobs:
 
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run test:standalone-component
+        run: yarn test:component-standalone
 
   build:
     runs-on: ubuntu-latest
@@ -129,11 +130,11 @@ jobs:
 
       - name: Run Linting
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run lint
+        run: yarn lint
 
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run build
+        run: yarn build
 
   setup:
     name: Setup Test Chunks
@@ -236,7 +237,7 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         uses: cypress-io/github-action@v3
         with:
-          start: npm run pretest
+          start: yarn build-start:instrumented
           wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
           wait-on-timeout: 120
 
