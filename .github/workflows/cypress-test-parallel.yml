@@ -62,7 +62,7 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.setup.outputs['test-chunks']) }}
 
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
