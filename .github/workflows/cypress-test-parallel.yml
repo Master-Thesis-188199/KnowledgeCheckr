@@ -115,7 +115,7 @@ jobs:
       - name: Cypress run 🧪
         uses: cypress-io/github-action@v3
         with:
-          start: npm run prestart-test-instance-ci
+          start: npm run pretest
           wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
           wait-on-timeout: 120
 
