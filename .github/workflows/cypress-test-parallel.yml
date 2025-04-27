@@ -26,15 +26,26 @@ jobs:
     name: Setup Test Chunks
     runs-on: ubuntu-latest
     outputs:
-      # will contain a json string with an array of n elements, each being a string of spec files delimited by ,
-      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      test-chunks: ${{ steps.set-test-chunks.outputs.test-chunks }}
     steps:
       - uses: actions/checkout@v3
       - id: set-test-chunks
         name: Set Chunks
+        shell: bash
         # get all spec files from the e2e directory, group them to be at most 3 at a time and transform them to json
-        # this will output something like ["cypress/integration/test1.spec.ts, cypress/integration/test2.spec.ts, cypress/integration/test3.spec.ts", "cypress/integration/test4.spec.ts,etc.."]
-        run: echo "test-chunks=$(find cypress/e2e -type f -name "*.cy.tsx" | xargs -n3 | tr ' ' ',' | jq -R . | jq -s -cM .)" >> $GITHUB_OUTPUT
+        run: |
+          echo "test-chunks=$(
+            find cypress/e2e -type f -name '*.cy.tsx' \ | xargs -n3 \ | while read -r group; do
+                  # 1) make it comma-separated
+                  paths=$(echo "$group" | tr ' ' ',')
+                  # 2) strip the static prefix & suffix, but leave commas
+                  short=$(echo "$paths" | sed -E 's#cypress/e2e/##g; s#\.cy\.tsx##g')
+                  # 3) emit a JSON object with both fields
+                  jq -n --arg paths "$paths" --arg short "$short" \
+                    '{paths: $paths, short: $short}'
+                done \
+              | jq -s -c
+          )" >> $GITHUB_OUTPUT
 
   run-cypress-tests:
     needs: setup
@@ -54,7 +65,7 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: ${{ matrix.chunk }}
+    name: ${{ matrix.chunk.short }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -121,4 +132,4 @@ jobs:
 
           browser: chrome
           install: false
-          spec: ${{ matrix.chunk }}
+          spec: ${{ matrix.chunk.paths }}
