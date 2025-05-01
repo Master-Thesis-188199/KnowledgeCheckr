@@ -39,7 +39,7 @@ jobs:
 
   run-component-tests:
     name: Run Component Tests
-    needs: check-file-changes
+    needs: [check-file-changes, instrumented-build]
     runs-on: ubuntu-latest
 
     services:
@@ -87,9 +87,27 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn install --frozen-lockfile
 
+      - name: Cache Next.js (instrumented) Build
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
+
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn test:component-standalone
+        run: yarn start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && yarn test:component
 
   build:
     runs-on: ubuntu-latest
@@ -218,7 +236,7 @@ jobs:
           )" >> $GITHUB_OUTPUT
 
   run-e2e-tests:
-    needs: [check-file-changes, setup]
+    needs: [check-file-changes, setup, instrumented-build]
 
     services:
       mysql:
@@ -284,11 +302,30 @@ jobs:
             "SkipOnCi": true 
           }' > cypress.env.json
 
+      - name: Cache Next.js (instrumented) Build
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
+
       - name: Cypress run 🧪
         if: needs.check-file-changes.outputs.relevant == 'true'
         uses: cypress-io/github-action@v3
         with:
-          start: yarn build-start:instrumented
+          start: yarn start
           wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
           wait-on-timeout: 120
 
