@@ -1,0 +1,34 @@
+name: 'Setup Dependencies'
+description: “Setup Node, install cypress binaries, cache cypress binaries + node_modules”
+
+inputs:
+  node-version:
+    description: 'The Node.js version to use'
+    default: '23.7'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Cache apt packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+
+    - name: Cache node_modules + Cypress
+      uses: actions/cache@v3
+      with:
+        path: |
+          node_modules
+          ~/.cache/Cypress
+        key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: node_modules-
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --frozen-lockfile
