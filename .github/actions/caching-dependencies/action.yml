@@ -4,8 +4,7 @@ description: “Setup Node, install cypress binaries, cache cypress binaries + n
 inputs:
   node-version:
     description: 'The Node.js version to use'
-    default: '23.7'
-    required: false
+    required: true
 
 runs:
   using: 'composite'
