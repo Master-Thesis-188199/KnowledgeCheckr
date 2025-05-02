@@ -18,6 +18,8 @@ env:
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
+  NODE_VERSION: 23.7
+
 jobs:
   check-file-changes:
     runs-on: ubuntu-latest
@@ -61,31 +63,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
-
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        with:
-          packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
-          version: 1.0
-
-      - name: Cache node_modules + Cypress Cache
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{hashFiles('yarn.lock')}}
-          restore-keys: node_modules-
-
-      - name: Install Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache Next.js (instrumented) Build
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -136,15 +118,11 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'false'
         run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
 
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
-
-      - name: Install dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Run Linting
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -166,25 +144,11 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'false'
         run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
 
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
-
-      - name: Cache node_modules + Cypress Cache
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{hashFiles('yarn.lock')}}
-          restore-keys: node_modules-
-
-      - name: Install Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache Next.js (instrumented) Build
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -266,31 +230,11 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
-
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        with:
-          packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
-          version: 1.0
-
-      - name: Cache node_modules + Cypress Cache
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{hashFiles('yarn.lock')}}
-          restore-keys: node_modules-
-
-      - name: Install Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Create Cypress Environment File
         if: needs.check-file-changes.outputs.relevant == 'true'
