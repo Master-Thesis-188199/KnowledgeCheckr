@@ -280,6 +280,17 @@ jobs:
           install: false
           spec: ${{ matrix.chunk.paths }}
 
+  e2e-test-summary:
+    name: E2E Tests Summary
+    runs-on: ubuntu-latest
+    needs: run-e2e-tests
+    if: ${{ always() }}
+    steps:
+      - run: |
+          if [[ "${{ needs.*.result }}" =~ failure ]]; then
+            echo "Some e2e tests failed"; exit 1
+          fi
+
   Skip-Executions:
     name: Skip Build And Test
     needs: check-file-changes
