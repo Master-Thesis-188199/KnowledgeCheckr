@@ -22,6 +22,7 @@ env:
 
 jobs:
   check-file-changes:
+    name: Check for Relevant File Changes
     runs-on: ubuntu-latest
     outputs:
       relevant: ${{ steps.check.outputs.relevant }}
@@ -92,6 +93,7 @@ jobs:
         run: yarn start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && yarn test:component
 
   build:
+    name: Production Build
     runs-on: ubuntu-latest
     needs: check-file-changes
 
@@ -133,6 +135,7 @@ jobs:
         run: yarn build
 
   instrumented-build:
+    name: Instrumented Build
     runs-on: ubuntu-latest
     needs: check-file-changes
 
@@ -278,6 +281,7 @@ jobs:
           spec: ${{ matrix.chunk.paths }}
 
   Skip-Executions:
+    name: Skip Build And Test
     needs: check-file-changes
     if: needs.check-file-changes.outputs.relevant == 'false'
     runs-on: ubuntu-latest
