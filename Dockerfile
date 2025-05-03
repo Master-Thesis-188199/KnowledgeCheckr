@@ -45,4 +45,4 @@ RUN ["npm", "install", "ts-node", "-g"]
 EXPOSE 3000
 
 # Start the Next.js application
-CMD ["npm", "run", "production:start"]
+CMD ["npm", "run", "start"]

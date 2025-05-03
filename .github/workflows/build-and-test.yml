@@ -18,8 +18,11 @@ env:
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
+  NODE_VERSION: 23.7
+
 jobs:
   check-file-changes:
+    name: Check for Relevant File Changes
     runs-on: ubuntu-latest
     outputs:
       relevant: ${{ steps.check.outputs.relevant }}
@@ -37,8 +40,9 @@ jobs:
           base: ${{ github.event.before }}
           disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
 
-  run-tests:
-    needs: check-file-changes
+  run-component-tests:
+    name: Run Component Tests
+    needs: [check-file-changes, instrumented-build]
     runs-on: ubuntu-latest
 
     services:
@@ -60,44 +64,36 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Skip Tests when nothing changed
-        if: needs.check-file-changes.outputs.relevant == 'false'
-        run: echo "Skipping test execution because no relevant files were modified by the last commit / pushed commits"
-
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
+          node-version: ${{ env.NODE_VERSION }}
 
-      - uses: awalsh128/cache-apt-pkgs-action@latest
+      - name: Cache Next.js (instrumented) Build
         if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
         with:
-          packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
-          version: 1.0
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
 
-      - name: Cypress run
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: cypress-io/github-action@v6
-        with:
-          install: true
-          runTests: false
-
-      - name: Create Cypress Environment File
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: |
-          echo '{  
-            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
-            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
-            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
-            "SkipOnCi": true 
-          }' > cypress.env.json
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
 
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run test
+        run: yarn start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && yarn test:component
 
   build:
+    name: Production Build
     runs-on: ubuntu-latest
     needs: check-file-changes
 
@@ -124,25 +120,168 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'false'
         run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
 
-      - name: Set up Node 23.7
+      - name: Setup Dependencies
         if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: actions/setup-node@v3
+        uses: ./.github/actions/caching-dependencies
         with:
-          node-version: 23.7
-
-      - name: Install dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Run Linting
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run lint
+        run: yarn lint
 
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: npm run build
+        run: yarn build
+
+  instrumented-build:
+    name: Instrumented Build
+    runs-on: ubuntu-latest
+    needs: check-file-changes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Skip Build when nothing changed
+        if: needs.check-file-changes.outputs.relevant == 'false'
+        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
+
+      - name: Setup Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: ./.github/actions/caching-dependencies
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache Next.js (instrumented) Build
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
+
+  setup:
+    name: Setup Test Chunks
+    runs-on: ubuntu-latest
+
+    needs: check-file-changes
+    outputs:
+      test-chunks: ${{ steps.set-test-chunks.outputs.test-chunks }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-test-chunks
+        name: Set Chunks
+        shell: bash
+        # get all spec files from the e2e directory, group them to be at most 3 at a time and transform them to json
+        run: |
+          echo "test-chunks=$(
+            find src/tests/e2e -type f -name '*.cy.tsx' \
+              | xargs -n3 \
+              | while read -r group; do
+                  # full, comma-separated paths (for spec:)
+                  paths=$(echo "$group" | tr ' ' ',')
+                  # strip prefix/suffix AND swap commas for " + "
+                  short=$(echo "$paths" \
+                    | sed -E 's#src/tests/e2e/##g; s#\.cy\.tsx##g; s#,# + #g')
+                  jq -n --arg paths "$paths" --arg short "$short" \
+                    '{paths: $paths, short: $short}'
+                done \
+              | jq -s -c
+          )" >> $GITHUB_OUTPUT
+
+  run-e2e-tests:
+    needs: [check-file-changes, setup, instrumented-build]
+
+    services:
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    name: 'E2E Tests: ${{ matrix.chunk.short }}'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.setup.outputs['test-chunks']) }}
+
+    timeout-minutes: 15
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: ./.github/actions/caching-dependencies
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Create Cypress Environment File
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: |
+          echo '{  
+            "GOOGLE_USERNAME": "${{ secrets.TEST_GOOGLE_USERNAME }}",  
+            "GOOGLE_PASSWORD": "${{ secrets.TEST_GOOGLE_PASSWORD }}",  
+            "NEXT_PUBLIC_BASE_URL": "${{ env.NEXT_PUBLIC_BASE_URL }}", 
+            "SkipOnCi": true 
+          }' > cypress.env.json
+
+      - name: Cache Next.js (instrumented) Build
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        id: cache-nextjs-instrumented
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/standalone
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Run Instrumented Build-Script
+        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        run: yarn build:instrumented
+
+      - name: Cypress run 🧪
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: cypress-io/github-action@v3
+        with:
+          start: yarn start
+          wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
+          wait-on-timeout: 120
+
+          browser: chrome
+          install: false
+          spec: ${{ matrix.chunk.paths }}
 
   Skip-Executions:
+    name: Skip Build And Test
     needs: check-file-changes
     if: needs.check-file-changes.outputs.relevant == 'false'
     runs-on: ubuntu-latest
