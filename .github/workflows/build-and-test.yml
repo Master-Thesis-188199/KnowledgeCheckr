@@ -92,6 +92,16 @@ jobs:
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && yarn test:component
 
+      - name: Upload Coverage to Codecov
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Master-Thesis-188199/KnowledgeCheckr
+          files: /coverage/**/lcov.info
+          fail_ci_if_error: true
+          verbose: true
+
   build:
     name: Production Build
     runs-on: ubuntu-latest
@@ -279,6 +289,16 @@ jobs:
           browser: chrome
           install: false
           spec: ${{ matrix.chunk.paths }}
+
+      - name: Upload Coverage to Codecov
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Master-Thesis-188199/KnowledgeCheckr
+          files: /coverage/**/lcov.info
+          fail_ci_if_error: true
+          verbose: true
 
   e2e-test-summary:
     name: E2E Tests Summary
