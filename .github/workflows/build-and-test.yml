@@ -102,6 +102,16 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+      - name: Upload Coverage to Codecov
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Master-Thesis-188199/KnowledgeCheckr
+          files: /coverage/**/lcov.info
+          fail_ci_if_error: true
+          verbose: true
+
   build:
     name: Production Build
     runs-on: ubuntu-latest
