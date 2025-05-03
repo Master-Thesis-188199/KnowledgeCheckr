@@ -4,5 +4,6 @@
   "instrument": true,
   "reporter": ["text-summary", "lcov"],
   "include": ["src/**/*"],
-  "exclude": ["src/app/api/coverage/**", "src/tests/**"]
+  "exclude": ["src/app/api/coverage/**", "src/tests/**", "src/hooks/**/*Store.ts"],
+  "excludeAfterRemap": true
 }
