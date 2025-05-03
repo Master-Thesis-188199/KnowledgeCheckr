@@ -15,7 +15,7 @@ WORKDIR /app
 COPY --from=package-installer /app/node_modules /app/node_modules
 COPY . .
 
-RUN npm run production:build
+RUN npm run build
 
 # Final Stage: Run the Application
 FROM node:23.7.0-alpine
@@ -45,4 +45,4 @@ RUN ["npm", "install", "ts-node", "-g"]
 EXPOSE 3000
 
 # Start the Next.js application
-CMD ["npm", "run", "production:start"]
+CMD ["npm", "run", "start"]

@@ -10,10 +10,11 @@ export default defineConfig({
   chromeWebSecurity: false,
   env: {
     codeCoverage: {
-      url: 'http://localhost:3000/api/coverage',
+      url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
   },
   component: {
+    specPattern: 'src/tests/components/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
     devServer: {
       framework: 'next',
@@ -26,6 +27,7 @@ export default defineConfig({
     },
   },
   e2e: {
+    specPattern: 'src/tests/e2e/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
     setupNodeEvents(on, config) {
       const connection = mysql.createConnection({
@@ -67,7 +69,7 @@ export default defineConfig({
 
       return config
     },
-    baseUrl: 'http://localhost:3000',
+    baseUrl: env.NEXT_PUBLIC_BASE_URL,
     chromeWebSecurity: false,
   },
 })

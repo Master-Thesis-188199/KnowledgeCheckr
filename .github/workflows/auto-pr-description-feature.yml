@@ -1,4 +1,4 @@
-name: Auto-generate PR Description
+name: Auto-generate PR Description Feature
 
 permissions:
   pull-requests: write
@@ -6,15 +6,17 @@ permissions:
 on:
   pull_request:
     types: [synchronize]
+    branches-ignore:
+      - main
 
 jobs:
-  generate-pr-description:
+  generate-pr-description-feature:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # This fetches all branches and full history if needed
+          fetch-depth: 0 # This fetches all branches and full history if needed
 
       - name: Generate PR Description
         uses: Marty-Byrde/auto-pr-description-g4f-action@main
