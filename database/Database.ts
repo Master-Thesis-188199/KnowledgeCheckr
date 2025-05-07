@@ -61,7 +61,5 @@ async function insert(query: string, values?: Any[]) {
     throw new Error(`Inserted Element was not found! ${select_query}`)
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1500))
-
   return elements.at(0)
 }
