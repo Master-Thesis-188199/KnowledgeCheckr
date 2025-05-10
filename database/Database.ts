@@ -6,6 +6,7 @@ import mysql, { Connection } from 'mysql2/promise'
 
 export type DBConnection = Connection & {
   insert: <T = Any>(query: string, values?: Any[]) => Promise<{ [key: string]: T } | never>
+  exec: <T extends object = Any>(query: string, values?: Any[]) => Promise<T | never>
 }
 
 let connection: DBConnection | null = null
@@ -28,6 +29,7 @@ async function getConnection() {
   await connection.connect()
 
   connection.insert = insert
+  connection.exec = exec
 
   return connection
 }
@@ -62,4 +64,12 @@ async function insert(query: string, values?: Any[]) {
   }
 
   return elements.at(0)
+}
+
+async function exec<TReturn extends object = Any>(query: string, values?: Any[]) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const [result] = await connection!.execute<TReturn>(query, values)
+
+  return result
 }
