@@ -1,9 +1,17 @@
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Fragment } from 'react'
+import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
+import { getServerSession } from '@/src/lib/auth/server'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import Link from 'next/link'
+import { unauthorized } from 'next/navigation'
+import { Fragment } from 'react'
 
 export default async function ChecksPage() {
-  const checks = Array.from({ length: 4 }).map(() => instantiateKnowledgeCheck())
+  const { user } = await getServerSession()
+
+  if (!user) {
+    unauthorized()
+  }
+  const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
 
   return (
     <main>
