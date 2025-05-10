@@ -5,12 +5,13 @@ import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/sele
 import { DbKnowledgeCheck } from '@/database/knowledgeCheck/type'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { User } from 'better-auth'
 
-export async function getKnowledgeChecks({ limit = 10 }: { limit?: number }) {
+export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10 }: { limit?: number }) {
   const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
-  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck Limit ${limit > 100 ? 100 : limit}`)
+  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Limit ${limit > 100 ? 100 : limit}`, [user_id])
   for (const knowledgeCheck of knowledgeChecks) {
     const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
     const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions)
