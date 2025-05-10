@@ -2,10 +2,15 @@ import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
 describe('Check: Drag Drop Question -', () => {
   beforeEach(() => {
+    cy.signUp('testuser', 'user@email.com', 'testpassword')
     cy.visit('/checks/create')
 
     cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
+  })
+
+  afterEach(() => {
+    cy.removeDBUser('user@email.com', 'testuser')
   })
 
   it('Verify that a drag-drop question can be added when the inputs are valid', () => {
