@@ -14,10 +14,11 @@ export default async function insertKnowledgeCheckQuestions(db: DBConnection, qu
 
 async function insertQuestion(db: DBConnection, question: Question, check_id: KnowledgeCheck['id']) {
   const category_id = await findInsertCategory(db, question.category)
-  const { id } = await db.insert('INSERT INTO Question (id, type, question, category_id, knowledgecheck_id) Values (?, ?, ?, ?, ?)', [
+  const { id } = await db.insert('INSERT INTO Question (id, type, question, points, category_id, knowledgecheck_id) Values (?, ?, ?, ?, ?, ?)', [
     question.id,
     question.type,
     question.question,
+    question.points,
     category_id,
     check_id,
   ])
