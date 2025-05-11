@@ -1,7 +1,8 @@
-import { DesktopSidebar } from '@/components/root/Navigation/desktop/DesktopSideBar'
-import { ReactNode } from 'react'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
+import { DesktopSidebar } from '@/components/root/Navigation/desktop/DesktopSideBar'
 import MobileSideBar from '@/components/root/Navigation/mobile/MobileSideBar'
+import { ActiveDelimiter } from '@/src/components/root/Navigation/ActiveDelimiter'
+import { ReactNode } from 'react'
 
 export interface SideBarProps {
   title: string
@@ -18,6 +19,7 @@ export default async function SideBar({ children, initialStoreProps }: { initial
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
       <DesktopSidebar children={children} className='hidden md:flex' />
       <MobileSideBar children={children} visibilityBreakpoints='flex md:hidden opacity-100 md:opacity-0' />
+      <ActiveDelimiter />
     </SidebarStoreProvider>
   )
 }
