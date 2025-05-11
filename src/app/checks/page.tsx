@@ -1,13 +1,30 @@
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Fragment } from 'react'
+import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
+import { getServerSession } from '@/src/lib/auth/server'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import Link from 'next/link'
+import { unauthorized } from 'next/navigation'
+import { Fragment } from 'react'
 
 export default async function ChecksPage() {
-  const checks = Array.from({ length: 4 }).map(() => instantiateKnowledgeCheck())
+  const { user } = await getServerSession()
+
+  if (!user) {
+    unauthorized()
+  }
+  const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
 
   return (
     <main>
       <h1 className='mb-8 text-[22px] font-semibold tracking-wider'>Your Checks</h1>
+      {checks.length === 0 && (
+        <div>
+          No checks found. Create a new one{' '}
+          <Link href='/checks/create' className='text-blue-500 underline'>
+            here
+          </Link>
+          .
+        </div>
+      )}
       <div className='checks-grid grid grid-cols-1 gap-6 @[800px]:grid-cols-2 @[1200px]:grid-cols-3'>
         {checks.map((check, i) => (
           <RenderCheck key={i} {...check} />
