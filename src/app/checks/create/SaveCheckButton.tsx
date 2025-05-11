@@ -21,7 +21,7 @@ export function SaveCreateCheckButton({ user_id }: { user_id: User['id'] }) {
   }
 
   return (
-    <Button type='submit' formAction={() => saveAction({ user_id, check })}>
+    <Button aria-label='save created knowledge check' type='submit' formAction={() => saveAction({ user_id, check })}>
       Save
     </Button>
   )
