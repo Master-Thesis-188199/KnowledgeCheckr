@@ -2,7 +2,7 @@ import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
 describe('Check: Drag Drop Question -', () => {
   beforeEach(() => {
-    cy.login('test@email.com', 'testpassword')
+    cy.loginTestUser()
     cy.visit('/checks/create')
 
     cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
