@@ -1,25 +1,19 @@
 it("Verify that a dialog opens when the 'Add Question' button is clicked", () => {
-  cy.signUp('testuser', 'user@email.com', 'testpassword')
+  cy.login('test@email.com', 'testpassword')
   cy.visit('/checks/create')
 
   cy.get("[data-slot='dialog-trigger']").contains('Create Question').click()
   cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
-
-  cy.removeDBUser('user@email.com', 'testuser')
 })
 
 describe('Check: Create Question Dialog Closure Checks -', () => {
   beforeEach(() => {
-    cy.signUp('testuser', 'user@email.com', 'testpassword')
+    cy.login('test@email.com', 'testpassword')
     cy.visit('/checks/create')
 
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').click()
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
     cy.get('#question-dialog').should('be.visible')
-  })
-
-  afterEach(() => {
-    cy.removeDBUser('user@email.com', 'testuser')
   })
 
   it("Verify that the dialog closes when the 'Close' button is clicked", () => {
