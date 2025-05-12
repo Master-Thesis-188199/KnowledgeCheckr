@@ -9,8 +9,8 @@ export function ActiveDelimiter() {
     const desktopSidebar = document.querySelector('#desktop-sidebar-container')
     const mobileSidebar = document.querySelector('#mobile-sidebar-menubar')
 
-    const isDesktopActive = () => desktopSidebar?.parentElement?.computedStyleMap().get('display') !== 'none'
-    const isMobileActive = () => mobileSidebar?.parentElement?.computedStyleMap().get('display') !== 'none'
+    const isDesktopActive = () => (desktopSidebar?.parentElement ? window.getComputedStyle(desktopSidebar.parentElement).getPropertyValue('display') !== 'none' : false)
+    const isMobileActive = () => (mobileSidebar?.parentElement ? window.getComputedStyle(mobileSidebar.parentElement).getPropertyValue('display') !== 'none' : false)
 
     if (isDesktopActive()) desktopSidebar?.setAttribute(CONTENT_DELIMITER, 'true')
     else desktopSidebar?.removeAttribute(CONTENT_DELIMITER)
