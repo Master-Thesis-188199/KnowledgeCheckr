@@ -1,14 +1,9 @@
 'use server'
 
 import { auth } from '@/src/lib/auth/server'
+import { LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { Any } from '@/types'
 import { redirect } from 'next/navigation'
-import { z } from 'zod'
-
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
-})
 
 export type AuthState = {
   success: boolean
@@ -53,12 +48,6 @@ export async function signin(_: AuthState, formData: FormData): Promise<AuthStat
 
   redirect('/')
 }
-
-const SignupSchema = z.object({
-  name: z.string().trim().min(1, { message: 'The name must be at least 1 characters long.' }),
-  email: z.string().email(),
-  password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
-})
 
 export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {
   'use server'
