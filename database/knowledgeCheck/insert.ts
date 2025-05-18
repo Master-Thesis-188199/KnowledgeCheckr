@@ -11,6 +11,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
   await db.beginTransaction()
 
+  // todo: update open-date value to be date-object or enforce date-string-format
   const { id: check_id } = await db.insert(
     'INSERT INTO KnowledgeCheck (id, name, description, owner_id, public_token, openDate, closeDate, difficulty, createdAt, updatedAt, expiresAt) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
@@ -19,7 +20,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
       check.description || null,
       user_id,
       check.share_key || null,
-      new Date(Date.parse(check.openDate)).toISOString().slice(0, 19).replace('T', ' '),
+      new Date(Date.parse(check.openDate.split('.').reverse().join('/'))).toISOString().slice(0, 19).replace('T', ' '),
       check.closeDate ? new Date(Date.parse(check.closeDate)).toISOString().slice(0, 19).replace('T', ' ') : null,
       check.difficulty,
       new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
