@@ -92,4 +92,23 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').should('exist')
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
   })
+
+  it.only('Verify that client-side field errors are displayed on invalid input', () => {
+    const EMAIL = `invalid-email`
+    const USERNAME = ``
+    const PASSWORD = `123`
+
+    cy.visit('/account/login?type=signup')
+
+    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').type('Some username')
+    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').clear()
+    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(PASSWORD)
+
+    cy.get('[main-content="true"] * button[type="submit"]').should('be.disabled')
+
+    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-name"]').should('exist')
+    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-email"]').should('exist')
+    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-password"]').should('exist')
+  })
 })
