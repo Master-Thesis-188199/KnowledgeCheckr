@@ -1,74 +1,100 @@
+/* app/account/login/SignupForm.tsx */
 'use client'
 
-import { AuthState, signup } from '@/src/app/account/login/actions'
-import Input from '@/src/components/Shared/form/Input'
-import { TriangleAlert } from 'lucide-react'
-import Link from 'next/link'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useActionState, useEffect, useRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-const initialState: AuthState = { success: false }
+import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import Input from '@/src/components/Shared/form/Input'
+import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import Link from 'next/link'
+import { signup } from './actions'
+
+type FormValues = z.infer<typeof SignupSchema>
+
 export default function SignupForm() {
-  const [state, formAction] = useActionState(signup, initialState)
-  const isFirst = useRef(true)
+  const [state, formAction] = useActionState(signup, { success: false, values: {} })
+
+  const {
+    register,
+    trigger,
+    setError,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(SignupSchema),
+    delayError: 150,
+    mode: 'onChange',
+    defaultValues: {
+      name: state.values?.name,
+      email: state.values?.email,
+      password: state.values?.password,
+    },
+  })
 
   useEffect(() => {
-    if (isFirst.current) {
-      isFirst.current = false
-      return
+    if (state.fieldErrors) {
+      Object.entries(state.fieldErrors).forEach(([key, msgs]) => {
+        if (msgs?.length) {
+          setError(key as keyof FormValues, { type: 'server', message: msgs[0] })
+        }
+      })
     }
 
     if (state.rootError) {
-      console.error(state.rootError)
+      setError('root', { type: 'server', message: state.rootError })
     }
+  }, [state.fieldErrors, state.rootError, setError])
 
-    if (state.success) {
-      console.info('Account created - welcome aboard!')
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) {
+      first.current = false
+      return
     }
-  }, [state])
+  }, [state.rootError, state.success])
+
+  useEffect(() => {
+    if (state.success) {
+      reset()
+    }
+  }, [state.success, reset])
 
   return (
-    <form action={formAction} className='flex flex-col gap-6'>
-      <label className='flex flex-col gap-2'>
+    <form
+      noValidate
+      action={formAction}
+      onSubmit={async (e) => {
+        const ok = await trigger()
+        if (!ok) e.preventDefault()
+      }}
+      className='flex flex-col gap-6'>
+      <label className='flex flex-col gap-1'>
         Username
-        <Input name='name' type='text' placeholder='Alexander' defaultValue={state.values?.name} />
-        {state.fieldErrors?.name && (
-          <div aria-label={`field-error-name`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
-            {state.fieldErrors?.name?.at(0)}
-          </div>
-        )}
+        <Input {...register('name')} className='input' defaultValue={state.values?.name} />
+        <FormFieldError field='name' errors={errors} />
       </label>
 
       <label className='flex flex-col gap-1'>
         Email
-        <Input name='email' type='email' placeholder='you@example.com' defaultValue={state.values?.email} />
-        {state.fieldErrors?.email && (
-          <div aria-label={`field-error-email`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
-            {state.fieldErrors?.email?.at(0)}
-          </div>
-        )}
+        <Input {...register('email')} className='input' defaultValue={state.values?.email} />
+        <FormFieldError field='email' errors={errors} />
       </label>
 
       <label className='flex flex-col gap-1'>
         Password
-        <Input name='password' type='password' placeholder='••••••••' defaultValue={state.values?.password} />
-        {state.fieldErrors?.password && (
-          <div aria-label={`field-error-password`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
-            {state.fieldErrors?.password?.at(0)}
-          </div>
-        )}
+        <Input type='password' {...register('password')} className='input' defaultValue={state.values?.password} />
+        <FormFieldError field='password' errors={errors} />
       </label>
 
-      <div className={twMerge('-mt-2 -mb-4', state?.rootError?.length || 0 > 0 ? '' : 'hidden')}>
-        <div aria-label={`field-error-password`} className={'flex items-center justify-center gap-1.5 text-[15px] text-red-400 dark:text-red-400/80'}>
-          <TriangleAlert className='inline-block size-4 text-red-400 dark:text-red-400/80' />
-          {state.rootError}
-        </div>
-      </div>
+      <FormFieldError field='root' errors={errors} className='-mt-2 -mb-4 text-center' />
 
       <div className='mt-2 flex flex-col items-center justify-center gap-3'>
         <button
           type='submit'
+          disabled={!isValid}
           className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
           Create account
         </button>
