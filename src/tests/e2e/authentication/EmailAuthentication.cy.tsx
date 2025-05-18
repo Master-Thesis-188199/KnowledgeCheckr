@@ -64,3 +64,32 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.login(EMAIL, '1234567890')
   })
 })
+
+describe('Better Auth: Email Authentication - Error Handling', () => {
+  it('Verify that an user cannot signup with the same credentials twice', () => {
+    const EMAIL = `test@email.com`
+    const USERNAME = `Test User`
+
+    cy.visit('/account/login?type=signup')
+
+    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').type(USERNAME)
+    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(Math.random().toString(36).slice(2, 10))
+
+    cy.intercept('POST', '/account/login?type=signup').as('signup-request')
+    cy.get('[main-content="true"] * button[type="submit"]').filter(':visible').click()
+
+    cy.wait('@signup-request').then((interception) => {
+      const response = interception.response
+      const responseBody = response?.body.toString().split('1:').at(1)
+      const body = JSON.parse(responseBody)
+
+      expect(response?.statusCode).to.eq(200)
+      expect(body).to.have.property('success')
+      expect(body.success).to.equal(false)
+    })
+
+    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').should('exist')
+    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
+  })
+})
