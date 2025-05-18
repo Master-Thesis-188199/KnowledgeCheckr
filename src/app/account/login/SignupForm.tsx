@@ -64,6 +64,7 @@ export default function SignupForm() {
 
   return (
     <form
+      id='signup-form'
       noValidate
       action={formAction}
       onSubmit={async (e) => {

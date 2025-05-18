@@ -61,6 +61,7 @@ export default function LoginForm() {
 
   return (
     <form
+      id='login-form'
       noValidate
       action={formAction}
       onSubmit={async (e) => {
