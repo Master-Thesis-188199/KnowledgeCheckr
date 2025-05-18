@@ -15,7 +15,7 @@ export default function LoginForm() {
     <form action={formAction} className='flex flex-col gap-6'>
       <label className='flex flex-col gap-1'>
         Email
-        <Input name='email' type='email' />
+        <Input name='email' type='email' defaultValue={state.values?.email} />
         {state.fieldErrors?.email && (
           <div aria-label={`field-error-email`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
             {state.fieldErrors?.email?.at(0)}
@@ -25,7 +25,7 @@ export default function LoginForm() {
 
       <label className='flex flex-col gap-1'>
         Password
-        <Input name='password' type='password' />
+        <Input name='password' type='password' defaultValue={state.values?.password} />
         {state.fieldErrors?.password && (
           <div aria-label={`field-error-password`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
             {state.fieldErrors?.password?.at(0)}

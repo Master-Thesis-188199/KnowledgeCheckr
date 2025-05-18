@@ -18,30 +18,37 @@ export type AuthState = {
     name?: string[]
   }
   rootError?: string
+  values?: {
+    email?: string
+    password?: string
+    name?: string
+  }
 }
 
 export async function signin(_: AuthState, formData: FormData): Promise<AuthState> {
   'use server'
 
-  const parsed = LoginSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+  const values = {
+    email: formData.get('email')?.toString(),
+    password: formData.get('password')?.toString(),
+  }
+
+  const parsed = LoginSchema.safeParse(values)
 
   if (!parsed.success) {
     const { fieldErrors } = parsed.error.flatten()
-    return { success: false, fieldErrors }
+    return { success: false, fieldErrors, values }
   }
 
   try {
     await auth.api.signInEmail({ body: parsed.data })
   } catch (e: Any) {
     if (e?.statusCode === 401) {
-      return { success: false, rootError: 'Wrong e-mail address or password.' }
+      return { success: false, rootError: 'Wrong e-mail address or password.', values }
     }
 
     console.error(e)
-    return { success: false, rootError: 'Something went wrong - please try again.' }
+    return { success: false, rootError: 'Something went wrong - please try again.', values }
   }
 
   redirect('/')
@@ -56,15 +63,17 @@ const SignupSchema = z.object({
 export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {
   'use server'
 
-  const parsed = SignupSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+  const values = {
+    name: formData.get('name')?.toString(),
+    email: formData.get('email')?.toString(),
+    password: formData.get('password')?.toString(),
+  }
+
+  const parsed = SignupSchema.safeParse(values)
 
   if (!parsed.success) {
     const { fieldErrors } = parsed.error.flatten()
-    return { success: false, fieldErrors }
+    return { success: false, fieldErrors, values }
   }
 
   try {
@@ -74,6 +83,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
       return {
         success: false,
         rootError: 'That e-mail address is already registered.',
+        values,
       }
     }
 
@@ -81,6 +91,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
       return {
         success: false,
         rootError: `${e.body.message}${!e.body.message.endsWith('!') ? '!' : ''}`, //+ e.body.message.endsWith('!') ? '' : '!',
+        values,
       }
     }
 
@@ -88,6 +99,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
     return {
       success: false,
       rootError: 'Could not create your account - please try again later.',
+      values,
     }
   }
 

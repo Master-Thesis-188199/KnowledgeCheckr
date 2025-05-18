@@ -31,7 +31,7 @@ export default function SignupForm() {
     <form action={formAction} className='flex flex-col gap-6'>
       <label className='flex flex-col gap-2'>
         Username
-        <Input name='name' type='text' placeholder='Alexander' />
+        <Input name='name' type='text' placeholder='Alexander' defaultValue={state.values?.name} />
         {state.fieldErrors?.name && (
           <div aria-label={`field-error-name`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
             {state.fieldErrors?.name?.at(0)}
@@ -41,7 +41,7 @@ export default function SignupForm() {
 
       <label className='flex flex-col gap-1'>
         Email
-        <Input name='email' type='email' placeholder='you@example.com' />
+        <Input name='email' type='email' placeholder='you@example.com' defaultValue={state.values?.email} />
         {state.fieldErrors?.email && (
           <div aria-label={`field-error-email`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
             {state.fieldErrors?.email?.at(0)}
@@ -51,7 +51,7 @@ export default function SignupForm() {
 
       <label className='flex flex-col gap-1'>
         Password
-        <Input name='password' type='password' placeholder='••••••••' />
+        <Input name='password' type='password' placeholder='••••••••' defaultValue={state.values?.password} />
         {state.fieldErrors?.password && (
           <div aria-label={`field-error-password`} className={'text-[15px] text-red-400 dark:text-red-400/80'}>
             {state.fieldErrors?.password?.at(0)}
