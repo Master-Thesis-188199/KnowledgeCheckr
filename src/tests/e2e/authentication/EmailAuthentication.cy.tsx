@@ -93,7 +93,7 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
   })
 
-  it('Verify that client-side field errors are displayed on invalid input', () => {
+  it('Verify that sign-up client-side field errors are displayed on invalid input', () => {
     const EMAIL = `invalid-email`
     const USERNAME = ``
     const PASSWORD = `123`
