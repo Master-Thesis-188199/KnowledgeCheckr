@@ -95,7 +95,6 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
 
   it('Verify that sign-up client-side field errors are displayed on invalid input', () => {
     const EMAIL = `invalid-email`
-    const USERNAME = ``
     const PASSWORD = `123`
 
     cy.visit('/account/login?type=signup')
@@ -110,6 +109,22 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-name"]').should('exist')
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-email"]').should('exist')
     cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-password"]').should('exist')
+  })
+
+  it('Verify that login client-side field errors are displayed on invalid input', () => {
+    const EMAIL = `invalid-email`
+    const PASSWORD = `123`
+
+    cy.visit('/account/login?type=login')
+
+    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(PASSWORD)
+
+    cy.get('[main-content="true"] * button[type="submit"]').should('be.disabled')
+    cy.get('[main-content="true"] * button[type="submit"]').click({ force: true })
+
+    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-email"]').should('exist')
+    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-password"]').should('exist')
   })
 
   it('Verify that error is displayed when logging in with wrong credentials', () => {
