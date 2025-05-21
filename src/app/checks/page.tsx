@@ -26,7 +26,7 @@ export default async function ChecksPage() {
           .
         </div>
       )}
-      <div className='checks grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6'>
+      <div className='checks grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8'>
         {checks.map((check, i) => (
           <RenderCheck key={i} {...check} />
         ))}
@@ -65,7 +65,7 @@ function RenderCheck(check: KnowledgeCheck) {
       <div className='flex flex-col items-center gap-1 px-4'>
         <span className='mx-auto mt-4 mb-2 flex size-14 items-center justify-center rounded-full bg-amber-500/30 text-center text-lg'>XX</span>
         <h2 className='text-center text-xl font-semibold'>{check.name || lorem.substring(0, Math.random() * 10 + 10)}</h2>
-        <span className='line-clamp-2 text-center text-sm text-balance dark:text-neutral-300'>{check.description || lorem.substring(0, Math.random() * 100 + 20)}</span>
+        <span className='line-clamp-2 text-center text-sm text-balance dark:text-neutral-400'>{check.description || lorem.substring(0, Math.random() * 100 + 20)}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6 text-neutral-300'>
         <div className='flex max-w-fit flex-col items-center gap-1'>
