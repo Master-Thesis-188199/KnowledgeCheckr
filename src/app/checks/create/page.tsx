@@ -8,6 +8,7 @@ import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import { Button } from '@/src/components/shadcn/button'
 import { getServerSession } from '@/src/lib/auth/server'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { redirect, unauthorized } from 'next/navigation'
 
 export default async function CreateCheckPage() {
@@ -18,10 +19,21 @@ export default async function CreateCheckPage() {
 
   const createDummyCheckAction = async () => {
     'use server'
+    const { user } = await getServerSession()
+    if (!user) unauthorized()
+
     insertKnowledgeCheck(user.id, {
       id: getUUID(),
-      name: '',
-      description: '',
+      name: (Math.random() * 100 + 10)
+        .toPrecision(20)
+        .replace(/\./g, '')
+        .split('')
+        .map((char) => String.fromCharCode(65 + parseInt(char)).toLowerCase())
+        .join(''),
+      description: lorem
+        .split(' ')
+        .slice(0, Math.random() * 100 + 10)
+        .join(' '),
       share_key: null,
       closeDate: null,
       difficulty: 2,
