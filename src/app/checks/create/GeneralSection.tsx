@@ -1,5 +1,6 @@
 'use client'
 
+import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
 import { Textarea } from '@headlessui/react'
@@ -7,6 +8,8 @@ import { ComponentType, InputHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export default function GeneralSection() {
+  const { setName, setDescription } = useCreateCheckStore((state) => state)
+
   return (
     <Card className='@container flex flex-col gap-8 p-3' disableHoverStyles>
       <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
@@ -15,8 +18,14 @@ export default function GeneralSection() {
         </div>
       </div>
       <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
-        <InputGroup label='Name' placeholder='Enter the name of your knowledge check' />
-        <InputGroup label='Description' className='min-h-20 resize-none' as={Textarea} placeholder='Describe the concept of your knowledge check using a few words.' />
+        <InputGroup onChange={(e) => setName(e.target.value)} label='Name' placeholder='Enter the name of your knowledge check' />
+        <InputGroup
+          onChange={(e) => setDescription(e.target.value)}
+          label='Description'
+          className='min-h-20 resize-none'
+          as={Textarea}
+          placeholder='Describe the concept of your knowledge check using a few words.'
+        />
         <InputGroup
           label='Deadline'
           type='date'
