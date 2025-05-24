@@ -27,7 +27,7 @@ export default async function ChecksPage() {
           .
         </div>
       )}
-      <div className='checks grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8'>
+      <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
         {checks.map((check, i) => (
           <RenderCheck key={i} {...check} />
         ))}
