@@ -8,7 +8,7 @@ import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import { Button } from '@/src/components/shadcn/button'
 import { getServerSession } from '@/src/lib/auth/server'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { unauthorized } from 'next/navigation'
+import { redirect, unauthorized } from 'next/navigation'
 
 export default async function CreateCheckPage() {
   const { user } = await getServerSession()
@@ -69,6 +69,8 @@ export default async function CreateCheckPage() {
         },
       ],
     })
+
+    redirect('/checks')
   }
 
   return (
