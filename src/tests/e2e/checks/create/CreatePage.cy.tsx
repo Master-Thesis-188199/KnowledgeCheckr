@@ -35,7 +35,7 @@ describe('/checks/create - Create Page ', () => {
 
       expect(body.at(0)).to.have.property('user_id')
       expect(body.at(0)).to.have.property('check')
-      expect(response?.statusCode).to.eq(200)
+      expect(response?.statusCode).to.eq(303)
     })
   })
 })
