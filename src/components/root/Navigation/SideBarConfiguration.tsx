@@ -9,7 +9,7 @@ export const sideBarConfiguration: SideBarProps = {
   elements: [
     {
       label: 'Dashboard',
-      href: '#',
+      href: '/',
       // icon: <BookOpenIcon className={iconClasses} />,
       icon: <LayoutDashboard className={cn(iconClasses, 'stroke-[1.7]')} />,
     },
