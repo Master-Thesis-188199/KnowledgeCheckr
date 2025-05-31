@@ -23,5 +23,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           temperature: 0.7
-          provider: auto
-          model: o1-mini
+          provider: g4f.Provider.Blackbox
+          model: o3-mini
