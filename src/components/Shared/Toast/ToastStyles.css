@@ -20,7 +20,7 @@
   --toastify-toast-bottom: max(var(--toastify-toast-offset), env(safe-area-inset-bottom));
   --toastify-toast-background: #fff;
   --toastify-toast-padding: 14px;
-  --toastify-toast-min-height: 64px;
+  --toastify-toast-min-height: 44px;
   --toastify-toast-max-height: 800px;
   --toastify-toast-bd-radius: 6px;
   --toastify-toast-shadow: 0px 4px 12px #0000001a;
@@ -42,6 +42,7 @@
   --toastify-color-progress-error: #5c0b0b;
   --toastify-color-progress-default: #000;
   --toastify-color-progress-bgo: 0.2;
+  --toastify-height-progress-bar: 4px;
 }
 
 html[data-theme='dark'] {
@@ -430,7 +431,7 @@ html[data-theme='dark'] .Toastify__toast-theme--colored.Toastify__toast--default
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5px;
+  height: var(--toastify-height-progress-bar);
   border-bottom-left-radius: var(--toastify-toast-bd-radius);
   border-bottom-right-radius: var(--toastify-toast-bd-radius);
 }
