@@ -254,6 +254,14 @@ html[data-theme='dark'] {
   color: var(--toastify-text-color-light);
 }
 
+.Toastify__toast-theme--colored.Toastify__toast--default .Toastify__close-button {
+  color: var(--toastify-text-color-light);
+}
+
+html[data-theme='dark'] .Toastify__toast-theme--colored.Toastify__toast--default .Toastify__close-button {
+  color: #fff;
+}
+
 html[data-theme='dark'] .Toastify__toast-theme--colored.Toastify__toast--default {
   background: var(--toastify-color-dark);
   color: var(--toastify-text-color-dark);
