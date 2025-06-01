@@ -10,6 +10,7 @@ import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { signup } from './actions'
 
 type FormValues = z.infer<typeof SignupSchema>
@@ -53,6 +54,10 @@ export default function SignupForm() {
     if (first.current) {
       first.current = false
       return
+    }
+
+    if (state.rootError) {
+      toast(state.rootError, { type: 'error' })
     }
   }, [state.rootError, state.success])
 
