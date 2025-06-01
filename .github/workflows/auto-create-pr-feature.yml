@@ -9,6 +9,9 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   BASE_BRANCH: canary
+  AI_GENERATION_ENABLED: false
+  PR_TITLE: 'Merge Feature Branch into Canary'
+  PR_DESCRIPTION: ''
 
 jobs:
   create-pr:
@@ -44,7 +47,7 @@ jobs:
           exit 0
 
       - name: Generate dynamic PR title using G4F (o1-mini)
-        if: steps.pr-check.outputs.result == 'false'
+        if: steps.pr-check.outputs.result == 'false' && env.AI_GENERATION_ENABLED == 'true'
         id: generate-title
         env:
           BRANCH_NAME: ${{ github.ref_name }}
@@ -119,7 +122,7 @@ jobs:
           EOF
 
       - name: Generate dynamic PR description using G4F (o1-mini) with Diff
-        if: steps.pr-check.outputs.result == 'false'
+        if: steps.pr-check.outputs.result == 'false' && env.AI_GENERATION_ENABLED == 'true'
         id: generate-description
         env:
           INPUT_TEMPERATURE: 0.7
