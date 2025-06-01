@@ -2,7 +2,7 @@
 
 import useMatchMedia from '@/hooks/Shared/useMatchMedia'
 
-interface ConditionalSidebarProps {
+interface ConditionalBreakpointProps {
   children: React.ReactNode
 
   hideBreakPoint?: string
@@ -10,7 +10,7 @@ interface ConditionalSidebarProps {
   logIdentifier?: string
 }
 
-export default function ConditionalBreakpointRendering({ children, showBreakPoint, hideBreakPoint, logIdentifier }: ConditionalSidebarProps) {
+export default function ConditionalBreakpointRendering({ children, showBreakPoint, hideBreakPoint, logIdentifier }: ConditionalBreakpointProps) {
   if (!showBreakPoint && !hideBreakPoint) throw new Error('[ConditionalBreakpointRendering]: Either showBreakPoint or hideBreakPoint must be provided')
 
   const mediaQuery = hideBreakPoint ? `(max-width: ${hideBreakPoint})` : `(min-width: ${showBreakPoint})`
