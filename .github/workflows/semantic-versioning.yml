@@ -18,8 +18,29 @@ env:
   REPO_NAME: ${{ github.repository }}
 
 jobs:
+  check-file-changes:
+    name: Check for Relevant File Changes (Sem. Ver.)
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for relevant changes
+        id: check
+        uses: ./.github/actions/check-changed-files
+        with:
+          base: ${{ github.event.before }}
+          disable-workflow-skips: ${{ secrets.DISABLE_WORKFLOW_SKIPS }}
+
   semantic-versioning:
     runs-on: ubuntu-latest
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.relevant == 'true'
 
     steps:
       - name: Checkout

@@ -5,7 +5,6 @@ on:
     types: [opened, labeled, reopened]
     branches-ignore:
       - main
-      - canary
 
 permissions:
   pull-requests: write
