@@ -1,5 +1,6 @@
 language: 'en-US'
 early_access: false
+enable_free_tier: true
 reviews:
   profile: 'chill'
   request_changes_workflow: false
