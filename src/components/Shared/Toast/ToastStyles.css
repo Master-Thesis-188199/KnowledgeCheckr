@@ -36,10 +36,11 @@
   --toastify-spinner-color-empty-area: #e0e0e0;
   --toastify-color-progress-light: linear-gradient(to right, #4cd964, #5ac8fa, #007aff, #34aadc, #5856d6, #ff2d55);
   --toastify-color-progress-dark: #bb86fc;
-  --toastify-color-progress-info: var(--toastify-color-info);
-  --toastify-color-progress-success: var(--toastify-color-success);
-  --toastify-color-progress-warning: var(--toastify-color-warning);
-  --toastify-color-progress-error: var(--toastify-color-error);
+  --toastify-color-progress-info: #083064;
+  --toastify-color-progress-success: #0f530f;
+  --toastify-color-progress-warning: #5c390b;
+  --toastify-color-progress-error: #5c0b0b;
+  --toastify-color-progress-default: #000;
   --toastify-color-progress-bgo: 0.2;
 }
 
@@ -52,6 +53,11 @@ html[data-theme='dark'] {
   --toastify-icon-color-warning: rgb(245, 167, 49);
   --toastify-icon-color-success: rgb(84, 218, 88);
   --toastify-icon-color-error: rgb(248, 117, 115);
+  --toastify-color-progress-info: var(--toastify-color-transparent);
+  --toastify-color-progress-success: var(--toastify-color-transparent);
+  --toastify-color-progress-warning: var(--toastify-color-transparent);
+  --toastify-color-progress-error: var(--toastify-color-transparent);
+  --toastify-color-progress-default: var(--toastify-color-transparent);
 }
 
 .Toastify__toast-container {
@@ -329,11 +335,21 @@ html[data-theme='dark'] .Toastify__toast-theme--colored.Toastify__toast--default
   background: var(--toastify-color-progress-error);
 }
 
-.Toastify__progress-bar-theme--colored.Toastify__progress-bar--info,
-.Toastify__progress-bar-theme--colored.Toastify__progress-bar--success,
-.Toastify__progress-bar-theme--colored.Toastify__progress-bar--warning,
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--info {
+  background: var(--toastify-color-progress-info);
+}
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--success {
+  background: var(--toastify-color-progress-success);
+}
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--warning {
+  background: var(--toastify-color-progress-warning);
+}
 .Toastify__progress-bar-theme--colored.Toastify__progress-bar--error {
-  background: var(--toastify-color-transparent);
+  background: var(--toastify-color-progress-error);
+}
+
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--default {
+  background: var(--toastify-color-progress-default);
 }
 
 .Toastify__close-button {
