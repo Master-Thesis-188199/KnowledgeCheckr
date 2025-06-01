@@ -12,7 +12,7 @@ export default function QuestionsSection() {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
-    <Card disableHoverStyles className='break-inside-avoid'>
+    <Card disableHoverStyles className='question-section break-inside-avoid'>
       <div className='header -m-3 mb-0 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>Questions</h2>

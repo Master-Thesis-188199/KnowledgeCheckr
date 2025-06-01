@@ -1,12 +1,9 @@
 import { Any } from '@/types'
 
 it('Verify that the page is unaccessible for unauthenticated users', () => {
-  const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
-  cy.intercept('GET', `${baseUrl}/checks/create`).as('intercept-page-response')
+  cy.visit('/checks/create')
 
-  cy.visit('/checks/create', { failOnStatusCode: false })
-
-  cy.wait('@intercept-page-response').its('response.statusCode').should('eq', 401)
+  cy.get('main').should('contain', "You're not authorized to access this page")
 })
 
 describe('/checks/create - Create Page ', () => {
@@ -26,7 +23,7 @@ describe('/checks/create - Create Page ', () => {
     cy.visit('/checks/create')
 
     cy.intercept('POST', `${baseUrl}/checks/create`).as('intercept-create-response')
-    cy.get("[main-content='true'] * [aria-label='save created knowledge check']").should('exist').click({ force: true })
+    cy.get("[aria-label='save created knowledge check']").should('exist').click({ force: true })
 
     cy.wait('@intercept-create-response').then((interception) => {
       const request = interception.request

@@ -10,6 +10,7 @@ import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { LoginSchema } from '@/src/schemas/AuthenticationSchema'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { signin } from './actions'
 
 type FormValues = z.infer<typeof LoginSchema>
@@ -52,6 +53,10 @@ export default function LoginForm() {
     if (first.current) {
       first.current = false
       return
+    }
+
+    if (state.rootError) {
+      toast(state.rootError, { type: 'error' })
     }
   }, [state.rootError, state.success])
 
