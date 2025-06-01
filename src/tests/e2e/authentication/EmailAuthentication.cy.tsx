@@ -72,12 +72,12 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
 
     cy.visit('/account/login?type=signup')
 
-    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').type(USERNAME)
-    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
-    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(Math.random().toString(36).slice(2, 10))
+    cy.get('input[name="name"]').filter(':visible').type(USERNAME)
+    cy.get('input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('input[name="password"]').filter(':visible').type(Math.random().toString(36).slice(2, 10))
 
     cy.intercept('POST', '/account/login?type=signup').as('signup-request')
-    cy.get('[main-content="true"] * button[type="submit"]').filter(':visible').click()
+    cy.get('button[type="submit"]').filter(':visible').click()
 
     cy.wait('@signup-request').then((interception) => {
       const response = interception.response
@@ -89,8 +89,8 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
       expect(body.success).to.equal(false)
     })
 
-    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').should('exist')
-    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
+    cy.get('main * #signup-form [aria-label="field-error-root"]').should('exist')
+    cy.get('main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
   })
 
   it('Verify that sign-up client-side field errors are displayed on invalid input', () => {
@@ -99,16 +99,16 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
 
     cy.visit('/account/login?type=signup')
 
-    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').type('Some username')
-    cy.get('[main-content="true"] * input[name="name"]').filter(':visible').clear()
-    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
-    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(PASSWORD)
+    cy.get('input[name="name"]').filter(':visible').type('Some username')
+    cy.get('input[name="name"]').filter(':visible').clear()
+    cy.get('input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('input[name="password"]').filter(':visible').type(PASSWORD)
 
-    cy.get('[main-content="true"] * button[type="submit"]').should('be.disabled')
+    cy.get('button[type="submit"]').should('be.disabled')
 
-    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-name"]').should('exist')
-    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-email"]').should('exist')
-    cy.get('[main-content="true"] * main * #signup-form [aria-label="field-error-password"]').should('exist')
+    cy.get('main * #signup-form [aria-label="field-error-name"]').should('exist')
+    cy.get('main * #signup-form [aria-label="field-error-email"]').should('exist')
+    cy.get('main * #signup-form [aria-label="field-error-password"]').should('exist')
   })
 
   it('Verify that login client-side field errors are displayed on invalid input', () => {
@@ -117,24 +117,24 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
 
     cy.visit('/account/login?type=login')
 
-    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type(EMAIL)
-    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type(PASSWORD)
+    cy.get('input[name="email"]').filter(':visible').type(EMAIL)
+    cy.get('input[name="password"]').filter(':visible').type(PASSWORD)
 
-    cy.get('[main-content="true"] * button[type="submit"]').should('be.disabled')
-    cy.get('[main-content="true"] * button[type="submit"]').click({ force: true })
+    cy.get('button[type="submit"]').should('be.disabled')
+    cy.get('button[type="submit"]').click({ force: true })
 
-    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-email"]').should('exist')
-    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-password"]').should('exist')
+    cy.get('main * #login-form [aria-label="field-error-email"]').should('exist')
+    cy.get('main * #login-form [aria-label="field-error-password"]').should('exist')
   })
 
   it('Verify that error is displayed when logging in with wrong credentials', () => {
     cy.visit('/account/login?type=signin')
 
-    cy.get('[main-content="true"] * input[name="email"]').filter(':visible').type('test@email.com')
-    cy.get('[main-content="true"] * input[name="password"]').filter(':visible').type('wrongpassword')
+    cy.get('input[name="email"]').filter(':visible').type('test@email.com')
+    cy.get('input[name="password"]').filter(':visible').type('wrongpassword')
 
     cy.intercept('POST', '/account/login?type=signin').as('login-request')
-    cy.get('[main-content="true"] * button[type="submit"]').filter(':visible').click()
+    cy.get('button[type="submit"]').filter(':visible').click()
     cy.wait('@login-request').then((interception) => {
       const response = interception.response
       const responseBody = response?.body.toString().split('1:').at(1)
@@ -145,7 +145,7 @@ describe('Better Auth: Email Authentication - Error Handling', () => {
       expect(body.success).to.equal(false)
     })
 
-    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-root"]').should('exist')
-    cy.get('[main-content="true"] * main * #login-form [aria-label="field-error-root"]').contains('Wrong e-mail address or password.')
+    cy.get('main * #login-form [aria-label="field-error-root"]').should('exist')
+    cy.get('main * #login-form [aria-label="field-error-root"]').contains('Wrong e-mail address or password.')
   })
 })
