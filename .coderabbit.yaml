@@ -13,6 +13,5 @@ reviews:
     base_branches:
       - main
       - canary
-      - '*'
 chat:
   auto_reply: true
