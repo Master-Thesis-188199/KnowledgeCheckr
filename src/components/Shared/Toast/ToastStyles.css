@@ -1,16 +1,16 @@
 /* [project]/node_modules/react-toastify/dist/ReactToastify.css [app-client] (css) */
 :root {
   --toastify-color-light: #fff;
-  --toastify-color-dark: #121212;
-  --toastify-color-info: #3498db;
-  --toastify-color-success: #07bc0c;
-  --toastify-color-warning: #f1c40f;
-  --toastify-color-error: #e74d3c;
+  --toastify-color-dark: #312e2e;
+  --toastify-color-info: linear-gradient(45deg, rgb(58, 146, 180) 0%, rgb(60, 158, 197) 50%, rgb(22, 152, 204) 100%);
+  --toastify-color-success: linear-gradient(90deg, rgb(67, 176, 71) 0%, rgb(29, 170, 34) 50%, rgb(19, 155, 24) 100%);
+  --toastify-color-warning: linear-gradient(90deg, rgb(234, 167, 65) 0%, rgb(216, 160, 76) 50%, rgb(210, 144, 46) 100%);
+  --toastify-color-error: linear-gradient(90deg, rgb(203, 76, 74) 0%, rgb(217, 78, 76) 50%, rgb(217, 30, 27) 100%);
   --toastify-color-transparent: #ffffffb3;
-  --toastify-icon-color-info: var(--toastify-color-info);
-  --toastify-icon-color-success: var(--toastify-color-success);
-  --toastify-icon-color-warning: var(--toastify-color-warning);
-  --toastify-icon-color-error: var(--toastify-color-error);
+  --toastify-icon-color-info: #afdbf9;
+  --toastify-icon-color-success: #95ec98;
+  --toastify-icon-color-warning: #a87413;
+  --toastify-icon-color-error: #791906;
   --toastify-container-width: fit-content;
   --toastify-toast-width: 320px;
   --toastify-toast-offset: 16px;
@@ -41,6 +41,17 @@
   --toastify-color-progress-warning: var(--toastify-color-warning);
   --toastify-color-progress-error: var(--toastify-color-error);
   --toastify-color-progress-bgo: 0.2;
+}
+
+html[data-theme='dark'] {
+  --toastify-color-info: linear-gradient(45deg, rgb(0, 84, 117) 0%, rgb(13, 105, 141) 50%, rgba(17, 116, 156, 1) 100%);
+  --toastify-color-success: linear-gradient(90deg, rgb(23, 125, 26) 0%, rgb(22, 124, 26) 50%, rgba(39, 161, 43, 1) 100%);
+  --toastify-color-warning: linear-gradient(90deg, rgba(166, 104, 12, 1) 0%, rgb(156, 104, 25) 50%, rgb(183, 121, 26) 100%);
+  --toastify-color-error: linear-gradient(90deg, rgba(176, 29, 26, 1) 0%, rgba(176, 29, 26, 1) 50%, rgba(181, 48, 45, 1) 100%);
+  --toastify-icon-color-info: rgb(128, 195, 222);
+  --toastify-icon-color-warning: rgb(245, 167, 49);
+  --toastify-icon-color-success: rgb(84, 218, 88);
+  --toastify-icon-color-error: rgb(248, 117, 115);
 }
 
 .Toastify__toast-container {
@@ -243,9 +254,32 @@
   color: var(--toastify-text-color-light);
 }
 
+html[data-theme='dark'] .Toastify__toast-theme--colored.Toastify__toast--default {
+  background: var(--toastify-color-dark);
+  color: var(--toastify-text-color-dark);
+  border: 1px solid #494747;
+}
+
 .Toastify__toast-theme--colored.Toastify__toast--info {
   color: var(--toastify-text-color-info);
   background: var(--toastify-color-info);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--info .Toastify__toast-icon {
+  color: var(--toastify-icon-color-info);
+  margin-bottom: 2;
+}
+.Toastify__toast-theme--colored.Toastify__toast--success .Toastify__toast-icon {
+  color: var(--toastify-icon-color-success);
+  margin-bottom: 2;
+}
+.Toastify__toast-theme--colored.Toastify__toast--warning .Toastify__toast-icon {
+  color: var(--toastify-icon-color-warning);
+  margin-bottom: 2;
+}
+.Toastify__toast-theme--colored.Toastify__toast--error .Toastify__toast-icon {
+  color: var(--toastify-icon-color-error);
+  margin-bottom: 2;
 }
 
 .Toastify__toast-theme--colored.Toastify__toast--success {
