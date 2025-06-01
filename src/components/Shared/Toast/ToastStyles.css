@@ -42,7 +42,7 @@
   --toastify-color-progress-error: #5c0b0b;
   --toastify-color-progress-default: #000;
   --toastify-color-progress-bgo: 0.2;
-  --toastify-height-progress-bar: 4px;
+  --toastify-height-progress-bar: calc(var(--toastify-toast-min-height) / 12);
 }
 
 html[data-theme='dark'] {
