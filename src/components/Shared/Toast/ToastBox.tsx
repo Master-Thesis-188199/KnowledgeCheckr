@@ -1,9 +1,9 @@
 'use client'
+import '@/components/Shared/Toast/ToastStyles.css'
 import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 export default function ToastBox(config?: ContainerProps) {
-  return <ToastContainer className='mt-12' autoClose={3000} closeOnClick pauseOnHover pauseOnFocusLoss={false} theme={'colored'} position={'bottom-center'} {...config} />
+  return <ToastContainer toastClassName='md:ml-12' autoClose={3000} closeOnClick pauseOnHover pauseOnFocusLoss={false} theme={'colored'} position={'bottom-center'} {...config} />
 }
 
 export type ContainerProps = {
