@@ -8,7 +8,7 @@ import { ComponentType, InputHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export default function GeneralSection() {
-  const { setName, setDescription } = useCreateCheckStore((state) => state)
+  const { setName, setDescription, name, description, closeDate } = useCreateCheckStore((state) => state)
 
   return (
     <Card className='@container flex flex-col gap-8 p-3' disableHoverStyles>
@@ -18,8 +18,9 @@ export default function GeneralSection() {
         </div>
       </div>
       <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
-        <InputGroup onChange={(e) => setName(e.target.value)} label='Name' placeholder='Enter the name of your knowledge check' />
+        <InputGroup defaultValue={name} onChange={(e) => setName(e.target.value)} label='Name' placeholder='Enter the name of your knowledge check' />
         <InputGroup
+          defaultValue={description || ''}
           onChange={(e) => setDescription(e.target.value)}
           label='Description'
           className='min-h-20 resize-none'
@@ -29,12 +30,15 @@ export default function GeneralSection() {
         <InputGroup
           label='Deadline'
           type='date'
-          defaultValue={new Date(Date.now())
-            .toLocaleDateString('de')
-            .split('.')
-            .reverse()
-            .map((el) => (el.length < 2 ? '0' + el : el))
-            .join('-')}
+          defaultValue={
+            closeDate ||
+            new Date(Date.now())
+              .toLocaleDateString('de')
+              .split('.')
+              .reverse()
+              .map((el) => (el.length < 2 ? '0' + el : el))
+              .join('-')
+          }
           className='text-sm text-neutral-500 dark:text-neutral-400'
         />
         <InputGroup label='Administrators' />
