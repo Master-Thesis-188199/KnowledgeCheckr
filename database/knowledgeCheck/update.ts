@@ -8,8 +8,13 @@ export async function updateKnowledgeCheck(user_id: User['id'], updatedCheck: Kn
 
   await db.beginTransaction()
 
-  await db.exec('DELETE FROM KnowledgeCheck WHERE id = ?', [updatedCheck.id])
-  await insertKnowledgeCheck(user_id, updatedCheck, false)
+  try {
+    await db.exec('DELETE FROM KnowledgeCheck WHERE id = ?', [updatedCheck.id])
+    await insertKnowledgeCheck(user_id, updatedCheck, false)
 
-  await db.commit()
+    await db.commit()
+  } catch (err) {
+    await db.rollback()
+    console.error('[Rollback]: Error updating knowledge check:', err)
+  }
 }
