@@ -9,7 +9,7 @@ import _ from 'lodash'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { redirect, unauthorized } from 'next/navigation'
 
-export async function saveAction({ user_id, check }: { user_id: string; check: KnowledgeCheck }) {
+export async function saveAction({ check }: { check: KnowledgeCheck }) {
   const { user } = await getServerSession()
   if (!user) unauthorized()
 
@@ -27,7 +27,7 @@ export async function saveAction({ user_id, check }: { user_id: string; check: K
       }
     } else {
       console.log('Inserting new knowledge check', check)
-      await insertKnowledgeCheck(user_id, check)
+      await insertKnowledgeCheck(user.id, check)
     }
 
     redirect('/checks')
