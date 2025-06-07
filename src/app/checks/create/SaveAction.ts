@@ -21,7 +21,7 @@ export async function saveAction({ user_id, check }: { user_id: string; check: K
           'Updating existing knowledge check -> changes',
           _.differenceWith(_.toPairs(exists), _.toPairs(check), _.isEqual).map(([key, value]) => ({ key, value })),
         )
-        updateKnowledgeCheck(user.id, check)
+        await updateKnowledgeCheck(user.id, check)
       } else {
         console.log('Knowledge check is unchanged, skipping update')
       }
