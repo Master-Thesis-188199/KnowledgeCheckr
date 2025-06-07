@@ -95,7 +95,7 @@ export default async function CreateCheckPage() {
           <div className='h-[500px]'></div>
         </Card>
         <QuestionsSection />
-        <Card className='h-60 break-inside-avoid' children={<></>} disableHoverStyles></Card>
+        <Card className='h-60 break-inside-avoid' disableHoverStyles />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
         <SaveCreateCheckButton user_id={user.id} />
