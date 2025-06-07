@@ -61,7 +61,7 @@ function RenderCheckGrid(check: KnowledgeCheck) {
 function RenderCheck(check: KnowledgeCheck) {
   return (
     <Link
-      href={`/checks/${check.id}`}
+      href={`/checks/edit/${check.id}`}
       className='flex flex-col justify-between gap-10 rounded-md py-4 ring-1 hover:ring-[1.5px] dark:bg-neutral-700/30 dark:ring-neutral-500/70 hover:dark:bg-neutral-700/60 hover:dark:ring-neutral-500 focus:dark:bg-neutral-700/60'>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name || 'XX'} className='mx-auto mt-4 mb-2 size-auto' />
