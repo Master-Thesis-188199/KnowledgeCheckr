@@ -4,7 +4,6 @@ import { Button } from '@/src/components/shadcn/button'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { motion, Variants } from 'framer-motion'
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 
 // Parent needs empty states just to trigger its children
 const cardVariants = {
@@ -39,9 +38,9 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       whileHover='hover'
       animate='rest'>
       <div className='flex flex-col items-center gap-1 px-4'>
-        <InitialsIcon size={64} name={check.name || 'XX'} className='mx-auto mt-4 mb-2 size-auto' />
-        <h2 className='text-center text-xl font-semibold dark:text-neutral-300'>{check.name || lorem.substring(0, Math.random() * 10 + 10)}</h2>
-        <span className='line-clamp-2 text-center text-sm text-balance dark:text-neutral-400'>{check.description || lorem.substring(0, Math.random() * 100 + 20)}</span>
+        <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2 size-auto' />
+        <h2 className='text-center text-xl font-semibold dark:text-neutral-300'>{check.name}</h2>
+        <span className='line-clamp-2 text-center text-sm text-balance dark:text-neutral-400'>{check.description}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6 text-neutral-300'>
         <div className='flex max-w-fit flex-col items-center gap-1'>
