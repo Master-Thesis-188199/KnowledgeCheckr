@@ -9,6 +9,7 @@ export type CreateCheckActions = {
   setName: (name: string) => void
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
+  removeQuestion: (questionId: Question['id']) => void
 }
 
 export type CreateCheckStore = CreateCheckState & CreateCheckActions
@@ -51,6 +52,18 @@ export const createCheckCreateStore = (initialState: CreateCheckState = defaultI
         }
 
         return { questions: [...prev.questions, question], questionCategories }
+      }),
+    removeQuestion: (questionId) =>
+      set((prev) => {
+        const toRemoveQuestion = prev.questions.find((question) => question.id !== questionId)
+
+        const category = toRemoveQuestion?.category
+        const isCategoryUsed = prev.questions.filter((question) => question.id !== questionId).some((question) => question.category === category)
+
+        return {
+          questions: prev.questions.filter((question) => question.id !== questionId),
+          questionCategories: isCategoryUsed ? prev.questionCategories : prev.questionCategories.filter((cat) => cat.name !== category),
+        }
       }),
   }))
 }
