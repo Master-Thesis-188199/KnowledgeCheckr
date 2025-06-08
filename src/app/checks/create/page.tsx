@@ -98,7 +98,7 @@ export default async function CreateCheckPage() {
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton user_id={user.id} />
+        <SaveCreateCheckButton />
         <Button variant='primary' className='' formAction={createDummyCheckAction}>
           Create Dummy Check
         </Button>

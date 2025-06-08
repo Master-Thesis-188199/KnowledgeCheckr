@@ -35,7 +35,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
         <Card className='h-60 break-inside-avoid' children={<></>} disableHoverStyles></Card>
       </div>
       <form className='mt-4 flex justify-center gap-2'>
-        <SaveCreateCheckButton user_id={user.id} />
+        <SaveCreateCheckButton />
       </form>
       <div />
     </CreateCheckStoreProvider>
