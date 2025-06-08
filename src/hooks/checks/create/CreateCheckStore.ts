@@ -38,7 +38,7 @@ export const createCheckCreateStore = (initialState: CreateCheckState = defaultI
   return createStore<CreateCheckStore>()((set) => {
     const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
       set((prev) => {
-        const toRemoveQuestion = prev.questions.find((question) => question.id !== questionId)
+        const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
 
         const category = toRemoveQuestion?.category
         const isCategoryUsed = prev.questions.filter((question) => question.id !== questionId).some((question) => question.category === category)
