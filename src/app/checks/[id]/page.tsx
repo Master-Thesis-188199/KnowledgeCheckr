@@ -1,15 +1,11 @@
 import DisplayQuestion from '@/components/check/DisplayQuestion'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
-import { getServerSession } from '@/src/lib/auth/server'
-import { notFound, unauthorized } from 'next/navigation'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { notFound } from 'next/navigation'
 
 export default async function CheckPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { user } = await getServerSession()
-
-  if (!user) {
-    unauthorized()
-  }
+  await requireAuthentication()
 
   const check = await getKnowledgeCheckById(id)
 
