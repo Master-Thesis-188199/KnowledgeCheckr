@@ -4,9 +4,12 @@ import getDatabase from '@/database/Database'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { User } from 'better-auth'
 
 export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck, transaction = true) {
+  await requireAuthentication()
+
   const db = await getDatabase()
 
   if (transaction) await db.beginTransaction()

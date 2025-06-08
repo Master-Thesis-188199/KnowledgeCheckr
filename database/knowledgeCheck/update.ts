@@ -1,9 +1,12 @@
 import getDatabase from '@/database/Database'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { User } from 'better-auth'
 
 export async function updateKnowledgeCheck(user_id: User['id'], updatedCheck: KnowledgeCheck) {
+  await requireAuthentication()
+
   const db = await getDatabase()
 
   await db.beginTransaction()

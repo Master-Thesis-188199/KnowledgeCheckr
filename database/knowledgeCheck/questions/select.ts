@@ -2,11 +2,14 @@
 
 import { DBConnection } from '@/database/Database'
 import { DBAnswer, DBCategory, DbQuestion } from '@/database/knowledgeCheck/questions/type'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 export default async function getKnowledgeCheckQuestions(db: DBConnection, knowledgeCheck_id: KnowledgeCheck['id']) {
+  await requireAuthentication()
+
   const questions: Question[] = []
 
   const raw_questions = await db.exec<Array<DbQuestion>>('SELECT * FROM Question WHERE knowledgecheck_id = ?', [knowledgeCheck_id])
@@ -59,6 +62,8 @@ function parseAnswer(question_type: Question['type'], answers: DBAnswer[]): Pick
 }
 
 async function parseCategory(db: DBConnection, category_id: string): Promise<Question['category']> {
+  await requireAuthentication()
+
   const categories = await db.exec<DBCategory[]>('SELECT * FROM Category WHERE id = ?', [category_id])
 
   return categories.at(0)!.name
