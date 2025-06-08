@@ -5,7 +5,7 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
-import { Info, Plus } from 'lucide-react'
+import { Folder, Info, Plus } from 'lucide-react'
 import { useState } from 'react'
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
@@ -36,6 +36,7 @@ export default function QuestionsSection() {
                   </div>
                   <div className='flex justify-between text-xs'>
                     <div className='flex items-center gap-1 text-neutral-500 dark:text-neutral-400'>
+                      <Folder className='size-3' />
                       <span className='lowercase'>{question.category}</span>
                     </div>
                     <span className='text-neutral-500 dark:text-neutral-400'>{question.type}</span>
