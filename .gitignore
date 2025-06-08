@@ -13,6 +13,8 @@
 # testing
 .actrc
 /coverage
+/cypress/downloads
+/cypress/screenshots
 
 # next.js
 /.next/

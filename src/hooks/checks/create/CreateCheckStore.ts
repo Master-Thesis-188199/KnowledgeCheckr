@@ -6,6 +6,8 @@ import { createStore } from 'zustand/vanilla'
 export type CreateCheckState = KnowledgeCheck
 
 export type CreateCheckActions = {
+  setName: (name: string) => void
+  setDescription: (description: string) => void
   addQuestion: (question: Question) => void
 }
 
@@ -33,6 +35,8 @@ const defaultInitState: CreateCheckState = {
 export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
   return createStore<CreateCheckStore>()((set) => ({
     ...initialState,
+    setName: (name) => set((prev) => ({ ...prev, name })),
+    setDescription: (description) => set((prev) => ({ ...prev, description })),
     addQuestion: (question: Question) =>
       set((prev) => {
         const { questionCategories } = prev

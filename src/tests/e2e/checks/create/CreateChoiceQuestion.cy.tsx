@@ -2,10 +2,11 @@ import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 
 describe('Check: Create Choice Question -', () => {
   beforeEach(() => {
+    cy.loginTestUser()
     cy.visit('/checks/create')
 
-    cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
-    cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
+    cy.get(".question-section * [data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
+    cy.get(".question-section * [data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
   })
 
   it('Verify that a choice question can be added when the inputs are valid', () => {

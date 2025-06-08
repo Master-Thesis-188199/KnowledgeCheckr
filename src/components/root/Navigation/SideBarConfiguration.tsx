@@ -1,5 +1,6 @@
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
-import { ArrowLeftEndOnRectangleIcon, BookOpenIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
+import { cn } from '@/src/lib/Shared/utils'
+import { BadgePlus, LayoutDashboard, List } from 'lucide-react'
 
 export const iconClasses = 'text-neutral-700 dark:text-neutral-200 size-6 flex-shrink-0 ml-[9px]'
 
@@ -7,19 +8,20 @@ export const sideBarConfiguration: SideBarProps = {
   title: 'KnowledgeCheckr',
   elements: [
     {
-      label: 'Knowledge Dashboard',
-      href: '#',
-      icon: <BookOpenIcon className={iconClasses} />,
+      label: 'Dashboard',
+      href: '/',
+      // icon: <BookOpenIcon className={iconClasses} />,
+      icon: <LayoutDashboard className={cn(iconClasses, 'stroke-[1.7]')} />,
     },
     {
-      label: 'Settings',
-      href: '#',
-      icon: <Cog8ToothIcon className={iconClasses} />,
+      label: 'Create New Check',
+      href: '/checks/create',
+      icon: <BadgePlus className={iconClasses} />,
     },
     {
-      label: 'Logout',
-      href: '#',
-      icon: <ArrowLeftEndOnRectangleIcon className={iconClasses} />,
+      label: 'Show Checks',
+      href: '/checks',
+      icon: <List className={iconClasses} />,
     },
   ],
 }

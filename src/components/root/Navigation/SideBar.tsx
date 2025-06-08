@@ -1,7 +1,9 @@
 import { DesktopSidebar } from '@/components/root/Navigation/desktop/DesktopSideBar'
-import { ReactNode } from 'react'
-import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
 import MobileSideBar from '@/components/root/Navigation/mobile/MobileSideBar'
+import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
+import { ActiveDelimiter } from '@/src/components/root/Navigation/ActiveDelimiter'
+import ConditionalBreakpointRendering from '@/src/components/Shared/ConditionalBreakpointRendering'
+import { ReactNode } from 'react'
 
 export interface SideBarProps {
   title: string
@@ -16,8 +18,13 @@ export interface SideBarProps {
 export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {
   return (
     <SidebarStoreProvider initialStoreProps={initialStoreProps}>
-      <DesktopSidebar children={children} className='hidden md:flex' />
-      <MobileSideBar children={children} visibilityBreakpoints='flex md:hidden opacity-100 md:opacity-0' />
+      <ConditionalBreakpointRendering hideBreakPoint='768px' logIdentifier='mobile-sidebar'>
+        <MobileSideBar children={children} visibilityBreakpoints='flex md:hidden opacity-100 md:opacity-0' />
+      </ConditionalBreakpointRendering>
+
+      <ConditionalBreakpointRendering showBreakPoint='768px' logIdentifier='desktop-sidebar'>
+        <DesktopSidebar className='hidden md:flex' children={children} />
+      </ConditionalBreakpointRendering>
     </SidebarStoreProvider>
   )
 }

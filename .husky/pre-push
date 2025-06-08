@@ -37,7 +37,7 @@ if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
     exit 1
   fi
 
-  if npm run test; then
+  if yarn test:parallel; then
     echo "Tests passed."
     # Check if running on macOS for notifications
     if [ "$(uname)" = "Darwin" ]; then

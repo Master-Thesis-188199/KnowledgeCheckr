@@ -1,4 +1,5 @@
 it("Verify that a dialog opens when the 'Add Question' button is clicked", () => {
+  cy.loginTestUser()
   cy.visit('/checks/create')
 
   cy.get("[data-slot='dialog-trigger']").contains('Create Question').click()
@@ -7,6 +8,7 @@ it("Verify that a dialog opens when the 'Add Question' button is clicked", () =>
 
 describe('Check: Create Question Dialog Closure Checks -', () => {
   beforeEach(() => {
+    cy.loginTestUser()
     cy.visit('/checks/create')
 
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').click()

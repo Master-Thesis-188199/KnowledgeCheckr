@@ -90,3 +90,7 @@ Cypress.Commands.add('signOut', () => {
 Cypress.Commands.add('removeDBUser', (email: string, username: string) => {
   cy.task('removeDBUser', { email, username })
 })
+
+Cypress.Commands.add('loginTestUser', () => {
+  cy.login('test@email.com', 'testpassword')
+})
