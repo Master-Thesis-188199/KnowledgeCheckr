@@ -41,8 +41,8 @@ export default function QuestionsSection() {
                   </div>
                 </div>
                 <CreateQuestionDialog initialValues={question}>
-                  <div className='my-auto flex max-h-10 items-center gap-4 rounded-md p-3 hover:cursor-pointer dark:bg-neutral-600/70'>
-                    <Pen className='size-4 dark:text-orange-400/70' />
+                  <div className='group my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70'>
+                    <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
                   </div>
                 </CreateQuestionDialog>
               </Card>
