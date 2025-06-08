@@ -33,6 +33,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
     await insertKnowledgeCheckSettings(db, null, check_id)
     await insertKnowledgeCheckQuestions(db, check.questions, check_id)
   } catch (err) {
+    console.error('[Rollback]: Error inserting knowledge check:', err)
     await db.rollback()
   }
 
