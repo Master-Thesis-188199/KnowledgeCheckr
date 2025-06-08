@@ -5,9 +5,9 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
-import { Folder, Info, Pen, Plus } from 'lucide-react'
+import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 export default function QuestionsSection() {
-  const { questions } = useCreateCheckStore((state) => state)
+  const { questions, removeQuestion } = useCreateCheckStore((state) => state)
 
   return (
     <Card disableHoverStyles className='question-section break-inside-avoid'>
@@ -45,6 +45,13 @@ export default function QuestionsSection() {
                     <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
                   </div>
                 </CreateQuestionDialog>
+                <button
+                  aria-label='Delete Question'
+                  type='button'
+                  onClick={() => removeQuestion(question.id)}
+                  className='group my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70'>
+                  <Trash2 className='size-4 text-red-600/70 group-hover:stroke-3 dark:text-red-400/70' />
+                </button>
               </Card>
             </div>
           ))}
