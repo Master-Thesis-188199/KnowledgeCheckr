@@ -29,16 +29,16 @@ export default function QuestionsSection() {
               <Card className='question flex gap-3 p-2 hover:bg-none'>
                 <div className='header flex flex-1 flex-col p-1'>
                   <div className='flex items-center justify-between'>
-                    <h2 className=''>{question.question}</h2>
-                    <span className='dark:text-neutral-200'>
+                    <h2 className='text-neutral-700 dark:text-neutral-300'>{question.question}</h2>
+                    <span className='text-neutral-700 dark:text-neutral-300'>
                       {question.points} point{question.points > 1 && 's'}
                     </span>
                   </div>
                   <div className='flex justify-between text-xs'>
-                    <div className='flex items-center gap-1 text-neutral-400 dark:text-neutral-400'>
+                    <div className='flex items-center gap-1 text-neutral-500 dark:text-neutral-400'>
                       <span className='lowercase'>{question.category}</span>
                     </div>
-                    <span className='text-neutral-400 dark:text-neutral-400'>{question.type}</span>
+                    <span className='text-neutral-500 dark:text-neutral-400'>{question.type}</span>
                   </div>
                 </div>
                 {/* <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
