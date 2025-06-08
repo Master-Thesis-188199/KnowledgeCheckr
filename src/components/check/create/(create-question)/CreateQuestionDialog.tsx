@@ -132,7 +132,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             <DialogTitle>Create Question</DialogTitle>
             <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
           </DialogHeader>
-          <input {...register('id')} id='id' value={getUUID()} className='hidden' />
+          <input {...register('id')} id='id' value={initialValues?.id || getUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
