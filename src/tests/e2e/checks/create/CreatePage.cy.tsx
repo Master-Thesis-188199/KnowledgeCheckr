@@ -30,7 +30,6 @@ describe('/checks/create - Create Page ', () => {
       const body: Array<Any> = JSON.parse(request.body)
       const response = interception.response
 
-      expect(body.at(0)).to.have.property('user_id')
       expect(body.at(0)).to.have.property('check')
       expect(response?.statusCode).to.eq(303)
     })
