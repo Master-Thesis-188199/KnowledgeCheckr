@@ -5,7 +5,7 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
-import { Folder, Info, Plus } from 'lucide-react'
+import { Folder, Info, Pen, Plus } from 'lucide-react'
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
 
@@ -40,11 +40,11 @@ export default function QuestionsSection() {
                     <span className='text-neutral-500 dark:text-neutral-400'>{question.type}</span>
                   </div>
                 </div>
-                {/* <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
+                <CreateQuestionDialog initialValues={question}>
                   <div className='my-auto flex max-h-10 items-center gap-4 rounded-md p-3 hover:cursor-pointer dark:bg-neutral-600/70'>
                     <Pen className='size-4 dark:text-orange-400/70' />
                   </div>
-                </CreateQuestionDialog> */}
+                </CreateQuestionDialog>
               </Card>
             </div>
           ))}

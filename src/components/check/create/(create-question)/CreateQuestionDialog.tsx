@@ -12,7 +12,7 @@ import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-export default function CreateQuestionDialog({ children }: { children: ReactNode }) {
+export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
 
@@ -85,7 +85,7 @@ export default function CreateQuestionDialog({ children }: { children: ReactNode
     setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: getDefaultValues('drag-drop'),
+    defaultValues: initialValues || getDefaultValues('drag-drop'),
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
