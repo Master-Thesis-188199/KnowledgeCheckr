@@ -9,10 +9,11 @@ import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/sc
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
+export default function CreateQuestionDialog({ children }: { children: ReactNode }) {
+  const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> => {
@@ -88,7 +89,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
-    setOpen(false)
+    setDialogOpenState(false)
     if (reset) {
       resetInputs()
     }
@@ -108,16 +109,16 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   }
 
   useEffect(() => {
-    if (!open) {
+    if (!dialogOpenState) {
       clearErrors()
     }
-  }, [open])
+  }, [dialogOpenState])
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
   return (
-    <Dialog open={open}>
-      <DialogTrigger asChild onClick={() => setOpen(true)}>
+    <Dialog open={dialogOpenState}>
+      <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
         {children}
       </DialogTrigger>
       <DialogContent
@@ -196,7 +197,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
             <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <Button size='lg' variant='outline' onClick={() => setOpen(false)} type='button'>
+            <Button size='lg' variant='outline' onClick={() => setDialogOpenState(false)} type='button'>
               Cancel
             </Button>
             <Button size='lg' variant='primary' type='submit'>

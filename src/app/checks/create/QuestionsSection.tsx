@@ -6,10 +6,8 @@ import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
 import { Folder, Info, Plus } from 'lucide-react'
-import { useState } from 'react'
 export default function QuestionsSection() {
   const { questions } = useCreateCheckStore((state) => state)
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
     <Card disableHoverStyles className='question-section break-inside-avoid'>
@@ -53,7 +51,7 @@ export default function QuestionsSection() {
         </div>
       </div>
       <div className='flex justify-center gap-8'>
-        <CreateQuestionDialog open={dialogOpen} setOpen={setDialogOpen}>
+        <CreateQuestionDialog>
           <Button variant='outline' size='lg'>
             <Plus className='size-5' />
             Create Question
