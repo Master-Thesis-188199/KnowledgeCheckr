@@ -89,10 +89,10 @@ export default async function CreateCheckPage() {
   return (
     <CreateCheckStoreProvider>
       <PageHeading title='Create KnowledgeCheck' />
-      <div className='columns-xl gap-12 space-y-12'>
+      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(780px,1fr))]'>
         <GeneralSection />
-        <SettingsSection />
         <QuestionsSection />
+        <SettingsSection />
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
