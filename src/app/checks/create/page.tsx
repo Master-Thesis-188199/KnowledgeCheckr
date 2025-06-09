@@ -5,6 +5,7 @@ import PageHeading from '@/components/Shared/PageHeading'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
+import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
 import { getServerSession } from '@/src/lib/auth/server'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -90,10 +91,7 @@ export default async function CreateCheckPage() {
       <PageHeading title='Create KnowledgeCheck' />
       <div className='columns-xl gap-12 space-y-12'>
         <GeneralSection />
-        <Card disableHoverStyles className='break-inside-avoid'>
-          <h2 className='text-lg'>Settings</h2>
-          <div className='h-[500px]'></div>
-        </Card>
+        <SettingsSection />
         <QuestionsSection />
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
