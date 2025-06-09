@@ -5,6 +5,7 @@ import { createPool } from 'mysql2/promise'
 import { headers } from 'next/headers'
 
 export const auth = betterAuth({
+  baseURL: env.NEXT_PUBLIC_BASE_URL,
   user: {
     modelName: 'User',
   },
