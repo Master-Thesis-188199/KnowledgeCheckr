@@ -1,15 +1,10 @@
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
 import { KnowledgeCheckCard } from '@/src/components/check/KnowledgeCheckCard'
-import { getServerSession } from '@/src/lib/auth/server'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
 
 export default async function ChecksPage() {
-  const { user } = await getServerSession()
-
-  if (!user) {
-    unauthorized()
-  }
+  const { user } = await requireAuthentication()
   const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
 
   return (

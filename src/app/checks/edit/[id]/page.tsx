@@ -5,16 +5,12 @@ import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import { CreateCheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { getServerSession } from '@/src/lib/auth/server'
-import { notFound, unauthorized } from 'next/navigation'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { notFound } from 'next/navigation'
 
 export default async function CheckPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { user } = await getServerSession()
-
-  if (!user) {
-    unauthorized()
-  }
+  await requireAuthentication()
 
   const check = await getKnowledgeCheckById(id)
 
@@ -35,7 +31,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
         <Card className='h-60 break-inside-avoid' children={<></>} disableHoverStyles></Card>
       </div>
       <form className='mt-4 flex justify-center gap-2'>
-        <SaveCreateCheckButton user_id={user.id} />
+        <SaveCreateCheckButton />
       </form>
       <div />
     </CreateCheckStoreProvider>
