@@ -4,6 +4,7 @@ import { z } from 'zod'
 dotenv.config()
 
 export const envSchema = z.object({
+  BETTER_AUTH_URL: z.string().url(),
   NEXT_PUBLIC_BASE_URL: z.string().startsWith('http').includes('://'),
   AUTH_SECRET: z.string().base64(),
 
