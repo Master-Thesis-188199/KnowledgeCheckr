@@ -76,7 +76,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
       }
     }
 
-    if (e?.body.message) {
+    if (e?.body?.message) {
       return {
         success: false,
         rootError: `${e.body.message}${!e.body.message.endsWith('!') ? '!' : ''}`, //+ e.body.message.endsWith('!') ? '' : '!',
