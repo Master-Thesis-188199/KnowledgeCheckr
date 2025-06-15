@@ -40,12 +40,10 @@ export const auth = betterAuth({
     github: {
       clientId: env.AUTH_GITHUB_ID,
       clientSecret: env.AUTH_GITHUB_SECRET,
-      redirectUri: `${env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/github`,
     },
     google: {
       clientId: env.AUTH_GOOGLE_ID,
       clientSecret: env.AUTH_GOOGLE_SECRET,
-      redirectUri: `${env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`,
     },
   },
   plugins: [nextCookies()],
