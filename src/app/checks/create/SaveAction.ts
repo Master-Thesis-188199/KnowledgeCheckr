@@ -3,15 +3,14 @@
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { updateKnowledgeCheck } from '@/database/knowledgeCheck/update'
-import { getServerSession } from '@/src/lib/auth/server'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import _ from 'lodash'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
-import { redirect, unauthorized } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export async function saveAction({ check }: { check: KnowledgeCheck }) {
-  const { user } = await getServerSession()
-  if (!user) unauthorized()
+  const { user } = await requireAuthentication()
 
   try {
     const exists = await getKnowledgeCheckById(check.id)

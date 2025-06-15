@@ -3,11 +3,14 @@
 import getDatabase from '@/database/Database'
 import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
 import { DbKnowledgeCheck } from '@/database/knowledgeCheck/type'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { User } from 'better-auth'
 
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10 }: { limit?: number }) {
+  await requireAuthentication()
+
   const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
@@ -23,6 +26,8 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
 }
 
 export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck | null> {
+  await requireAuthentication()
+
   const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
