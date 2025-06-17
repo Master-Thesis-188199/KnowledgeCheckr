@@ -3,7 +3,6 @@
 import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
-import CreateableSelect from '@/src/components/Shared/form/Select'
 import { Textarea } from '@headlessui/react'
 import { ComponentType, InputHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
