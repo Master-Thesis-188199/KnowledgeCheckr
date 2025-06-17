@@ -3,6 +3,7 @@ name: Build and Test
 on: push
 
 env:
+  BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
   NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
