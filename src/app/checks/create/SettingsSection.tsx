@@ -27,7 +27,7 @@ export default function SettingsSection() {
           <h2 className=''>Settings</h2>
         </div>
       </div>
-      <TabsProvider tabs={tabs} currentTab={currentTab}>
+      <TabsProvider tabs={tabs} initialValue={currentTab}>
         <div className=''>
           <div className='mx-2 sm:hidden'>
             <label htmlFor='tabs' className='sr-only'>

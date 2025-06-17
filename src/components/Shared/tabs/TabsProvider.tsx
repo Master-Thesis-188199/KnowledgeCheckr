@@ -25,14 +25,9 @@ export function useTabsContext() {
   return context
 }
 
-export default function TabsProvider({ children, tabs, currentTab: externalTabState }: { children: React.ReactNode; tabs: Array<Tab>; currentTab?: Tab }) {
-  const [currentTab, setCurrentTab] = useState<Tab['name']>(tabs.at(0)?.name || '')
+export default function TabsProvider({ children, tabs, initialValue }: { children: React.ReactNode; tabs: Array<Tab>; initialValue?: Tab }) {
+  const defaultValue = tabs.at(0)?.name ?? ''
+  const [currentTab, setCurrentTab] = useState<Tab['name']>(initialValue?.name ?? defaultValue)
 
-  const value: TabsContextProps = {
-    currentTab: externalTabState?.name || currentTab,
-    setCurrentTab,
-    tabs,
-  }
-
-  return <Context.Provider value={value}>{children}</Context.Provider>
+  return <Context.Provider value={{ currentTab, setCurrentTab, tabs }}>{children}</Context.Provider>
 }
