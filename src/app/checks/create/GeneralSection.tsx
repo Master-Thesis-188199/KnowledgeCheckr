@@ -47,7 +47,7 @@ export default function GeneralSection() {
   )
 }
 
-function InputGroup<E extends ComponentType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
+export function InputGroup<E extends ComponentType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
   const Element = as || Input
 
   return (
