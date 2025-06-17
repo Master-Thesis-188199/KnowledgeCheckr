@@ -13,7 +13,7 @@ interface TabsContextProps {
   setCurrentTab: (tabId: Tab['name']) => void
 }
 
-const Context = createContext({} as TabsContextProps)
+const Context = createContext<TabsContextProps | undefined>(undefined)
 
 export function useTabsContext() {
   const context = useContext(Context)
