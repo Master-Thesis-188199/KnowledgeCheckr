@@ -5,6 +5,8 @@ import { Transition } from '@headlessui/react'
 import { twMerge } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { motion, useAnimate } from 'motion/react'
+import Link, { LinkProps } from 'next/link'
+import { useBreakpoints } from '@/src/hooks/Shared/useBreakpoints'
 
 /**
  * Renders the dialog that slides in from the left and displays renders the provided children in it
@@ -63,4 +65,22 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
       </motion.div>
     </>
   )
+}
+
+/**
+ * This component renders a simple next-Link component and passes along its properties to this element. It sets the onNavigate event-handler to close the Sidebar on smaller screens (mobile-devices).
+ * @param props that are passes to the Link component
+ */
+export function CloseMobileSidebarLink({ ...props }: { children: React.ReactNode; className?: string } & Omit<LinkProps, 'onNavigate'>) {
+  const { isSm, isCustom, ...breakPoints } = useBreakpoints()
+  const { toggleSidebar } = useSidebarStore((state) => state)
+
+  const closeOnNavigate = () => {
+    //? Don't close sidebar for desktop screens
+    if (Object.values(breakPoints).some((point) => !!point)) return
+
+    toggleSidebar()
+  }
+
+  return <Link {...props} onNavigate={closeOnNavigate} />
 }
