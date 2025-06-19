@@ -20,13 +20,13 @@ export function useBreakpoints(): {
   isCustom: (breakpoint: number) => boolean
 } {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const isCustom = (breakPoint: number) => useMatchMedia(`min-width: ${breakPoint}`)
+  const isCustom = (breakPoint: number) => useMatchMedia(`(min-width: ${breakPoint})`)
 
   let states: Any = { isCustom }
 
   for (const [key, value] of Object.entries(breakPoints).sort((a, b) => b[1] - a[1])) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const match = useMatchMedia(`(min-width: ${value}px`)
+    const match = useMatchMedia(`(min-width: ${value}px)`)
     if (!match) continue
 
     // if >> breakpoint is true -> smaller ones are automatically true -> discard those
