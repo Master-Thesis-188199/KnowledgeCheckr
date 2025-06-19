@@ -58,7 +58,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
         className={twMerge('fixed inset-0 z-50 flex md:inset-full', visibilityBreakpoints)}
         initial={{ display: 'none' }}
         animate={{ display: isOpen ? 'flex' : 'none', transition: { delay: isOpen ? 0 : 0.3, delayChildren: 0 } }}>
-        <motion.div className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
+        <motion.div id='mobile-sidebar-dialog' className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
           {children}
         </motion.div>
         <div className='flex-1' onClick={toggleSidebar} />
