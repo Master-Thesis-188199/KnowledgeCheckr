@@ -33,7 +33,7 @@ export default function SettingsSection() {
               Select a tab
             </label>
 
-            <TabSelect />
+            <TabSelect id='tabs' />
           </div>
 
           <div className='-mt-2 hidden sm:block'>
