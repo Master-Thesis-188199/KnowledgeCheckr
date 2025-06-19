@@ -6,7 +6,6 @@ import { HTMLProps } from 'react'
 export function TabSelect({ ...props }: HTMLProps<HTMLSelectElement>) {
   const { tabs, setCurrentTab, currentTab } = useTabsContext()
 
-  //todo generade unique id -> generate uuid in provider
   return (
     <select
       name='tabs'
