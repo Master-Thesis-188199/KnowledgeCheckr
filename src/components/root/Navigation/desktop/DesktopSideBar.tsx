@@ -10,7 +10,7 @@ import { twMerge as tw } from 'tailwind-merge'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
-    <div className={tw('h-screen flex-col', className)}>
+    <div className={tw('min-h-screen flex-col', className)}>
       <MenuBar />
 
       <div id='desktop-sidebar-container' className='mx-auto flex w-full flex-1 flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800'>
