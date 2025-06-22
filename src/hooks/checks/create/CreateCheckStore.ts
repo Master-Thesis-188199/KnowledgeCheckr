@@ -30,7 +30,7 @@ const defaultInitState: CreateCheckState = {
 
   closeDate: null,
   difficulty: 0,
-  openDate: new Date(Date.now()).toLocaleDateString('de'),
+  openDate: new Date(Date.now()),
   share_key: null,
 }
 
