@@ -38,7 +38,7 @@ export default async function CreateCheckPage() {
       share_key: null,
       closeDate: null,
       difficulty: 2,
-      openDate: new Date(Date.now()).toLocaleDateString('de'),
+      openDate: new Date(Date.now()),
       questionCategories: [{ id: getUUID(), name: 'Geography', skipOnMissingPrequisite: false }],
       questions: [
         {

@@ -45,8 +45,8 @@ function parseKnowledgeCheck(knowledgeCheck: DbKnowledgeCheck, questions: Questi
     share_key: knowledgeCheck.public_token,
     questions,
     difficulty: knowledgeCheck.difficulty,
-    closeDate: knowledgeCheck.closeDate,
-    openDate: knowledgeCheck.openDate,
+    closeDate: knowledgeCheck.closeDate ? new Date(Date.parse(knowledgeCheck.closeDate)) : null,
+    openDate: new Date(Date.parse(knowledgeCheck.openDate)),
     questionCategories: [],
   }
 }
