@@ -4,10 +4,13 @@ import getDatabase from '@/database/Database'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { User } from 'better-auth'
 
 export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck, transaction = true) {
+  await requireAuthentication()
+
   const db = await getDatabase()
 
   if (transaction) await db.beginTransaction()
@@ -34,6 +37,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
     await insertKnowledgeCheckSettings(db, null, check_id)
     await insertKnowledgeCheckQuestions(db, check.questions, check_id)
   } catch (err) {
+    console.error('[Rollback]: Error inserting knowledge check:', err)
     await db.rollback()
   }
 

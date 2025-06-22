@@ -55,7 +55,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         </div>
         <div className='flex max-w-fit flex-col items-center gap-1'>
           <dt className='text-sm text-neutral-400'>Points</dt>
-          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-300'>{check.questions.map((q) => q.points).reduce((prev, current, index, array) => (prev += current), 0)}</dd>
+          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-300'>{check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)}</dd>
         </div>
       </div>
 

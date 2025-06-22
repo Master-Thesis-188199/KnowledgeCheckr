@@ -7,21 +7,17 @@ import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
-import { getServerSession } from '@/src/lib/auth/server'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
-import { redirect, unauthorized } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export default async function CreateCheckPage() {
-  const { user } = await getServerSession()
-  if (!user) {
-    return unauthorized()
-  }
+  await requireAuthentication()
 
   const createDummyCheckAction = async () => {
     'use server'
-    const { user } = await getServerSession()
-    if (!user) unauthorized()
+    const { user } = await requireAuthentication()
 
     insertKnowledgeCheck(user.id, {
       id: getUUID(),
@@ -96,7 +92,7 @@ export default async function CreateCheckPage() {
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton user_id={user.id} />
+        <SaveCreateCheckButton />
         <Button variant='primary' className='' formAction={createDummyCheckAction}>
           Create Dummy Check
         </Button>
