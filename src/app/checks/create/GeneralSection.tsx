@@ -31,7 +31,7 @@ export default function GeneralSection() {
           label='Deadline'
           type='date'
           defaultValue={
-            closeDate ||
+            closeDate?.toDateString() ||
             new Date(Date.now())
               .toLocaleDateString('de')
               .split('.')

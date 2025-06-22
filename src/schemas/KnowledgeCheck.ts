@@ -30,12 +30,9 @@ const KnowledgeCheckSchema = z
 
     share_key: z.string().nullable(),
 
-    openDate: z.union([z.string(), z.date()]).transform((date) => (typeof date === 'string' ? new Date(Date.parse(date)).toLocaleString('de') : date.toLocaleString('de'))),
+    openDate: z.date(),
 
-    closeDate: z
-      .union([z.string(), z.date()])
-      .transform((date) => (typeof date === 'string' ? new Date(Date.parse(date)).toLocaleString('de') : date.toLocaleString('de')))
-      .nullable(),
+    closeDate: z.date().nullable(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'
