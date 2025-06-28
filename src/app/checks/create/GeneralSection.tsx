@@ -39,7 +39,7 @@ export default function GeneralSection() {
               .map((el) => (el.length < 2 ? '0' + el : el))
               .join('-')
           }
-          className='text-sm text-neutral-500 dark:text-neutral-400'
+          className='text-sm text-neutral-500 dark:text-neutral-400 [&::-webkit-calendar-picker-indicator]:brightness-50'
         />
         <InputGroup label='Administrators' />
       </div>

@@ -1,5 +1,6 @@
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
 import { KnowledgeCheckCard } from '@/src/components/check/KnowledgeCheckCard'
+import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import Link from 'next/link'
 
@@ -8,8 +9,8 @@ export default async function ChecksPage() {
   const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
 
   return (
-    <main>
-      <h1 className='mb-8 text-[22px] font-semibold tracking-wider'>Your Checks</h1>
+    <div>
+      <PageHeading title='Your Checks' />
       {checks.length === 0 && (
         <div>
           No checks found. Create a new one{' '}
@@ -24,6 +25,6 @@ export default async function ChecksPage() {
           <KnowledgeCheckCard key={i} {...check} />
         ))}
       </div>
-    </main>
+    </div>
   )
 }

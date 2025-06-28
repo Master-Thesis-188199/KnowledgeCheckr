@@ -128,10 +128,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
-          <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
-            <DialogTitle>Create Question</DialogTitle>
-            <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
-          </DialogHeader>
+          <QuestionDialogHeader type={initialValues ? 'edit' : 'create'} />
           <input {...register('id')} id='id' value={initialValues?.id || getUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
@@ -211,6 +208,17 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   )
 }
 
+function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
+  const title = type === 'create' ? 'Create Question' : 'Edit Question'
+  const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
+
+  return (
+    <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogDescription>{description}</DialogDescription>
+    </DialogHeader>
+  )
+}
 interface AnswerOptionProps extends Pick<UseFormReturn<Question>, 'control' | 'watch' | 'register' | 'setValue'> {
   errors: FormState<Question>['errors']
 }
