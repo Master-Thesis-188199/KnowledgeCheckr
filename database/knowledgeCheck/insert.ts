@@ -43,3 +43,14 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
   if (transaction) await db.commit()
 }
+
+export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id'], token: string) {
+  await requireAuthentication()
+  const db = await getDatabase()
+
+  const duplicateTokens = await db.exec<KnowledgeCheck['id'][]>(`SELECT id FROM KnowledgeCheck WHERE public_token = ?`, [token])
+
+  if (duplicateTokens.length > 0) throw new Error('Storing KnowledgeCheck share token failed because this token is already used!')
+
+  await db.exec('UPDATE KnowledgeCheck SET public_token = ? WHERE id = ? ', [token, check_id])
+}
