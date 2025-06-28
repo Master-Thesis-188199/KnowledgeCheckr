@@ -42,6 +42,19 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
   return checks?.at(0) || null
 }
 
+export async function getKnowledgeCheckByShareToken(token: string) {
+  await requireAuthentication()
+  const db = await getDatabase()
+
+  const rawCheck = (await db.exec<DbKnowledgeCheck[]>('SELECT * from KnowledgeCheck WHERE public_token = ?', [token]))?.at(0)
+  if (!rawCheck) return null
+
+  const questions = await getKnowledgeCheckQuestions(db, rawCheck.id)
+  const check = parseKnowledgeCheck(rawCheck, questions)
+
+  return check
+}
+
 function parseKnowledgeCheck(knowledgeCheck: DbKnowledgeCheck, questions: Question[]): KnowledgeCheck {
   return {
     id: knowledgeCheck.id,
