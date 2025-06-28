@@ -1,5 +1,6 @@
 'use client'
 
+import { ShareKnowledgeCheckButton } from '@/src/components/check/ShareKnowledgeCheckButton'
 import { Button } from '@/src/components/shadcn/button'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -37,6 +38,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial='rest'
       whileHover='hover'
       animate='rest'>
+      <ShareKnowledgeCheckButton check={check} className='absolute top-3 right-4' />
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2 size-auto' />
         <h2 className='text-center text-xl font-semibold dark:text-neutral-300'>{check.name}</h2>
