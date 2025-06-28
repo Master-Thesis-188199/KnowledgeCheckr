@@ -62,9 +62,6 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       </div>
 
       <motion.div className='absolute inset-x-0 bottom-0 z-10 flex justify-center gap-12 rounded-md border-0 bg-white/90 py-3 ring-0 outline-none dark:bg-neutral-900' variants={actionVariants}>
-        <Button variant='outline' disabled>
-          Share
-        </Button>
         <Button variant='primary' disabled>
           Exercise
         </Button>
