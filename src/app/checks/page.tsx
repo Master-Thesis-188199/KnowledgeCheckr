@@ -9,7 +9,7 @@ export default async function ChecksPage() {
   const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
 
   return (
-    <main>
+    <div>
       <PageHeading title='Your Checks' />
       {checks.length === 0 && (
         <div>
@@ -25,6 +25,6 @@ export default async function ChecksPage() {
           <KnowledgeCheckCard key={i} {...check} />
         ))}
       </div>
-    </main>
+    </div>
   )
 }
