@@ -85,7 +85,7 @@ export default async function CreateCheckPage() {
   return (
     <CreateCheckStoreProvider>
       <PageHeading title='Create KnowledgeCheck' />
-      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(780px,1fr))]'>
+      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />
         <QuestionsSection />
         <SettingsSection />

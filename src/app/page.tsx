@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main className=''>
+    <div className=''>
       <PageHeading title='KnowledgeCheckr' />
       <div className='flex flex-col gap-3 tracking-wide'>
         <p className='dark:text-neutral-300'>Create your own KnowledgeChecks to boost your knowledge to the next level. </p>
@@ -18,6 +18,6 @@ export default function Home() {
           </Link>{' '}
         </p>
       </div>
-    </main>
+    </div>
   )
 }
