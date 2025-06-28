@@ -1,6 +1,8 @@
 'use client'
 
 import { auth_client } from '@/src/lib/auth/client'
+import { LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
 
 type ProviderOptions =
   | 'github'
@@ -28,12 +30,16 @@ export interface ProviderButtonProps extends React.ButtonHTMLAttributes<HTMLButt
 }
 
 export default function ProviderButton({ provider, callbackURL, errorCallbackURL, ...props }: ProviderButtonProps) {
+  const [isLoading, setLoading] = useState(false)
+
   return (
     <button
       {...props}
       onClick={() => {
-        auth_client.signIn.social({ provider, callbackURL, errorCallbackURL })
+        setLoading(true)
+        auth_client.signIn.social({ provider, callbackURL, errorCallbackURL }).then(() => setLoading(false))
       }}
+      children={isLoading ? <LoaderCircle className='animate-spin' /> : props.children}
     />
   )
 }
