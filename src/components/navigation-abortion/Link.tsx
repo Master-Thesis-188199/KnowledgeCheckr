@@ -1,4 +1,4 @@
-import { useNavigationAbort } from '@/src/components/unsaved-changes/NavigationAbortProvider'
+import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import NextLink, { LinkProps } from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, type MouseEvent } from 'react'

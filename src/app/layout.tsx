@@ -4,7 +4,7 @@ import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
 import getTheme from '@/lib/Shared/getTheme'
 import ToastBox from '@/src/components/Shared/Toast/ToastBox'
-import NavigationAbortProvider from '@/src/components/unsaved-changes/NavigationAbortProvider'
+import NavigationAbortProvider from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import type { Metadata } from 'next'
 import './globals.css'
 
