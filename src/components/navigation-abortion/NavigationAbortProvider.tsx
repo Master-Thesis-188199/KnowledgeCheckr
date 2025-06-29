@@ -31,7 +31,7 @@ export function useNavigationAbort() {
   const context = useContext(NavigationAbortContext)
 
   if (context === undefined) {
-    throw new Error('useSetUnsavedChanges must be called within <UnsavedChangesProvider />')
+    throw new Error('useNavigationAbort must be called within <NavigationAbortProvider />')
   }
 
   const { setContent, content, setShowModal } = context
@@ -51,7 +51,7 @@ export function useNavigationAbort() {
     (continueHref: string) => {
       setContent((currentContent) => ({
         ...currentContent,
-        continueHref: continueHref,
+        continueHref,
       }))
       setShowModal(true)
     },
