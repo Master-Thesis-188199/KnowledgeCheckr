@@ -30,18 +30,22 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
           e.preventDefault()
 
           if (shareToken) {
-            navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL}/checks/${shareToken}`)
-            toast('Successfully saved token to your clipboard.', { type: 'success' })
+            navigator.clipboard
+              .writeText(`${window.location.origin}/checks/${shareToken}`)
+              .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
+              .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
             return
           }
 
           saveGeneratedShareToken(check.id)
             .then((token) => {
-              navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL}/checks/${token}`)
-              toast('Successfully saved token to your clipboard.', { type: 'success' })
+              navigator.clipboard
+                .writeText(`${window.location.origin}/checks/${token}`)
+                .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
+                .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
               setShareToken(token)
             })
-            .catch((e) => toast('Failed to save generate and save share-token', { type: 'error' }))
+            .catch(() => toast('Failed to generate and save share-token', { type: 'error' }))
         }}
         className={cn('group rounded-md p-1.5 hover:cursor-pointer hover:ring-1 dark:text-neutral-400 dark:ring-neutral-500', className)}>
         <Share2Icon className='size-4.5 group-active:stroke-3' />
