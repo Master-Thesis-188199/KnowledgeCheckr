@@ -5,8 +5,9 @@ import { Transition } from '@headlessui/react'
 import { twMerge } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { motion, useAnimate } from 'motion/react'
-import Link, { LinkProps } from 'next/link'
+import { LinkProps } from 'next/link'
 import { useBreakpoints } from '@/src/hooks/Shared/useBreakpoints'
+import Link from '@/src/components/unsaved-changes/Link'
 
 /**
  * Renders the dialog that slides in from the left and displays renders the provided children in it
