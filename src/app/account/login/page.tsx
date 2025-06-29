@@ -5,6 +5,7 @@ import LoginForm from '@/src/app/account/login/LoginForm'
 import SignupForm from '@/src/app/account/login/SignupForm'
 import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
 import { getServerSession } from '@/src/lib/auth/server'
+import env from '@/src/lib/Shared/Env'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
@@ -55,6 +56,8 @@ function SocialButton({ icon: Icon, iconClassName, ...props }: { icon: React.Com
     <ProviderButton
       type='button'
       className='flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600'
+      callbackURL={env.NEXT_PUBLIC_BASE_URL}
+      errorCallbackURL={env.NEXT_PUBLIC_BASE_URL}
       {...props}>
       <Icon className={twMerge('size-6', iconClassName)} />
     </ProviderButton>

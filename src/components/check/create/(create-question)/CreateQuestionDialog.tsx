@@ -9,10 +9,11 @@ import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/sc
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-export default function CreateQuestionDialog({ children, open, setOpen }: { children: ReactNode; open: boolean; setOpen: (state: boolean) => void }) {
+export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
+  const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> => {
@@ -84,11 +85,11 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
     setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: getDefaultValues('drag-drop'),
+    defaultValues: initialValues || getDefaultValues('drag-drop'),
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
-    setOpen(false)
+    setDialogOpenState(false)
     if (reset) {
       resetInputs()
     }
@@ -108,16 +109,16 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   }
 
   useEffect(() => {
-    if (!open) {
+    if (!dialogOpenState) {
       clearErrors()
     }
-  }, [open])
+  }, [dialogOpenState])
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
   return (
-    <Dialog open={open}>
-      <DialogTrigger asChild onClick={() => setOpen(true)}>
+    <Dialog open={dialogOpenState}>
+      <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
         {children}
       </DialogTrigger>
       <DialogContent
@@ -127,11 +128,8 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
-          <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
-            <DialogTitle>Create Question</DialogTitle>
-            <DialogDescription>Create your new question for your KnowledgeCheck</DialogDescription>
-          </DialogHeader>
-          <input {...register('id')} id='id' value={getUUID()} className='hidden' />
+          <QuestionDialogHeader type={initialValues ? 'edit' : 'create'} />
+          <input {...register('id')} id='id' value={initialValues?.id || getUUID()} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
@@ -196,7 +194,7 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
             <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
           </div>
           <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
-            <Button size='lg' variant='outline' onClick={() => setOpen(false)} type='button'>
+            <Button size='lg' variant='outline' onClick={() => setDialogOpenState(false)} type='button'>
               Cancel
             </Button>
             <Button size='lg' variant='primary' type='submit'>
@@ -210,6 +208,17 @@ export default function CreateQuestionDialog({ children, open, setOpen }: { chil
   )
 }
 
+function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
+  const title = type === 'create' ? 'Create Question' : 'Edit Question'
+  const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
+
+  return (
+    <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogDescription>{description}</DialogDescription>
+    </DialogHeader>
+  )
+}
 interface AnswerOptionProps extends Pick<UseFormReturn<Question>, 'control' | 'watch' | 'register' | 'setValue'> {
   errors: FormState<Question>['errors']
 }

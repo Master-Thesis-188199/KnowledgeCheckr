@@ -4,9 +4,13 @@ import getDatabase from '@/database/Database'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { User } from 'better-auth'
 
 export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck, transaction = true) {
+  await requireAuthentication()
+
   const db = await getDatabase()
 
   if (transaction) await db.beginTransaction()
@@ -21,20 +25,32 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
         check.description || null,
         user_id,
         check.share_key || null,
-        new Date(Date.parse(check.openDate)).toISOString().slice(0, 19).replace('T', ' '),
-        check.closeDate ? new Date(Date.parse(check.closeDate)).toISOString().slice(0, 19).replace('T', ' ') : null,
+        formatDatetime(check.openDate || new Date(Date.now())),
+        formatDatetime(check.closeDate || new Date(Date.now())),
         check.difficulty,
         new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
         new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
-        check.closeDate ? new Date(Date.parse(check.closeDate)).toISOString().slice(0, 19).replace('T', ' ') : null,
+        formatDatetime(check.closeDate || new Date(Date.now())),
       ],
     )
 
     await insertKnowledgeCheckSettings(db, null, check_id)
     await insertKnowledgeCheckQuestions(db, check.questions, check_id)
   } catch (err) {
+    console.error('[Rollback]: Error inserting knowledge check:', err)
     await db.rollback()
   }
 
   if (transaction) await db.commit()
+}
+
+export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id'], token: string) {
+  await requireAuthentication()
+  const db = await getDatabase()
+
+  const duplicateTokens = await db.exec<KnowledgeCheck['id'][]>(`SELECT id FROM KnowledgeCheck WHERE public_token = ?`, [token])
+
+  if (duplicateTokens.length > 0) throw new Error('Storing KnowledgeCheck share token failed because this token is already used!')
+
+  await db.exec('UPDATE KnowledgeCheck SET public_token = ? WHERE id = ? ', [token, check_id])
 }

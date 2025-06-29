@@ -2,17 +2,22 @@
 
 import { DBConnection } from '@/database/Database'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 export default async function insertKnowledgeCheckQuestions(db: DBConnection, questions: Question[], check_id: KnowledgeCheck['id']) {
+  await requireAuthentication()
+
   for (const question of questions) {
     await insertQuestion(db, question, check_id)
   }
 }
 
 async function insertQuestion(db: DBConnection, question: Question, check_id: KnowledgeCheck['id']) {
+  await requireAuthentication()
+
   const category_id = await findInsertCategory(db, question.category)
   const { id } = await db.insert('INSERT INTO Question (id, type, question, points, category_id, knowledgecheck_id) Values (?, ?, ?, ?, ?, ?)', [
     question.id,
@@ -40,6 +45,8 @@ async function insertQuestion(db: DBConnection, question: Question, check_id: Kn
 }
 
 async function findInsertCategory(db: DBConnection, category: Question['category']) {
+  await requireAuthentication()
+
   const [categories] = await db.execute<Any[]>('SELECT id, name FROM Category WHERE name = ?', [category])
 
   if (categories.length === 0) {
@@ -51,16 +58,22 @@ async function findInsertCategory(db: DBConnection, category: Question['category
 }
 
 async function insertChoiceAnswers(db: DBConnection, question_id: Question['id'], answers: ChoiceQuestion['answers']) {
+  await requireAuthentication()
+
   for (const answer of answers) {
     await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.correct ? 1 : 0])
   }
 }
 
 async function insertOpenAnswer(db: DBConnection, question_id: Question['id'], answer: string) {
+  await requireAuthentication()
+
   await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer, question_id, null])
 }
 
 async function insertDragDropAnswers(db: DBConnection, question_id: Question['id'], answers: DragDropQuestion['answers']) {
+  await requireAuthentication()
+
   for (const answer of answers) {
     await db.insert('INSERT INTO Answer (id, answer, Question_id, position) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.position])
   }

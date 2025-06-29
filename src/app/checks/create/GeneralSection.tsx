@@ -31,7 +31,7 @@ export default function GeneralSection() {
           label='Deadline'
           type='date'
           defaultValue={
-            closeDate ||
+            closeDate?.toDateString() ||
             new Date(Date.now())
               .toLocaleDateString('de')
               .split('.')
@@ -39,7 +39,7 @@ export default function GeneralSection() {
               .map((el) => (el.length < 2 ? '0' + el : el))
               .join('-')
           }
-          className='text-sm text-neutral-500 dark:text-neutral-400'
+          className='text-sm text-neutral-500 dark:text-neutral-400 [&::-webkit-calendar-picker-indicator]:brightness-50'
         />
         <InputGroup label='Administrators' />
       </div>
@@ -47,7 +47,7 @@ export default function GeneralSection() {
   )
 }
 
-function InputGroup<E extends ComponentType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
+export function InputGroup<E extends ComponentType>({ label, as, ...props }: { label: string; as?: E } & InputHTMLAttributes<HTMLInputElement>) {
   const Element = as || Input
 
   return (

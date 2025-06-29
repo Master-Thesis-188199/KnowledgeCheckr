@@ -1,8 +1,8 @@
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
-import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
-import Link from 'next/link'
-import { twMerge } from 'tailwind-merge'
 import SidebarElementContent from '@/components/root/Navigation/elements/SidebarElementContent'
+import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
+import { CloseMobileSidebarLink } from '@/src/components/root/Navigation/mobile/MobileSidebarDialog'
+import { twMerge } from 'tailwind-merge'
 
 export default function RenderSideBarItems() {
   const { elements } = sideBarConfiguration
@@ -23,11 +23,12 @@ export default function RenderSideBarItems() {
 
 export function SidebarElement({ children, icon, className, href }: { children: React.ReactNode; className?: string; href: string; icon: React.ReactNode }) {
   return (
-    <Link
+    <CloseMobileSidebarLink
+      aria-label='sidebar item'
       href={href}
       className={twMerge('group/sidebar flex items-center justify-start gap-4 rounded-md py-2 hover:cursor-pointer hover:bg-neutral-200/75 hover:font-semibold dark:hover:bg-neutral-700', className)}>
       {icon}
       <SidebarElementContent>{children}</SidebarElementContent>
-    </Link>
+    </CloseMobileSidebarLink>
   )
 }

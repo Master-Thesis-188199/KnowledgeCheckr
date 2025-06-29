@@ -5,22 +5,19 @@ import PageHeading from '@/components/Shared/PageHeading'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
+import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
-import { getServerSession } from '@/src/lib/auth/server'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
-import { redirect, unauthorized } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export default async function CreateCheckPage() {
-  const { user } = await getServerSession()
-  if (!user) {
-    return unauthorized()
-  }
+  await requireAuthentication()
 
   const createDummyCheckAction = async () => {
     'use server'
-    const { user } = await getServerSession()
-    if (!user) unauthorized()
+    const { user } = await requireAuthentication()
 
     insertKnowledgeCheck(user.id, {
       id: getUUID(),
@@ -37,7 +34,7 @@ export default async function CreateCheckPage() {
       share_key: null,
       closeDate: null,
       difficulty: 2,
-      openDate: new Date(Date.now()).toLocaleDateString('de'),
+      openDate: new Date(Date.now()),
       questionCategories: [{ id: getUUID(), name: 'Geography', skipOnMissingPrequisite: false }],
       questions: [
         {
@@ -88,17 +85,14 @@ export default async function CreateCheckPage() {
   return (
     <CreateCheckStoreProvider>
       <PageHeading title='Create KnowledgeCheck' />
-      <div className='columns-xl gap-12 space-y-12'>
+      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />
-        <Card disableHoverStyles className='break-inside-avoid'>
-          <h2 className='text-lg'>Settings</h2>
-          <div className='h-[500px]'></div>
-        </Card>
         <QuestionsSection />
+        <SettingsSection />
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton user_id={user.id} />
+        <SaveCreateCheckButton />
         <Button variant='primary' className='' formAction={createDummyCheckAction}>
           Create Dummy Check
         </Button>

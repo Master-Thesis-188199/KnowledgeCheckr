@@ -1,8 +1,9 @@
 'use client'
 
+import { createCheckCreateStore, CreateCheckState, type CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
+import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
 import { createContext, type ReactNode, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
-import { createCheckCreateStore, CreateCheckState, type CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 
 export type CreateCheckStoreApi = ReturnType<typeof createCheckCreateStore>
 
@@ -19,7 +20,12 @@ export function CreateCheckStoreProvider({ children, initialStoreProps }: Create
     storeRef.current = createCheckCreateStore(initialStoreProps)
   }
 
-  return <CreateCheckStoreContext.Provider value={storeRef.current}>{children}</CreateCheckStoreContext.Provider>
+  return (
+    <CreateCheckStoreContext.Provider value={storeRef.current}>
+      <UnsavedCheckChangesAlert />
+      {children}
+    </CreateCheckStoreContext.Provider>
+  )
 }
 
 export function useCreateCheckStore<T>(selector: (store: CreateCheckStore) => T): T {

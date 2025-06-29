@@ -4,9 +4,8 @@ import { saveAction } from '@/src/app/checks/create/SaveAction'
 import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { User } from 'better-auth'
 
-export function SaveCreateCheckButton({ user_id }: { user_id: User['id'] }) {
+export function SaveCreateCheckButton() {
   const store = useCreateCheckStore((store) => store)
   const check: KnowledgeCheck = {
     id: store.id,

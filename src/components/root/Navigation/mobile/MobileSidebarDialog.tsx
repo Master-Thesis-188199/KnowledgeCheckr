@@ -1,10 +1,13 @@
 'use client'
 
-import React, { Fragment, useEffect } from 'react'
-import { Transition } from '@headlessui/react'
-import { twMerge } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import Link from '@/src/components/navigation-abortion/Link'
+import { useBreakpoints } from '@/src/hooks/Shared/useBreakpoints'
+import { Transition } from '@headlessui/react'
 import { motion, useAnimate } from 'motion/react'
+import { LinkProps } from 'next/link'
+import React, { Fragment, useEffect } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 /**
  * Renders the dialog that slides in from the left and displays renders the provided children in it
@@ -56,11 +59,29 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
         className={twMerge('fixed inset-0 z-50 flex md:inset-full', visibilityBreakpoints)}
         initial={{ display: 'none' }}
         animate={{ display: isOpen ? 'flex' : 'none', transition: { delay: isOpen ? 0 : 0.3, delayChildren: 0 } }}>
-        <motion.div className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
+        <motion.div id='mobile-sidebar-dialog' className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
           {children}
         </motion.div>
         <div className='flex-1' onClick={toggleSidebar} />
       </motion.div>
     </>
   )
+}
+
+/**
+ * This component renders a simple next-Link component and passes along its properties to this element. It sets the onNavigate event-handler to close the Sidebar on smaller screens (mobile-devices).
+ * @param props that are passes to the Link component
+ */
+export function CloseMobileSidebarLink({ ...props }: { children: React.ReactNode; className?: string } & Omit<LinkProps, 'onNavigate'>) {
+  const { isSm, isCustom, ...breakPoints } = useBreakpoints()
+  const { toggleSidebar } = useSidebarStore((state) => state)
+
+  const closeOnNavigate = () => {
+    //? Don't close sidebar for desktop screens
+    if (Object.values(breakPoints).some((point) => !!point)) return
+
+    toggleSidebar()
+  }
+
+  return <Link {...props} onNavigate={closeOnNavigate} />
 }

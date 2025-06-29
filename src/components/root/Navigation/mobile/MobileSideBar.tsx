@@ -8,7 +8,7 @@ import { ArrowDownNarrowWide } from 'lucide-react'
 export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
   return (
     <>
-      <div className='flex h-screen flex-col md:hidden dark:bg-neutral-800'>
+      <div className='flex min-h-screen flex-col md:hidden dark:bg-neutral-800'>
         <MobileMenubar />
         <main className='flex-1 bg-gray-100 p-4 dark:bg-neutral-900/60'>{children}</main>
       </div>
