@@ -37,7 +37,7 @@ export function useNavigationAbort() {
   const { setContent, content, setShowModal } = context
 
   const enableNavigationAbort = useCallback(
-    function enableNavigationAbort(props: Omit<INavigationAbortModalContent, 'proceedLinkHref'>) {
+    function enableNavigationAbort(props: INavigationAbortModalContent) {
       setContent(props)
     },
     [setContent],
