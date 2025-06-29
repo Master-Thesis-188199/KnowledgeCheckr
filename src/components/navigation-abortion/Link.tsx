@@ -20,6 +20,9 @@ export default function Link({ onClick, href, children, onNavigate, ...nextLinkP
         onNavigate(e)
       }
 
+      // Prevents display of modal when trying to navigate to same page (which does not trigger a "redirect" / navigation)
+      if (window.location.pathname === href.toString()) return
+
       if (isNavigationAbortSet) {
         showNavigationAbortModal(href.toString())
       } else {
