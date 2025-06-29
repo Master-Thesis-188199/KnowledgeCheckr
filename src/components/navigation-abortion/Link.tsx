@@ -6,7 +6,7 @@ import React, { useCallback, type MouseEvent } from 'react'
 /**
  * This component wraps the next/Link component and allows navigation-abortion by checking whether the navigationAbortion is enabled.
  */
-export default function Link({ onClick, href, children, ...nextLinkProps }: LinkProps & { children?: React.ReactNode }) {
+export default function Link({ onClick, href, children, onNavigate, ...nextLinkProps }: LinkProps & { children?: React.ReactNode }) {
   const nextRouter = useRouter()
   const { isNavigationAbortSet, showNavigationAbortModal } = useNavigationAbort()
 
@@ -16,6 +16,8 @@ export default function Link({ onClick, href, children, ...nextLinkProps }: Link
 
       if (onClick) {
         onClick(e)
+      } else if (onNavigate) {
+        onNavigate(e)
       }
 
       if (isNavigationAbortSet) {
