@@ -1,12 +1,10 @@
 import DisplayQuestion from '@/components/check/DisplayQuestion'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { notFound } from 'next/navigation'
 
 export default async function CheckPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
-  await requireAuthentication()
 
   const check = await getKnowledgeCheckByShareToken(share_token)
 
