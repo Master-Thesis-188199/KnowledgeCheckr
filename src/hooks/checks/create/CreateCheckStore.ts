@@ -32,7 +32,7 @@ const defaultInitState: CreateCheckState = {
   ],
 
   closeDate: null,
-  difficulty: 0,
+  difficulty: 4,
   openDate: new Date(Date.now()),
   share_key: null,
 
