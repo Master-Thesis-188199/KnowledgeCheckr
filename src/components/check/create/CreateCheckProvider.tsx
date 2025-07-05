@@ -2,6 +2,8 @@
 
 import { createCheckCreateStore, CreateCheckState, type CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
+import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import { validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { createContext, type ReactNode, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 
@@ -16,8 +18,10 @@ export interface CreateCheckStoreProviderProps {
 
 export function CreateCheckStoreProvider({ children, initialStoreProps }: CreateCheckStoreProviderProps) {
   const storeRef = useRef<CreateCheckStoreApi>(null)
+  const { getStoredValue } = useSessionStorageContext()
+
   if (!storeRef.current) {
-    storeRef.current = createCheckCreateStore(initialStoreProps)
+    storeRef.current = createCheckCreateStore(getStoredValue<CreateCheckState>('create-check-store', validateKnowledgeCheck) ?? initialStoreProps)
   }
 
   return (
