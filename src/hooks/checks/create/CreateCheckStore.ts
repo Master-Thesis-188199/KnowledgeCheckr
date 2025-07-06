@@ -43,10 +43,20 @@ export const createCheckCreateStore = (initialState: CreateCheckState = defaultI
   return createStore<CreateCheckStore>()((set) => {
     const { storeSessionValue } = useSessionStorageContext()
 
+    const sessionStorageDebounceTime = 750
+    let storeTimer: ReturnType<typeof setTimeout> | null = null
+
     function modifyState(func: (prev: CreateCheckStore) => CreateCheckStore | Partial<CreateCheckStore>) {
       set((prev) => {
+        if (storeTimer) {
+          clearTimeout(storeTimer)
+        }
+
         const update = { ...prev, ...func(prev), unsavedChanges: true }
-        storeSessionValue('create-check-store', update)
+
+        storeTimer = setTimeout(() => {
+          storeSessionValue('create-check-store', update)
+        }, sessionStorageDebounceTime)
 
         return update
       })
