@@ -12,7 +12,7 @@ interface SessionStorageContext {
 
 const Context = createContext<SessionStorageContext | undefined>(undefined)
 
-export function SessionStorageProvider({ children, cacheDuration = 1 * 60 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
+export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
   function getStoredValue<T extends object = Any>(key: string, validation?: (value: T | null) => T | never): T | null {
     const item = JSON.parse(sessionStorage.getItem(key) || 'null')
     if (!item) return null
