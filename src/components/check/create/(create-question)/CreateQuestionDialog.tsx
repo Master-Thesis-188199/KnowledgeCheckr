@@ -381,7 +381,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         type='button'
         aria-label='Add Answer'
         onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
-        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
+        className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
       </button>
