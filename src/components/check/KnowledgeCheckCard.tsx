@@ -37,8 +37,8 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       href={`/checks/edit/${check.id}`}
       className={cn(
         'group relative flex h-full flex-col justify-between gap-10 rounded-md py-4 ring-1 hover:ring-2 focus:ring-2',
-        'bg-neutral-200/40 ring-neutral-400/80 focus:bg-neutral-200/80 focus:ring-neutral-400',
-        'dark:bg-neutral-700/30 dark:ring-neutral-500/70 focus:dark:bg-neutral-700/60 focus:dark:ring-neutral-500',
+        'bg-neutral-200/40 ring-neutral-400/80 hover:bg-neutral-200/80 focus:bg-neutral-200/60 focus:ring-neutral-400',
+        'dark:bg-neutral-700/30 dark:ring-neutral-500/70 dark:hover:bg-neutral-700/60 focus:dark:bg-neutral-700/60 focus:dark:ring-neutral-500',
       )}
       variants={cardVariants}
       initial='rest'
