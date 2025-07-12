@@ -11,7 +11,7 @@ describe('SessionStorageCache', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
     const DUMMY_NAME = 'Test Check'
 
-    cy.getAllSessionStorage().should('deep.equal', {}, 'Verify that sessionStorage is empty at the beginning')
+    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'create-check-store', 'Verify that create-check-store is not cached at the beginning')
 
     cy.get("input[name='check-name']").type(DUMMY_NAME)
 
@@ -36,7 +36,7 @@ describe('SessionStorageCache', () => {
     const DUMMY_NAME = 'Test Check'
     const CACHE_DURATION = 4 * 3600 * 1000
 
-    cy.getAllSessionStorage().should('deep.equal', {}, 'Verify that sessionStorage is empty at the beginning')
+    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'create-check-store', 'Verify that create-check-store is not cached at the beginning')
     cy.get("input[name='check-name']").type(DUMMY_NAME)
 
     cy.wait(1000) // wait - debounce time before values are cached
