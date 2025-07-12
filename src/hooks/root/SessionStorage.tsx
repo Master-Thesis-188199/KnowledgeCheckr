@@ -17,13 +17,13 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     const item = JSON.parse(sessionStorage.getItem(key) || 'null')
     if (!item) return null
 
-    if (!item?.session_expiration || item.session_expiration + cacheDuration < Date.now()) {
+    if (!item?.session_savedAt || item.session_savedAt + cacheDuration < Date.now()) {
       console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
       sessionStorage.removeItem(key)
       return null
     }
 
-    delete item.session_expiration
+    delete item.session_savedAt
 
     return validation ? validation(item) : item
   }
@@ -34,7 +34,7 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     const existingValue = getStoredValue<T>(key)
     if (_.isEqual(existingValue, value)) return
 
-    sessionStorage.setItem(key, JSON.stringify(Object.assign(value, { session_expiration: Date.now() })))
+    sessionStorage.setItem(key, JSON.stringify(Object.assign(value, { session_savedAt: Date.now() })))
   }
 
   return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration }}>{children}</Context.Provider>
