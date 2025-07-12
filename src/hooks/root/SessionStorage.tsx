@@ -34,7 +34,7 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     const existingValue = getStoredValue<T>(key)
     if (_.isEqual(existingValue, value)) return
 
-    sessionStorage.setItem(key, JSON.stringify(Object.assign(value, { session_savedAt: Date.now() })))
+    sessionStorage.setItem(key, JSON.stringify({ ...value, session_savedAt: Date.now() }))
   }
 
   return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration }}>{children}</Context.Provider>
