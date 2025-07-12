@@ -56,6 +56,12 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
     type: z.literal('drag-drop'),
     answers: z
       .array(z.object({ answer: z.string(), position: z.number().positive() }))
+      .default([
+        { answer: 'Answer 1', position: 1 },
+        { answer: 'Answer 2', position: 2 },
+        { answer: 'Answer 3', position: 3 },
+        { answer: 'Answer 4', position: 4 },
+      ])
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' }),
   }),
 
