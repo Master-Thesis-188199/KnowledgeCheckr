@@ -66,23 +66,25 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2 size-auto' />
-        <h2 className='text-center text-xl font-semibold dark:text-neutral-300'>{check.name}</h2>
-        <span className='line-clamp-2 text-center text-sm text-balance dark:text-neutral-400'>{check.description}</span>
+        <h2 className='text-center text-xl font-semibold text-neutral-600 dark:text-neutral-300'>{check.name}</h2>
+        <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{check.description}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6 text-neutral-300'>
         <div className='flex max-w-fit flex-col items-center gap-1'>
-          <dt className='text-sm text-neutral-400'>Questions</dt>
-          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-300'>{check.questions.length}</dd>
+          <dt className='text-sm text-neutral-500 dark:text-neutral-400'>Questions</dt>
+          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-600/90 dark:text-neutral-300'>{check.questions.length}</dd>
         </div>
         <div className='flex max-w-fit flex-col items-center gap-1'>
-          <dt className='text-sm text-neutral-400'>estimated Time</dt>
-          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-300'>
+          <dt className='text-sm text-neutral-500 dark:text-neutral-400'>estimated Time</dt>
+          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-600/90 dark:text-neutral-300'>
             10<span className='text-base'>m</span>
           </dd>
         </div>
         <div className='flex max-w-fit flex-col items-center gap-1'>
-          <dt className='text-sm text-neutral-400'>Points</dt>
-          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-300'>{check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)}</dd>
+          <dt className='text-sm text-neutral-500 dark:text-neutral-400'>Points</dt>
+          <dd className='order-first text-lg font-semibold tracking-tight text-neutral-600/90 dark:text-neutral-300'>
+            {check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)}
+          </dd>
         </div>
       </div>
 
