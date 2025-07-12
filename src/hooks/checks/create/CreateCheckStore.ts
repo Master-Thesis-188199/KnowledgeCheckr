@@ -1,5 +1,6 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
+import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { createStore } from 'zustand/vanilla'
@@ -31,7 +32,7 @@ const defaultInitState: CreateCheckState = {
   ],
 
   closeDate: null,
-  difficulty: 0,
+  difficulty: 4,
   openDate: new Date(Date.now()),
   share_key: null,
 
@@ -40,8 +41,25 @@ const defaultInitState: CreateCheckState = {
 
 export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
   return createStore<CreateCheckStore>()((set) => {
+    const { storeSessionValue } = useSessionStorageContext()
+
+    const sessionStorageDebounceTime = 750
+    let storeTimer: ReturnType<typeof setTimeout> | null = null
+
     function modifyState(func: (prev: CreateCheckStore) => CreateCheckStore | Partial<CreateCheckStore>) {
-      set((prev) => ({ ...prev, ...func(prev), unsavedChanges: true }))
+      set((prev) => {
+        if (storeTimer) {
+          clearTimeout(storeTimer)
+        }
+
+        const update = { ...prev, ...func(prev), unsavedChanges: true }
+
+        storeTimer = setTimeout(() => {
+          storeSessionValue('create-check-store', update)
+        }, sessionStorageDebounceTime)
+
+        return update
+      })
     }
 
     const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
