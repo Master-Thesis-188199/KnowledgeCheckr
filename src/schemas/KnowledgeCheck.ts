@@ -34,12 +34,14 @@ const KnowledgeCheckSchema = z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .default(new Date(Date.now())),
 
     closeDate: z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .nullable(),
 
     /* todo:
