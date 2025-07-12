@@ -26,7 +26,7 @@ const KnowledgeCheckSchema = z
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default([{ id: 'default', name: 'default' }]),
+      .default([{ id: 'default', name: 'general' }]),
 
     share_key: z.string().nullable(),
 

@@ -8,7 +8,7 @@ const baseQuestion = z.object({
     .number()
     .positive()
     .default((Math.floor(Math.random() * 1000) % 10) + 1),
-  category: z.string().default('default'),
+  category: z.string().default('general'),
 
   question: z
     .string()
