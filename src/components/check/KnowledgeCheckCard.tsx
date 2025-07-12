@@ -2,6 +2,7 @@
 
 import { ShareKnowledgeCheckButton } from '@/src/components/check/ShareKnowledgeCheckButton'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
+import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Tooltip } from '@heroui/tooltip'
 import { motion, Variants } from 'framer-motion'
@@ -34,7 +35,11 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
   return (
     <motion.a
       href={`/checks/edit/${check.id}`}
-      className='group relative flex h-full flex-col justify-between gap-10 rounded-md py-4 ring-1 hover:ring-2 focus:ring-2 dark:bg-neutral-700/30 dark:ring-neutral-500/70 focus:dark:bg-neutral-700/60 focus:dark:ring-neutral-500'
+      className={cn(
+        'group relative flex h-full flex-col justify-between gap-10 rounded-md py-4 ring-1 hover:ring-2 focus:ring-2',
+        'bg-neutral-200/40 ring-neutral-400/80 focus:bg-neutral-200/80 focus:ring-neutral-400',
+        'dark:bg-neutral-700/30 dark:ring-neutral-500/70 focus:dark:bg-neutral-700/60 focus:dark:ring-neutral-500',
+      )}
       variants={cardVariants}
       initial='rest'
       whileHover='hover'
