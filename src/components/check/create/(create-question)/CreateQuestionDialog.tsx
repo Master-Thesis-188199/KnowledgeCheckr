@@ -213,7 +213,7 @@ function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
   const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
 
   return (
-    <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+    <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
       <DialogTitle>{title}</DialogTitle>
       <DialogDescription>{description}</DialogDescription>
     </DialogHeader>
