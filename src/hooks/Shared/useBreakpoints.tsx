@@ -9,31 +9,34 @@ const breakPoints = {
   'Sm': 640,
 }
 
-export function useBreakpoints(): {
-  isMobile?: boolean
-  isDesktop?: boolean
-  isSm?: boolean
-  isMd?: boolean
-  isLg?: boolean
-  isXl?: boolean
+interface useBreakpointsReturn {
   is2Xl?: boolean
-  isCustom: (breakpoint: number) => boolean
-} {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const isCustom = (breakPoint: number) => useMatchMedia(`(min-width: ${breakPoint})`)
+  isXl?: boolean
+  isLg?: boolean
+  isMd?: boolean
+  isSm?: boolean
+}
 
-  let states: Any = { isCustom }
+export function useBreakpoints(): useBreakpointsReturn {
+  const isSm = useMatchMedia(`(min-width: ${breakPoints['Sm']}px)`)
+  const isMd = useMatchMedia(`(min-width: ${breakPoints['Md']}px)`)
+  const isLg = useMatchMedia(`(min-width: ${breakPoints['Lg']}px)`)
+  const isXl = useMatchMedia(`(min-width: ${breakPoints['Xl']}px)`)
+  const is2Xl = useMatchMedia(`(min-width: ${breakPoints['2Xl']}px)`)
 
-  for (const [key, value] of Object.entries(breakPoints).sort((a, b) => b[1] - a[1])) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const match = useMatchMedia(`(min-width: ${value}px)`)
-    if (!match) continue
-
-    // if >> breakpoint is true -> smaller ones are automatically true -> discard those
-    if (Object.keys(states).length >= 2) continue
-
-    states = { ...states, [`is${key}`]: match }
+  const obj = {
+    is2Xl,
+    isXl,
+    isLg,
+    isMd,
+    isSm,
   }
 
-  return states
+  const currentBreakpoint: Any = Object.entries(obj)
+    .filter(([, value]) => !!value)
+    .map(([key, value]) => ({ [key]: value }))
+    .find((point) => !!point)
+
+  const output: useBreakpointsReturn = { ...Object.entries(obj).map(([key]) => ({ [key]: false })), ...currentBreakpoint }
+  return output
 }
