@@ -1,6 +1,6 @@
+import env from '@/src/lib/Shared/Env'
 import { Any } from '@/types'
-import { Connection } from 'mysql2/promise'
-import createPool from '@/database/Pool'
+import { Connection, createConnection } from 'mysql2/promise'
 
 export type DBConnection = Connection & {
   insert: <T = Any>(query: string, values?: Any[]) => Promise<{ [key: string]: T } | never>
@@ -12,15 +12,6 @@ export default async function getDatabase() {
   if (connection === null) {
     connection = await getConnection()
   }
-
-  return connection
-}
-
-async function getConnection() {
-  const connection: DBConnection = createPool() as Any
-
-  connection.insert = insert
-  connection.exec = exec
 
   return connection
 }
@@ -63,4 +54,39 @@ async function exec<TReturn extends object = Any>(query: string, values?: Any[])
   const [result] = await connection!.execute<TReturn>(query, values)
 
   return result
+}
+
+export function convertConnection(connection: Connection): DBConnection {
+  const dbConnection = connection as DBConnection
+
+  dbConnection.insert = insert
+  dbConnection.exec = exec
+
+  return dbConnection
+}
+
+async function getConnection(): Promise<DBConnection> {
+  if (process.env.NODE_ENV === 'production') {
+    connection = convertConnection(
+      await createConnection({
+        host: env.DATABASE_HOST,
+        user: env.DATABASE_USER,
+        password: env.DATABASE_PASSWORD,
+        database: env.DATABASE_NAME,
+      }),
+    )
+  } else {
+    if (!global.connection) {
+      console.log('Creating new database connection for development environment.')
+      global.connection = await createConnection({
+        host: env.DATABASE_HOST,
+        user: env.DATABASE_USER,
+        password: env.DATABASE_PASSWORD,
+        database: env.DATABASE_NAME,
+      })
+    }
+    connection = convertConnection(global.connection)
+  }
+
+  return connection
 }
