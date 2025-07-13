@@ -2,12 +2,14 @@
 
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import Link from '@/src/components/navigation-abortion/Link'
-import { useBreakpoints } from '@/src/hooks/Shared/useBreakpoints'
 import { Transition } from '@headlessui/react'
 import { motion, useAnimate } from 'motion/react'
 import { LinkProps } from 'next/link'
 import React, { Fragment, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
+import useBreakpoint from 'use-breakpoint'
+
+const BREAKPOINTS = { 'xs': 0, 'sm': 640, 'md': 768, 'lg': 1024, 'xl': 1280, '2xl': 1536 }
 
 /**
  * Renders the dialog that slides in from the left and displays renders the provided children in it
@@ -73,12 +75,12 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
  * @param props that are passes to the Link component
  */
 export function CloseMobileSidebarLink({ ...props }: { children: React.ReactNode; className?: string } & Omit<LinkProps, 'onNavigate'>) {
-  const { isSm, ...breakPoints } = useBreakpoints()
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, 'xs')
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   const closeOnNavigate = () => {
     //? Don't close sidebar for desktop screens
-    if (Object.values(breakPoints).some((point) => !!point)) return
+    if (breakpoint != 'xs' && breakpoint != 'sm' && breakpoint != 'md') return
 
     toggleSidebar()
   }
