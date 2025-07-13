@@ -46,7 +46,7 @@ export const createSidebarStore = ({ ...initState }: SidebarState = defaultInitS
         const update = { ...prev, ...func(prev) }
 
         storeTimer = setTimeout(() => {
-          storeSessionValue('sidebar-store', update)
+          storeSessionValue('sidebar-store', { ...update, config: {} })
         }, sessionStorageDebounceTime)
 
         return update
