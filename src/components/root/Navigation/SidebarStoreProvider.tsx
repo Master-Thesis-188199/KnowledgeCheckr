@@ -19,7 +19,10 @@ export function SidebarStoreProvider({ children, initialStoreProps }: SidebarSto
   const { getStoredValue } = useSessionStorageContext()
 
   if (!storeRef.current) {
-    storeRef.current = createSidebarStore(getStoredValue<SidebarState>('sidebar-store') ?? initialStoreProps)
+    const cached = getStoredValue<SidebarState>('sidebar-store')
+    if (cached) Object.assign(cached, { config: initialStoreProps?.config ?? {} })
+
+    storeRef.current = createSidebarStore(cached ?? initialStoreProps)
   }
 
   return <SidebarStoreContext.Provider value={storeRef.current}>{children}</SidebarStoreContext.Provider>
