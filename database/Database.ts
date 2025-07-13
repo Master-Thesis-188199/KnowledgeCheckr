@@ -1,8 +1,6 @@
-'use server'
-
-import env from '@/src/lib/Shared/Env'
 import { Any } from '@/types'
-import mysql, { Connection } from 'mysql2/promise'
+import { Connection } from 'mysql2/promise'
+import createPool from '@/database/Pool'
 
 export type DBConnection = Connection & {
   insert: <T = Any>(query: string, values?: Any[]) => Promise<{ [key: string]: T } | never>
@@ -19,14 +17,7 @@ export default async function getDatabase() {
 }
 
 async function getConnection() {
-  const connection: DBConnection = (await mysql.createConnection({
-    host: env.DATABASE_HOST,
-    user: env.DATABASE_USER,
-    password: env.DATABASE_PASSWORD,
-    database: env.DATABASE_NAME,
-  })) as DBConnection
-
-  await connection.connect()
+  const connection: DBConnection = createPool() as Any
 
   connection.insert = insert
   connection.exec = exec
