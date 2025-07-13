@@ -8,6 +8,7 @@ const config: PoolOptions = {
   database: env.DATABASE_NAME,
   user: env.DATABASE_USER,
   password: env.DATABASE_PASSWORD,
+  connectionLimit: 10,
 }
 
 /**
