@@ -73,7 +73,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
  * @param props that are passes to the Link component
  */
 export function CloseMobileSidebarLink({ ...props }: { children: React.ReactNode; className?: string } & Omit<LinkProps, 'onNavigate'>) {
-  const { isSm, isCustom, ...breakPoints } = useBreakpoints()
+  const { isSm, ...breakPoints } = useBreakpoints()
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   const closeOnNavigate = () => {
