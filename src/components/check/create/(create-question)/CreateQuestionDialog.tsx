@@ -213,7 +213,7 @@ function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
   const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
 
   return (
-    <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+    <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
       <DialogTitle>{title}</DialogTitle>
       <DialogDescription>{description}</DialogDescription>
     </DialogHeader>
@@ -348,7 +348,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                     setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
                     setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
                   }}
-                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-300 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
                   disabled={index - 1 < 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
@@ -381,7 +381,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         type='button'
         aria-label='Add Answer'
         onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
-        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
+        className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
       </button>

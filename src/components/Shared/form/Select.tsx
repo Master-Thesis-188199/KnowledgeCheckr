@@ -135,8 +135,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
-          <Command className='dark:bg-neutral-800'>
+        <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
+          <Command className='bg-neutral-100 dark:bg-neutral-800'>
             <CommandInput
               value={state.query}
               onValueChange={(query) => dispatch({ type: 'SET_QUERY', payload: query })}
@@ -170,8 +170,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
-                      'cursor-pointer text-sm hover:ring-1 dark:text-neutral-400 dark:hover:ring-neutral-300/40',
-                      state.value === option.value ? 'ring-1 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
+                      'cursor-pointer text-sm hover:ring-1 hover:ring-neutral-400 dark:text-neutral-400/80 dark:hover:ring-neutral-300/40',
+                      state.value === option.value ? 'bg-neutral-200/80 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
                     )}
                     key={option.value + i}
                     value={option.value}
@@ -185,7 +185,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   </CommandItem>
                 ))}
               {state.newOptions.filter((option) => matches(option.value, state.query)).length === 0 && (
-                <div className='flex items-center gap-2 px-2 text-sm dark:text-neutral-400'>
+                <div className='flex items-center gap-2 px-2 text-sm text-neutral-600/80 dark:text-neutral-400'>
                   <SearchX className='size-4' />
                   No Categories found
                 </div>
@@ -195,8 +195,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   key={state.query}
                   value={state.query}
                   className={cn(
-                    'hover:cursor-pointer dark:text-neutral-400 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
-                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
+                    'bg-transparent text-neutral-800 hover:cursor-pointer hover:ring-neutral-400/80 dark:text-neutral-300/90 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
+                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed border-neutral-400/80 pt-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
                   )}
                   onSelect={() => createOption()}>
                   Create category &quot;{state.query}&quot;
