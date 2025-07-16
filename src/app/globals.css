@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where([data-theme=light], [data-theme=light] *));
 
 @theme {
   --font-sans: var(--font-geist-sans);
@@ -10,6 +11,23 @@
 label:has(+ input:required):after {
   content: ' *';
   color: var(--color-red-500);
+}
+
+/* Invert all dark-mode colors except brand logos (e.g. KnowledgeCheckr icon) */
+html[data-theme='light'] {
+  filter: invert(1) hue-rotate(180deg);
+
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* Invert all img, videos and elements with keep-colors data attribute back to their original color */
+html[data-theme='light'] img,
+html[data-theme='light'] video,
+/* html[data-theme='light'] svg, */
+html[data-theme='light'] [data-keep-colors] {
+  /* second inversion cancels the first */
+  filter: invert(1) hue-rotate(180deg);
 }
 
 /* Override variables when data-theme is explicitly set to dark */
