@@ -67,6 +67,12 @@ export default defineConfig({
         return launchOptions
       })
 
+      on('after:run', () => {
+        console.log('Tests have finished running. Cleaning up test data...')
+
+        connection.query('DELETE FROM KnowledgeCheck WHERE owner_id = (SELECT id FROM User WHERE email = "test@email.com")')
+      })
+
       return config
     },
     baseUrl: env.NEXT_PUBLIC_BASE_URL,
