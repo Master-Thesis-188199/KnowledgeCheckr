@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: 'KnowledgeCheckr',
     template: '%s | KnowledgeCheckr',
   },
-  description: '',
+  description: 'Increase your knowledge with KnowledgeCheckr',
 }
 
 export default async function RootLayout({
