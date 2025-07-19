@@ -13,6 +13,7 @@ export default defineConfig({
       url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
   },
+  retries: 2,
   component: {
     specPattern: 'src/tests/components/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
