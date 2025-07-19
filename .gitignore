@@ -15,6 +15,7 @@
 /coverage
 /cypress/downloads
 /cypress/screenshots
+multi-reporter-config.json
 
 # next.js
 /.next/
