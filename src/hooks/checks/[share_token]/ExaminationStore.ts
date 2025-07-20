@@ -25,7 +25,11 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
       ...initialState,
       setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index })),
       nextQuestion: () => set((prev) => ({ ...prev, currentQuestionIndex: (prev.currentQuestionIndex + 1) % prev.knowledgeCheck.questions.length })),
-      previousQuestion: () => set((prev) => ({ ...prev, currentQuestionIndex: (prev.currentQuestionIndex - 1) % prev.knowledgeCheck.questions.length })),
+      previousQuestion: () =>
+        set((prev) => ({
+          ...prev,
+          currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
+        })),
     }
   })
 }
