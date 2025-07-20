@@ -1,8 +1,10 @@
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
 import { useForm, UseFormReset } from 'react-hook-form'
+import TextareaAutosize from 'react-textarea-autosize'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
@@ -16,6 +18,7 @@ export default function ExamQuestion({ question }: { question: Question }) {
     <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600'>
       <input readOnly disabled className='text-lg font-semibold' value={question.question} />
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswer reset={resetInputs} question={question as ChoiceQuestion} />}
+      {question.type === 'open-question' && <ExamOpenQuestionAnswer reset={resetInputs} />}
     </form>
   )
 }
@@ -34,5 +37,17 @@ function ExamChoiceAnswer({ question, reset }: { question: ChoiceQuestion; reset
         Reset
       </button>
     </ul>
+  )
+}
+
+function ExamOpenQuestionAnswer({ reset }: { reset: UseFormReset<Question> }) {
+  return (
+    <TextareaAutosize
+      maxRows={10}
+      className={cn(
+        'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
+        'resize-none',
+      )}
+    />
   )
 }
