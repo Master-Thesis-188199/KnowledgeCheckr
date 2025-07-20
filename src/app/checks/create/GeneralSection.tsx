@@ -18,18 +18,20 @@ export default function GeneralSection() {
         </div>
       </div>
       <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
-        <InputGroup defaultValue={name} onChange={(e) => setName(e.target.value)} label='Name' placeholder='Enter the name of your knowledge check' />
+        <InputGroup defaultValue={name} onChange={(e) => setName(e.target.value)} name='check-name' label='Name' placeholder='Enter the name of your knowledge check' />
         <InputGroup
           defaultValue={description || ''}
           onChange={(e) => setDescription(e.target.value)}
           label='Description'
           className='min-h-20 resize-none'
           as={Textarea}
+          name='check-description'
           placeholder='Describe the concept of your knowledge check using a few words.'
         />
         <InputGroup
           label='Deadline'
           type='date'
+          name='check-close-date'
           defaultValue={
             closeDate?.toDateString() ||
             new Date(Date.now())
@@ -41,7 +43,7 @@ export default function GeneralSection() {
           }
           className='text-sm text-neutral-500 dark:text-neutral-400 [&::-webkit-calendar-picker-indicator]:brightness-50'
         />
-        <InputGroup label='Administrators' />
+        <InputGroup label='Administrators' name='check-contributors' />
       </div>
     </Card>
   )
