@@ -22,17 +22,27 @@ const KnowledgeCheckSchema = z
       .optional()
       .default((Math.floor(Math.random() * 1000) % 10) + 1),
 
-    questions: z.array(QuestionSchema).min(1, 'Please provide at least one question.'),
+    questions: z.array(QuestionSchema),
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default([{ id: 'default', name: 'default' }]),
+      .default([{ id: 'default', name: 'general' }]),
 
     share_key: z.string().nullable(),
 
-    openDate: z.date(),
+    openDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .default(new Date(Date.now())),
 
-    closeDate: z.date().nullable(),
+    closeDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .nullable(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'

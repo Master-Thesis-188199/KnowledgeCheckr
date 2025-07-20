@@ -4,6 +4,8 @@ import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
 import getTheme from '@/lib/Shared/getTheme'
 import ToastBox from '@/src/components/Shared/Toast/ToastBox'
+import NavigationAbortProvider from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { SessionStorageProvider } from '@/src/hooks/root/SessionStorage'
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -25,12 +27,16 @@ export default async function RootLayout({
   return (
     <html lang='en' data-theme={theme}>
       <body className={`antialiased scheme-light-dark`}>
-        <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
-          <SideBar {...sideBarConfiguration}>
-            {children}
-            <ToastBox />
-          </SideBar>
-        </RootStoreProvider>
+        <SessionStorageProvider>
+          <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
+            <NavigationAbortProvider>
+              <SideBar {...sideBarConfiguration}>
+                {children}
+                <ToastBox />
+              </SideBar>
+            </NavigationAbortProvider>
+          </RootStoreProvider>
+        </SessionStorageProvider>
       </body>
     </html>
   )
