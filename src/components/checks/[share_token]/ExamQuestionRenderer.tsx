@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { InfoIcon } from 'lucide-react'
 
 export function ExamQuestionRenderer() {
-  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion } = useExaminationStore((store) => store)
+  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion } = useExaminationStore((store) => store)
 
   if (knowledgeCheck.questions?.length === 0)
     return (
@@ -31,7 +31,7 @@ export function ExamQuestionRenderer() {
         <Button variant='outline' onClick={previousQuestion} disabled={currentQuestionIndex === 0}>
           Previous
         </Button>
-        <Button onClick={nextQuestion} disabled={currentQuestionIndex + 1 === knowledgeCheck.questions.length}>
+        <Button onClick={nextQuestion} disabled={isLastQuestion}>
           Next
         </Button>
       </div>
