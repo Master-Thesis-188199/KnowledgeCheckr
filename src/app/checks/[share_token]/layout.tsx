@@ -1,5 +1,6 @@
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationStoreProvider } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { defaultExaminationStoreProps } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import { notFound } from 'next/navigation'
 
 export default async function ExaminationLayout({ children, params }: { children: React.ReactNode; params: Promise<{ share_token: string }> }) {
@@ -10,5 +11,5 @@ export default async function ExaminationLayout({ children, params }: { children
     notFound()
   }
 
-  return <ExaminationStoreProvider initialStoreProps={{ knowledgeCheck: check, currentQuestionIndex: 0 }}>{children}</ExaminationStoreProvider>
+  return <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: check }}>{children}</ExaminationStoreProvider>
 }
