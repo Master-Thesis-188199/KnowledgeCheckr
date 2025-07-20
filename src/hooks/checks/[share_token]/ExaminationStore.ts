@@ -42,3 +42,5 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
     }
   })
 }
+
+export const defaultExaminationStoreProps = defaultInitState
