@@ -1,7 +1,7 @@
 'use client'
 
-import DisplayQuestion from '@/src/components/check/DisplayQuestion'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import ExamQuestion from '@/src/components/checks/[share_token]/ExamQuestion'
 import { Button } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
 import { motion } from 'framer-motion'
@@ -27,7 +27,7 @@ export function ExamQuestionRenderer() {
         transition: { duration: 0.15, ease: 'easeInOut' },
       }}
       className='relative mx-auto max-h-fit w-full max-w-7xl'>
-      {<DisplayQuestion {...knowledgeCheck.questions.at(currentQuestionIndex)!} />}
+      <ExamQuestion question={knowledgeCheck.questions[currentQuestionIndex]} />
       <div className='absolute right-0 -bottom-16 left-0 flex justify-between px-8'>
         <Button variant='outline' onClick={previousQuestion} disabled={currentQuestionIndex === 0}>
           Previous
