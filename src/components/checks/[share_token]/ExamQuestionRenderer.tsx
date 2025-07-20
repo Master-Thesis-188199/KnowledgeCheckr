@@ -8,6 +8,7 @@ import { InfoIcon } from 'lucide-react'
 
 export function ExamQuestionRenderer() {
   const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion } = useExaminationStore((store) => store)
+
   if (knowledgeCheck.questions?.length === 0)
     return (
       <div className='mx-auto flex max-h-fit w-full max-w-7xl items-center justify-center gap-2 text-neutral-600 dark:text-neutral-300'>
@@ -27,10 +28,12 @@ export function ExamQuestionRenderer() {
       className='relative mx-auto max-h-fit w-full max-w-7xl'>
       {<DisplayQuestion {...knowledgeCheck.questions.at(currentQuestionIndex)!} />}
       <div className='absolute right-0 -bottom-16 left-0 flex justify-between px-8'>
-        <Button variant='outline' onClick={previousQuestion}>
+        <Button variant='outline' onClick={previousQuestion} disabled={currentQuestionIndex === 0}>
           Previous
         </Button>
-        <Button onClick={nextQuestion}>Next</Button>
+        <Button onClick={nextQuestion} disabled={currentQuestionIndex + 1 === knowledgeCheck.questions.length}>
+          Next
+        </Button>
       </div>
     </motion.div>
   )
