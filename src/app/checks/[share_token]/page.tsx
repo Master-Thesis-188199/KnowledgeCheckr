@@ -17,9 +17,9 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
     <>
       <PageHeading title={check.name ?? '<check-name>'} />
 
-      <div className='grid grid-cols-[1fr_auto] gap-12'>
+      <div className='grid gap-12 md:grid-cols-[1fr_auto] md:gap-[7vw]'>
         <ExamQuestionRenderer />
-        <QuestionNavigationMenu />
+        <QuestionNavigationMenu className='order-first md:order-last' />
       </div>
     </>
   )
