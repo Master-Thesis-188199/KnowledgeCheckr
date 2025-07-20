@@ -3,12 +3,12 @@
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
 
-export function QuestionNavigationMenu() {
+export function QuestionNavigationMenu({ className }: { className?: string }) {
   const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex } = useExaminationStore((store) => store)
 
   return (
     <>
-      <div className='flex max-h-fit min-h-24 min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-2 dark:ring-neutral-600'>
+      <div className={cn('flex max-h-fit min-h-24 min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-2 dark:ring-neutral-600', className)}>
         <span className='font-semibold dark:text-neutral-300'>Questions</span>
         <div className='grid grid-cols-[repeat(auto-fill,30px)] gap-1.5'>
           {knowledgeCheck.questions.map((_, i) => (
