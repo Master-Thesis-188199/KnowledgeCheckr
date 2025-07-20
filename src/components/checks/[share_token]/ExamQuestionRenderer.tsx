@@ -3,6 +3,7 @@
 import DisplayQuestion from '@/src/components/check/DisplayQuestion'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
+import { cn } from '@/src/lib/Shared/utils'
 import { motion } from 'framer-motion'
 import { InfoIcon } from 'lucide-react'
 
@@ -34,7 +35,19 @@ export function ExamQuestionRenderer() {
         <Button onClick={nextQuestion} disabled={isLastQuestion}>
           Next
         </Button>
+
+        <FinishAttemptButton className='absolute right-1/3 -bottom-16 left-1/3' />
       </div>
     </motion.div>
+  )
+}
+
+export function FinishAttemptButton({ className }: { className?: string }) {
+  const { isLastQuestion } = useExaminationStore((store) => store)
+
+  return (
+    <Button className={cn('hidden', isLastQuestion && 'block', className)} disabled={!isLastQuestion}>
+      Finish Attempt
+    </Button>
   )
 }
