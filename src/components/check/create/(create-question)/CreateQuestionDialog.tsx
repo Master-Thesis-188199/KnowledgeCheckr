@@ -9,7 +9,7 @@ import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/sc
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
@@ -74,6 +74,9 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     }
   }
 
+  const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const previousType = useRef(defaultValues.type)
+
   const {
     register,
     handleSubmit,
@@ -85,7 +88,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: initialValues || getDefaultValues('drag-drop'),
+    defaultValues: defaultValues,
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
@@ -97,9 +100,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
 
   useEffect(() => {
     const type = watch('type')
-    if (type) {
+    if (type !== previousType.current) {
       resetInputs({ ...getDefaultValues(type), question: watch('question'), points: watch('points'), category: watch('category') })
     }
+    previousType.current = type
   }, [watch('type')])
 
   const onSubmit = (data: Question) => {
