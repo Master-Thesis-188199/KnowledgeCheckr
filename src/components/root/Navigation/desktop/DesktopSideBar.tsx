@@ -2,6 +2,7 @@ import DesktopSidebarDialog from '@/components/root/Navigation/desktop/DesktopSi
 import SidebarHoverabilityDetection from '@/components/root/Navigation/desktop/SidebarHoverabilityDetection'
 import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
 import SidebarUserBanner from '@/components/root/Navigation/elements/SidebarUserBanner'
+import SidebarContentPanel from '@/components/root/Navigation/SidebarContentPanel'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import AppVersion from '@/components/Shared/AppVersion'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
@@ -21,19 +22,9 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
           <AppVersion />
         </DesktopSidebarDialog>
 
-        <ContentPanel children={children} />
+        <SidebarContentPanel children={children} />
         <SidebarHoverabilityDetection />
       </div>
-    </div>
-  )
-}
-
-function ContentPanel({ children }: { children?: React.ReactNode }) {
-  return (
-    <div className='@container flex flex-1'>
-      <main className='flex flex-1 flex-col gap-2 overflow-auto rounded-tl-2xl rounded-bl-2xl border border-neutral-200 bg-gray-100 p-8 dark:border-neutral-700 dark:bg-neutral-900/60'>
-        {children}
-      </main>
     </div>
   )
 }

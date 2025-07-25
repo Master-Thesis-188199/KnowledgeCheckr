@@ -1,11 +1,9 @@
 import SideBar from '@/components/root/Navigation/SideBar'
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
-import { RootStoreProvider } from '@/components/root/RootStoreProvider'
 import '@/lib/Shared/Env'
 import getTheme from '@/lib/Shared/getTheme'
 import ToastBox from '@/src/components/Shared/Toast/ToastBox'
-import NavigationAbortProvider from '@/src/components/navigation-abortion/NavigationAbortProvider'
-import { SessionStorageProvider } from '@/src/hooks/root/SessionStorage'
+import RootProviders from '@/src/components/root/RootProviders'
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
     default: 'KnowledgeCheckr',
     template: '%s | KnowledgeCheckr',
   },
-  description: '',
+  description: 'Increase your knowledge with KnowledgeCheckr',
 }
 
 export default async function RootLayout({
@@ -27,16 +25,12 @@ export default async function RootLayout({
   return (
     <html lang='en' data-theme={theme}>
       <body className={`antialiased scheme-light-dark`}>
-        <SessionStorageProvider>
-          <RootStoreProvider initialStoreProps={{ theme_cookie: theme }}>
-            <NavigationAbortProvider>
-              <SideBar {...sideBarConfiguration}>
-                {children}
-                <ToastBox />
-              </SideBar>
-            </NavigationAbortProvider>
-          </RootStoreProvider>
-        </SessionStorageProvider>
+        <RootProviders defaultTheme={theme}>
+          <SideBar {...sideBarConfiguration}>
+            {children}
+            <ToastBox />
+          </SideBar>
+        </RootProviders>
       </body>
     </html>
   )

@@ -3,6 +3,7 @@ import SidebarUserBanner from '@/components/root/Navigation/elements/SidebarUser
 import { MobileCloseButton, MobileMenubar } from '@/components/root/Navigation/mobile/MobileSidebarComponents'
 import MobileSideBarDialog from '@/components/root/Navigation/mobile/MobileSidebarDialog'
 import AppVersion from '@/components/Shared/AppVersion'
+import SidebarContentPanel from '@/src/components/root/Navigation/SidebarContentPanel'
 import { ArrowDownNarrowWide } from 'lucide-react'
 
 export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
@@ -10,7 +11,7 @@ export default function MobileSideBar({ children, visibilityBreakpoints }: { vis
     <>
       <div className='flex min-h-screen flex-col md:hidden dark:bg-neutral-800'>
         <MobileMenubar />
-        <main className='flex-1 bg-gray-100 p-4 dark:bg-neutral-900/60'>{children}</main>
+        <SidebarContentPanel className='flex-1 border-0 bg-gray-100 dark:bg-neutral-900/60'>{children} </SidebarContentPanel>
       </div>
 
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
