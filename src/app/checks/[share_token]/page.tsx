@@ -1,5 +1,6 @@
-import DisplayQuestion from '@/components/check/DisplayQuestion'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { ExamQuestionRenderer } from '@/src/components/checks/[share_token]/ExamQuestionRenderer'
+import { QuestionNavigationMenu } from '@/src/components/checks/[share_token]/QuestionNavigationMenu'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { notFound } from 'next/navigation'
 
@@ -15,12 +16,10 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
   return (
     <>
       <PageHeading title={check.name ?? '<check-name>'} />
-      <div className='flex flex-col gap-8'>
-        <div className='grid grid-cols-1 gap-8 @[1000px]:grid-cols-2 @[1400px]:grid-cols-3 @[1400px]:gap-14'>
-          {check.questions.map((question) => (
-            <DisplayQuestion key={question.id} {...question} />
-          ))}
-        </div>
+
+      <div className='grid gap-12 md:grid-cols-[1fr_auto] md:gap-[7vw]'>
+        <ExamQuestionRenderer />
+        <QuestionNavigationMenu className='order-first md:order-last' />
       </div>
     </>
   )
