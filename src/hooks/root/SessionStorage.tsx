@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { createContext, useContext } from 'react'
 
 interface SessionStorageContext {
-  getStoredValue: <T extends object>(key: string, options?: { validation?: (value: T | null) => T | never }) => T | null
+  getStoredValue: <T extends object>(key: string, options?: { validation?: (value: T | null) => T | never; expiresAfter?: number }) => T | null
   storeSessionValue: <T extends object>(key: string, value: T) => void
   cacheDuration: number
 }
@@ -19,7 +19,7 @@ export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 36
     const item = JSON.parse(sessionStorage.getItem(key) ?? 'null')
     if (!item) return null
 
-    if (!item?.session_savedAt || item.session_savedAt + defaultCacheDuration < Date.now()) {
+    if (!item?.session_savedAt || item.session_savedAt + (options?.expiresAfter ?? defaultCacheDuration) < Date.now()) {
       console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
       sessionStorage.removeItem(key)
       return null
