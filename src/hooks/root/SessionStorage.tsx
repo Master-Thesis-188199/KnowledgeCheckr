@@ -25,7 +25,7 @@ export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 36
       //? - is data marked as cache by having a save-date
       //? - is data expired (based on <expiredAfter> property or <defaultCacheDuration>)
 
-      console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
+      console.warn(`[Cache]: ${key} has expired.`)
       sessionStorage.removeItem(key)
       return null
     }
