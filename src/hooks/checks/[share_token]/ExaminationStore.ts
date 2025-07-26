@@ -1,3 +1,4 @@
+import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { createStore } from 'zustand/vanilla'
@@ -25,24 +26,26 @@ const defaultInitState: ExaminationState = {
 
 export const createExaminationStore = (initialState: ExaminationState = defaultInitState) => {
   return createStore<ExaminationStore>()((set) => {
+    const { modify: modifyState } = useCacheStoreUpdate(set)
+
     return {
       ...initialState,
       // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
-      setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length })),
+      setCurrentQuestionIndex: (index) => modifyState((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length })),
       nextQuestion: () =>
-        set((prev) => ({
+        modifyState((prev) => ({
           ...prev,
           currentQuestionIndex: (prev.currentQuestionIndex + 1) % prev.knowledgeCheck.questions.length,
           isLastQuestion: prev.currentQuestionIndex + 1 + 1 === prev.knowledgeCheck.questions.length,
         })),
       previousQuestion: () =>
-        set((prev) => ({
+        modifyState((prev) => ({
           ...prev,
           currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
           isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
         })),
       saveQuestion: (question) => {
-        return set((prev) => ({
+        return modifyState((prev) => ({
           ...prev,
           knowledgeCheck: {
             ...prev.knowledgeCheck,
