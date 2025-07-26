@@ -19,16 +19,15 @@ export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 36
     const item = JSON.parse(sessionStorage.getItem(key) ?? 'null')
     if (!item) return null
 
-    //? - is data marked as cache by having a save-date
-    //? - is data expired (based on <expiredAfter> property or <defaultCacheDuration>)
-    if (!item?.session_savedAt || item.session_savedAt + (options?.expiresAfter ?? defaultCacheDuration) < Date.now()) {
-      //
-      //* - do not discard if expiration is set to 0
-      if (options?.expiresAfter !== 0) {
-        console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
-        sessionStorage.removeItem(key)
-        return null
-      }
+    if (options?.expiresAfter === 0) {
+      //* Do not discard item -> does not expire
+    } else if (!item?.session_savedAt || item.session_savedAt + (options?.expiresAfter ?? defaultCacheDuration) < Date.now()) {
+      //? - is data marked as cache by having a save-date
+      //? - is data expired (based on <expiredAfter> property or <defaultCacheDuration>)
+
+      console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
+      sessionStorage.removeItem(key)
+      return null
     }
 
     delete item.session_savedAt
