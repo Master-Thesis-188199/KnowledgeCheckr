@@ -3,32 +3,47 @@ import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
-import { useForm, UseFormReset } from 'react-hook-form'
+import { useForm, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function ExamQuestion({ question }: { question: Question }) {
-  const { register, reset: resetInputs } = useForm<Question>({
+  const { reset: resetInputs, setValue } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: question,
   })
+
   return (
     <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600'>
       <input readOnly disabled className='text-lg font-semibold' value={question.question} />
-      {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswer reset={resetInputs} question={question as ChoiceQuestion} />}
+      {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswer setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />}
       {question.type === 'open-question' && <ExamOpenQuestionAnswer reset={resetInputs} />}
     </form>
   )
 }
 
-function ExamChoiceAnswer({ question, reset }: { question: ChoiceQuestion; reset: UseFormReset<Question> }) {
+function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuestion; reset: UseFormReset<Question>; setValue: UseFormSetValue<Question> }) {
   return (
     <ul className='group flex flex-col gap-4 px-4'>
-      {question.answers.map((answer) => (
+      {question.answers.map((answer, index, array) => (
         <label className='flex items-center gap-2 hover:cursor-pointer' key={getUUID()}>
-          <input type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'} className='peer hidden' name={`${question.id}-answer-checkbox`} />
+          <input
+            type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'}
+            name={question.type === 'single-choice' ? 'answer.correct' : (`answers.${index}.correct` as const)}
+            onChange={(e) => {
+              setValue(`answers.${index}.correct` as const, e.target.checked)
+
+              //* Ensure single-choice questions only have a single answer
+              if (question.type !== 'single-choice') return
+              for (let i = 0; i < array.length; i++) {
+                if (i === index) continue
+                setValue(`answers.${i}.correct` as const, false)
+              }
+            }}
+            className='peer hidden'
+          />
           <CircleIcon className='size-4.5 peer-checked:fill-neutral-300' />
           {answer.answer}
         </label>
