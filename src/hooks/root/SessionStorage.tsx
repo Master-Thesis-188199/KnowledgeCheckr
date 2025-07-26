@@ -13,7 +13,7 @@ interface SessionStorageContext {
 const Context = createContext<SessionStorageContext | undefined>(undefined)
 
 export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
-  function getStoredValue<T extends object = Any>(key: string, options?: { validation?: (value: T | null) => T | never }): T | null {
+  const getStoredValue: SessionStorageContext['getStoredValue'] = (key, options) => {
     //! Check if window is defined to avoid SSR issues
     if (typeof window === 'undefined') return null
 
@@ -31,10 +31,10 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     return options?.validation ? options?.validation(item) : item
   }
 
-  function storeSessionValue<T extends object>(key: string, value: T) {
+  const storeSessionValue: SessionStorageContext['storeSessionValue'] = (key, value) => {
     if (!window) return
 
-    const existingValue = getStoredValue<T>(key)
+    const existingValue = getStoredValue(key)
     if (_.isEqual(existingValue, value)) return
 
     sessionStorage.setItem(key, JSON.stringify({ ...value, session_savedAt: Date.now() }))
