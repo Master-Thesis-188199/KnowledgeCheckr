@@ -1,4 +1,5 @@
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Question } from '@/src/schemas/QuestionSchema'
 import { createStore } from 'zustand/vanilla'
 
 export type ExaminationState = {
@@ -11,6 +12,7 @@ export type ExaminationActions = {
   setCurrentQuestionIndex: (index: number) => void
   nextQuestion: () => void
   previousQuestion: () => void
+  saveQuestion: (question: Question) => void
 }
 
 export type ExaminationStore = ExaminationState & ExaminationActions
@@ -39,6 +41,15 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
           currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
           isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
         })),
+      saveQuestion: (question) => {
+        return set((prev) => ({
+          ...prev,
+          knowledgeCheck: {
+            ...prev.knowledgeCheck,
+            questions: prev.knowledgeCheck.questions.map((q) => (q.id === question.id ? question : q)),
+          },
+        }))
+      },
     }
   })
 }
