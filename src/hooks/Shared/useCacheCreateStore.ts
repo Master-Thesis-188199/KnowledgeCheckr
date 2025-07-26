@@ -8,7 +8,7 @@ import { useRef } from 'react'
  * @param createStoreFunc The function which initializes the store
  * @param initialStoreProps The initial properties that are being used when no data is cached
  */
-export default function useCacheStore<StoreState extends object>(session_key: string, createStoreFunc: Any, initialStoreProps?: StoreState) {
+export default function useCacheCreateStore<StoreState extends object>(session_key: string, createStoreFunc: Any, initialStoreProps?: StoreState) {
   const { getStoredValue } = useSessionStorageContext()
   const storeRef = useRef<ReturnType<typeof createStoreFunc>>(null)
 
