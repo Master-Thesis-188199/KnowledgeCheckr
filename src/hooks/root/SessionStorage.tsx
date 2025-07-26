@@ -1,6 +1,5 @@
 'use client'
 
-import { Any } from '@/types'
 import _ from 'lodash'
 import { createContext, useContext } from 'react'
 
@@ -12,7 +11,7 @@ interface SessionStorageContext {
 
 const Context = createContext<SessionStorageContext | undefined>(undefined)
 
-export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
+export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; defaultCacheDuration?: number }) {
   const getStoredValue: SessionStorageContext['getStoredValue'] = (key, options) => {
     //! Check if window is defined to avoid SSR issues
     if (typeof window === 'undefined') return null
@@ -20,7 +19,7 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     const item = JSON.parse(sessionStorage.getItem(key) ?? 'null')
     if (!item) return null
 
-    if (!item?.session_savedAt || item.session_savedAt + cacheDuration < Date.now()) {
+    if (!item?.session_savedAt || item.session_savedAt + defaultCacheDuration < Date.now()) {
       console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
       sessionStorage.removeItem(key)
       return null
@@ -40,7 +39,7 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
     sessionStorage.setItem(key, JSON.stringify({ ...value, session_savedAt: Date.now() }))
   }
 
-  return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration }}>{children}</Context.Provider>
+  return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration: defaultCacheDuration }}>{children}</Context.Provider>
 }
 
 export function useSessionStorageContext() {
