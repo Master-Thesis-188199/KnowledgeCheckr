@@ -1,3 +1,5 @@
+import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -10,13 +12,20 @@ import TextareaAutosize from 'react-textarea-autosize'
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function ExamQuestion({ question }: { question: Question }) {
-  const { reset: resetInputs, setValue } = useForm<Question>({
+  const { saveQuestion } = useExaminationStore((state) => state)
+  const {
+    reset: resetInputs,
+    setValue,
+    getValues,
+  } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: question,
   })
 
+  const debounceSaveQuestion = debounceFunction(saveQuestion, 750)
+
   return (
-    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600'>
+    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSaveQuestion(getValues())}>
       <input readOnly disabled className='text-lg font-semibold' value={question.question} />
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswer setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />}
       {question.type === 'open-question' && <ExamOpenQuestionAnswer reset={resetInputs} />}
@@ -32,6 +41,7 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
           <input
             type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'}
             name={question.type === 'single-choice' ? 'answer.correct' : (`answers.${index}.correct` as const)}
+            defaultChecked={answer.correct}
             onChange={(e) => {
               setValue(`answers.${index}.correct` as const, e.target.checked)
 
