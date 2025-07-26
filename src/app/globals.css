@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-@custom-variant dark (&:where([data-theme=light], [data-theme=light] *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *), &:where([data-theme=light], [data-theme=light] *));
 
 @theme {
   --font-sans: var(--font-geist-sans);
