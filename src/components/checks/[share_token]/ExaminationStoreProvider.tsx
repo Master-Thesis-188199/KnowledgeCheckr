@@ -1,7 +1,8 @@
 'use client'
 
 import { createExaminationStore, ExaminationState, type ExaminationStore } from '@/hooks/checks/[share_token]/ExaminationStore'
-import { createContext, type ReactNode, useContext, useRef } from 'react'
+import useCacheStore from '@/hooks/Shared/useCacheStore'
+import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 
 export type ExaminationStoreApi = ReturnType<typeof createExaminationStore>
@@ -14,12 +15,9 @@ export interface ExaminationStoreProviderProps {
 }
 
 export function ExaminationStoreProvider({ children, initialStoreProps }: ExaminationStoreProviderProps) {
-  const storeRef = useRef<ExaminationStoreApi>(null)
-  if (!storeRef.current) {
-    storeRef.current = createExaminationStore(initialStoreProps)
-  }
+  const props = useCacheStore<ExaminationState>('examination-store', createExaminationStore, initialStoreProps)
 
-  return <ExaminationStoreContext.Provider value={storeRef.current}>{children}</ExaminationStoreContext.Provider>
+  return <ExaminationStoreContext.Provider value={props}>{children}</ExaminationStoreContext.Provider>
 }
 
 export function useExaminationStore<T>(selector: (store: ExaminationStore) => T): T {
