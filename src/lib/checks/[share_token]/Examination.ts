@@ -1,13 +1,17 @@
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
+interface PreparationOptions {
+  randomizeOrder?: boolean
+}
+
 /**
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and randomizes their order.
  */
-export default function prepareExaminationCheck(check: KnowledgeCheck) {
+export default function prepareExaminationCheck(check: KnowledgeCheck, { randomizeOrder = true }: PreparationOptions = {}) {
   return {
     ...check,
-    questions: check.questions.map(hideCorrectness).map(randomizeAnswerOrder),
+    questions: check.questions.map(hideCorrectness).map(randomizeOrder ? randomizeAnswerOrder : (e) => e),
   }
 }
 
