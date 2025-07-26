@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { createContext, useContext } from 'react'
 
 interface SessionStorageContext {
-  getStoredValue: <T extends object>(key: string, validation?: (value: T | null) => T | never) => T | null
+  getStoredValue: <T extends object>(key: string, options?: { validation?: (value: T | null) => T | never }) => T | null
   storeSessionValue: <T extends object>(key: string, value: T) => void
   cacheDuration: number
 }
@@ -13,7 +13,7 @@ interface SessionStorageContext {
 const Context = createContext<SessionStorageContext | undefined>(undefined)
 
 export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
-  function getStoredValue<T extends object = Any>(key: string, validation?: (value: T | null) => T | never): T | null {
+  function getStoredValue<T extends object = Any>(key: string, options?: { validation?: (value: T | null) => T | never }): T | null {
     //! Check if window is defined to avoid SSR issues
     if (typeof window === 'undefined') return null
 
@@ -28,7 +28,7 @@ export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 10
 
     delete item.session_savedAt
 
-    return validation ? validation(item) : item
+    return options?.validation ? options?.validation(item) : item
   }
 
   function storeSessionValue<T extends object>(key: string, value: T) {
