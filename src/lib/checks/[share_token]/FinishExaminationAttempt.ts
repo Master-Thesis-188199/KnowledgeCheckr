@@ -1,18 +1,11 @@
 'use server'
 
-import getDatabase from '@/database/Database'
+import insertExaminationResults from '@/database/examination/insert'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default async function finishExaminationAttempt(result: KnowledgeCheck) {
-  const db = await getDatabase()
-  try {
-    db.beginTransaction()
-    //todo saving
+  // todo Determinate examination score
+  const score = result.questions.reduce((acc, q) => (acc += q.points), 0) * Math.random()
 
-    db.commit()
-    console.log('Examination results saved...')
-  } catch (e) {
-    db.rollback()
-    console.error('Failed to save examination results to database', e)
-  }
+  await insertExaminationResults(result, score)
 }
