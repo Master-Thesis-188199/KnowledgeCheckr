@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default async function ChecksPage() {
   const { user } = await requireAuthentication()
-  const checks = await getKnowledgeChecksByOwner(user.id, { limit: 10 })
+  const checks = await getKnowledgeChecksByOwner(user.id)
 
   return (
     <div>
