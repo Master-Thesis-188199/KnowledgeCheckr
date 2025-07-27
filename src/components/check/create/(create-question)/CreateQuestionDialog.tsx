@@ -76,7 +76,6 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   }
 
   const defaultValues = initialValues ?? getDefaultValues('drag-drop')
-  const previousType = useRef(defaultValues.type)
 
   const {
     register,
