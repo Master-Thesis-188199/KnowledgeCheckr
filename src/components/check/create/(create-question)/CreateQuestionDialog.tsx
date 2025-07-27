@@ -30,10 +30,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'Which of the following is a programming language?',
           type,
           answers: [
-            { answer: 'Python', correct: true },
-            { answer: 'ASCII', correct: false },
-            { answer: 'ByteCode', correct: false },
-            { answer: 'JavaScript', correct: true },
+            { answer: '', correct: true },
+            { answer: '', correct: true },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
           ],
         }
       case 'single-choice':
@@ -42,10 +42,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'What does RGB stand for?',
           type,
           answers: [
-            { answer: 'Red, Green, Blue', correct: true },
-            { answer: 'Red, Green, Black', correct: false },
-            { answer: 'Red, Green, Yellow', correct: false },
-            { answer: 'Red, Green, White', correct: false },
+            { answer: '', correct: true },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
           ],
         }
 
@@ -54,7 +54,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           ...baseValues,
           // question: 'Describe the essential parts of a computer.',
           type,
-          expectation: 'A computer consists of hardware and software components that work together to perform tasks. This includes components like the CPU, memory, storage, and input/output devices.',
+          expectation: '',
         }
 
       case 'drag-drop':
@@ -63,10 +63,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'Move these activities based the order in which they should be performed',
           type,
           answers: [
-            { answer: 'Prepare the workspace', position: 1 },
-            { answer: 'Gather materials', position: 2 },
-            { answer: 'Follow the instructions', position: 3 },
-            { answer: 'Clean up', position: 4 },
+            { answer: '', position: 1 },
+            { answer: '', position: 2 },
+            { answer: '', position: 3 },
+            { answer: '', position: 4 },
           ],
         }
 
@@ -74,6 +74,9 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         return {}
     }
   }
+
+  const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const previousType = useRef(defaultValues.type)
 
   const {
     register,
@@ -86,7 +89,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: initialValues || getDefaultValues('drag-drop'),
+    defaultValues: defaultValues,
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
@@ -262,7 +265,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                   <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
                 </label>
               </Tooltip>
-              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1} -  to your question`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -331,7 +334,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   />
                 </label>
               </Tooltip>
-              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Moveable exemplary Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <div className='flex gap-2'>
                 <button
                   aria-label='move answer up'
