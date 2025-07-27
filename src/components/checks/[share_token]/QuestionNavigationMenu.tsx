@@ -1,5 +1,6 @@
 'use client'
 
+import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -23,7 +24,9 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
             </button>
           ))}
         </div>
-        <button className='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60'>Finish Check</button>
+        <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60'>
+          <span>Finish Check</span>
+        </ExamFinishDialog>
       </div>
     </>
   )
