@@ -13,6 +13,7 @@ export default async function insertExaminationResults(results: KnowledgeCheck, 
     await db.exec('INSERT INTO `User_has_done_KnowledgeCheck`(`user_id`, `knowledgeCheck_id`, `startedAt`, `finishedAt`, `score`, `results`) VALUES (?, ?, ?, ?, ?, ?)', [
       user.id,
       results.id,
+      // todo use actual start and end times
       formatDatetime(new Date(Date.now())),
       formatDatetime(new Date(Date.now() + 3600 * 1000)),
       score,

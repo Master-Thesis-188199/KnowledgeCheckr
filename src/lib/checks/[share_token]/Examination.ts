@@ -16,6 +16,7 @@ export default function prepareExaminationCheck(check: KnowledgeCheck, { randomi
 }
 
 function randomizeAnswerOrder(question: Question): Question {
+  //todo randomize order
   return question
 }
 
