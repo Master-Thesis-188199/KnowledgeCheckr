@@ -6,7 +6,9 @@ import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
+import { Question } from '@/src/schemas/QuestionSchema'
 import { DialogDescription } from '@radix-ui/react-dialog'
+import { CheckCheckIcon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -26,9 +28,12 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
           <div className='flex flex-col gap-4'>
             <span className='dark:text-neutral-200'>Question Overview</span>
             <div className='flex flex-wrap gap-4 px-4'>
-              {Array.from({ length: 15 }).map((_, i) => (
-                <div className='w-9 rounded-md py-1 text-center ring-1 dark:bg-green-900/60 dark:ring-neutral-700' key={i}>
-                  {i + 1}
+              {knowledgeCheck.questions.map((q, i) => (
+                <div className={cn('relative flex w-9 rounded-md py-1 text-center ring-1 dark:ring-neutral-700', isQuestionAnswered(q) && 'dark:bg-green-800/60')} key={i}>
+                  <div className={cn('absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]', isQuestionAnswered(q) && 'flex')}>
+                    <CheckCheckIcon className={cn('size-4 dark:text-green-400/80')} />
+                  </div>
+                  <span className={cn('mx-auto')}>{i + 1}</span>
                 </div>
               ))}
             </div>
@@ -58,4 +63,18 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
       </DialogContent>
     </Dialog>
   )
+}
+
+function isQuestionAnswered(question: Question) {
+  switch (question.type) {
+    case 'single-choice':
+      return question.answers.some((q) => q.correct)
+    case 'multiple-choice':
+      return question.answers.some((q) => q.correct)
+    case 'drag-drop':
+      // todo determinate if user has made changes
+      return false
+    case 'open-question':
+      return !!question.expectation?.trim()?.length
+  }
 }
