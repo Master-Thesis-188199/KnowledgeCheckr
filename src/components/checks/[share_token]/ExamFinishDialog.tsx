@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { DialogDescription } from '@radix-ui/react-dialog'
+import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
 import { CheckCheckIcon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -39,9 +39,11 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
             </div>
           </div>
           <div className='flex justify-between'>
-            <Button variant='outline' className='rounded-md px-4 py-1.5 ring-1 dark:ring-neutral-600'>
-              Cancel
-            </Button>
+            <DialogClose asChild>
+              <Button variant='outline' className='rounded-md px-4 py-1.5 ring-1 dark:ring-neutral-600'>
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               onClick={() =>
                 finishExaminationAttempt(knowledgeCheck)
