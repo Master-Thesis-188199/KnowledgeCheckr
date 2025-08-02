@@ -1,5 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { z, ZodTypeAny } from 'zod'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
+import {
+  z,
+  ZodArray,
+  ZodBigInt,
+  ZodBoolean,
+  ZodDate,
+  ZodDefault,
+  ZodEnum,
+  ZodIntersection,
+  ZodLiteral,
+  ZodMap,
+  ZodNullable,
+  ZodNumber,
+  ZodObject,
+  ZodOptional,
+  ZodPipe,
+  ZodRecord,
+  ZodSet,
+  ZodString,
+  ZodTransform,
+  ZodTypeAny,
+  ZodUnion,
+} from 'zod'
 
 /**
  * The default size of an array.
@@ -18,128 +42,89 @@ export interface SchemaOptionalProps {
 }
 
 /**
+ * Internal – recursively builds a default value for `schema`.
+ */
+function _instantiate(schema: ZodTypeAny): unknown {
+  // 1. honour explicit .default()
+  if (schema instanceof ZodDefault) {
+    const v = schema._zod.def.defaultValue
+    // defaultValue is either a direct value or a thunk
+    return typeof v === 'function' ? (v as () => unknown)() : v
+  }
+
+  // 2. primitives
+  if (schema instanceof ZodString) return ''
+  if (schema instanceof ZodNumber) return 0
+  if (schema instanceof ZodBigInt) return BigInt(0)
+  if (schema instanceof ZodBoolean) return false
+  if (schema instanceof ZodDate) return new Date(Date.now())
+
+  // 3. enums
+  if (schema instanceof ZodEnum) return schema.options[0]
+
+  // 4. arrays, sets, maps, tuples
+  if (schema instanceof ZodArray) {
+    const itemSchema = schema.element
+
+    // @ts-expect-error
+    return Array.from({ length: DEFAULT_ARRAY_SIZE }, () => _instantiate(itemSchema))
+  }
+  if (schema instanceof ZodSet) return new Set()
+  if (schema instanceof ZodMap) return new Map()
+  // if (schema instanceof ZodTuple) return schema._zod.def.items.map(_instantiate)
+  if (schema instanceof ZodIntersection) {
+    // @ts-expect-error
+    return Object.assign(_instantiate(schema._zod.def.left), _instantiate(schema._zod.def.right))
+  }
+
+  if (schema instanceof ZodTransform) {
+    // const base = _instantiate(schema._zod.def.type)
+
+    return schema._zod.def.transform('something...', { issues: [{ code: 'invalid_key', input: 'test', issues: [], origin: 'map' }], value: 'invalid-value' })
+  }
+
+  // @ts-expect-error
+  if (schema instanceof ZodUnion) return _instantiate(schema.options.at((Math.random() * schema.options.length) % schema.options.length))
+
+  // @ts-expect-error
+  if (schema instanceof ZodNullable || schema instanceof ZodOptional) return _instantiate(schema._zod.def.innerType)
+
+  if (schema instanceof ZodLiteral) return schema._zod.def.values.at((schema._zod.def.values.length * (Math.random() * 10)) % schema._zod.def.values.length)
+
+  // 5. objects & records
+  if (schema instanceof ZodRecord) return {}
+  if (schema instanceof ZodObject) {
+    const out: Record<string, unknown> = {}
+    const shape = schema.shape // getter in v4
+    for (const key in shape) {
+      out[key] = _instantiate(shape[key])
+    }
+    return out
+  }
+
+  if (schema instanceof ZodPipe) {
+    console.log('Pipe output ->', schema._zod.def.out)
+
+    // @ts-expect-error
+    return _instantiate(schema._zod.def.out)
+  }
+
+  // 10. Anything we do not recognise → undefined
+
+  console.warn('schemaDefaults: unknown Zod type, returning undefined:', schema)
+
+  return undefined
+}
+
+/**
  * Returns a default values for a given schema.
  * @param schema The schema to generate default values for.
  */
-export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes>(
+export default function schemaDefaults<Schema extends typeof KnowledgeCheckSchema>(
   schema: Schema,
   options: SchemaOptionalProps = { instantiate_Optional_PrimitiveProps: true, instantiate_Optional_Objects: true, instantiate_Nullable_PrimitiveProps: true, instantiate_Nullable_Objects: true },
 ): z.TypeOf<Schema> {
   if (options.instantiate_Optional_PrimitiveProps === undefined) options.instantiate_Optional_PrimitiveProps = true
 
-  switch (schema._def.typeName) {
-    case z.ZodFirstPartyTypeKind.ZodDefault:
-      return schema._def.defaultValue()
-
-    case z.ZodFirstPartyTypeKind.ZodObject:
-      return Object.fromEntries(Object.entries((schema as z.SomeZodObject).shape).map(([key, value]) => [key, schemaDefaults(value, options)]))
-
-    case z.ZodFirstPartyTypeKind.ZodString:
-      return ''
-
-    case z.ZodFirstPartyTypeKind.ZodNull:
-      return null
-
-    case z.ZodFirstPartyTypeKind.ZodNullable:
-      const strippedNullableSchema = (schema as z.ZodNullable<ZodTypeAny>).unwrap()
-
-      switch (strippedNullableSchema._def.typeName) {
-        case z.ZodFirstPartyTypeKind.ZodObject:
-          return options.instantiate_Nullable_Objects ? schemaDefaults(strippedNullableSchema, options) : undefined
-
-        case z.ZodFirstPartyTypeKind.ZodArray:
-          return options.instantiate_Nullable_Objects ? schemaDefaults(strippedNullableSchema, options) : undefined
-      }
-
-      return options.instantiate_Nullable_PrimitiveProps ? schemaDefaults(strippedNullableSchema, options) : undefined
-
-    case z.ZodFirstPartyTypeKind.ZodUndefined:
-      return undefined
-
-    case z.ZodFirstPartyTypeKind.ZodUnknown:
-      return undefined
-
-    case z.ZodFirstPartyTypeKind.ZodArray: {
-      const arraySchema = schema as z.ZodArray<any>
-      const elementSchema = arraySchema.element
-
-      const elements = Array.from({ length: DEFAULT_ARRAY_SIZE }).map(() => schemaDefaults(elementSchema, options)) as z.TypeOf<Schema>
-      return elements
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodOptional:
-      const strippedOptionalSchema = (schema as z.ZodOptional<ZodTypeAny>).unwrap()
-
-      switch (strippedOptionalSchema._def.typeName) {
-        case z.ZodFirstPartyTypeKind.ZodObject:
-          return options.instantiate_Optional_Objects ? schemaDefaults(strippedOptionalSchema, options) : undefined
-
-        case z.ZodFirstPartyTypeKind.ZodArray:
-          return options.instantiate_Optional_Objects ? schemaDefaults(strippedOptionalSchema, options) : undefined
-      }
-
-      return options.instantiate_Optional_PrimitiveProps ? schemaDefaults(strippedOptionalSchema, options) : undefined
-
-    case z.ZodFirstPartyTypeKind.ZodNumber:
-      return 0
-
-    case z.ZodFirstPartyTypeKind.ZodBoolean:
-      return false
-
-    case z.ZodFirstPartyTypeKind.ZodAny:
-      return undefined
-
-    case z.ZodFirstPartyTypeKind.ZodCatch:
-      return schema._def.catchValue.call(null, {} as any)
-
-    case z.ZodFirstPartyTypeKind.ZodEffects:
-      return schemaDefaults((schema as any)._def.schema, options)
-
-    case z.ZodFirstPartyTypeKind.ZodUnion: {
-      const unionSchema = schema as z.ZodUnion<any>
-      const unionOptions = unionSchema._def.options
-
-      const randomOptionIndex = Math.floor(Math.random() * unionOptions.length)
-      return schemaDefaults(unionOptions[randomOptionIndex], options)
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodDate:
-      return new Date()
-
-    case z.ZodFirstPartyTypeKind.ZodLiteral: {
-      return schema._def.value
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodEnum: {
-      const enumSchema = schema as z.ZodEnum<any>
-      const enumValues = enumSchema._def.values
-      const randomIndex = Math.floor(Math.random() * enumValues.length)
-      return enumValues[randomIndex]
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodTuple: {
-      const tupleSchema = schema as z.ZodTuple<any>
-      const tupleItems = tupleSchema._def.items
-      return tupleItems.map((item: ZodTypeAny) => schemaDefaults(item, options)) as unknown as z.TypeOf<Schema>
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodIntersection: {
-      const intersectionSchema = schema as z.ZodIntersection<ZodTypeAny, ZodTypeAny>
-      const leftDefaults = schemaDefaults(intersectionSchema._def.left, options)
-      const rightDefaults = schemaDefaults(intersectionSchema._def.right, options)
-      // Merge the left and right results (right properties override left if overlapping)
-      return { ...leftDefaults, ...rightDefaults } as z.TypeOf<Schema>
-    }
-
-    case (z.ZodFirstPartyTypeKind as any).ZodDiscriminatedUnion: {
-      // The discriminated union internally stores a tuple of options just like a union.
-      const discUnion = schema as any // ZodDiscriminatedUnion<any, any>
-      const optionsArr = discUnion._def.options
-      const randomOptionIndex = Math.floor(Math.random() * optionsArr.length)
-      return schemaDefaults(optionsArr[randomOptionIndex], options)
-    }
-
-    default:
-      throw new Error(`[SchemaDefaults]: Unsupported type ${(schema as any)._def.typeName}`)
-  }
+  return _instantiate(schema) as z.infer<Schema>
 }
