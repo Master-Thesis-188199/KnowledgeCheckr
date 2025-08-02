@@ -10,7 +10,7 @@ export const envSchema = z.object({
 
   DATABASE_HOST: z.union([
     z.string().regex(/^\S*$/, { message: 'When using the service-name as the database host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
-    z.string().ip({ message: 'Please provide a valid database host url / ip / service-name' }),
+    z.ipv4({ message: 'Please provide a valid database host url / ip / service-name' }),
     z.string().url({ message: 'Please provide a valid database host url / ip / service-name' }),
     // .min(1, 'The database host must not be empty!')
   ]),
