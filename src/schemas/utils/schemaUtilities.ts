@@ -28,7 +28,7 @@ export function schemaUtilities<Type>(schema: z.ZodObject) {
    * Safely parses an object against its schema and returns the result of the zod.safeParse method
    * @param object - The object to be parsed / validated
    */
-  const safeParse = (object: any): z.SafeParseReturnType<any, Type> => stripZodDefault(schema).safeParse(object) as SafeParseReturnType<any, Type>
+  const safeParse = (object: any): z.ZodSafeParseResult<Type> => stripZodDefault(schema).safeParse(object) as z.ZodSafeParseResult<Type>
   return {
     instantiate,
     validate,
