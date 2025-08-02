@@ -8,7 +8,7 @@ export const CategorySchema = z.object({
     .transform((val) => (typeof val === 'string' ? [val] : val))
     .refine((pre) => pre.filter((c, i, a) => a.indexOf(c) === i).length !== pre.length, { message: 'Please remove duplicate prequisite categories.' })
     .optional(),
-  skipOnMissingPrequisite: z.boolean().default(false),
+  skipOnMissingPrequisite: z.boolean().default(false).optional(),
 })
 
 export type CategorySchema = z.infer<typeof CategorySchema>
