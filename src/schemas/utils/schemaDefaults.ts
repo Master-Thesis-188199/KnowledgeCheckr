@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
 import {
   z,
   ZodArray,
@@ -30,16 +29,6 @@ import {
  * @internal
  */
 export const DEFAULT_ARRAY_SIZE = 5
-
-/**
- * @internal
- */
-export interface SchemaOptionalProps {
-  instantiate_Optional_PrimitiveProps?: boolean
-  instantiate_Nullable_PrimitiveProps?: boolean
-  instantiate_Optional_Objects?: boolean
-  instantiate_Nullable_Objects?: boolean
-}
 
 /**
  * Internal – recursively builds a default value for `schema`.
@@ -120,11 +109,6 @@ function _instantiate(schema: ZodTypeAny): unknown {
  * Returns a default values for a given schema.
  * @param schema The schema to generate default values for.
  */
-export default function schemaDefaults<Schema extends typeof KnowledgeCheckSchema>(
-  schema: Schema,
-  options: SchemaOptionalProps = { instantiate_Optional_PrimitiveProps: true, instantiate_Optional_Objects: true, instantiate_Nullable_PrimitiveProps: true, instantiate_Nullable_Objects: true },
-): z.TypeOf<Schema> {
-  if (options.instantiate_Optional_PrimitiveProps === undefined) options.instantiate_Optional_PrimitiveProps = true
-
+export default function schemaDefaults<Schema extends z.ZodObject>(schema: Schema): z.TypeOf<Schema> {
   return _instantiate(schema) as z.infer<Schema>
 }
