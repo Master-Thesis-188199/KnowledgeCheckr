@@ -21,7 +21,7 @@ export function CreateCheckStoreProvider({ children, initialStoreProps }: Create
   const { getStoredValue } = useSessionStorageContext()
 
   if (!storeRef.current) {
-    storeRef.current = createCheckCreateStore(getStoredValue<CreateCheckState>('create-check-store', validateKnowledgeCheck) ?? initialStoreProps)
+    storeRef.current = createCheckCreateStore(getStoredValue<CreateCheckState>('create-check-store', { validation: validateKnowledgeCheck }) ?? initialStoreProps)
   }
 
   return (
