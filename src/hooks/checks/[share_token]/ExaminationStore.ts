@@ -1,10 +1,10 @@
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
+import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { createStore } from 'zustand/vanilla'
 
-export type ExaminationState = {
-  knowledgeCheck: KnowledgeCheck
+export type ExaminationState = ExaminationSchema & {
   currentQuestionIndex: number
   isLastQuestion: boolean
 }
@@ -19,8 +19,10 @@ export type ExaminationActions = {
 export type ExaminationStore = ExaminationState & ExaminationActions
 
 const defaultInitState: ExaminationState = {
-  currentQuestionIndex: 0,
+  ...instantiateExaminationSchema(),
   knowledgeCheck: instantiateKnowledgeCheck(),
+  startedAt: new Date(Date.now()),
+  currentQuestionIndex: 0,
   isLastQuestion: false,
 }
 
