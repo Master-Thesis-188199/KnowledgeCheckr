@@ -1,3 +1,4 @@
+import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
@@ -5,8 +6,8 @@ import { z } from 'zod'
 
 const ExaminationSchema = z.object({
   knowledgeCheck: KnowledgeCheckSchema._def.schema,
-  startedAt: z.date().default(new Date(Date.now())),
-  finishedAt: z.date().nullable().default(null),
+  startedAt: StringDate.default(new Date(Date.now())),
+  finishedAt: StringDate.nullable().default(null),
   score: z.number().positive().nullable().default(null),
   results: z
     .array(
