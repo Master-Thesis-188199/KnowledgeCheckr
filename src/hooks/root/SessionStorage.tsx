@@ -1,46 +1,50 @@
 'use client'
 
-import { Any } from '@/types'
-import { isEqual } from 'lodash'
+import _ from 'lodash'
 import { createContext, useContext } from 'react'
 
 interface SessionStorageContext {
-  getStoredValue: <T extends object>(key: string, validation?: (value: T | null) => T | never) => T | null
+  getStoredValue: <T extends object>(key: string, options?: { validation?: (value: T | null) => T | never; expiresAfter?: number }) => T | null
   storeSessionValue: <T extends object>(key: string, value: T) => void
   cacheDuration: number
 }
 
 const Context = createContext<SessionStorageContext | undefined>(undefined)
 
-export function SessionStorageProvider({ children, cacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; cacheDuration?: number }) {
-  function getStoredValue<T extends object = Any>(key: string, validation?: (value: T | null) => T | never): T | null {
+export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 3600 * 1000 }: { children: React.ReactNode; defaultCacheDuration?: number }) {
+  const getStoredValue: SessionStorageContext['getStoredValue'] = (key, options) => {
     //! Check if window is defined to avoid SSR issues
     if (typeof window === 'undefined') return null
 
     const item = JSON.parse(sessionStorage.getItem(key) ?? 'null')
     if (!item) return null
 
-    if (!item?.session_savedAt || item.session_savedAt + cacheDuration < Date.now()) {
-      console.warn('SessionStorageProvider: Item expired, removing from session storage', key)
+    if (options?.expiresAfter === 0) {
+      //* Do not discard item -> does not expire
+    } else if (!item?.session_savedAt || item.session_savedAt + (options?.expiresAfter ?? defaultCacheDuration) < Date.now()) {
+      //? - is data marked as cache by having a save-date
+      //? - is data expired (based on <expiredAfter> property or <defaultCacheDuration>)
+
+      console.warn(`[Cache]: ${key} has expired.`)
       sessionStorage.removeItem(key)
       return null
     }
 
     delete item.session_savedAt
 
-    return validation ? validation(item) : item
+    return options?.validation ? options?.validation(item) : item
   }
 
-  function storeSessionValue<T extends object>(key: string, value: T) {
+  const storeSessionValue: SessionStorageContext['storeSessionValue'] = (key, value) => {
     if (!window) return
 
-    const existingValue = getStoredValue<T>(key)
-    if (isEqual(existingValue, value)) return
+    const existingValue = getStoredValue(key)
+    if (_.isEqual(existingValue, value)) return
 
     sessionStorage.setItem(key, JSON.stringify({ ...value, session_savedAt: Date.now() }))
   }
 
-  return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration }}>{children}</Context.Provider>
+  return <Context.Provider value={{ getStoredValue, storeSessionValue, cacheDuration: defaultCacheDuration }}>{children}</Context.Provider>
 }
 
 export function useSessionStorageContext() {
