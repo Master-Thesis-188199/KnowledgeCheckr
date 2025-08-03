@@ -55,7 +55,7 @@ describe('Check: Create Choice Question -', () => {
       points: -5,
       type: 'multiple-choice',
       answers: [
-        { answer: 'Duplicate', correct: false },
+        { answer: 'Example', correct: false },
         { answer: 'Duplicate', correct: false },
         { answer: 'Madrid', correct: false },
         { answer: 'Rome', correct: false },
@@ -89,7 +89,7 @@ describe('Check: Create Choice Question -', () => {
     // Check for error messages
     cy.get('#question-dialog * div[aria-label="field-error-question"]').should('exist').contains('Please reformulate your question to be at least 3 words long.')
     cy.get('#question-dialog * div[aria-label="field-error-points"]').should('exist').contains('Number must be greater than 0')
-    cy.get('#question-dialog * div[aria-label="field-error-answers.root"]').should('exist').contains('At least one answer has to be correct!')
+    cy.get('#question-dialog * div[aria-label="field-error-answers"]').should('exist').contains('At least one answer has to be correct!')
   })
 
   it('Verify that answers can be added and removed', () => {
