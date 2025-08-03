@@ -9,7 +9,7 @@ import { z } from 'zod'
  * @returns An object containing utility functions: getDummy, validate and safeParse based on the given schema
  * @internal
  */
-export function schemaUtilities<Type>(schema: z.ZodObject) {
+export function schemaUtilities<Type>(schema: z.ZodType) {
   /**
    * Validates a given object against a given schema. Throws an error if the object is invalid
    * @param object - The object to be validated

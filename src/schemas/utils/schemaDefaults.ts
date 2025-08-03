@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
+import { Any } from '@/types'
 import {
   z,
   ZodArray,
@@ -109,6 +110,6 @@ function _instantiate(schema: ZodTypeAny): unknown {
  * Returns a default values for a given schema.
  * @param schema The schema to generate default values for.
  */
-export default function schemaDefaults<Schema extends z.ZodObject>(schema: Schema): z.TypeOf<Schema> {
+export default function schemaDefaults<Schema extends z.ZodType<T>, T = Any>(schema: Schema): z.TypeOf<Schema> {
   return _instantiate(schema) as z.infer<Schema>
 }
