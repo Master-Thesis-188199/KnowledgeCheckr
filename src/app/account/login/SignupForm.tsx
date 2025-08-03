@@ -1,13 +1,13 @@
 /* app/account/login/SignupForm.tsx */
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useActionState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
+import { zodResolver } from '@/src/lib/form/zodResolver'
 import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
