@@ -81,7 +81,6 @@ function _instantiate(schema: ZodTypeAny): unknown {
 
   if (schema instanceof ZodLiteral) return schema._zod.def.values.at((schema._zod.def.values.length * (Math.random() * 10)) % schema._zod.def.values.length)
 
-  // 5. objects & records
   if (schema instanceof ZodRecord) return {}
   if (schema instanceof ZodObject) {
     const out: Record<string, unknown> = {}
@@ -92,12 +91,8 @@ function _instantiate(schema: ZodTypeAny): unknown {
     return out
   }
 
-  if (schema instanceof ZodPipe) {
-    console.log('Pipe output ->', schema._zod.def.out)
-
-    // @ts-expect-error
-    return _instantiate(schema._zod.def.out)
-  }
+  // @ts-expect-error
+  if (schema instanceof ZodPipe) return _instantiate(schema._zod.def.out)
 
   // 10. Anything we do not recognise → undefined
 
