@@ -30,13 +30,9 @@ const KnowledgeCheckSchema = z
 
     share_key: z.string().nullable(),
 
-    openDate: z
-      .union([z.string(), z.date()])
-      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .default(new Date(Date.now() - 3600)),
+    openDate: z.date().default(new Date(Date.now() - 3600)),
 
-    closeDate: z.union([z.string(), z.date()]).nullable(),
+    closeDate: z.date().nullable(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'
