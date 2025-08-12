@@ -2,10 +2,11 @@ import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
+import { stripEffects } from '@/src/schemas/utils/stripEffects'
 import { z } from 'zod'
 
-const ExaminationSchema = z.object({
-  knowledgeCheck: KnowledgeCheckSchema._def.schema,
+export const ExaminationSchema = z.object({
+  knowledgeCheck: stripEffects(KnowledgeCheckSchema),
   startedAt: StringDate.default(new Date(Date.now())),
   finishedAt: StringDate.nullable().default(null),
   score: z.number().positive().nullable().default(null),
