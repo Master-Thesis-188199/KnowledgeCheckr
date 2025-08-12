@@ -9,7 +9,7 @@ import { motion } from 'framer-motion'
 import { InfoIcon } from 'lucide-react'
 import { useEffect } from 'react'
 
-export function ExamQuestionRenderer() {
+export function ExamQuestionWrapper() {
   const { enableNavigationAbort } = useNavigationAbort()
   const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion } = useExaminationStore((store) => store)
 
@@ -34,7 +34,7 @@ export function ExamQuestionRenderer() {
         transition: { duration: 0.15, ease: 'easeInOut' },
       }}
       className='relative mx-auto max-h-fit w-full max-w-7xl'>
-      <ExamQuestion question={knowledgeCheck.questions[currentQuestionIndex]} />
+      <ExamQuestion />
       <div className='absolute right-0 -bottom-16 left-0 flex justify-between px-8'>
         <Button variant='outline' onClick={previousQuestion} disabled={currentQuestionIndex === 0}>
           Previous
