@@ -11,15 +11,16 @@ import TextareaAutosize from 'react-textarea-autosize'
 /**
  * This component renders a single exam question and will be used to store an user's answer
  */
-export default function ExamQuestion({ question }: { question: Question }) {
-  const { saveQuestion } = useExaminationStore((state) => state)
+export default function RenderExamQuestion() {
+  const { saveQuestion, currentQuestionIndex, knowledgeCheck } = useExaminationStore((state) => state)
+  const question = knowledgeCheck.questions.at(currentQuestionIndex)!
+
   const {
     reset: resetInputs,
     setValue,
     getValues,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: question,
   })
 
   const debounceSaveQuestion = debounceFunction(saveQuestion, 750)
