@@ -9,7 +9,79 @@ type StripOptions = {
   omitKeys?: readonly string[]
 }
 
-export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptions = {}): z.ZodTypeAny {
+export type StripEffects<T extends z.ZodTypeAny, OmitKeys extends readonly PropertyKey[] = [], Mode extends 'effects-only' | 'all' = 'effects-only'> =
+  // Unwrap effects
+  T extends z.ZodEffects<infer U, Any, Any>
+    ? StripEffects<U, OmitKeys, Mode>
+    : // Preserve wrappers, relax inner
+      T extends z.ZodOptional<infer U>
+      ? z.ZodOptional<StripEffects<U, OmitKeys, Mode>>
+      : T extends z.ZodNullable<infer U>
+        ? z.ZodNullable<StripEffects<U, OmitKeys, Mode>>
+        : T extends z.ZodDefault<infer U>
+          ? z.ZodDefault<StripEffects<U, OmitKeys, Mode>>
+          : T extends z.ZodCatch<infer U>
+            ? z.ZodCatch<StripEffects<U, OmitKeys, Mode>>
+            : T extends z.ZodReadonly<infer U>
+              ? z.ZodReadonly<StripEffects<U, OmitKeys, Mode>>
+              : // Objects (omit keys + recurse)
+                T extends z.ZodObject<infer Shape, infer UnknownKeys, infer Catchall, Any, Any>
+                ? z.ZodObject<
+                    {
+                      [K in keyof Shape as K extends OmitKeys[number] ? never : K]: Shape[K] extends z.ZodTypeAny ? StripEffects<Shape[K], OmitKeys, Mode> : Shape[K]
+                    },
+                    UnknownKeys,
+                    Catchall extends z.ZodTypeAny ? StripEffects<Catchall, OmitKeys, Mode> : Catchall
+                  >
+                : // Arrays / Tuples
+                  T extends z.ZodArray<infer U, infer Card>
+                  ? z.ZodArray<StripEffects<U, OmitKeys, Mode>, Card>
+                  : T extends z.ZodTuple<infer Items, infer Rest>
+                    ? z.ZodTuple<
+                        //@ts-expect-error
+                        { [I in keyof Items]: Items[I] extends z.ZodTypeAny ? StripEffects<Items[I], OmitKeys, Mode> : Items[I] },
+                        Rest extends z.ZodTypeAny ? StripEffects<Rest, OmitKeys, Mode> : Rest
+                      >
+                    : // Records / Maps / Sets
+                      T extends z.ZodRecord<infer K, infer V>
+                      ? //@ts-expect-error
+                        z.ZodRecord<StripEffects<K, OmitKeys, Mode>, StripEffects<V, OmitKeys, Mode>>
+                      : T extends z.ZodMap<infer K, infer V>
+                        ? z.ZodMap<StripEffects<K, OmitKeys, Mode>, StripEffects<V, OmitKeys, Mode>>
+                        : T extends z.ZodSet<infer V>
+                          ? z.ZodSet<StripEffects<V, OmitKeys, Mode>>
+                          : // Unions / Discriminated unions / Intersections
+                            T extends z.ZodUnion<infer Options>
+                            ? z.ZodUnion<{ [I in keyof Options]: Options[I] extends z.ZodTypeAny ? StripEffects<Options[I], OmitKeys, Mode> : Options[I] }>
+                            : T extends z.ZodDiscriminatedUnion<infer Disc, infer Options>
+                              ? //@ts-expect-error
+                                z.ZodDiscriminatedUnion<Disc, { [I in keyof Options]: Options[I] extends z.ZodTypeAny ? StripEffects<Options[I], OmitKeys, Mode> : Options[I] }>
+                              : T extends z.ZodIntersection<infer A, infer B>
+                                ? z.ZodIntersection<StripEffects<A, OmitKeys, Mode>, StripEffects<B, OmitKeys, Mode>>
+                                : // Lazy / Promise / Pipeline
+                                  T extends z.ZodLazy<infer U>
+                                  ? z.ZodLazy<StripEffects<U, OmitKeys, Mode>>
+                                  : T extends z.ZodPromise<infer U>
+                                    ? z.ZodPromise<StripEffects<U, OmitKeys, Mode>>
+                                    : T extends z.ZodPipeline<infer In, infer Out>
+                                      ? z.ZodPipeline<StripEffects<In, OmitKeys, Mode>, StripEffects<Out, OmitKeys, Mode>>
+                                      : // Literals / Enums
+                                        T extends z.ZodLiteral<infer V>
+                                        ? z.ZodLiteral<V>
+                                        : T extends z.ZodEnum<infer Values>
+                                          ? z.ZodEnum<Values>
+                                          : T extends z.ZodNativeEnum<infer E>
+                                            ? z.ZodNativeEnum<E>
+                                            : // Branding (kept, since your runtime doesn't strip it)
+                                              T extends z.ZodBranded<infer U, infer B>
+                                              ? z.ZodBranded<StripEffects<U, OmitKeys, Mode>, B>
+                                              : // Primitives & other structure-only nodes — unchanged
+                                                T
+
+export function stripEffects<T extends z.ZodTypeAny, OmitKeys extends readonly PropertyKey[] = [], Mode extends 'effects-only' | 'all' = 'effects-only'>(
+  schema: T,
+  opts: StripOptions = {},
+): StripEffects<T, OmitKeys, Mode> {
   const strip = opts.strip ?? 'effects-only'
   const omitSet = new Set(opts.omitKeys ?? [])
   const memo = new WeakMap<z.ZodTypeAny, z.ZodTypeAny>()
@@ -202,5 +274,5 @@ export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptio
     return s
   }
 
-  return go(schema)
+  return go(schema) as Any
 }
