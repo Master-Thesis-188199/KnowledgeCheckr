@@ -2,9 +2,12 @@ import { useExaminationStore } from '@/src/components/checks/[share_token]/Exami
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
-import { ChoiceQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
+import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
+import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
@@ -12,29 +15,39 @@ import TextareaAutosize from 'react-textarea-autosize'
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function RenderExamQuestion() {
-  const { saveQuestion, currentQuestionIndex, knowledgeCheck } = useExaminationStore((state) => state)
-  const question = knowledgeCheck.questions.at(currentQuestionIndex)!
+  const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
+  const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
 
   const {
     reset: resetInputs,
     setValue,
     getValues,
-  } = useForm<Question>({
-    resolver: zodResolver(QuestionSchema),
+  } = useForm<ExaminationSchema>({
+    resolver: zodResolver(ExaminationSchema),
+    defaultValues: state,
   })
 
-  const debounceSaveQuestion = debounceFunction(saveQuestion, 750)
+  const debounceSave = debounceFunction(saveAnswer, 750)
+
+  useEffect(() => {
+    console.log('Current:', getValues())
+  })
 
   return (
-    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSaveQuestion(getValues())}>
+    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.find((r) => r.question_id === question.id)!)}>
       <input readOnly disabled className='text-lg font-semibold' value={question.question} />
-      {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswer setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />}
+      {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
+        <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
+      )}
       {question.type === 'open-question' && <ExamOpenQuestionAnswer reset={resetInputs} />}
     </form>
   )
 }
 
-function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuestion; reset: UseFormReset<Question>; setValue: UseFormSetValue<Question> }) {
+function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuestion; reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema>; getValues: () => Any }) {
+  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
+  const answers = results.at(currentQuestionIndex)!.answer
+
   return (
     <ul className='group flex flex-col gap-4 px-4'>
       {question.answers.map((answer, index, array) => (
@@ -42,15 +55,15 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
           <input
             type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'}
             name={question.type === 'single-choice' ? 'answer.correct' : (`answers.${index}.correct` as const)}
-            defaultChecked={answer.correct}
+            defaultChecked={answers.at(index)?.selected}
             onChange={(e) => {
-              setValue(`answers.${index}.correct` as const, e.target.checked)
+              setValue(`results.${currentQuestionIndex}.answer.${index}.selected` as const, e.target.checked)
 
               //* Ensure single-choice questions only have a single answer
               if (question.type !== 'single-choice') return
               for (let i = 0; i < array.length; i++) {
                 if (i === index) continue
-                setValue(`answers.${i}.correct` as const, false)
+                setValue(`results.${currentQuestionIndex}.answer.${i}.selected` as const, false)
               }
             }}
             className='peer hidden'
@@ -59,14 +72,14 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
           {answer.answer}
         </label>
       ))}
-      <button type='button' className='hidden underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset(question)}>
+      <button type='button' className='hidden underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset()}>
         Reset
       </button>
     </ul>
   )
 }
 
-function ExamOpenQuestionAnswer({ reset }: { reset: UseFormReset<Question> }) {
+function ExamOpenQuestionAnswer({ reset }: { reset: UseFormReset<ExaminationSchema> }) {
   return (
     <TextareaAutosize
       maxRows={10}
