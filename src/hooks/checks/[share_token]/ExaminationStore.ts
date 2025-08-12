@@ -1,7 +1,7 @@
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Question } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 import { createStore } from 'zustand/vanilla'
 
 export type ExaminationState = ExaminationSchema & {
@@ -13,7 +13,7 @@ export type ExaminationActions = {
   setCurrentQuestionIndex: (index: number) => void
   nextQuestion: () => void
   previousQuestion: () => void
-  saveQuestion: (question: Question) => void
+  saveAnswer: (result: ExaminationSchema['results'][number]) => void
 }
 
 export type ExaminationStore = ExaminationState & ExaminationActions
@@ -46,13 +46,10 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
           currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
           isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
         })),
-      saveQuestion: (question) => {
+      saveAnswer: (result: ExaminationSchema['results'][number]) => {
         return modifyState((prev) => ({
           ...prev,
-          knowledgeCheck: {
-            ...prev.knowledgeCheck,
-            questions: prev.knowledgeCheck.questions.map((q) => (q.id === question.id ? question : q)),
-          },
+          results: prev.results.find((r) => r.question_id === result.question_id) ? prev.results.map((r) => (r.question_id === result.question_id ? result : r)) : [...prev.results, result],
         }))
       },
     }
