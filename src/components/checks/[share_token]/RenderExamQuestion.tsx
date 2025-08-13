@@ -7,7 +7,6 @@ import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
-import { useEffect } from 'react'
 import { useForm, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
@@ -29,12 +28,8 @@ export default function RenderExamQuestion() {
 
   const debounceSave = debounceFunction(saveAnswer, 750)
 
-  useEffect(() => {
-    console.log('Current:', getValues())
-  })
-
   return (
-    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.find((r) => r.question_id === question.id)!)}>
+    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
       <input readOnly disabled className='text-lg font-semibold' value={question.question} />
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
         <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
