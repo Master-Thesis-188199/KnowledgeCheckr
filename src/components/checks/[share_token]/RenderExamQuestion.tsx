@@ -79,7 +79,7 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
   )
 }
 
-function ExamOpenQuestionAnswer({ reset }: { reset: UseFormReset<ExaminationSchema> }) {
+function ExamOpenQuestionAnswer({}: { reset: UseFormReset<ExaminationSchema> }) {
   return (
     <TextareaAutosize
       maxRows={10}
