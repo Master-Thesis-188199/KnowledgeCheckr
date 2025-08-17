@@ -1,14 +1,14 @@
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
-import DragDropContainer from '@/src/components/Shared/DragDropContainer'
+import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
+import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
-import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { useForm, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
@@ -96,19 +96,14 @@ function ExamOpenQuestionAnswer({ setValue }: { reset: UseFormReset<ExaminationS
 }
 
 function DragDropAnswers({}: { reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema> }) {
-  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
+  const { currentQuestionIndex, results, knowledgeCheck } = useExaminationStore((state) => state)
 
   return (
     <DragDropContainer className='flex flex-col gap-4'>
       {results.at(currentQuestionIndex)?.answer.map((a, i) => (
-        <div data-swapy-slot={i.toString(36)} key={i}>
-          <div
-            data-swapy-item={i.toString(36) + 'item'}
-            className='flex cursor-move items-center gap-4 rounded-md bg-neutral-300/40 p-3 px-4 ring-1 ring-neutral-400/50 select-none hover:bg-neutral-300/60 active:bg-neutral-400/40 dark:bg-neutral-800 dark:ring-neutral-600/80 dark:hover:bg-neutral-700/60 dark:active:bg-neutral-700/60'>
-            <span className='current-position'>{i + 1}.</span>
-            <span className='flex-1'>{a.text || lorem.slice(i * 10, i * 10 + 40)}</span>
-          </div>
-        </div>
+        <DragDropItem key={i} initialIndex={i} showPositionCounter>
+          <span className='flex-1'>{(knowledgeCheck.questions.at(currentQuestionIndex)! as Any as DragDropQuestion).answers.at(i)?.answer}</span>
+        </DragDropItem>
       ))}
     </DragDropContainer>
   )
