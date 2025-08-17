@@ -23,18 +23,19 @@ export default function DragDropContainer({ children, className, ...config }: { 
       swapyRef.current.onSwapStart(() => {})
 
       swapyRef.current.onSwap((event) => {
-        event.newSlotItemMap.asArray.forEach(({ slot, item }) => {
-          const element = document.querySelector(`[data-swapy-item*="${item}"]`)
-          const newIndex = event.newSlotItemMap.asArray.findIndex((i) => i.item === item)
-          element?.setAttribute('position', newIndex.toString())
+        event.newSlotItemMap.asArray
+          //? discard items that have not changed position
+          .filter((el) => el.item === event.draggingItem || el.item === event.swappedWithItem)
+          .forEach(({ item }) => {
+            const element = document.querySelector(`[data-swapy-item*="${item}"]`)
+            const newIndex = event.newSlotItemMap.asArray.findIndex((i) => i.item === item)
+            element?.setAttribute('position', newIndex.toString())
 
-          element?.dispatchEvent(htmlEvent)
-
-          const position_Counter = element?.getElementsByClassName('current-position')[0]?.textContent
-          if (position_Counter) {
-            element!.getElementsByClassName('current-position')[0].textContent = `${newIndex + 1}.`
-          }
-        })
+            const position_Counter = element?.getElementsByClassName('current-position')[0]?.textContent
+            if (position_Counter) {
+              element!.getElementsByClassName('current-position')[0].textContent = `${newIndex + 1}.`
+            }
+          })
       })
       swapyRef.current.onSwapEnd(() => {})
     }
