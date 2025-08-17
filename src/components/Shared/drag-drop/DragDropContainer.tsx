@@ -25,9 +25,14 @@ export default function DragDropContainer({ children, className, ...config }: { 
       swapyRef.current.onSwap((event) => {
         event.newSlotItemMap.asArray.forEach(({ slot, item }) => {
           const element = document.querySelector(`[data-swapy-item*="${item}"]`)
+          const newIndex = event.newSlotItemMap.asArray.findIndex((i) => i.item === item)
+          element?.setAttribute('position', newIndex.toString())
+
+          element?.dispatchEvent(htmlEvent)
+
           const position_Counter = element?.getElementsByClassName('current-position')[0]?.textContent
           if (position_Counter) {
-            element!.getElementsByClassName('current-position')[0].textContent = `${parseInt(slot) + 1}.`
+            element!.getElementsByClassName('current-position')[0].textContent = `${newIndex + 1}.`
           }
         })
       })
