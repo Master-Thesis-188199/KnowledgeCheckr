@@ -95,13 +95,13 @@ function ExamOpenQuestionAnswer({ setValue }: { reset: UseFormReset<ExaminationS
   )
 }
 
-function DragDropAnswers({}: { reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema> }) {
+function DragDropAnswers({ setValue }: { reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema> }) {
   const { currentQuestionIndex, results, knowledgeCheck } = useExaminationStore((state) => state)
 
   return (
     <DragDropContainer className='flex flex-col gap-4'>
       {results.at(currentQuestionIndex)?.answer.map((a, i) => (
-        <DragDropItem key={i} initialIndex={i} showPositionCounter>
+        <DragDropItem key={i} initialIndex={i} showPositionCounter onSwap={(e) => setValue(`results.${currentQuestionIndex}.answer.${i}.position` as const, e.detail.new_pos)}>
           <span className='flex-1'>{(knowledgeCheck.questions.at(currentQuestionIndex)! as Any as DragDropQuestion).answers.at(i)?.answer}</span>
         </DragDropItem>
       ))}
