@@ -3,6 +3,12 @@
 import { useEffect, useRef } from 'react'
 import { Config, createSwapy, Swapy } from 'swapy'
 
+export type ItemSwapEvent = CustomEvent<{
+  name: string
+  new_pos: number
+  prev_pos: number
+}>
+
 export default function DragDropContainer({ children, className, ...config }: { children: React.ReactNode; className?: string } & Partial<Config>) {
   const swapyRef = useRef<Swapy | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -35,6 +41,15 @@ export default function DragDropContainer({ children, className, ...config }: { 
             if (position_Counter) {
               element!.getElementsByClassName('current-position')[0].textContent = `${newIndex + 1}.`
             }
+
+            const htmlEvent: ItemSwapEvent = new CustomEvent('item-swap-event', {
+              detail: {
+                name: item,
+                new_pos: newIndex,
+                prev_pos: event.oldSlotItemMap.asArray.findIndex((i) => i.item === item),
+              },
+            })
+            element?.dispatchEvent(htmlEvent)
           })
       })
       swapyRef.current.onSwapEnd(() => {})
