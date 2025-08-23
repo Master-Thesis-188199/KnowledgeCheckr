@@ -1,6 +1,7 @@
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
+import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
@@ -9,7 +10,7 @@ import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
-import { useForm, UseFormReset, UseFormSetValue } from 'react-hook-form'
+import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
 /**
@@ -37,7 +38,7 @@ export default function RenderExamQuestion() {
         <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
       )}
       {question.type === 'open-question' && <ExamOpenQuestionAnswer setValue={setValue} reset={resetInputs} />}
-      {question.type === 'drag-drop' && <DragDropAnswers setValue={setValue} reset={resetInputs} />}
+      {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} getValues={getValues} setValue={setValue} reset={resetInputs} />}
     </form>
   )
 }
@@ -95,16 +96,40 @@ function ExamOpenQuestionAnswer({ setValue }: { reset: UseFormReset<ExaminationS
   )
 }
 
-function DragDropAnswers({ setValue }: { reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema> }) {
+function DragDropAnswers({
+  setValue,
+  debounceSave,
+  getValues,
+}: {
+  reset: UseFormReset<ExaminationSchema>
+  setValue: UseFormSetValue<ExaminationSchema>
+  getValues: UseFormGetValues<ExaminationSchema>
+  debounceSave: ExaminationActions['saveAnswer']
+}) {
   const { currentQuestionIndex, results, knowledgeCheck } = useExaminationStore((state) => state)
 
   return (
-    <DragDropContainer className='flex flex-col gap-4'>
-      {results.at(currentQuestionIndex)?.answer.map((a, i) => (
-        <DragDropItem key={i} initialIndex={i} showPositionCounter onSwap={(e) => setValue(`results.${currentQuestionIndex}.answer.${i}.position` as const, e.detail.new_pos)}>
-          <span className='flex-1'>{(knowledgeCheck.questions.at(currentQuestionIndex)! as Any as DragDropQuestion).answers.at(i)?.answer}</span>
-        </DragDropItem>
-      ))}
+    <DragDropContainer
+      className='flex flex-col gap-4'
+      key={results
+        .at(currentQuestionIndex)!
+        .answer.map((a, i) => (a.position ?? i) + (a.text ?? ''))
+        .join('')}>
+      {results
+        .at(currentQuestionIndex)!
+        .answer.map((a, i) => ({ ...a, text: a.text ?? (knowledgeCheck.questions.at(currentQuestionIndex)! as DragDropQuestion).answers.at(a.position ?? i)?.answer ?? '?' }))
+        .map((a, i, array) => (
+          <DragDropItem
+            key={a.text + a.position}
+            initialIndex={a.position ? a.position : i}
+            showPositionCounter
+            onSwap={(e) => {
+              setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: e.detail.new_pos, text: a.text })
+              debounceSave(getValues().results.at(currentQuestionIndex)!)
+            }}>
+            <span className='flex-1'>{array.at(a.position ?? i)?.text}</span>
+          </DragDropItem>
+        ))}
     </DragDropContainer>
   )
 }
