@@ -2,6 +2,7 @@ import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
+import _ from 'lodash'
 import { createStore } from 'zustand/vanilla'
 
 export type ExaminationState = ExaminationSchema & {
@@ -33,11 +34,12 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
     return {
       ...initialState,
 
-      // todo: move results-initialization so that it does not override potential default-values.
-      results: Array.from(initialState.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
-        question_id: q.id,
-        answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map(() => ({})),
-      })),
+      results: _.isEmpty(initialState.results)
+        ? Array.from(initialState.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
+            question_id: q.id,
+            answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map(() => ({})),
+          }))
+        : initialState.results,
 
       // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
       setCurrentQuestionIndex: (index) => modifyState((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length })),
