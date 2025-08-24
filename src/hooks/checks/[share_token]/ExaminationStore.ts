@@ -37,7 +37,10 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
       results: _.isEmpty(initialState.results)
         ? Array.from(initialState.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
             question_id: q.id,
-            answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map(() => ({})),
+            answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i) => ({
+              //? save answer label of choice and drag-drop answers, e.g. "Answer A"
+              label: (q as ChoiceQuestion).answers ? (q as ChoiceQuestion).answers!.at(i)!.answer : undefined,
+            })),
           }))
         : initialState.results,
 
