@@ -16,6 +16,7 @@ export const ExaminationSchema = z.object({
         question_id: QuestionSchema._def.left.shape.id,
         answer: z.array(
           z.object({
+            label: z.string().readonly().optional(),
             selected: z.boolean().optional(),
             text: z.string().optional(),
             position: z.number().optional(),
