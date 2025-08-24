@@ -40,10 +40,7 @@ function hideCorrectness(question: Question): Question {
 
     return {
       ...question,
-      answers: question.answers
-        .map((answer) => ({ answer: answer, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ answer }, i) => ({ ...answer, position: i })),
+      answers: question.answers.map((answer) => ({ answer: answer })).map(({ answer }, i) => ({ ...answer, position: i })),
     }
   }
 
