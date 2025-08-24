@@ -115,17 +115,17 @@ function DragDropAnswers({
         debounceSave.abort()
       }}
       onSwapEnd={(e) => {
-        e.slotItemMap.asArray.map((el, i) => setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: i, text: el.item }))
+        e.slotItemMap.asArray.map((el, i) => setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: i, label: el.item }))
         debounceSave(getValues().results.at(currentQuestionIndex)!)
       }}
       className='flex flex-col gap-4'
       key={results
         .at(currentQuestionIndex)!
-        .answer.map((a, i) => (a.position ?? i) + (a.text ?? ''))
+        .answer.map((a, i) => (a.position ?? i) + (a.label ?? ''))
         .join('')}>
       {results.at(currentQuestionIndex)!.answer.map((a, i, array) => (
-        <DragDropItem name={a.text} key={(a.text ?? '') + a.position} initialIndex={a.position ? a.position : i} showPositionCounter>
-          <span className='flex-1'>{array.at(a.position ?? i)?.text}</span>
+        <DragDropItem name={a.label} key={(a.label ?? '') + a.position} initialIndex={a.position ? a.position : i} showPositionCounter>
+          <span className='flex-1'>{array.at(a.position ?? i)?.label}</span>
         </DragDropItem>
       ))}
     </DragDropContainer>
