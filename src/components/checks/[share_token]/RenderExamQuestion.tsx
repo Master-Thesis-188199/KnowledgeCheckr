@@ -6,10 +6,11 @@ import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
-import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleIcon } from 'lucide-react'
+import { useMemo } from 'react'
 import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 
@@ -29,7 +30,7 @@ export default function RenderExamQuestion() {
     defaultValues: state,
   })
 
-  const debounceSave = debounceFunction(saveAnswer, 750)
+  const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [])
 
   return (
     <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
@@ -104,37 +105,29 @@ function DragDropAnswers({
   reset: UseFormReset<ExaminationSchema>
   setValue: UseFormSetValue<ExaminationSchema>
   getValues: UseFormGetValues<ExaminationSchema>
-  debounceSave: ExaminationActions['saveAnswer']
+  debounceSave: ReturnType<typeof debounceFunction<ExaminationActions['saveAnswer']>>
 }) {
-  const { currentQuestionIndex, results, knowledgeCheck } = useExaminationStore((state) => state)
+  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
 
   return (
     <DragDropContainer
+      onSwapStart={() => {
+        debounceSave.abort()
+      }}
+      onSwapEnd={(e) => {
+        e.slotItemMap.asArray.map((el, i) => setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: i, text: el.item }))
+        debounceSave(getValues().results.at(currentQuestionIndex)!)
+      }}
       className='flex flex-col gap-4'
       key={results
         .at(currentQuestionIndex)!
         .answer.map((a, i) => (a.position ?? i) + (a.text ?? ''))
         .join('')}>
-      {results
-        .at(currentQuestionIndex)!
-        .answer.map((a, i) => ({
-          ...a,
-          text: a.text ?? (knowledgeCheck.questions.at(currentQuestionIndex)! as DragDropQuestion).answers.at(a.position ?? i)?.answer ?? '?',
-          position: a.position ?? i,
-        }))
-        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-        .map((a, i, array) => (
-          <DragDropItem
-            key={a.text + a.position}
-            initialIndex={a.position ? a.position : i}
-            showPositionCounter
-            onSwap={(e) => {
-              setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: e.detail.new_pos, text: a.text })
-              debounceSave(getValues().results.at(currentQuestionIndex)!)
-            }}>
-            <span className='flex-1'>{array.at(a.position ?? i)?.text}</span>
-          </DragDropItem>
-        ))}
+      {results.at(currentQuestionIndex)!.answer.map((a, i, array) => (
+        <DragDropItem name={a.text} key={(a.text ?? '') + a.position} initialIndex={a.position ? a.position : i} showPositionCounter>
+          <span className='flex-1'>{array.at(a.position ?? i)?.text}</span>
+        </DragDropItem>
+      ))}
     </DragDropContainer>
   )
 }
