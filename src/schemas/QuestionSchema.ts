@@ -6,7 +6,7 @@ const baseQuestion = z.object({
   id: z.string().default(Math.floor(Math.random() * 1000).toString()),
   points: z
     .number()
-    .positive()
+    .positive('Number must be greater than 0')
     .default((Math.floor(Math.random() * 1000) % 10) + 1),
   category: z.string().default('general'),
 
