@@ -117,7 +117,12 @@ function DragDropAnswers({
         .join('')}>
       {results
         .at(currentQuestionIndex)!
-        .answer.map((a, i) => ({ ...a, text: a.text ?? (knowledgeCheck.questions.at(currentQuestionIndex)! as DragDropQuestion).answers.at(a.position ?? i)?.answer ?? '?' }))
+        .answer.map((a, i) => ({
+          ...a,
+          text: a.text ?? (knowledgeCheck.questions.at(currentQuestionIndex)! as DragDropQuestion).answers.at(a.position ?? i)?.answer ?? '?',
+          position: a.position ?? i,
+        }))
+        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
         .map((a, i, array) => (
           <DragDropItem
             key={a.text + a.position}
