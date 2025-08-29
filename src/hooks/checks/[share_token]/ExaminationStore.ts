@@ -1,7 +1,7 @@
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import _ from 'lodash'
 import { createStore } from 'zustand/vanilla'
 
@@ -39,7 +39,7 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
             question_id: q.id,
             answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i) => ({
               //? save answer label of choice and drag-drop answers, e.g. "Answer A"
-              label: (q as ChoiceQuestion).answers ? (q as ChoiceQuestion).answers!.at(i)!.answer : undefined,
+              label: (q as ChoiceQuestion | DragDropQuestion).answers ? (q as ChoiceQuestion | DragDropQuestion).answers!.at(i)!.answer : undefined,
             })),
           }))
         : initialState.results,
