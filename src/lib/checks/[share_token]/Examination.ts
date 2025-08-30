@@ -1,8 +1,25 @@
+import { ExaminationState } from '@/src/hooks/checks/[share_token]/ExaminationStore'
+import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 interface PreparationOptions {
   randomizeOrder?: boolean
+}
+
+/**
+ * This functions initializes the `results` property of the ExaminationStore. This means that it will have the same structure (e.g. indicies) as the question-answers of the respective knowledgeCheck.
+ * @param state The examinationState used to access the knowledgeCheck to mimic its structure
+ * @returns
+ */
+export function initializeExaminationResults(state: ExaminationState) {
+  return Array.from(state.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
+    question_id: q.id,
+    answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i) => ({
+      //? save answer label of choice and drag-drop answers, e.g. "Answer A"
+      label: (q as ChoiceQuestion | DragDropQuestion).answers ? (q as ChoiceQuestion | DragDropQuestion).answers!.at(i)!.answer : undefined,
+    })),
+  }))
 }
 
 /**

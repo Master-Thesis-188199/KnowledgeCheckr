@@ -1,7 +1,7 @@
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
+import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/Examination'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import _ from 'lodash'
 import { createStore } from 'zustand/vanilla'
 
@@ -34,15 +34,7 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
     return {
       ...initialState,
 
-      results: _.isEmpty(initialState.results)
-        ? Array.from(initialState.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
-            question_id: q.id,
-            answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i) => ({
-              //? save answer label of choice and drag-drop answers, e.g. "Answer A"
-              label: (q as ChoiceQuestion | DragDropQuestion).answers ? (q as ChoiceQuestion | DragDropQuestion).answers!.at(i)!.answer : undefined,
-            })),
-          }))
-        : initialState.results,
+      results: _.isEmpty(initialState.results) ? initializeExaminationResults(initialState) : initialState.results,
 
       // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
       setCurrentQuestionIndex: (index) => modifyState((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length })),
