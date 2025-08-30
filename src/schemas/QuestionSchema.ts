@@ -55,7 +55,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('drag-drop'),
     answers: z
-      .array(z.object({ answer: z.string(), position: z.number().positive() }))
+      .array(z.object({ answer: z.string(), position: z.number().min(0, 'Position must be positive') }))
       .default([
         { answer: 'Answer 1', position: 1 },
         { answer: 'Answer 2', position: 2 },
