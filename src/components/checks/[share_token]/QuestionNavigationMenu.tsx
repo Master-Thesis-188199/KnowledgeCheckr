@@ -9,7 +9,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
 
   return (
     <>
-      <div className={cn('flex max-h-fit min-h-24 min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-2 dark:ring-neutral-600', className)}>
+      <div className={cn('flex h-fit min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-2 dark:ring-neutral-600', className)}>
         <span className='font-semibold dark:text-neutral-300'>Questions</span>
         <div className='grid grid-cols-[repeat(auto-fill,30px)] gap-1.5'>
           {knowledgeCheck.questions.map((_, i) => (
