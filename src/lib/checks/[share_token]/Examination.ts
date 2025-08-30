@@ -13,12 +13,23 @@ interface PreparationOptions {
  * @returns
  */
 export function initializeExaminationResults(state: ExaminationState) {
-  return Array.from(state.knowledgeCheck.questions).map((q): ExaminationSchema['results'][number] => ({
-    question_id: q.id,
-    answer: Array.from({ length: (q?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i) => ({
-      //? save answer label of choice and drag-drop answers, e.g. "Answer A"
-      label: (q as ChoiceQuestion | DragDropQuestion).answers ? (q as ChoiceQuestion | DragDropQuestion).answers!.at(i)!.answer : undefined,
-    })),
+  return Array.from(state.knowledgeCheck.questions).map((question): ExaminationSchema['results'][number] => ({
+    question_id: question.id,
+    answer: Array.from({ length: (question?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i): ExaminationSchema['results'][number]['answer'][number] => {
+      switch (question.type) {
+        case 'single-choice':
+          return { label: question.answers.at(i)!.answer, selected: false }
+
+        case 'multiple-choice':
+          return { label: question.answers.at(i)!.answer, selected: false }
+
+        case 'drag-drop':
+          return { label: question.answers.at(i)!.answer, position: i }
+
+        default:
+          return {}
+      }
+    }),
   }))
 }
 
