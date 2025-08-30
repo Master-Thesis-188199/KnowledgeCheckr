@@ -1,10 +1,11 @@
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Question } from '@/src/schemas/QuestionSchema'
+import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/Examination'
+import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
+import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import _ from 'lodash'
 import { createStore } from 'zustand/vanilla'
 
-export type ExaminationState = {
-  knowledgeCheck: KnowledgeCheck
+export type ExaminationState = ExaminationSchema & {
   currentQuestionIndex: number
   isLastQuestion: boolean
 }
@@ -13,14 +14,16 @@ export type ExaminationActions = {
   setCurrentQuestionIndex: (index: number) => void
   nextQuestion: () => void
   previousQuestion: () => void
-  saveQuestion: (question: Question) => void
+  saveAnswer: (result: ExaminationSchema['results'][number]) => void
 }
 
 export type ExaminationStore = ExaminationState & ExaminationActions
 
 const defaultInitState: ExaminationState = {
-  currentQuestionIndex: 0,
+  ...instantiateExaminationSchema(),
   knowledgeCheck: instantiateKnowledgeCheck(),
+  startedAt: new Date(Date.now()),
+  currentQuestionIndex: 0,
   isLastQuestion: false,
 }
 
@@ -30,8 +33,11 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
 
     return {
       ...initialState,
+
+      results: _.isEmpty(initialState.results) ? initializeExaminationResults(initialState) : initialState.results,
+
       // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
-      setCurrentQuestionIndex: (index) => modifyState((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length })),
+      setCurrentQuestionIndex: (index) => modifyState((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length - 1 })),
       nextQuestion: () =>
         modifyState((prev) => ({
           ...prev,
@@ -44,13 +50,10 @@ export const createExaminationStore = (initialState: ExaminationState = defaultI
           currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
           isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
         })),
-      saveQuestion: (question) => {
+      saveAnswer: (result: ExaminationSchema['results'][number]) => {
         return modifyState((prev) => ({
           ...prev,
-          knowledgeCheck: {
-            ...prev.knowledgeCheck,
-            questions: prev.knowledgeCheck.questions.map((q) => (q.id === question.id ? question : q)),
-          },
+          results: prev.results.find((r) => r.question_id === result.question_id) ? prev.results.map((r) => (r.question_id === result.question_id ? result : r)) : [...prev.results, result],
         }))
       },
     }

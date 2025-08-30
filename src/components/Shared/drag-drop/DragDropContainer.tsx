@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Config, createSwapy, Swapy } from 'swapy'
+import { Config, createSwapy, SwapEndEventHandler, SwapStartEventHandler, Swapy } from 'swapy'
 
 export type ItemSwapEvent = CustomEvent<{
   name: string
@@ -9,7 +9,14 @@ export type ItemSwapEvent = CustomEvent<{
   prev_pos: number
 }>
 
-export default function DragDropContainer({ children, className, ...config }: { children: React.ReactNode; className?: string } & Partial<Config>) {
+interface DragDropContainerProps {
+  children: React.ReactNode
+  className?: string
+  onSwapStart?: SwapStartEventHandler
+  onSwapEnd?: SwapEndEventHandler
+}
+
+export default function DragDropContainer({ children, className, onSwapEnd, onSwapStart, ...config }: DragDropContainerProps & Partial<Config>) {
   const swapyRef = useRef<Swapy | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -26,7 +33,7 @@ export default function DragDropContainer({ children, className, ...config }: { 
         return true
       })
 
-      swapyRef.current.onSwapStart(() => {})
+      swapyRef.current.onSwapStart(onSwapStart ? onSwapStart : () => {})
 
       swapyRef.current.onSwap((event) => {
         event.newSlotItemMap.asArray
@@ -52,7 +59,7 @@ export default function DragDropContainer({ children, className, ...config }: { 
             element?.dispatchEvent(htmlEvent)
           })
       })
-      swapyRef.current.onSwapEnd(() => {})
+      swapyRef.current.onSwapEnd(onSwapEnd ? onSwapEnd : () => {})
     }
     return () => {
       swapyRef.current?.destroy()

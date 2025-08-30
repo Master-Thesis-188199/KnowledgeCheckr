@@ -6,6 +6,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
+import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
 import { CheckCheckIcon } from 'lucide-react'
@@ -13,7 +14,7 @@ import { redirect } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
-  const { knowledgeCheck } = useExaminationStore((state) => state)
+  const { knowledgeCheck, ...examinationState } = useExaminationStore((state) => state)
   const { clearNavigationAbort } = useNavigationAbort()
 
   return (
@@ -46,7 +47,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
             </DialogClose>
             <Button
               onClick={() =>
-                finishExaminationAttempt(knowledgeCheck)
+                finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, ...examinationState }))
                   .catch((e) => {
                     toast(`Failed to submit examination results. ${e}`, { type: 'error' })
                   })

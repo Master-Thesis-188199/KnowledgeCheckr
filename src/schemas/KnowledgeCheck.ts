@@ -1,10 +1,10 @@
-import { z } from 'zod'
-import { QuestionSchema } from '@/src/schemas/QuestionSchema'
-import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
+import { z } from 'zod'
 
-const KnowledgeCheckSchema = z
+export const KnowledgeCheckSchema = z
   .object({
     id: z.string().default(Math.floor(Math.random() * 1000).toString()),
 
@@ -57,4 +57,4 @@ const KnowledgeCheckSchema = z
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
 
 const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<KnowledgeCheck>(KnowledgeCheckSchema)
-export { validateKnowledgeCheck, instantiateKnowledgeCheck, safeParseKnowledgeCheck }
+export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }
