@@ -1,5 +1,6 @@
 'use client'
 
+import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import RenderExamQuestion from '@/src/components/checks/[share_token]/RenderExamQuestion'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
@@ -53,8 +54,20 @@ export function FinishAttemptButton({ className }: { className?: string }) {
   const { isLastQuestion } = useExaminationStore((store) => store)
 
   return (
-    <Button className={cn('hidden', isLastQuestion && 'block', className)} disabled={!isLastQuestion}>
+    <ExamFinishDialog
+      triggerClassname={cn(
+        'ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60',
+
+        /* Button styles */
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:cursor-pointer",
+        'dark:!active:bg-primary/70 bg-neutral-500 text-white shadow-xs ring-neutral-500 hover:bg-neutral-500/80 hover:ring-[1.5px] active:scale-[101%] active:!bg-neutral-600/95 dark:bg-black dark:text-neutral-200 dark:ring-neutral-600 dark:hover:bg-neutral-900 dark:active:!bg-neutral-700',
+        'h-9 px-4 py-2 has-[>svg]:px-3',
+        /* End Button styles */
+
+        isLastQuestion ? 'block' : 'hidden',
+        className,
+      )}>
       Finish Attempt
-    </Button>
+    </ExamFinishDialog>
   )
 }
