@@ -40,11 +40,11 @@ export function InfinityScrollFetcher({ children, getItems }: { getItems: (offse
     if (!ref.current) return
     if (!inView) return
 
-    console.log('Infinite Scroll - fetching new items...', getItems(10))
+    console.debug('Infinite Scroll - fetching new items...', getItems(10))
     setStatus('pending')
     getItems(items.length)
       .then((checks) => {
-        console.log(`Fetched ... ${checks.length} new items..`)
+        console.debug(`Fetched ... ${checks.length} new items..`)
         return checks
       })
       .then(addItems)
