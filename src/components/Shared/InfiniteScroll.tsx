@@ -1,11 +1,8 @@
 'use client'
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
-import { KnowledgeCheckCard } from '@/src/components/check/KnowledgeCheckCard'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 import { useInView } from 'framer-motion'
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { JSX } from 'react/jsx-runtime'
+import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
 
 interface InfiniteScrollContext<T = Any> {
   items: T[]
@@ -54,8 +51,8 @@ export function InfinityScrollFetcher({ user_id }: { user_id: string }) {
   return <div ref={ref}>Loading...</div>
 }
 
-export function InfinityScrollRenderer<TItem extends KnowledgeCheck>({ render }: { render: (item: TItem, index: number, array: TItem[]) => Promise<JSX.Element> }) {
+export function InfinityScrollRenderer<TItem>({ component: Component }: { component: ComponentType<TItem> }) {
   const { items } = useInfiniteScrollContext<TItem>()
 
-  return items.map((check, i) => <KnowledgeCheckCard key={i} {...check} />)
+  return items.map((args, index) => <Component key={index} {...args} />)
 }
