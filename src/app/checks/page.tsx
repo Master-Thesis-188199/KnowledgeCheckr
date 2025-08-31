@@ -26,10 +26,6 @@ export default async function ChecksPage() {
         )}
         <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
           <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
-
-          {/* {checks.map((check, i) => (
-            <KnowledgeCheckCard key={i} {...check} />
-          ))} */}
         </div>
         <InfinityScrollFetcher getItems={fetchItems}>
           <div className='mt-8 flex justify-center gap-2'>
