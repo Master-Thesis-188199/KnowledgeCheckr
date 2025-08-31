@@ -29,7 +29,7 @@ export function useInfiniteScrollContext<TElement>() {
   return context as InfiniteScrollContext<TElement>
 }
 
-export function InfinityScrollFetcher({ getItems }: { getItems: (offset: number) => Promise<unknown[]> }) {
+export function InfinityScrollFetcher({ children, getItems }: { getItems: (offset: number) => Promise<unknown[]>; children: React.ReactNode }) {
   const { addItems, items } = useInfiniteScrollContext()
   const ref = useRef(null)
   const inView = useInView(ref)
@@ -47,7 +47,7 @@ export function InfinityScrollFetcher({ getItems }: { getItems: (offset: number)
       .then(addItems)
   }, [ref.current, inView])
 
-  return <div ref={ref}>Loading...</div>
+  return <div ref={ref}>{children}</div>
 }
 
 export function InfinityScrollRenderer<TItem>({ component: Component }: { component: ComponentType<TItem> }) {
