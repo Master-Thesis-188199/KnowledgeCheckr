@@ -4,6 +4,7 @@ import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollRenderer }
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { LoaderCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ChecksPage() {
@@ -30,7 +31,12 @@ export default async function ChecksPage() {
             <KnowledgeCheckCard key={i} {...check} />
           ))} */}
         </div>
-        <InfinityScrollFetcher getItems={fetchItems} />
+        <InfinityScrollFetcher getItems={fetchItems}>
+          <div className='mt-8 flex justify-center gap-2'>
+            <LoaderCircleIcon className='animate-spin' />
+            Loading...
+          </div>
+        </InfinityScrollFetcher>
       </div>
     </InfiniteScrollProvider>
   )
