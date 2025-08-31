@@ -24,20 +24,21 @@ export default async function ChecksPage() {
           </div>
         )}
         <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-          {/* <InfinityScrollRenderer<KnowledgeCheck> render={(check, i) => <KnowledgeCheckCard key={i} {...check} />} /> */}
-          <InfinityScrollRenderer<KnowledgeCheck> render={RenderCheck} component={KnowledgeCheckCard} />
+          <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
 
           {/* {checks.map((check, i) => (
             <KnowledgeCheckCard key={i} {...check} />
           ))} */}
         </div>
-        <InfinityScrollFetcher user_id={user.id} />
+        <InfinityScrollFetcher getItems={fetchItems} />
       </div>
     </InfiniteScrollProvider>
   )
 }
 
-async function RenderCheck(check: KnowledgeCheck, i: number, a: KnowledgeCheck[]) {
+async function fetchItems(offset: number) {
   'use server'
-  return <KnowledgeCheckCard key={i} {...check} />
+  const { user } = await requireAuthentication()
+
+  return await getKnowledgeChecksByOwner(user.id, { offset })
 }

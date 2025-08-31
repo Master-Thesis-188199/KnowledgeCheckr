@@ -1,5 +1,4 @@
 'use client'
-import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
 import { Any } from '@/types'
 import { useInView } from 'framer-motion'
 import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
@@ -30,7 +29,7 @@ export function useInfiniteScrollContext<TElement>() {
   return context as InfiniteScrollContext<TElement>
 }
 
-export function InfinityScrollFetcher({ user_id }: { user_id: string }) {
+export function InfinityScrollFetcher({ getItems }: { getItems: (offset: number) => Promise<unknown[]> }) {
   const { addItems, items } = useInfiniteScrollContext()
   const ref = useRef(null)
   const inView = useInView(ref)
@@ -40,9 +39,9 @@ export function InfinityScrollFetcher({ user_id }: { user_id: string }) {
     if (!inView) return
 
     console.log('Infinite Scroll - fetching new items...')
-    getKnowledgeChecksByOwner(user_id, { offset: items.length })
+    getItems(items.length)
       .then((checks) => {
-        console.log(`Fetched ... ${checks.length} new checks..`)
+        console.log(`Fetched ... ${checks.length} new items..`)
         return checks
       })
       .then(addItems)
