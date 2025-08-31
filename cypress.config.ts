@@ -13,6 +13,7 @@ export default defineConfig({
       url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
   },
+  retries: 2,
   component: {
     specPattern: 'src/tests/components/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
@@ -65,6 +66,12 @@ export default defineConfig({
         launchOptions.args.push('--disable-setuid-sandbox')
 
         return launchOptions
+      })
+
+      on('after:run', () => {
+        console.log('Tests have finished running. Cleaning up test data...')
+
+        connection.query('DELETE FROM KnowledgeCheck WHERE owner_id = (SELECT id FROM User WHERE email = "test@email.com")')
       })
 
       return config

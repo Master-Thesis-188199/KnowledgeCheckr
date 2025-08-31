@@ -28,7 +28,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .array(z.object({ answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
       .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .default([
         { answer: 'Answer 1', correct: false },
         { answer: 'Answer 2', correct: true },
@@ -43,7 +43,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .array(z.object({ answer: z.string().min(1, 'An answer must not be empty!'), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
       .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
+      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .default([
         { answer: 'Answer 1', correct: false },
         { answer: 'Answer 2', correct: true },
@@ -55,7 +55,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('drag-drop'),
     answers: z
-      .array(z.object({ answer: z.string(), position: z.number().positive() }))
+      .array(z.object({ answer: z.string(), position: z.number().min(0, 'Position must be positive') }))
       .default([
         { answer: 'Answer 1', position: 1 },
         { answer: 'Answer 2', position: 2 },

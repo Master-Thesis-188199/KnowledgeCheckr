@@ -6,10 +6,11 @@ import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { Any } from '@/types'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
@@ -75,7 +76,6 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   }
 
   const defaultValues = initialValues ?? getDefaultValues('drag-drop')
-  const previousType = useRef(defaultValues.type)
 
   const {
     register,
@@ -98,30 +98,16 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     }
   }
 
-  useEffect(() => {
-    const type = watch('type')
-    if (type !== previousType.current) {
-      resetInputs({ ...getDefaultValues(type), question: watch('question'), points: watch('points'), category: watch('category') })
-    }
-    previousType.current = type
-  }, [watch('type')])
-
   const onSubmit = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
     closeDialog({ reset: true })
   }
 
-  useEffect(() => {
-    if (!dialogOpenState) {
-      clearErrors()
-    }
-  }, [dialogOpenState])
-
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
   return (
-    <Dialog open={dialogOpenState}>
+    <Dialog open={dialogOpenState} onOpenChange={(state) => (!state ? clearErrors() : null)}>
       <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
         {children}
       </DialogTrigger>
@@ -165,7 +151,12 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               <CreateableSelect
                 name='type'
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
-                onChange={(type) => register('type').onChange({ target: { value: type, name: 'type' } })}
+                onChange={(type) => {
+                  if (type !== watch('type')) {
+                    resetInputs({ ...getDefaultValues(type as Any), question: watch('question'), points: watch('points'), category: watch('category') })
+                  }
+                  register('type').onChange({ target: { value: type, name: 'type' } })
+                }}
                 options={[
                   { label: 'Single Choice', value: 'single-choice' },
                   { label: 'Multiple Choice', value: 'multiple-choice' },

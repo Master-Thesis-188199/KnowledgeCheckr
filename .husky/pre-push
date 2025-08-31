@@ -26,15 +26,14 @@ done
 if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
   echo "Detected changes in files matching $EXTENSIONS_REGEX. Running tests..."
 
-  # Check if port 3000 is already in use
+  # Clear port 3000 if already in use
   if lsof -i :3000 | grep LISTEN > /dev/null; then
-    echo "Error: Another app is already running on PORT 3000. Aborting push."
     if [ "$(uname)" = "Darwin" ]; then
-      osascript -e 'display notification "Another app is already running on PORT 3000. Aborting push." with title "Pre-Push Hook Error" sound name "Submarine"'
+      osascript -e 'display notification "An app running on Port 3000 was terminated to allow tests to run!" with title "Pre-Push Hook Error" sound name "Morse"'
     else
       echo "Non-macOS system detected. No notification will be shown."
     fi
-    exit 1
+      kill -9 $(lsof -ti:3000)
   fi
 
   if yarn test:parallel; then
