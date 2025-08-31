@@ -17,7 +17,7 @@ export default function ConditionalBreakpointRendering({ children, showBreakPoin
   const matches = useMatchMedia(mediaQuery)
 
   if (!matches) {
-    console.debug(`[ConditionalRendering]: ${logIdentifier ?? '[?]'} - was not rendered because the media-query "${mediaQuery}" did not match.`)
+    // console.debug(`[ConditionalRendering]: ${logIdentifier ?? '[?]'} - was not rendered because the media-query "${mediaQuery}" did not match.`)
     return null
   }
 

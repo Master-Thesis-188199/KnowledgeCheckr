@@ -1,7 +1,7 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import _ from 'lodash'
+import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { createStore } from 'zustand/vanilla'
 
@@ -85,10 +85,10 @@ export const createCheckCreateStore = (initialState: CreateCheckState = defaultI
 
           // Check if question already exists and has changed
           const exists = prev.questions.find((q) => q.id === question.id)
-          if (exists && !_.isEqual(exists, question)) {
+          if (exists && !isEqual(exists, question)) {
             console.log('Removing existing question to update it...')
             removeQuestion(question.id)
-          } else if (exists && _.isEqual(exists, question)) {
+          } else if (exists && isEqual(exists, question)) {
             console.log('Question already exists and is unchanged, skipping...')
             return prev // No changes needed
           }

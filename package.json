@@ -32,7 +32,7 @@
     "test:parallel": "yarn build-start:instrumented && cypress-parallel -s test:e2e -t 8 -d 'src/tests/e2e/**/*.tsx' && yarn test:component",
     "posttest:parallel": "kill -9 $(lsof -ti:3000)",
     "-------- test scripts (end) --------": "--------",
-    "cypress:open": "yarn instrument-code && next dev & cypress open",
+    "cy:open": "yarn instrument-code && next dev & cypress open",
     "production": "yarn build-start",
     "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
     "prepare": "husky install"

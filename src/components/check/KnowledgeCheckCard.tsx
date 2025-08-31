@@ -65,7 +65,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         </Tooltip>
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
-        <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2 size-auto' />
+        <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />
         <h2 className='text-center text-xl font-semibold text-neutral-600 dark:text-neutral-300'>{check.name}</h2>
         <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{check.description}</span>
       </div>
