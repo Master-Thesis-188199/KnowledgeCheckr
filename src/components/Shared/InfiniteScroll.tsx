@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
 import { useInView } from 'framer-motion'
 import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
@@ -31,6 +32,7 @@ export function useInfiniteScrollContext<TElement>() {
 
 export function InfinityScrollFetcher({ children, getItems }: { getItems: (offset: number) => Promise<unknown[]>; children: React.ReactNode }) {
   const { addItems, items } = useInfiniteScrollContext()
+  const [status, setStatus] = useState<'done' | 'pending' | 'error'>('pending')
   const ref = useRef(null)
   const inView = useInView(ref)
 
@@ -38,16 +40,26 @@ export function InfinityScrollFetcher({ children, getItems }: { getItems: (offse
     if (!ref.current) return
     if (!inView) return
 
-    console.log('Infinite Scroll - fetching new items...')
+    console.log('Infinite Scroll - fetching new items...', getItems(10))
+    setStatus('pending')
     getItems(items.length)
       .then((checks) => {
         console.log(`Fetched ... ${checks.length} new items..`)
         return checks
       })
       .then(addItems)
+      .then(() => setStatus('done'))
+      .catch((e) => {
+        setStatus('error')
+        console.error('[InfinityScroll]: Failed to fetch new items', e)
+      })
   }, [ref.current, inView])
 
-  return <div ref={ref}>{children}</div>
+  return (
+    <div ref={ref} className={cn(status === 'pending' ? '' : 'opacity-0')}>
+      {children}
+    </div>
+  )
 }
 
 export function InfinityScrollRenderer<TItem>({ component: Component }: { component: ComponentType<TItem> }) {
