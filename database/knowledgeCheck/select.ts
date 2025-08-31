@@ -14,7 +14,7 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
   const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
-  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Limit ${limit > 100 ? 100 : limit} OFFSET = ?`, [user_id, offset])
+  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Limit ${limit > 100 ? 100 : limit} OFFSET ?`, [user_id, (offset ?? '0').toString()])
   for (const knowledgeCheck of knowledgeChecks) {
     const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
     const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions)
