@@ -1,4 +1,3 @@
- 
 import { Any } from '@/types'
 
 export default function debounceFunction<T extends (...args: Any[]) => Any>(func: T, delay: number): T & { abort: () => void } {
