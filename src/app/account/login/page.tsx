@@ -7,18 +7,17 @@ import SignupForm from '@/src/app/account/login/SignupForm'
 import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
-import { headers } from 'next/headers'
+import { getReferer } from '@/src/lib/Shared/getReferer'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
-  //? referer is passed along when the user switches between signin and signup
+  //? `referer` is passed along when the user switches between signin and signup
   let { type, referer } = await searchParams
   type = type || 'signin'
 
-  const headerList = await headers()
-  const callbackUrl = referer ?? headerList.get('referer')
+  const callbackUrl = referer ?? (await getReferer())
 
   const { user } = await getServerSession()
   if (user) {
