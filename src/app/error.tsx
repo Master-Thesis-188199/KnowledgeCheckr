@@ -4,7 +4,7 @@ import Card from '@/src/components/Shared/Card'
 import { cn } from '@/src/lib/Shared/utils'
 import { useEffect } from 'react'
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function RootErrorBoundary({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const isDevelelopment = process.env.NODE_ENV === 'development'
   const isProduction = process.env.NODE_ENV === 'production'
 
