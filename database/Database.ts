@@ -8,8 +8,13 @@ export type DBConnection = Connection & {
 }
 
 let connection: DBConnection | null = null
+
+async function isConnectionAlive() {
+  return (await connection?.ping().catch(() => false)) === true
+}
+
 export default async function getDatabase() {
-  if (connection === null) {
+  if (connection === null || !(await isConnectionAlive())) {
     connection = await getConnection()
   }
 
@@ -76,7 +81,7 @@ async function getConnection(): Promise<DBConnection> {
       }),
     )
   } else {
-    if (!global.connection) {
+    if (!global.connection || !(await isConnectionAlive())) {
       console.log('Creating new database connection for development environment.')
       global.connection = await createConnection({
         host: env.DATABASE_HOST,
