@@ -1,8 +1,8 @@
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { CreateStoreType } from '@/types/Shared/CreateStoreType'
+import { CreateStoreOptions, CreateStoreType } from '@/types/Shared/CreateStoreType'
 import { useRef } from 'react'
 
-export type useCacheCreateStoreOptions<T> = {
+export type useCacheCreateStoreOptions<T> = CreateStoreOptions & {
   expiresAfter?: number
   discardCache?: (cached: T | null) => boolean
 }
@@ -30,7 +30,12 @@ export default function useCacheCreateStore<StoreState extends object>(
       console.debug(`Discarding cached store ('${session_key}') because discardCache() returned true`)
       props = initialStoreProps
     }
-    storeRef.current = createStoreFunc(props)
+
+    if (options?.disableCache) {
+      props = initialStoreProps
+    }
+
+    storeRef.current = createStoreFunc(props, options)
   }
 
   return storeRef.current
