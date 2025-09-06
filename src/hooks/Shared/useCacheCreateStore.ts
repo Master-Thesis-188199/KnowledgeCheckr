@@ -8,13 +8,24 @@ import { useRef } from 'react'
  * @param createStoreFunc The function which initializes the store
  * @param initialStoreProps The initial properties that are being used when no data is cached
  */
-export default function useCacheCreateStore<StoreState extends object>(session_key: string, createStoreFunc: Any, initialStoreProps?: StoreState, options?: { expiresAfter?: number }) {
+export default function useCacheCreateStore<StoreState extends object>(
+  session_key: string,
+  createStoreFunc: Any,
+  initialStoreProps?: StoreState,
+  options?: { expiresAfter?: number; discardCache?: (cached: StoreState | null) => boolean },
+): ReturnType<typeof createStoreFunc> {
   const { getStoredValue } = useSessionStorageContext()
   const storeRef = useRef<ReturnType<typeof createStoreFunc>>(null)
 
   if (!storeRef.current) {
     const cached = getStoredValue<StoreState>(session_key, { expiresAfter: options?.expiresAfter })
-    storeRef.current = createStoreFunc(cached ?? initialStoreProps)
+    let props = cached ?? initialStoreProps
+
+    if (options?.discardCache && options.discardCache(cached)) {
+      console.debug(`Discarding cached store ('${session_key}') because discardCache() returned true`)
+      props = initialStoreProps
+    }
+    storeRef.current = createStoreFunc(props)
   }
 
   return storeRef.current
