@@ -1,6 +1,7 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import { CreateStoreType } from '@/types/Shared/CreateStoreType'
 import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { createStore } from 'zustand/vanilla'
@@ -39,7 +40,7 @@ const defaultInitState: CreateCheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckCreateStore = (initialState: CreateCheckState = defaultInitState) => {
+export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initialState = defaultInitState, options) => {
   return createStore<CreateCheckStore>()((set) => {
     const { storeSessionValue } = useSessionStorageContext()
 
