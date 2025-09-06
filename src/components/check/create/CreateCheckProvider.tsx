@@ -2,9 +2,8 @@
 
 import { createCheckCreateStore, CreateCheckState, type CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
-import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { createContext, type ReactNode, useContext, useRef } from 'react'
+import useCacheCreateStore from '@/src/hooks/Shared/useCacheCreateStore'
+import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 
 export type CreateCheckStoreApi = ReturnType<typeof createCheckCreateStore>
@@ -17,17 +16,11 @@ export interface CreateCheckStoreProviderProps {
 }
 
 export function CreateCheckStoreProvider({ children, initialStoreProps }: CreateCheckStoreProviderProps) {
-  const storeRef = useRef<CreateCheckStoreApi>(null)
-  const { getStoredValue } = useSessionStorageContext()
-
-  if (!storeRef.current) {
-    //? Discard cached value when cached check-id differs from the initialStore-id (because ids are constants)
-    const cached = getStoredValue<CreateCheckState>('create-check-store', { validation: validateKnowledgeCheck })
-    storeRef.current = createCheckCreateStore(cached ? (cached.id === initialStoreProps?.id ? cached : initialStoreProps) : initialStoreProps)
-  }
+  //? discard cache when cached check-id differs from the initialStore-id (because ids are constants)
+  const props = useCacheCreateStore<CreateCheckState>('create-check-store', createCheckCreateStore, initialStoreProps, { discardCache: (cache) => cache?.id !== initialStoreProps?.id })
 
   return (
-    <CreateCheckStoreContext.Provider value={storeRef.current}>
+    <CreateCheckStoreContext.Provider value={props}>
       <UnsavedCheckChangesAlert />
       {children}
     </CreateCheckStoreContext.Provider>
