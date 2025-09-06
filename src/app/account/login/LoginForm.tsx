@@ -15,8 +15,8 @@ import { signin } from './actions'
 
 type FormValues = z.infer<typeof LoginSchema>
 
-export default function LoginForm() {
-  const [state, formAction] = useActionState(signin, { success: false, values: {} })
+export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
+  const [state, formAction] = useActionState(signin, { success: false, values: { callbackUrl: undefined } })
 
   const {
     register,
@@ -74,6 +74,8 @@ export default function LoginForm() {
         if (!ok) e.preventDefault()
       }}
       className='flex flex-col gap-6'>
+      <input className='hidden' name='callbackUrl' readOnly value={callbackUrl} />
+
       <label className='flex flex-col gap-1'>
         Email
         <Input type='email' {...register('email')} className='input' defaultValue={state.values?.email} />
@@ -97,7 +99,7 @@ export default function LoginForm() {
         </button>
         <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
           Don&apos;t have an Account?{' '}
-          <Link href='/account/login?type=signup' className='px-2 text-neutral-600 hover:cursor-pointer hover:underline dark:text-neutral-200'>
+          <Link href={{ pathname: '/account/login', query: { type: 'signup', referer: callbackUrl } }} className='px-2 text-neutral-600 hover:cursor-pointer hover:underline dark:text-neutral-200'>
             Signup
           </Link>
         </p>
