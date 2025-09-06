@@ -21,7 +21,9 @@ export function CreateCheckStoreProvider({ children, initialStoreProps }: Create
   const { getStoredValue } = useSessionStorageContext()
 
   if (!storeRef.current) {
-    storeRef.current = createCheckCreateStore(getStoredValue<CreateCheckState>('create-check-store', { validation: validateKnowledgeCheck }) ?? initialStoreProps)
+    //? Discard cached value when cached check-id differs from the initialStore-id (because ids are constants)
+    const cached = getStoredValue<CreateCheckState>('create-check-store', { validation: validateKnowledgeCheck })
+    storeRef.current = createCheckCreateStore(cached ? (cached.id === initialStoreProps?.id ? cached : initialStoreProps) : initialStoreProps)
   }
 
   return (
