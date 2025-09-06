@@ -1,5 +1,5 @@
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { Any } from '@/types'
+import { CreateStoreType } from '@/types/Shared/CreateStoreType'
 import { useRef } from 'react'
 
 /**
@@ -10,7 +10,7 @@ import { useRef } from 'react'
  */
 export default function useCacheCreateStore<StoreState extends object>(
   session_key: string,
-  createStoreFunc: Any,
+  createStoreFunc: CreateStoreType<StoreState>,
   initialStoreProps?: StoreState,
   options?: { expiresAfter?: number; discardCache?: (cached: StoreState | null) => boolean },
 ): ReturnType<typeof createStoreFunc> {
