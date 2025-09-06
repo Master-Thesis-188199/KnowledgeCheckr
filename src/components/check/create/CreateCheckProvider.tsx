@@ -16,8 +16,11 @@ export interface CreateCheckStoreProviderProps {
 }
 
 export function CreateCheckStoreProvider({ children, initialStoreProps }: CreateCheckStoreProviderProps) {
-  //? discard cache when cached check-id differs from the initialStore-id (because ids are constants)
-  const props = useCacheCreateStore<CreateCheckState>('create-check-store', createCheckCreateStore, initialStoreProps, { discardCache: (cache) => cache?.id !== initialStoreProps?.id })
+  const props = useCacheCreateStore<CreateCheckState>('create-check-store', createCheckCreateStore, initialStoreProps, {
+    //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
+    //? drafted checks may not be discarded when they were either not yet cached or when no initialProps were provided (thus indicating that a new check is being created)
+    discardCache: (cache) => cache?.id !== undefined && initialStoreProps?.id !== undefined && cache?.id !== initialStoreProps?.id,
+  })
 
   return (
     <CreateCheckStoreContext.Provider value={props}>
