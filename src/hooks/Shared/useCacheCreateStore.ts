@@ -2,6 +2,11 @@ import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import { CreateStoreType } from '@/types/Shared/CreateStoreType'
 import { useRef } from 'react'
 
+export type useCacheCreateStoreOptions<T> = {
+  expiresAfter?: number
+  discardCache?: (cached: T | null) => boolean
+}
+
 /**
  * This hook implements the cache-restoration of a store's state
  * @param session_key The session-key under which the cached data is stored in the sessionStorage
@@ -12,7 +17,7 @@ export default function useCacheCreateStore<StoreState extends object>(
   session_key: string,
   createStoreFunc: CreateStoreType<StoreState>,
   initialStoreProps?: StoreState,
-  options?: { expiresAfter?: number; discardCache?: (cached: StoreState | null) => boolean },
+  options?: useCacheCreateStoreOptions<StoreState>,
 ): ReturnType<typeof createStoreFunc> {
   const { getStoredValue } = useSessionStorageContext()
   const storeRef = useRef<ReturnType<typeof createStoreFunc>>(null)
