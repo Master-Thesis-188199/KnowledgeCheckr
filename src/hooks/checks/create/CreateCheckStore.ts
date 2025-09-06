@@ -56,7 +56,7 @@ export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initia
         const update = { ...prev, ...func(prev), unsavedChanges: true }
 
         storeTimer = setTimeout(() => {
-          storeSessionValue('create-check-store', update)
+          if (!options?.disableCache) storeSessionValue('create-check-store', update)
         }, sessionStorageDebounceTime)
 
         return update
