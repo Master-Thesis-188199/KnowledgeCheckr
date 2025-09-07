@@ -42,7 +42,7 @@ const defaultInitState: CreateCheckState = {
 
 export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initialState = defaultInitState, options) => {
   return createStore<CreateCheckStore>()((set) => {
-    const { modify: modifyState } = useCacheStoreUpdate(set, { options, cache_key: 'create-check-store' })
+    const { modify: modifyState } = useCacheStoreUpdate(set, { options, debounceTime: 750, cache_key: 'create-check-store' })
 
     const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
       modifyState((prev) => {
