@@ -1,5 +1,6 @@
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { z } from 'zod'
@@ -43,6 +44,10 @@ export const KnowledgeCheckSchema = z
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .nullable(),
+
+    createdAt: StringDate.default(new Date(Date.now())).optional(),
+    updatedAt: StringDate.default(new Date(Date.now())).optional(),
+    owner_id: z.string().optional(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'
