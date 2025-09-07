@@ -68,5 +68,9 @@ function parseKnowledgeCheck(knowledgeCheck: DbKnowledgeCheck, questions: Questi
     closeDate: knowledgeCheck.closeDate ? new Date(Date.parse(knowledgeCheck.closeDate)) : null,
     openDate: new Date(Date.parse(knowledgeCheck.openDate)),
     questionCategories: [],
+
+    createdAt: new Date(Date.parse(knowledgeCheck.createdAt)),
+    updatedAt: new Date(Date.parse(knowledgeCheck.updatedAt)),
+    owner_id: knowledgeCheck.owner_id,
   }
 }
