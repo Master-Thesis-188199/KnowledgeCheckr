@@ -17,6 +17,7 @@ export type AuthState = {
     email?: string
     password?: string
     name?: string
+    callbackUrl: string | undefined
   }
 }
 
@@ -26,6 +27,7 @@ export async function signin(_: AuthState, formData: FormData): Promise<AuthStat
   const values = {
     email: formData.get('email')?.toString(),
     password: formData.get('password')?.toString(),
+    callbackUrl: formData.get('callbackUrl')!.toString(),
   }
 
   const parsed = LoginSchema.safeParse(values)
@@ -46,7 +48,7 @@ export async function signin(_: AuthState, formData: FormData): Promise<AuthStat
     return { success: false, rootError: 'Something went wrong - please try again.', values }
   }
 
-  redirect('/')
+  redirect(values.callbackUrl ?? '/')
 }
 
 export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {
@@ -56,6 +58,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
     name: formData.get('name')?.toString(),
     email: formData.get('email')?.toString(),
     password: formData.get('password')?.toString(),
+    callbackUrl: formData.get('callbackUrl')!.toString(),
   }
 
   const parsed = SignupSchema.safeParse(values)
@@ -92,5 +95,5 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
     }
   }
 
-  redirect('/')
+  redirect(values.callbackUrl ?? '/')
 }

@@ -1,7 +1,7 @@
 import ChoiceQuestionOption from '@/components/check/ChoiceQuestionOption'
 import QuestionSelectionProvider from '@/components/check/QuestionSelectionProvider'
 import { ChoiceQuestion, DragDropQuestion } from '@/schemas/QuestionSchema'
-import DragDropContainer from '@/components/Shared/DragDropContainer'
+import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { MoveIcon } from 'lucide-react'
 
 export function OpenQuestionAnswerOption() {

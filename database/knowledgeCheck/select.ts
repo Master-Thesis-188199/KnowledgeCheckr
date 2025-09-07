@@ -8,13 +8,16 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { User } from 'better-auth'
 
-export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10 }: { limit?: number }) {
+export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
   const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
-  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Limit ${limit > 100 ? 100 : limit}`, [user_id])
+  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Order By updatedAt DESC Limit ${limit > 100 ? 100 : limit} OFFSET ?`, [
+    user_id,
+    (offset ?? '0').toString(),
+  ])
   for (const knowledgeCheck of knowledgeChecks) {
     const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
     const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions)
@@ -65,5 +68,9 @@ function parseKnowledgeCheck(knowledgeCheck: DbKnowledgeCheck, questions: Questi
     closeDate: knowledgeCheck.closeDate ? new Date(Date.parse(knowledgeCheck.closeDate)) : null,
     openDate: new Date(Date.parse(knowledgeCheck.openDate)),
     questionCategories: [],
+
+    createdAt: new Date(Date.parse(knowledgeCheck.createdAt)),
+    updatedAt: new Date(Date.parse(knowledgeCheck.updatedAt)),
+    owner_id: knowledgeCheck.owner_id,
   }
 }

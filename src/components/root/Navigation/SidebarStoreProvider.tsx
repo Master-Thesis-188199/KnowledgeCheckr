@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 import { createSidebarStore, SidebarState, type SidebarStore } from '@/hooks/root/SidebarStore'
+import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 
 export type SidebarStoreApi = ReturnType<typeof createSidebarStore>
 
@@ -15,8 +16,13 @@ export interface SidebarStoreProviderProps {
 
 export function SidebarStoreProvider({ children, initialStoreProps }: SidebarStoreProviderProps) {
   const storeRef = useRef<SidebarStoreApi>(null)
+  const { getStoredValue } = useSessionStorageContext()
+
   if (!storeRef.current) {
-    storeRef.current = createSidebarStore(initialStoreProps)
+    const cached = getStoredValue<SidebarState>('sidebar-store')
+    if (cached) Object.assign(cached, { config: initialStoreProps?.config ?? {} })
+
+    storeRef.current = createSidebarStore(cached ?? initialStoreProps)
   }
 
   return <SidebarStoreContext.Provider value={storeRef.current}>{children}</SidebarStoreContext.Provider>

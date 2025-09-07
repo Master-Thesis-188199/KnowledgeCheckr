@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
@@ -6,13 +7,17 @@ import SignupForm from '@/src/app/account/login/SignupForm'
 import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
+import { getReferer } from '@/src/lib/Shared/getReferer'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin' }> }) {
-  let { type } = await searchParams
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
+  //? `referer` is passed along when the user switches between signin and signup
+  let { type, referer } = await searchParams
   type = type || 'signin'
+
+  const callbackUrl = referer ?? (await getReferer())
 
   const { user } = await getServerSession()
   if (user) {
@@ -27,7 +32,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             title={type === 'signup' ? 'Create an account' : 'Welcome back'}
             subTitle={type === 'signup' ? 'Increase your knowledge by creating KnowledgeChecks' : 'Jump right back to where you left of'}
           />
-          {type === 'signup' ? <SignupForm /> : <LoginForm />}
+          {type === 'signup' ? <SignupForm callbackUrl={callbackUrl ?? '/'} /> : <LoginForm callbackUrl={callbackUrl ?? '/'} />}
           <div className='relative'>
             <div className='absolute inset-0 flex items-center' aria-hidden='true'>
               <div className='h-[1px] w-full bg-gradient-to-r from-neutral-700 via-neutral-300 to-neutral-700 dark:via-neutral-500' />
@@ -43,8 +48,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
 
         <div className='mx-auto flex w-full max-w-64 items-center justify-center gap-5 text-neutral-200/90'>
-          <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
-          <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
+          <SocialButton icon={GoogleIcon} callbackURL={callbackUrl ?? undefined} provider='google' aria-label='SignIn using Google' />
+          <SocialButton icon={GithubSvg} callbackURL={callbackUrl ?? undefined} provider='github' aria-label='SignIn using GitHub' />
         </div>
       </div>
     </div>
@@ -56,7 +61,7 @@ function SocialButton({ icon: Icon, iconClassName, ...props }: { icon: React.Com
     <ProviderButton
       type='button'
       className='flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600'
-      callbackURL={env.NEXT_PUBLIC_BASE_URL}
+      callbackURL={props.callbackURL ?? env.NEXT_PUBLIC_BASE_URL}
       errorCallbackURL={env.NEXT_PUBLIC_BASE_URL}
       {...props}>
       <Icon className={twMerge('size-6', iconClassName)} />

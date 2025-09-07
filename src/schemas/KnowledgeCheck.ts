@@ -1,10 +1,11 @@
-import { z } from 'zod'
-import { QuestionSchema } from '@/src/schemas/QuestionSchema'
-import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { StringDate } from '@/src/schemas/CustomZodTypes'
+import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
+import { z } from 'zod'
 
-const KnowledgeCheckSchema = z
+export const KnowledgeCheckSchema = z
   .object({
     id: z.string().default(Math.floor(Math.random() * 1000).toString()),
 
@@ -22,17 +23,31 @@ const KnowledgeCheckSchema = z
       .optional()
       .default((Math.floor(Math.random() * 1000) % 10) + 1),
 
-    questions: z.array(QuestionSchema).min(1, 'Please provide at least one question.'),
+    questions: z.array(QuestionSchema),
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default([{ id: 'default', name: 'default' }]),
+      .default([{ id: 'default', name: 'general' }]),
 
     share_key: z.string().nullable(),
 
-    openDate: z.date(),
+    openDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .default(new Date(Date.now())),
 
-    closeDate: z.date().nullable(),
+    closeDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .nullable(),
+
+    createdAt: StringDate.default(new Date(Date.now())).optional(),
+    updatedAt: StringDate.default(new Date(Date.now())).optional(),
+    owner_id: z.string().optional(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'
@@ -47,4 +62,4 @@ const KnowledgeCheckSchema = z
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
 
 const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<KnowledgeCheck>(KnowledgeCheckSchema)
-export { validateKnowledgeCheck, instantiateKnowledgeCheck, safeParseKnowledgeCheck }
+export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }

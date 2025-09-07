@@ -6,10 +6,11 @@ import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { Any } from '@/types'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
@@ -29,10 +30,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'Which of the following is a programming language?',
           type,
           answers: [
-            { answer: 'Python', correct: true },
-            { answer: 'ASCII', correct: false },
-            { answer: 'ByteCode', correct: false },
-            { answer: 'JavaScript', correct: true },
+            { answer: '', correct: true },
+            { answer: '', correct: true },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
           ],
         }
       case 'single-choice':
@@ -41,10 +42,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'What does RGB stand for?',
           type,
           answers: [
-            { answer: 'Red, Green, Blue', correct: true },
-            { answer: 'Red, Green, Black', correct: false },
-            { answer: 'Red, Green, Yellow', correct: false },
-            { answer: 'Red, Green, White', correct: false },
+            { answer: '', correct: true },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
+            { answer: '', correct: false },
           ],
         }
 
@@ -53,7 +54,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           ...baseValues,
           // question: 'Describe the essential parts of a computer.',
           type,
-          expectation: 'A computer consists of hardware and software components that work together to perform tasks. This includes components like the CPU, memory, storage, and input/output devices.',
+          expectation: '',
         }
 
       case 'drag-drop':
@@ -62,10 +63,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           // question: 'Move these activities based the order in which they should be performed',
           type,
           answers: [
-            { answer: 'Prepare the workspace', position: 1 },
-            { answer: 'Gather materials', position: 2 },
-            { answer: 'Follow the instructions', position: 3 },
-            { answer: 'Clean up', position: 4 },
+            { answer: '', position: 1 },
+            { answer: '', position: 2 },
+            { answer: '', position: 3 },
+            { answer: '', position: 4 },
           ],
         }
 
@@ -73,6 +74,8 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         return {}
     }
   }
+
+  const defaultValues = initialValues ?? getDefaultValues('drag-drop')
 
   const {
     register,
@@ -85,7 +88,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     setValue,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: initialValues || getDefaultValues('drag-drop'),
+    defaultValues: defaultValues,
   })
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
@@ -95,29 +98,16 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     }
   }
 
-  useEffect(() => {
-    const type = watch('type')
-    if (type) {
-      resetInputs({ ...getDefaultValues(type), question: watch('question'), points: watch('points'), category: watch('category') })
-    }
-  }, [watch('type')])
-
   const onSubmit = (data: Question) => {
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
     closeDialog({ reset: true })
   }
 
-  useEffect(() => {
-    if (!dialogOpenState) {
-      clearErrors()
-    }
-  }, [dialogOpenState])
-
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
   return (
-    <Dialog open={dialogOpenState}>
+    <Dialog open={dialogOpenState} onOpenChange={(state) => (!state ? clearErrors() : null)}>
       <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
         {children}
       </DialogTrigger>
@@ -161,7 +151,12 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               <CreateableSelect
                 name='type'
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
-                onChange={(type) => register('type').onChange({ target: { value: type, name: 'type' } })}
+                onChange={(type) => {
+                  if (type !== watch('type')) {
+                    resetInputs({ ...getDefaultValues(type as Any), question: watch('question'), points: watch('points'), category: watch('category') })
+                  }
+                  register('type').onChange({ target: { value: type, name: 'type' } })
+                }}
                 options={[
                   { label: 'Single Choice', value: 'single-choice' },
                   { label: 'Multiple Choice', value: 'multiple-choice' },
@@ -213,7 +208,7 @@ function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
   const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
 
   return (
-    <DialogHeader className='border-b pb-3 text-left dark:border-b-neutral-500/80'>
+    <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
       <DialogTitle>{title}</DialogTitle>
       <DialogDescription>{description}</DialogDescription>
     </DialogHeader>
@@ -269,7 +264,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                   <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
                 </label>
               </Tooltip>
-              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1} -  to your question`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -338,7 +333,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   />
                 </label>
               </Tooltip>
-              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
+              <Input {...register(`answers.${index}.answer` as const)} placeholder={`Moveable exemplary Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <div className='flex gap-2'>
                 <button
                   aria-label='move answer up'
@@ -348,7 +343,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                     setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
                     setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
                   }}
-                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
+                  className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-300 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
                   disabled={index - 1 < 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
@@ -381,7 +376,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         type='button'
         aria-label='Add Answer'
         onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
-        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
+        className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
       </button>
