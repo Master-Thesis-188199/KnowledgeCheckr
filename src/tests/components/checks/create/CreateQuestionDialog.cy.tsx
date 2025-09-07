@@ -48,4 +48,26 @@ describe('<CreateQuestionDialog />', () => {
     cy.get('#question-dialog').should('be.visible')
     cy.get('#question-dialog input[name="question"]').should('have.value', '')
   })
+
+  it("Verify that create-question-dialog closes when the user clicks outside the dialog's content area", () => {
+    cy.viewport(800, 980)
+    cy.mount(
+      <RootProviders>
+        <CreateCheckStoreProvider>
+          <CreateQuestionDialog>
+            <div className='trigger'>Trigger</div>
+          </CreateQuestionDialog>
+        </CreateCheckStoreProvider>
+      </RootProviders>,
+    )
+
+    cy.get('#question-dialog').should('not.exist')
+    cy.get('.trigger').click()
+    cy.get('#question-dialog').should('be.visible')
+
+    cy.get('#question-dialog input[name="question"]').type('Example Question')
+
+    cy.get('[data-slot="dialog-overlay"]').click({ force: true })
+    cy.get('#question-dialog').should('not.exist')
+  })
 })
