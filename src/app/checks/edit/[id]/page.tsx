@@ -20,7 +20,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <CreateCheckStoreProvider initialStoreProps={check}>
+    <CreateCheckStoreProvider initialStoreProps={check} options={{ disableCache: true }}>
       <PageHeading title={check.name} />
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />

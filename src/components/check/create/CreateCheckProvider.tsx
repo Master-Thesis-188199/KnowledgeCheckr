@@ -1,10 +1,9 @@
 'use client'
 
-import { createCheckCreateStore, CreateCheckState, type CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
+import { createCheckCreateStore, CreateCheckState, CreateCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
-import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { createContext, type ReactNode, useContext, useRef } from 'react'
+import useCacheCreateStore, { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
+import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 
 export type CreateCheckStoreApi = ReturnType<typeof createCheckCreateStore>
@@ -14,18 +13,19 @@ const CreateCheckStoreContext = createContext<CreateCheckStoreApi | undefined>(u
 export interface CreateCheckStoreProviderProps {
   children: ReactNode
   initialStoreProps?: CreateCheckState
+  options?: useCacheCreateStoreOptions<CreateCheckState>
 }
 
-export function CreateCheckStoreProvider({ children, initialStoreProps }: CreateCheckStoreProviderProps) {
-  const storeRef = useRef<CreateCheckStoreApi>(null)
-  const { getStoredValue } = useSessionStorageContext()
-
-  if (!storeRef.current) {
-    storeRef.current = createCheckCreateStore(getStoredValue<CreateCheckState>('create-check-store', { validation: validateKnowledgeCheck }) ?? initialStoreProps)
-  }
+export function CreateCheckStoreProvider({ children, initialStoreProps, options }: CreateCheckStoreProviderProps) {
+  const props = useCacheCreateStore<CreateCheckState>('create-check-store', createCheckCreateStore, initialStoreProps, {
+    //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
+    //? drafted checks may not be discarded when they were either not yet cached or when no initialProps were provided (thus indicating that a new check is being created)
+    discardCache: (cache) => cache?.id !== undefined && initialStoreProps?.id !== undefined && cache?.id !== initialStoreProps?.id,
+    ...options,
+  })
 
   return (
-    <CreateCheckStoreContext.Provider value={storeRef.current}>
+    <CreateCheckStoreContext.Provider value={props}>
       <UnsavedCheckChangesAlert />
       {children}
     </CreateCheckStoreContext.Provider>
