@@ -32,15 +32,12 @@ export default function GeneralSection() {
           label='Deadline'
           type='date'
           name='check-close-date'
-          defaultValue={
-            closeDate?.toDateString() ||
-            new Date(Date.now())
-              .toLocaleDateString('de')
-              .split('.')
-              .reverse()
-              .map((el) => (el.length < 2 ? '0' + el : el))
-              .join('-')
-          }
+          defaultValue={new Date(closeDate ?? Date.now())
+            .toLocaleDateString('de')
+            .split('.')
+            .reverse()
+            .map((el) => (el.length < 2 ? '0' + el : el))
+            .join('-')}
           className='text-sm text-neutral-500 dark:text-neutral-400 [&::-webkit-calendar-picker-indicator]:brightness-50'
         />
         <InputGroup label='Administrators' name='check-contributors' />
