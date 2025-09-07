@@ -15,4 +15,15 @@ describe('Debouncing Suite: ', () => {
     cy.wait(DebounceTime + 100)
     cy.get('@saveFunction').should('have.been.calledOnceWith', 'Call 5')
   })
+
+  it("Verify that a debounced function call can be cancelled before it's executed", () => {
+    const saveFunction = cy.stub().as('saveFunction')
+    const debouncedSave = debounceFunction(saveFunction, DebounceTime)
+
+    debouncedSave('Initial Call')
+    debouncedSave.abort()
+
+    cy.wait(DebounceTime + 100)
+    cy.get('@saveFunction').should('not.have.been.called')
+  })
 })
