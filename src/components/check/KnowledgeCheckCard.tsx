@@ -87,7 +87,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
           </dd>
         </div>
       </div>
-
+      <Footer updatedAt={check.updatedAt} />
       {/* <motion.div className='absolute inset-x-0 bottom-0 z-10 flex justify-center gap-12 rounded-md border-0 bg-white/90 py-3 ring-0 outline-none dark:bg-neutral-900' variants={actionVariants}>
         <Button variant='primary' disabled>
           Exercise
@@ -97,5 +97,13 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         </Button>
       </motion.div> */}
     </motion.a>
+  )
+}
+
+function Footer({ updatedAt }: { updatedAt?: Date }) {
+  return (
+    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-700 px-4 pt-3 text-xs dark:text-neutral-400/70'>
+      <div>last modified: {updatedAt ? new Date(updatedAt).toLocaleDateString('de', { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}</div>
+    </div>
   )
 }
