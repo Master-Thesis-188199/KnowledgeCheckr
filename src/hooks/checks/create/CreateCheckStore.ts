@@ -1,6 +1,6 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
-import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { CreateStoreType } from '@/types/Shared/CreateStoreType'
 import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
@@ -42,26 +42,7 @@ const defaultInitState: CreateCheckState = {
 
 export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initialState = defaultInitState, options) => {
   return createStore<CreateCheckStore>()((set) => {
-    const { storeSessionValue } = useSessionStorageContext()
-
-    const sessionStorageDebounceTime = 750
-    let storeTimer: ReturnType<typeof setTimeout> | null = null
-
-    function modifyState(func: (prev: CreateCheckStore) => CreateCheckStore | Partial<CreateCheckStore>) {
-      set((prev) => {
-        if (storeTimer) {
-          clearTimeout(storeTimer)
-        }
-
-        const update = { ...prev, ...func(prev), unsavedChanges: true }
-
-        storeTimer = setTimeout(() => {
-          if (!options?.disableCache) storeSessionValue('create-check-store', update)
-        }, sessionStorageDebounceTime)
-
-        return update
-      })
-    }
+    const { modify: modifyState } = useCacheStoreUpdate(set, { options, cache_key: 'create-check-store' })
 
     const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
       modifyState((prev) => {
@@ -73,13 +54,14 @@ export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initia
         return {
           questions: prev.questions.filter((question) => question.id !== questionId),
           questionCategories: isCategoryUsed ? prev.questionCategories : prev.questionCategories.filter((cat) => cat.name !== category),
+          unsavedChanges: true,
         }
       })
 
     return {
       ...initialState,
-      setName: (name) => modifyState((prev) => ({ ...prev, name })),
-      setDescription: (description) => modifyState((prev) => ({ ...prev, description })),
+      setName: (name) => modifyState((prev) => ({ ...prev, name, unsavedChanges: true })),
+      setDescription: (description) => modifyState((prev) => ({ ...prev, description, unsavedChanges: true })),
       addQuestion: (question: Question) =>
         modifyState((prev) => {
           const { questionCategories } = prev
@@ -103,7 +85,7 @@ export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initia
             })
           }
 
-          return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories }
+          return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories, unsavedChanges: true }
         }),
       removeQuestion,
     }
