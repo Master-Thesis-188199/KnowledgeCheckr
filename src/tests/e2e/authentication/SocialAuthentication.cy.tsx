@@ -7,7 +7,7 @@ describe('Better Auth: Social Provider Authentication - ', () => {
     cy.url().should('include', 'github.com/login?client_id=')
   })
 
-  it.only('verify that users can signin using Google', () => {
+  it('verify that users can signin using Google', () => {
     cy.visit('/account/login?type=signin')
 
     cy.get('[aria-label="SignIn using Google"]').filter(':visible').click()

@@ -17,6 +17,7 @@ export default defineConfig({
   component: {
     specPattern: 'src/tests/components/**/*.{cy,spec}.{js,jsx,ts,tsx}',
     defaultBrowser: 'chrome',
+    port: (Date.now() % 10000) + 3000,
     devServer: {
       framework: 'next',
       bundler: 'webpack',

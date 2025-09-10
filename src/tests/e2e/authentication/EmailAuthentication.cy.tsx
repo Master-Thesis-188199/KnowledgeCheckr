@@ -63,9 +63,7 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.login(EMAIL, '1234567890')
   })
-})
 
-describe('Better Auth: Email Authentication - Error Handling', () => {
   it('Verify that an user cannot signup with the same credentials twice', () => {
     const EMAIL = `test@email.com`
     const USERNAME = `Test User`
