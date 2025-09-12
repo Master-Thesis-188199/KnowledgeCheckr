@@ -20,11 +20,6 @@ describe('Drag Drop Components:', () => {
       </DragDropContainer>,
     )
 
-    const dragAndDrop = (dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>) => {
-      dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
-      dropLocator.realMouseMove(0, 0, { position: 'center' }).realMouseUp()
-    }
-
     cy.get('.drag-drop-container').should('exist')
     cy.get('.drag-drop-container  [data-swapy-item]').should('have.length', items.length)
 
@@ -32,7 +27,7 @@ describe('Drag Drop Components:', () => {
     cy.get('.drag-drop-container  [data-swapy-item]').first().should('contain.text', items.at(0)!.content)
     cy.get('.drag-drop-container  [data-swapy-item]').last().should('contain.text', items.at(-1)!.content)
 
-    dragAndDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
+    cy.dragDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
 
     ///? Verify order of switches items
     cy.get('.drag-drop-container  [data-swapy-item]').first().should('contain.text', items.at(-1)!.content)
@@ -59,14 +54,9 @@ describe('Drag Drop Components:', () => {
       </DragDropContainer>,
     )
 
-    const dragAndDrop = (dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>) => {
-      dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
-      dropLocator.realMouseMove(0, -10, { position: 'center' }).realMouseUp()
-    }
-
     cy.get('@eventHandler').should('not.have.been.called')
 
-    dragAndDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
+    cy.dragDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
 
     ///? Verify order of switches items
     cy.get('.drag-drop-container  [data-swapy-item]').first().should('contain.text', items.at(-1)!.content)
@@ -94,14 +84,9 @@ describe('Drag Drop Components:', () => {
       </DragDropContainer>,
     )
 
-    const dragAndDrop = (dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>) => {
-      dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
-      dropLocator.realMouseMove(0, -10, { position: 'center' }).realMouseUp()
-    }
-
     cy.get('@eventHandler').should('not.have.been.called')
 
-    dragAndDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
+    cy.dragDrop(cy.get('[data-swapy-item]').first(), cy.get('div[data-swapy-item]').last())
 
     ///? Verify order of switches items
     cy.get('.drag-drop-container  [data-swapy-item]').first().should('contain.text', items.at(-1)!.content)
