@@ -8,5 +8,7 @@ declare namespace Cypress {
     signOut(): void
 
     removeDBUser(email: string, username: string): void
+
+    dragDrop(dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>): void
   }
 }
