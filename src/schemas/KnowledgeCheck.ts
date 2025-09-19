@@ -29,7 +29,7 @@ export const KnowledgeCheckSchema = z
       .optional()
       .default([{ id: 'default', name: 'general' }]),
 
-    share_key: z.string().nullable(),
+    share_key: z.string().nullable().default(null),
 
     openDate: z
       .date()
@@ -43,7 +43,8 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .nullable(),
+      .nullable()
+      .default(null),
 
     createdAt: StringDate.default(new Date(Date.now())).optional(),
     updatedAt: StringDate.default(new Date(Date.now())).optional(),
