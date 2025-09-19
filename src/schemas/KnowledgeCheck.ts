@@ -56,7 +56,7 @@ export const KnowledgeCheckSchema = z
 
     */
   })
-  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories.find((qc) => qc.name === question.category)), {
+  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',
   })
 
