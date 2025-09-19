@@ -105,7 +105,9 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
     case z.ZodFirstPartyTypeKind.ZodCatch: {
       const catchSchema = schema as unknown as z.ZodCatch<z.ZodTypeAny>
       const inner = catchSchema._def.innerType
-      return stripZodDefault(inner) as StripZodDefault<Schema>
+
+      //? Re-apply catch value to ensure fallback values are preserved
+      return stripZodDefault(inner).catch(catchSchema._def.catchValue) as unknown as StripZodDefault<Schema>
     }
 
     // For effects wrappers, remove the effects and return the underlying schema.
