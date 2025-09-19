@@ -110,7 +110,6 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
 
     // For effects wrappers, remove the effects and return the underlying schema.
     case z.ZodFirstPartyTypeKind.ZodEffects: {
-      return schema as StripZodDefault<Schema>
       const effectsSchema = schema as unknown as z.ZodEffects<z.ZodTypeAny>
       return stripZodDefault(effectsSchema._def.schema) as StripZodDefault<Schema>
     }
