@@ -87,7 +87,18 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
       return options.instantiate_Optional_PrimitiveProps ? schemaDefaults(strippedOptionalSchema, options) : undefined
 
     case z.ZodFirstPartyTypeKind.ZodNumber:
-      return 0
+      const checks = schema._def.checks
+      const numberConstraints = {
+        min: 0,
+        max: 100,
+      }
+
+      checks.forEach((check: any) => {
+        if (check.kind === 'min') numberConstraints.min = check.value + (check.inclusive ? 0 : 1)
+        if (check.kind === 'max') numberConstraints.max = check.value + (check.inclusive ? 0 : 1)
+      })
+
+      return Math.floor(((Math.random() * 100) % (numberConstraints.max - numberConstraints.min)) + numberConstraints.min) as z.TypeOf<Schema>
 
     case z.ZodFirstPartyTypeKind.ZodBoolean:
       return false
