@@ -24,7 +24,7 @@ export const KnowledgeCheckSchema = z
       .optional()
       .default((Math.floor(Math.random() * 1000) % 10) + 1),
 
-    questions: z.array(QuestionSchema),
+    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
     questionCategories: z
       .array(CategorySchema)
       .optional()
