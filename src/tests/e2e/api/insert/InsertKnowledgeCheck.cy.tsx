@@ -7,14 +7,14 @@ describe('Verify the functionality and integrity of the insert/knowledgeCheck ap
   })
   it('Verify insertion of an valid knowledgeCheck instance', () => {
     const dummyCheck: KnowledgeCheck = instantiateKnowledgeCheck()
-    const check = Object.assign(dummyCheck, { id: getUUID(), questions: [] } as Partial<KnowledgeCheck>)
+    const check = Object.assign(dummyCheck, { id: getUUID() } as Partial<KnowledgeCheck>)
 
     cy.request('POST', '/api/insert/knowledgeCheck', check)
   })
 
   it('Verify error handling when inserting an invalid knowledgeCheck instance', () => {
     const dummyCheck: KnowledgeCheck = instantiateKnowledgeCheck()
-    const invalidCheck: Partial<KnowledgeCheck> = Object.assign(dummyCheck, { id: getUUID(), questions: [] } as Partial<KnowledgeCheck>)
+    const invalidCheck: Partial<KnowledgeCheck> = Object.assign(dummyCheck, { id: getUUID() } as Partial<KnowledgeCheck>)
 
     invalidCheck.name = undefined
     invalidCheck.questionCategories = []
