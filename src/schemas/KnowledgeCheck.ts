@@ -1,4 +1,5 @@
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -7,7 +8,7 @@ import { z } from 'zod'
 
 export const KnowledgeCheckSchema = z
   .object({
-    id: z.string().default(Math.floor(Math.random() * 1000).toString()),
+    id: z.string().uuid().default(getUUID()),
 
     name: z.string().default('Knowledge Check'),
 
