@@ -19,6 +19,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
 
   const getDefaultValues = (type: Question['type']): Partial<Question> => {
     const baseValues: Partial<Pick<Question, 'category' | 'id' | 'points' | 'question'>> = {
+      id: getUUID(),
       points: 1,
       category: 'general',
     }
