@@ -95,7 +95,7 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
 
       checks.forEach((check: any) => {
         if (check.kind === 'min') numberConstraints.min = check.value + (check.inclusive ? 0 : 1)
-        if (check.kind === 'max') numberConstraints.max = check.value + (check.inclusive ? 0 : 1)
+        if (check.kind === 'max') numberConstraints.max = check.value - (check.inclusive ? 0 : 1)
       })
 
       return Math.floor(((Math.random() * 100) % (numberConstraints.max - numberConstraints.min)) + numberConstraints.min) as z.TypeOf<Schema>
