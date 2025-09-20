@@ -13,12 +13,12 @@ import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
-export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> }) {
+export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
 
-  const getDefaultValues = (type: Question['type']): Partial<Question> => {
-    const baseValues: Partial<Pick<Question, 'category' | 'id' | 'points' | 'question'>> = {
+  const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
+    const baseValues: Partial<Pick<Question, 'category' | 'points' | 'question'>> & Pick<Question, 'id'> = {
       id: getUUID(),
       points: 1,
       category: 'general',
@@ -72,7 +72,9 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         }
 
       default:
-        return {}
+        return {
+          ...baseValues,
+        }
     }
   }
 
@@ -120,7 +122,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <QuestionDialogHeader type={initialValues ? 'edit' : 'create'} />
-          <input {...register('id')} id='id' value={initialValues?.id || getUUID()} className='hidden' />
+          <input {...register('id')} id='id' value={defaultValues.id} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
