@@ -19,10 +19,10 @@ describe('Verify the functionality and integrity of the insert/knowledgeCheck ap
     invalidCheck.name = undefined
     invalidCheck.questionCategories = []
 
-    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: invalidCheck, failOnStatusCode: false }).should('have.property', 'status').and('eq', 500)
+    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: invalidCheck, failOnStatusCode: false }).should('have.property', 'status').and('eq', 400)
   })
 
   it('Verify error handling when inserting with an empty request-body', () => {
-    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', failOnStatusCode: false }).should('have.property', 'status').and('eq', 500)
+    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', failOnStatusCode: false }).should('have.property', 'status').and('eq', 400)
   })
 })
