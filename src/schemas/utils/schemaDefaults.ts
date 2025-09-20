@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { z, ZodTypeAny } from 'zod'
 
 /**
@@ -35,7 +36,12 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
       return Object.fromEntries(Object.entries((schema as z.SomeZodObject).shape).map(([key, value]) => [key, schemaDefaults(value, options)]))
 
     case z.ZodFirstPartyTypeKind.ZodString:
-      return ''
+      const schemaChecks = schema._def.checks
+
+      let value = ''
+      if (schemaChecks.some((check: any) => check.kind === 'uuid')) value = getUUID()
+
+      return value
 
     case z.ZodFirstPartyTypeKind.ZodNull:
       return null
