@@ -5,11 +5,11 @@ import { Stage, useMultiStageContext } from '@/src/components/Shared/MultiStageP
 import { cn } from '@/src/lib/Shared/utils'
 import { Fragment, useEffect, useRef, useState } from 'react'
 
-export function MultiStageProgressBar() {
+export function MultiStageProgressBar({ className }: { className?: string }) {
   const { stages } = useMultiStageContext()
 
   return (
-    <ol className='mx-[12.5%] -mt-6 mb-8 flex items-center justify-center gap-6 text-white/40 select-none'>
+    <ol className={cn('mx-[12.5%] flex items-center justify-center gap-6 text-white/40 select-none', className)}>
       {stages.map((stage, i) => (
         <Fragment key={`Stage-${i}`}>
           <ProgressRing {...stage} />
