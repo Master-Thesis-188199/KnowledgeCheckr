@@ -27,7 +27,7 @@ export function MultiStageProvider({ children, stages }: { children: React.React
   const nextStage = () => setStage((prev) => (prev < stages.length ? prev + 1 : prev))
   const previousStage = () => setStage((prev) => (prev > 1 ? prev - 1 : prev))
   const isFocussed = (currentStage: number) => stage === currentStage
-  const isCompleted = (currentState: number) => stage > currentState
+  const isCompleted = (currentState: number) => stage > currentState && stage >= 1
 
   return <Context.Provider value={{ stages, stage, setStage, nextStage, previousStage, isFocussed, isCompleted }}>{children}</Context.Provider>
 }
