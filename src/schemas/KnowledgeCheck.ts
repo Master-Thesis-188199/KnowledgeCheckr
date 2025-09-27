@@ -1,4 +1,5 @@
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -7,7 +8,7 @@ import { z } from 'zod'
 
 export const KnowledgeCheckSchema = z
   .object({
-    id: z.string().default(Math.floor(Math.random() * 1000).toString()),
+    id: z.string().uuid().default(getUUID()),
 
     name: z.string().default('Knowledge Check'),
 
@@ -23,13 +24,13 @@ export const KnowledgeCheckSchema = z
       .optional()
       .default((Math.floor(Math.random() * 1000) % 10) + 1),
 
-    questions: z.array(QuestionSchema),
+    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default([{ id: 'default', name: 'general' }]),
+      .default([{ id: 'default', name: 'general', skipOnMissingPrequisite: false }]),
 
-    share_key: z.string().nullable(),
+    share_key: z.string().nullable().default(null),
 
     openDate: z
       .date()
@@ -43,7 +44,8 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .nullable(),
+      .nullable()
+      .default(null),
 
     createdAt: StringDate.default(new Date(Date.now())).optional(),
     updatedAt: StringDate.default(new Date(Date.now())).optional(),
@@ -55,7 +57,7 @@ export const KnowledgeCheckSchema = z
 
     */
   })
-  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories.find((qc) => qc.name === question.category)), {
+  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',
   })
 

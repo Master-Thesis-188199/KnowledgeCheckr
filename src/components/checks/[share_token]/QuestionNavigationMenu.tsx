@@ -11,7 +11,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
     <>
       <div className={cn('flex h-fit min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-2 dark:ring-neutral-600', className)}>
         <span className='font-semibold dark:text-neutral-300'>Questions</span>
-        <div className='grid grid-cols-[repeat(auto-fill,30px)] gap-1.5'>
+        <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-1.5' id='exam-question-navigation'>
           {knowledgeCheck.questions.map((_, i) => (
             <button
               className={cn(
@@ -23,7 +23,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
               {i + 1}
             </button>
           ))}
-        </div>
+        </nav>
         <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60'>
           <span>Finish Check</span>
         </ExamFinishDialog>

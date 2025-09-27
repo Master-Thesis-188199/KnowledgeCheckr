@@ -3,11 +3,8 @@ import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lo
 import { z } from 'zod'
 
 const baseQuestion = z.object({
-  id: z.string().default(Math.floor(Math.random() * 1000).toString()),
-  points: z
-    .number()
-    .positive()
-    .default((Math.floor(Math.random() * 1000) % 10) + 1),
+  id: z.string().uuid(),
+  points: z.number().positive(),
   category: z.string().default('general'),
 
   question: z

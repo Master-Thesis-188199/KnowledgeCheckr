@@ -1,6 +1,7 @@
 'use client'
 
-import { saveGeneratedShareToken } from '@/src/lib/Shared/generateToken'
+import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
+import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Tooltip } from '@heroui/tooltip'
@@ -37,8 +38,9 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
             return
           }
 
-          saveGeneratedShareToken(check.id)
-            .then((token) => {
+          const token = generateToken()
+          storeKnowledgeCheckShareToken(check.id, token)
+            .then(() => {
               navigator.clipboard
                 .writeText(`${window.location.origin}/checks/${token}`)
                 .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))

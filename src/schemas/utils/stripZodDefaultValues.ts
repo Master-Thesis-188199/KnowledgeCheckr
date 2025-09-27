@@ -105,14 +105,15 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
     case z.ZodFirstPartyTypeKind.ZodCatch: {
       const catchSchema = schema as unknown as z.ZodCatch<z.ZodTypeAny>
       const inner = catchSchema._def.innerType
-      return stripZodDefault(inner) as StripZodDefault<Schema>
+
+      //? Re-apply catch value to ensure fallback values are preserved
+      return stripZodDefault(inner).catch(catchSchema._def.catchValue) as unknown as StripZodDefault<Schema>
     }
 
     // For effects wrappers, remove the effects and return the underlying schema.
     case z.ZodFirstPartyTypeKind.ZodEffects: {
-      return schema as StripZodDefault<Schema>
       const effectsSchema = schema as unknown as z.ZodEffects<z.ZodTypeAny>
-      return stripZodDefault(effectsSchema._def.schema) as StripZodDefault<Schema>
+      return reapplyEffects(effectsSchema, stripZodDefault(effectsSchema._def.schema)) as StripZodDefault<Schema>
     }
 
     case z.ZodFirstPartyTypeKind.ZodIntersection: {
@@ -132,5 +133,36 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
     // For all other types (primitives, etc.), return the schema unchanged.
     default:
       return schema as StripZodDefault<Schema>
+  }
+}
+
+/**
+ * Re-applies ZodEffects to a `base` schema that was unwrapped.
+ * @param original The original schema that holds the effects.
+ * @param base The schema to which the effects should be reapplied.
+ */
+function reapplyEffects(original: z.ZodEffects<z.ZodTypeAny>, base: z.ZodTypeAny): z.ZodTypeAny {
+  const effect = (original as any)._def.effect as
+    | { type: 'transform'; transform: (arg: unknown, ctx: any) => unknown | Promise<unknown> }
+    | { type: 'refinement'; refinement: (arg: unknown, ctx: any) => void | Promise<void> }
+    | { type: 'preprocess'; transform: (arg: unknown) => unknown | Promise<unknown> }
+    | undefined
+
+  if (!effect) {
+    return base
+  }
+
+  switch (effect.type) {
+    case 'transform':
+      return base.transform(effect.transform as any)
+
+    case 'refinement':
+      return base.superRefine(effect.refinement as any)
+
+    case 'preprocess':
+      return z.preprocess(effect.transform as any, base)
+
+    default:
+      return base
   }
 }

@@ -94,3 +94,8 @@ Cypress.Commands.add('removeDBUser', (email: string, username: string) => {
 Cypress.Commands.add('loginTestUser', () => {
   cy.login('test@email.com', 'testpassword')
 })
+
+Cypress.Commands.add('dragDrop', (dragLocator, dropLocator) => {
+  dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
+  dropLocator.realMouseMove(0, -10, { position: 'center' }).realMouseUp()
+})
