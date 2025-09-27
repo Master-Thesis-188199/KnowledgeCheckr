@@ -3,7 +3,7 @@
 import Line from '@/src/components/Shared/Line'
 import { Stage, useMultiStageContext } from '@/src/components/Shared/MultiStageProgress/MultiStageProvider'
 import { cn } from '@/src/lib/Shared/utils'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 export function MultiStageProgressBar() {
   const { stages } = useMultiStageContext()
@@ -42,9 +42,24 @@ function ProgressRing({ stage, title }: Stage) {
 }
 
 function RingConnector({ stage }: Stage) {
-  const { stages, isCompleted } = useMultiStageContext()
+  const [animateFromDirection, setAnimation] = useState<'none' | 'left' | 'right'>('none')
+  const prevShownStage = useRef<number | null>(null)
+
+  const { stages, isCompleted, isFocussed, stage: stageState } = useMultiStageContext()
+
+  useEffect(() => {
+    if (prevShownStage.current !== null && prevShownStage?.current < stageState) {
+      //? we moved to the next stage
+      setAnimation(isCompleted(stage) && stage === prevShownStage.current ? 'left' : 'none')
+    } else if (prevShownStage.current !== null && prevShownStage.current > stageState) {
+      //? we moved to the prev stage
+      setAnimation(isFocussed(stage) ? 'right' : 'none')
+    }
+
+    prevShownStage.current = stageState
+  }, [stageState])
 
   if (stage === stages.length) return
 
-  return <Line className={cn(isCompleted(stage) && 'dark:text-blue-400/80')} />
+  return <Line animateFromDirection={animateFromDirection} className={cn(isCompleted(stage) && 'dark:text-blue-400/80')} />
 }
