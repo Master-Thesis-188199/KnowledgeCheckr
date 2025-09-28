@@ -61,5 +61,11 @@ function RingConnector({ stage }: Stage) {
 
   if (stage === stages.length) return
 
-  return <Line animateFromDirection={animateFromDirection} className={cn(isCompleted(stage) && 'dark:text-blue-400/80')} />
+  return (
+    <Line
+      animateFromDirection={animateFromDirection}
+      animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80', animateFromDirection === 'right' && 'dark:text-neutral-400')}
+      className={cn(isCompleted(stage) && 'dark:text-blue-400/80', 'duration-initial', animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]')}
+    />
+  )
 }
