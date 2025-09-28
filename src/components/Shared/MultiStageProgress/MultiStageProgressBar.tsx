@@ -12,7 +12,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
   const sharedStageListClasses = '@container items-center justify-center gap-6 text-white/40 select-none'
 
   return (
-    <div className='@container/stages mx-[12.5%]'>
+    <div className='@container/stages mx-[12.5%]' id='multi-stage-list-parent'>
       {/* //* classes needed at build-time to dynamically construct them at runtime
       @[6rem]/stages:flex  (1 stage)
       @[12rem]/stages:flex (2 stages)
