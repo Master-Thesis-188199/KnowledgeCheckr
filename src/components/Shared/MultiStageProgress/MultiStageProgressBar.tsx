@@ -9,7 +9,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
   const { stages } = useMultiStageStore((state) => state)
 
   return (
-    <ol className={cn('mx-[12.5%] flex items-center justify-center gap-6 text-white/40 select-none', className)}>
+    <ol className={cn('@container mx-[12.5%] flex items-center justify-center gap-6 text-white/40 select-none', className)}>
       {stages.map((stage, i) => (
         <Fragment key={`Stage-${i}`}>
           <ProgressRing {...stage} />
@@ -20,8 +20,31 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
   )
 }
 
+/**
+ * This hooks is used to filter out stages that should not be displayed on smaller screens.
+ * The way it works, it always shows the first and last stage, and either the middle stage
+ * or the currently selected stage a stage in-between is selected.
+ * @returns Returns an object `{show: boolean, filtered: boolean}` that indicates whether a given stage should be shown or not.
+ */
+function useFilterStages_SmallScreens(stage: Stage['stage']) {
+  const { isFocussed, stages, stage: currentStage } = useMultiStageStore((state) => state)
+
+  const showConditions: boolean[] = [
+    stage === 1,
+    stage === stages.length,
+    isFocussed(stage),
+    //* Either display middle stage or the stage in-between that is currently displayed
+    stage === Math.round(stages.length / 2) && (currentStage === 1 || currentStage === stages.length),
+  ]
+
+  if (stages.length <= 3) return { show: true, filtered: false }
+
+  return { show: showConditions.some((cond) => cond === true), filtered: true }
+}
+
 function ProgressRing({ stage, title }: Stage) {
   const { isFocussed, setStage, isCompleted } = useMultiStageStore((state) => state)
+  const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
 
   return (
     <li
@@ -33,6 +56,7 @@ function ProgressRing({ stage, title }: Stage) {
         !isCompleted(stage) && !isFocussed(stage) && 'opacity-65',
         isCompleted(stage) && 'dark:ring-blue-80 dark:text-blue-400/80',
         isFocussed(stage) && 'dark:text-blue-400 dark:ring-blue-400',
+        !showOnSmallScreens && 'hidden @sm:flex',
       )}
       aria-label={`Stage ${stage}`}>
       {stage}
@@ -42,6 +66,7 @@ function ProgressRing({ stage, title }: Stage) {
 }
 
 function RingConnector({ stage }: Stage) {
+  const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
   const [animateFromDirection, setAnimation] = useState<'none' | 'left' | 'right'>('none')
   const prevShownStage = useRef<number | null>(null)
 
@@ -63,9 +88,15 @@ function RingConnector({ stage }: Stage) {
 
   return (
     <Line
+      // todo:  enable dashed for the remaining lines when not all lines are displayed, thus a small screen is used.
       animateFromDirection={animateFromDirection}
       animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80', animateFromDirection === 'right' && 'dark:text-neutral-400')}
-      className={cn(isCompleted(stage) && 'dark:text-blue-400/80', 'duration-initial', animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]')}
+      className={cn(
+        isCompleted(stage) && 'dark:text-blue-400/80',
+        'duration-initial',
+        animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]',
+        !showOnSmallScreens && 'hidden @sm:flex',
+      )}
     />
   )
 }
