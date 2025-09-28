@@ -11,11 +11,11 @@ type LineProps = {
   className?: string
   /** Color of the base (old) line; independent of parent text color */
   /** Change this value to retrigger the left→right wipe (e.g., step index or color name) */
-  animateOn?: string | number
+  animateStrokeColor?: string
   animateFromDirection?: 'left' | 'right' | 'none'
 }
 
-export default function Line({ dashed = false, dashSize = 4, dashSpacing = 5.5, className, animateFromDirection = 'none' }: LineProps) {
+export default function Line({ dashed = false, dashSize = 4, dashSpacing = 5.5, className, animateFromDirection = 'none', animateStrokeColor }: LineProps) {
   const maskId = useId()
 
   return (
@@ -46,7 +46,8 @@ export default function Line({ dashed = false, dashSize = 4, dashSpacing = 5.5, 
         y1='1'
         x2='100'
         y2='1'
-        stroke='currentColor'
+        stroke={'currentColor'}
+        className={animateStrokeColor}
         strokeWidth={2}
         strokeDasharray={`${dashSize} ${dashed ? dashSpacing : 0}`}
         strokeLinecap='round'
