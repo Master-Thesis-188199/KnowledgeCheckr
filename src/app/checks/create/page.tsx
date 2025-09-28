@@ -7,6 +7,7 @@ import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
+import { MultiStageBackButton, MultiStageNextButton } from '@/src/components/Shared/MultiStageProgress/MultiStageNavigationButtons'
 import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgress/MultiStageProgressBar'
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
@@ -114,6 +115,10 @@ export default async function CreateCheckPage() {
           <MutliStageRenderer stage={4}>
             <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
           </MutliStageRenderer>
+        </div>
+        <div className='mx-[1.5%] mt-4 flex justify-between'>
+          <MultiStageBackButton variant='outline' children='Back' />
+          <MultiStageNextButton variant='primary' children='Next' />
         </div>
         <MutliStageRenderer stage={4}>
           <form className='mt-4 flex justify-center gap-4'>
