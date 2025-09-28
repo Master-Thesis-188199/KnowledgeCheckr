@@ -27,7 +27,7 @@ export const createMultiStageStore = ({ ...initState }: MultiStageState | undefi
       ...defaultState,
       ...initState,
       nextStage: () => set((prev) => ({ stage: prev.stage < prev.stages.length ? prev.stage + 1 : prev.stage })),
-      previousStage: () => set((prev) => ({ stage: prev.stage > 1 ? prev.stage + 1 : prev.stage })),
+      previousStage: () => set((prev) => ({ stage: prev.stage > 1 ? prev.stage - 1 : prev.stage })),
       isCompleted: (stage: Stage['stage']) => get().stage > stage && stage >= 1,
       isFocussed: (stage: Stage['stage']) => get().stage === stage,
       setStage: (stage: Stage['stage']) => set(() => ({ stage })),
