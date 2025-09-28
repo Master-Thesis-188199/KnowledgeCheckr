@@ -22,6 +22,9 @@ describe('/checks/create - Create Page ', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
     cy.visit('/checks/create')
 
+    //* Switch to last stage to save check
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
+
     cy.intercept('POST', `${baseUrl}/checks/create`).as('intercept-create-response')
     cy.get("[aria-label='save created knowledge check']").should('exist').click({ force: true })
 

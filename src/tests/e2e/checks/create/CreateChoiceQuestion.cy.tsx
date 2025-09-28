@@ -5,6 +5,9 @@ describe('Check: Create Choice Question -', () => {
     cy.loginTestUser()
     cy.visit('/checks/create')
 
+    //* Switch to questions-stage
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()
+
     cy.get(".question-section * [data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
     cy.get(".question-section * [data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
   })
