@@ -7,6 +7,9 @@ import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
+import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgress/MultiStageProgressBar'
+import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
+import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
@@ -84,20 +87,44 @@ export default async function CreateCheckPage() {
 
   return (
     <CreateCheckStoreProvider>
-      <PageHeading title='Create KnowledgeCheck' />
-      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
-        <GeneralSection />
-        <QuestionsSection />
-        <SettingsSection />
-        <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
-      </div>
-      <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton />
-        <Button variant='primary' className='' formAction={createDummyCheckAction}>
-          Create Dummy Check
-        </Button>
-      </form>
-      <div />
+      <MultiStageStoreProvider
+        initialStoreProps={{
+          stages: [
+            { stage: 1, title: 'Basic Information' },
+            { stage: 2, title: 'Questions' },
+            { stage: 3, title: 'Settings' },
+            { stage: 4, title: 'Conclusion' },
+          ],
+        }}>
+        <PageHeading title='Create KnowledgeCheck' />
+        <MultiStageProgressBar className='-mt-2 mb-12' />
+
+        <div className='mx-[1.5%] grid grid-cols-1 gap-8'>
+          <MutliStageRenderer stage={1}>
+            <GeneralSection />
+          </MutliStageRenderer>
+          <MutliStageRenderer stage={2}>
+            <QuestionsSection />
+          </MutliStageRenderer>
+
+          <MutliStageRenderer stage={3}>
+            <SettingsSection />
+          </MutliStageRenderer>
+
+          <MutliStageRenderer stage={4}>
+            <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
+          </MutliStageRenderer>
+        </div>
+        <MutliStageRenderer stage={4}>
+          <form className='mt-4 flex justify-center gap-4'>
+            <SaveCreateCheckButton />
+            <Button variant='primary' className='' formAction={createDummyCheckAction}>
+              Create Dummy Check
+            </Button>
+          </form>
+        </MutliStageRenderer>
+        <div />
+      </MultiStageStoreProvider>
     </CreateCheckStoreProvider>
   )
 }
