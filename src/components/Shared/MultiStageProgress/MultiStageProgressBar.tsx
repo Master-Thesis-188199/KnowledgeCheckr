@@ -81,6 +81,7 @@ function ProgressRing({ stage, title }: Stage) {
   return (
     <li
       onClick={() => setStage(stage)}
+      data-active={isFocussed(stage)}
       className={cn(
         'flex size-5 min-w-5 items-center justify-center rounded-full text-sm text-neutral-200 ring-[1.5px] dark:ring-neutral-300',
         'hover:cursor-pointer',
