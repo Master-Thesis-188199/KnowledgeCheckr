@@ -65,19 +65,13 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
  * @returns Returns an object `{show: boolean, filtered: boolean}` that indicates whether a given stage should be shown or not.
  */
 function useFilterStages_SmallScreens(stage: Stage['stage']) {
-  const { isFocussed, stages, stage: currentStage } = useMultiStageStore((state) => state)
-
-  const showConditions: boolean[] = [
-    stage === 1,
-    stage === stages.length,
-    isFocussed(stage),
-    //* Either display middle stage or the stage in-between that is currently displayed
-    stage === Math.round(stages.length / 2) && (currentStage === 1 || currentStage === stages.length),
-  ]
+  const { stages, stage: currentStage } = useMultiStageStore((state) => state)
 
   if (stages.length <= 3) return { show: true, filtered: false }
 
-  return { show: showConditions.some((cond) => cond === true), filtered: true }
+  const condensedStages = [1, currentStage > 1 && currentStage < stages.length ? currentStage : Math.round(stages.length / 2), stages.length]
+
+  return { show: condensedStages.some((s) => s === stage), filtered: true }
 }
 
 function ProgressRing({ stage, title }: Stage) {
