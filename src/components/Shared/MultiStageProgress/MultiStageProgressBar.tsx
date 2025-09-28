@@ -1,12 +1,12 @@
 'use client'
 
 import Line from '@/src/components/Shared/Line'
-import { Stage, useMultiStageContext } from '@/src/components/Shared/MultiStageProgress/MultiStageProvider'
+import { Stage, useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
 import { Fragment, useEffect, useRef, useState } from 'react'
 
 export function MultiStageProgressBar({ className }: { className?: string }) {
-  const { stages } = useMultiStageContext()
+  const { stages } = useMultiStageStore((state) => state)
 
   return (
     <ol className={cn('mx-[12.5%] flex items-center justify-center gap-6 text-white/40 select-none', className)}>
@@ -21,7 +21,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
 }
 
 function ProgressRing({ stage, title }: Stage) {
-  const { isFocussed, setStage, isCompleted } = useMultiStageContext()
+  const { isFocussed, setStage, isCompleted } = useMultiStageStore((state) => state)
 
   return (
     <li
@@ -45,7 +45,7 @@ function RingConnector({ stage }: Stage) {
   const [animateFromDirection, setAnimation] = useState<'none' | 'left' | 'right'>('none')
   const prevShownStage = useRef<number | null>(null)
 
-  const { stages, isCompleted, isFocussed, stage: stageState } = useMultiStageContext()
+  const { stages, isCompleted, isFocussed, stage: stageState } = useMultiStageStore((state) => state)
 
   useEffect(() => {
     if (prevShownStage.current !== null && prevShownStage?.current < stageState) {
