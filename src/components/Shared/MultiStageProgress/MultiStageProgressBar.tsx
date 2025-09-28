@@ -6,17 +6,55 @@ import { cn } from '@/src/lib/Shared/utils'
 import { Fragment, useEffect, useRef, useState } from 'react'
 
 export function MultiStageProgressBar({ className }: { className?: string }) {
-  const { stages } = useMultiStageStore((state) => state)
+  const { stages, stage } = useMultiStageStore((state) => state)
+  const condensedStages = [1, stage > 1 && stage < stages.length ? stage : Math.round(stages.length / 2), stages.length]
+
+  const sharedStageListClasses = '@container items-center justify-center gap-6 text-white/40 select-none'
 
   return (
-    <ol className={cn('@container mx-[12.5%] flex items-center justify-center gap-6 text-white/40 select-none', className)}>
-      {stages.map((stage, i) => (
-        <Fragment key={`Stage-${i}`}>
-          <ProgressRing {...stage} />
-          <RingConnector {...stage} />
-        </Fragment>
-      ))}
-    </ol>
+    <div className='@container/stages mx-[12.5%]'>
+      {/* //* classes needed at build-time to dynamically construct them at runtime
+      @[6rem]/stages:flex  (1 stage)
+      @[12rem]/stages:flex (2 stages)
+      @[18rem]/stages:flex (3 stages)
+      @[24rem]/stages:flex (4 stages)
+      @[30rem]/stages:flex (5 stages)
+      @[36rem]/stages:flex (6 stages)
+      @[42rem]/stages:flex (7 stages)
+      @[48rem]/stages:flex (8 stages)
+      @[52rem]/stages:flex (9 stages)
+      */}
+      <ol className={cn(sharedStageListClasses, `hidden @[${stages.length * 6}rem]/stages:flex`, className)}>
+        {stages.map((stage, i) => (
+          <Fragment key={`Stage-${i}`}>
+            <ProgressRing {...stage} />
+            <RingConnector {...stage} />
+          </Fragment>
+        ))}
+      </ol>
+
+      {/* //* classes needed at build-time to dynamically construct them at runtime
+      @[6rem]/stages:hidden  (1 stage)
+      @[12rem]/stages:hidden (2 stages)
+      @[18rem]/stages:hidden (3 stages)
+      @[24rem]/stages:hidden (4 stages)
+      @[30rem]/stages:hidden (5 stages)
+      @[36rem]/stages:hidden (6 stages)
+      @[42rem]/stages:hidden (7 stages)
+      @[48rem]/stages:hidden (8 stages)
+      @[52rem]/stages:hidden (9 stages)
+      */}
+      <ol id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden `, className)}>
+        {stages
+          .filter((s) => condensedStages.includes(s.stage))
+          .map((stage, i) => (
+            <Fragment key={`Stage-${i}`}>
+              <ProgressRing {...stage} />
+              <RingConnector {...stage} dashed />
+            </Fragment>
+          ))}
+      </ol>
+    </div>
   )
 }
 
@@ -65,7 +103,7 @@ function ProgressRing({ stage, title }: Stage) {
   )
 }
 
-function RingConnector({ stage }: Stage) {
+function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
   const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
   const [animateFromDirection, setAnimation] = useState<'none' | 'left' | 'right'>('none')
   const prevShownStage = useRef<number | null>(null)
@@ -88,7 +126,7 @@ function RingConnector({ stage }: Stage) {
 
   return (
     <Line
-      // todo:  enable dashed for the remaining lines when not all lines are displayed, thus a small screen is used.
+      dashed={dashed}
       animateFromDirection={animateFromDirection}
       animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80', animateFromDirection === 'right' && 'dark:text-neutral-400')}
       className={cn(
