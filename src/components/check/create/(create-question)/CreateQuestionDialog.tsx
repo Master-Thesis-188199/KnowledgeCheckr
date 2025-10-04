@@ -1,4 +1,4 @@
-import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/components/check/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import FieldError from '@/src/components/Shared/form/FormFieldError'
@@ -15,7 +15,7 @@ import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn }
 import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
-  const { addQuestion, questionCategories } = useCreateCheckStore((state) => state)
+  const { addQuestion, questionCategories } = useCheckStore((state) => state)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
     const baseValues: Partial<Pick<Question, 'category' | 'points' | 'question'>> & Pick<Question, 'id'> = {

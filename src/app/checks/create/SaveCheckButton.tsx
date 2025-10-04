@@ -1,14 +1,14 @@
 'use client'
 
 import { saveAction } from '@/src/app/checks/create/SaveAction'
-import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
 export function SaveCreateCheckButton() {
-  const store = useCreateCheckStore((store) => store)
+  const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const check: KnowledgeCheck = {
     id: store.id,

@@ -6,20 +6,20 @@ import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { createStore } from 'zustand/vanilla'
 
-export type CreateCheckState = KnowledgeCheck & {
+export type CheckState = KnowledgeCheck & {
   unsavedChanges?: boolean
 }
 
-export type CreateCheckActions = {
+export type CheckActions = {
   setName: (name: string) => void
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
 }
 
-export type CreateCheckStore = CreateCheckState & CreateCheckActions
+export type CheckStore = CheckState & CheckActions
 
-const defaultInitState: CreateCheckState = {
+const defaultInitState: CheckState = {
   id: uuid(),
   name: '',
   questions: [],
@@ -40,11 +40,11 @@ const defaultInitState: CreateCheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initialState = defaultInitState, options) => {
-  return createStore<CreateCheckStore>()((set) => {
-    const { modify: modifyState } = useCacheStoreUpdate(set, { options, debounceTime: 750, cache_key: 'create-check-store' })
+export const createCheckStore: CreateStoreType<CheckState> = (initialState = defaultInitState, options) => {
+  return createStore<CheckStore>()((set) => {
+    const { modify: modifyState } = useCacheStoreUpdate(set, { options, debounceTime: 750, cache_key: 'check-store' })
 
-    const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
+    const removeQuestion: CheckActions['removeQuestion'] = (questionId) =>
       modifyState((prev) => {
         const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
 

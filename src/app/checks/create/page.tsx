@@ -1,5 +1,5 @@
 import QuestionsSection from '@/app/checks/create/QuestionsSection'
-import { CreateCheckStoreProvider } from '@/components/check/create/CreateCheckProvider'
+import { CheckStoreProvider } from '@/components/check/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import PageHeading from '@/components/Shared/PageHeading'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
@@ -82,8 +82,34 @@ export default async function CreateCheckPage() {
     redirect('/checks')
   }
 
+  /*
+   ...  function ({}: {mode: 'create' | 'edit' })
+  ...
+
   return (
-    <CreateCheckStoreProvider>
+    <CheckStoreProvider>
+      <PageHeading title={`${mode === 'create' ? "Create KnowledgeCheck" : check.title} `}/>
+
+      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
+        <GeneralSection />
+        <QuestionsSection />
+        <SettingsSection />
+        <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
+      </div>
+      <form className='mt-4 flex justify-center gap-4'>
+        <SaveCreateCheckButton />
+        <Button variant='primary' className='' formAction={createDummyCheckAction}>
+          Create Dummy Check
+        </Button>
+      </form>
+      <div />
+    </CheckStoreProvider>
+  )
+
+*/
+
+  return (
+    <CheckStoreProvider>
       <PageHeading title='Create KnowledgeCheck' />
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />
@@ -98,6 +124,6 @@ export default async function CreateCheckPage() {
         </Button>
       </form>
       <div />
-    </CreateCheckStoreProvider>
+    </CheckStoreProvider>
   )
 }

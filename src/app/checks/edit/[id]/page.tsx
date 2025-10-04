@@ -3,7 +3,7 @@ import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import QuestionsSection from '@/src/app/checks/create/QuestionsSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
-import { CreateCheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
+import { CheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -20,7 +20,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <CreateCheckStoreProvider initialStoreProps={check} options={{ disableCache: true }}>
+    <CheckStoreProvider initialStoreProps={check} options={{ disableCache: true }}>
       <PageHeading title={check.name} />
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />
@@ -32,6 +32,6 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
         <SaveCreateCheckButton />
       </form>
       <div />
-    </CreateCheckStoreProvider>
+    </CheckStoreProvider>
   )
 }

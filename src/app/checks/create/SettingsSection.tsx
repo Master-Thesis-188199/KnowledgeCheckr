@@ -1,7 +1,7 @@
 'use client'
 
 import { InputGroup } from '@/src/app/checks/create/GeneralSection'
-import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
@@ -17,7 +17,7 @@ const tabs = [
   { name: 'Sharing', icon: UsersIcon },
 ]
 export default function SettingsSection() {
-  const {} = useCreateCheckStore((state) => state)
+  const {} = useCheckStore((state) => state)
 
   return (
     <Card className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>

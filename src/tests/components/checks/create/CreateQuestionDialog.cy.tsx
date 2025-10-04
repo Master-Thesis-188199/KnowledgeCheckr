@@ -1,5 +1,5 @@
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
-import { CreateCheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
+import { CheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
 import RootProviders from '@/src/components/root/RootProviders'
 
 describe('<CreateQuestionDialog />', () => {
@@ -7,11 +7,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <CreateCheckStoreProvider>
+        <CheckStoreProvider>
           <CreateQuestionDialog>
             <div className='trigger'>Trigger</div>
           </CreateQuestionDialog>
-        </CreateCheckStoreProvider>
+        </CheckStoreProvider>
       </RootProviders>,
     )
 
@@ -27,11 +27,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <CreateCheckStoreProvider>
+        <CheckStoreProvider>
           <CreateQuestionDialog>
             <div className='trigger'>Trigger</div>
           </CreateQuestionDialog>
-        </CreateCheckStoreProvider>
+        </CheckStoreProvider>
       </RootProviders>,
     )
 
@@ -53,11 +53,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <CreateCheckStoreProvider>
+        <CheckStoreProvider>
           <CreateQuestionDialog>
             <div className='trigger'>Trigger</div>
           </CreateQuestionDialog>
-        </CreateCheckStoreProvider>
+        </CheckStoreProvider>
       </RootProviders>,
     )
 
@@ -75,11 +75,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <CreateCheckStoreProvider>
+        <CheckStoreProvider>
           <CreateQuestionDialog>
             <div className='trigger'>Trigger</div>
           </CreateQuestionDialog>
-        </CreateCheckStoreProvider>
+        </CheckStoreProvider>
       </RootProviders>,
     )
 
