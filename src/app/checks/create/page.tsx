@@ -1,11 +1,11 @@
 import QuestionsSection from '@/app/checks/create/QuestionsSection'
 import { CreateCheckStoreProvider } from '@/components/check/create/CreateCheckProvider'
-import Card from '@/components/Shared/Card'
 import PageHeading from '@/components/Shared/PageHeading'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
+import { OverviewSection } from '@/src/components/check/create/(sections)/OverviewSection'
 import { Button } from '@/src/components/shadcn/button'
 import { MultiStageBackButton, MultiStageNextButton } from '@/src/components/Shared/MultiStageProgress/MultiStageNavigationButtons'
 import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgress/MultiStageProgressBar'
@@ -113,7 +113,7 @@ export default async function CreateCheckPage() {
           </MutliStageRenderer>
 
           <MutliStageRenderer stage={4}>
-            <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
+            <OverviewSection />
           </MutliStageRenderer>
         </div>
         <div className='mx-[1.5%] mt-4 flex justify-between'>
