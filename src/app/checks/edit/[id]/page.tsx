@@ -1,7 +1,7 @@
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import GeneralSection from '@/src/app/checks/create/GeneralSection'
 import QuestionsSection from '@/src/app/checks/create/QuestionsSection'
-import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
+import { SaveCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { CheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
@@ -29,7 +29,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
         <Card className='h-60 break-inside-avoid' children={<></>} disableHoverStyles></Card>
       </div>
       <form className='mt-4 flex justify-center gap-2'>
-        <SaveCreateCheckButton />
+        <SaveCheckButton />
       </form>
       <div />
     </CheckStoreProvider>

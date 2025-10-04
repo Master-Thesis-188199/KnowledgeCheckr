@@ -7,7 +7,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
-export function SaveCreateCheckButton() {
+export function SaveCheckButton() {
   const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const check: KnowledgeCheck = {
@@ -24,7 +24,7 @@ export function SaveCreateCheckButton() {
 
   return (
     <Button
-      aria-label='save created knowledge check'
+      aria-label='save knowledge check'
       type='submit'
       formAction={() =>
         saveAction({ check }).catch((e) => {

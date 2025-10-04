@@ -4,7 +4,7 @@ import Card from '@/components/Shared/Card'
 import PageHeading from '@/components/Shared/PageHeading'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import GeneralSection from '@/src/app/checks/create/GeneralSection'
-import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
+import { SaveCheckButton } from '@/src/app/checks/create/SaveCheckButton'
 import SettingsSection from '@/src/app/checks/create/SettingsSection'
 import { Button } from '@/src/components/shadcn/button'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -118,7 +118,7 @@ export default async function CreateCheckPage() {
         <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
       </div>
       <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton />
+        <SaveCheckButton />
         <Button variant='primary' className='' formAction={createDummyCheckAction}>
           Create Dummy Check
         </Button>
