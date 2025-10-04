@@ -17,7 +17,7 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
 
 export function ConfigureKnowledgeCheck({ mode, initialStoreProps, options }: CreateProps | EditProps = { mode: 'create' }) {
   return (
-    <CheckStoreProvider>
+    <CheckStoreProvider initialStoreProps={initialStoreProps} options={options}>
       <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps.name}`} />
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
         <GeneralSection />
