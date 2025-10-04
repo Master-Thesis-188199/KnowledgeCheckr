@@ -29,6 +29,13 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
       formAction={() =>
         saveAction({ check }).catch((e) => {
           if (isRedirectError(e)) {
+            const hasCache = !!sessionStorage.getItem(cacheKey ?? 'check-store')
+
+            if (!hasCache) {
+              console.debug(`[SaveCheckButton]: No cached data was found for cacheKey: ${cacheKey}.`)
+              return
+            }
+
             sessionStorage.removeItem(cacheKey ?? 'check-store')
             clearNavigationAbort()
           }
