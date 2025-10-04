@@ -11,9 +11,9 @@ export function MultiStageNextButton({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
-  const { nextStage } = useMultiStageStore((store) => store)
+  const { nextStage, stage, stages } = useMultiStageStore((store) => store)
 
-  return <Button {...props} onClick={() => nextStage()} />
+  return <Button disabled={stage === stages.length} {...props} onClick={() => nextStage()} />
 }
 
 export function MultiStageBackButton({
@@ -22,7 +22,7 @@ export function MultiStageBackButton({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
-  const { previousStage } = useMultiStageStore((store) => store)
+  const { previousStage, stage } = useMultiStageStore((store) => store)
 
-  return <Button {...props} onClick={() => previousStage()} />
+  return <Button {...props} disabled={stage === 1} onClick={() => previousStage()} />
 }
