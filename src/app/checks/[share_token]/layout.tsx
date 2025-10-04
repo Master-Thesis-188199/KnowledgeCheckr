@@ -13,6 +13,8 @@ export default async function ExaminationLayout({ children, params }: { children
   }
 
   return (
-    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), currentQuestionIndex: 1 }}>{children}</ExaminationStoreProvider>
+    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), currentQuestionIndex: 1 % check.questions.length }}>
+      {children}
+    </ExaminationStoreProvider>
   )
 }
