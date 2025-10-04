@@ -5,6 +5,8 @@
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --breakpoint-3xl: 120rem;
 }
 
 label:has(+ input:required):after {
