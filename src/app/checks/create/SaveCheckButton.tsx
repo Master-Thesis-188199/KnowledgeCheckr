@@ -7,7 +7,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
-export function SaveCheckButton() {
+export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
   const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const check: KnowledgeCheck = {
@@ -29,7 +29,7 @@ export function SaveCheckButton() {
       formAction={() =>
         saveAction({ check }).catch((e) => {
           if (isRedirectError(e)) {
-            sessionStorage.removeItem('create-check-store')
+            sessionStorage.removeItem(cacheKey ?? 'check-store')
             clearNavigationAbort()
           }
         })
