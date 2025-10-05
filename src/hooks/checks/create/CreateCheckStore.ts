@@ -39,7 +39,7 @@ const defaultInitState: CheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = (initialState = defaultInitState, options) =>
+export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initialState = defaultInitState, options }) =>
   createCacheStore<CheckStore>({
     caching: true,
     options: { cacheKey: options?.cacheKey ?? 'check-store' },

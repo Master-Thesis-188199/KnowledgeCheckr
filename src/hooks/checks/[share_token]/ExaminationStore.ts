@@ -28,7 +28,7 @@ const defaultInitState: ExaminationState = {
   isLastQuestion: false,
 }
 
-export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>> = (initialState = defaultInitState, options) => {
+export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>> = ({ initialState = defaultInitState, options }) => {
   return createStore<ExaminationStore>()((set) => {
     const { modify: modifyState } = useCacheStoreUpdate(set, { cacheKey: options?.cacheKey ?? 'examination-store' })
 

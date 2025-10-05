@@ -35,7 +35,7 @@ export default function useCacheCreateStore<Store extends object>(
       props = initialStoreProps
     }
 
-    storeRef.current = createStoreFunc(props, options)
+    storeRef.current = createStoreFunc({ initialState: props, options })
   }
 
   return storeRef.current
