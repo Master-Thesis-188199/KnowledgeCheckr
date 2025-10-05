@@ -1,11 +1,11 @@
 'use client'
 
-import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { useEffect } from 'react'
 
 export default function UnsavedCheckChangesAlert() {
-  const { unsavedChanges } = useCreateCheckStore((state) => state)
+  const { unsavedChanges } = useCheckStore((state) => state)
   const { enableNavigationAbort } = useNavigationAbort()
 
   useEffect(() => {

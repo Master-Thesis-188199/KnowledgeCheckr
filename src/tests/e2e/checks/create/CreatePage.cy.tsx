@@ -26,7 +26,7 @@ describe('/checks/create - Create Page ', () => {
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
 
     cy.intercept('POST', `${baseUrl}/checks/create`).as('intercept-create-response')
-    cy.get("[aria-label='save created knowledge check']").should('exist').click({ force: true })
+    cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
 
     cy.wait('@intercept-create-response').then((interception) => {
       const request = interception.request

@@ -1,13 +1,13 @@
 'use client'
 
-import { useCreateCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/components/check/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
 import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 export default function QuestionsSection() {
-  const { questions, removeQuestion } = useCreateCheckStore((state) => state)
+  const { questions, removeQuestion } = useCheckStore((state) => state)
 
   return (
     <Card disableHoverStyles className='question-section break-inside-avoid'>
