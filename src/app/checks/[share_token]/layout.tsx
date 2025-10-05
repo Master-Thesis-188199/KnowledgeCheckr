@@ -12,7 +12,11 @@ export default async function ExaminationLayout({ children, params }: { children
     notFound()
   }
 
+  // todo prevent practice and examination of knowledgeChecks with no questions.
+
   return (
-    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), currentQuestionIndex: 1 }}>{children}</ExaminationStoreProvider>
+    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), currentQuestionIndex: 1 % check.questions.length }}>
+      {children}
+    </ExaminationStoreProvider>
   )
 }

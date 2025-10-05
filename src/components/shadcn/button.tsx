@@ -5,18 +5,19 @@ import * as React from 'react'
 import { cn } from '@/lib/Shared/utils'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive enabled:hover:cursor-pointer disabled:hover:cursor-not-allowed",
   {
     variants: {
       variant: {
         primary:
-          'bg-neutral-500 dark:bg-black hover:ring-[1.5px] ring-neutral-500 dark:ring-neutral-600 text-white dark:text-neutral-200 shadow-xs hover:bg-neutral-500/80 dark:hover:bg-neutral-900  active:!bg-neutral-600/95 dark:active:!bg-neutral-700 active:scale-[101%] dark:!active:bg-primary/70',
+          'bg-neutral-500 dark:bg-black enabled:hover:ring-[1.5px] ring-neutral-500 dark:ring-neutral-600 text-white dark:text-neutral-200 shadow-xs enabled:hover:bg-neutral-500/80 dark:enabled:hover:bg-neutral-900  enabled:active:!bg-neutral-600/95 dark:enabled:active:!bg-neutral-700 enabled:active:scale-[101%] dark:!enabled:active:bg-primary/70',
         destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/80 active:!bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
-        outline: 'bg-transparent ring-1 ring-foreground/50 dark:ring-foreground/25 dark:hover:bg-neutral-700 text-secondary-foreground shadow-xs hover:bg-secondary/80 dark:text-neutral-200',
-        secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-        ghost: 'hover:bg-accent active:ring-2 active:ring-accent hover:text-accent-foreground dark:hover:bg-accent/50 dark:active:bg-accent/90',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'bg-destructive text-white shadow-xs enabled:hover:bg-destructive/80 enabled:active:!bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+        outline:
+          'bg-transparent ring-1 ring-foreground/50 dark:ring-foreground/25 dark:enabled:hover:bg-neutral-700 text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80 dark:text-neutral-200',
+        secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
+        ghost: 'enabled:hover:bg-accent enabled:active:ring-2 enabled:active:ring-accent enabled:hover:text-accent-foreground dark:enabled:hover:bg-accent/50 dark:enabled:active:bg-accent/90',
+        link: 'text-primary underline-offset-4 enabled:hover:underline',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

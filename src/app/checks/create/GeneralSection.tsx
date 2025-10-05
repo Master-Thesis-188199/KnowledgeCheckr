@@ -1,6 +1,6 @@
 'use client'
 
-import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
 import { Textarea } from '@headlessui/react'
@@ -8,7 +8,7 @@ import { ComponentType, InputHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export default function GeneralSection() {
-  const { setName, setDescription, name, description, closeDate } = useCreateCheckStore((state) => state)
+  const { setName, setDescription, name, description, closeDate } = useCheckStore((state) => state)
 
   return (
     <Card className='@container flex flex-col gap-8 p-3' disableHoverStyles>

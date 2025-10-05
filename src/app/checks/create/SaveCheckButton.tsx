@@ -1,14 +1,14 @@
 'use client'
 
 import { saveAction } from '@/src/app/checks/create/SaveAction'
-import { useCreateCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
-export function SaveCreateCheckButton() {
-  const store = useCreateCheckStore((store) => store)
+export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
+  const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const check: KnowledgeCheck = {
     id: store.id,
@@ -24,12 +24,20 @@ export function SaveCreateCheckButton() {
 
   return (
     <Button
-      aria-label='save created knowledge check'
+      aria-label='save knowledge check'
       type='submit'
       formAction={() =>
         saveAction({ check }).catch((e) => {
           if (isRedirectError(e)) {
-            sessionStorage.removeItem('create-check-store')
+            const key = cacheKey ?? 'check-store'
+            const hasCache = !!sessionStorage.getItem(key)
+
+            if (hasCache) {
+              sessionStorage.removeItem(key)
+            } else {
+              console.debug(`[SaveCheckButton]: No cached data was found for cacheKey: ${key}.`)
+            }
+
             clearNavigationAbort()
           }
         })

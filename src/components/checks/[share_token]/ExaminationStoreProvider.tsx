@@ -17,7 +17,7 @@ export interface ExaminationStoreProviderProps {
 
 export function ExaminationStoreProvider({ children, initialStoreProps, options }: ExaminationStoreProviderProps) {
   //todo consider switching to localStorage to ensure that users do not loose their progress e.g. when their browser / system crashes
-  const props = useCacheCreateStore<ExaminationState>('examination-store', createExaminationStore, initialStoreProps, {
+  const props = useCacheCreateStore<ExaminationState>(options?.cacheKey ?? 'examination-store', createExaminationStore, initialStoreProps, {
     expiresAfter: 10 * 60 * 1000,
     discardCache: (cache) => cache?.knowledgeCheck.id !== initialStoreProps?.knowledgeCheck.id,
     ...options,
