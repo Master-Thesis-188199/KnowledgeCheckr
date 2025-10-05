@@ -1,6 +1,6 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
-import { createZustandStore as createCacheStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
@@ -40,10 +40,10 @@ const defaultInitState: CheckState = {
 }
 
 export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initialState = defaultInitState, options }) =>
-  createCacheStore<CheckStore>({
+  createZustandStore({
     caching: true,
-    options: { cacheKey: options?.cacheKey ?? 'check-store' },
-    initializer: (set, get) => {
+    options,
+    initializer: (set) => {
       const removeQuestion: CheckActions['removeQuestion'] = (questionId) =>
         set((prev) => {
           const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
