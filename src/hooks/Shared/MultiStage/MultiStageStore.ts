@@ -21,7 +21,7 @@ const defaultState: MultiStageState = {
   stages: [],
 }
 
-export const createMultiStageStore = ({ ...initState }: Partial<MultiStageState> | undefined) => {
+export const createMultiStageStore = ({ ...initState }: Partial<MultiStageState> = {}) => {
   return createStore<MultiStageStore>()((set, get) => {
     return {
       ...defaultState,
