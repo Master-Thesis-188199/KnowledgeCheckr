@@ -1,7 +1,6 @@
 'use client'
 
 import { createMultiStageStore, MultiStageState, type MultiStageStore } from '@/hooks/Shared/MultiStage/MultiStageStore'
-import { Any } from '@/types'
 import { createContext, type ReactNode, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 
@@ -24,7 +23,7 @@ export function MultiStageStoreProvider({ children, initialStoreProps }: MultiSt
   const storeRef = useRef<MultiStageStoreApi>(null)
 
   if (!storeRef.current) {
-    storeRef.current = createMultiStageStore(initialStoreProps as Any)
+    storeRef.current = createMultiStageStore(initialStoreProps)
   }
 
   return <MultiStageStoreContext.Provider value={storeRef.current}>{children}</MultiStageStoreContext.Provider>
