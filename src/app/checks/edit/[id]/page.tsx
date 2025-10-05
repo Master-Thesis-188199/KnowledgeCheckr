@@ -13,5 +13,5 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
     notFound()
   }
 
-  return <ConfigureKnowledgeCheck mode='edit' initialStoreProps={check} options={{ disableCache: true }} />
+  return <ConfigureKnowledgeCheck mode='edit' initialStoreProps={check} options={{ cacheKey: 'check-exam-store', disableCache: true }} />
 }

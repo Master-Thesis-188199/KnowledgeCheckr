@@ -12,7 +12,7 @@ export type ZustandStore<Store extends object> = (props: { initialState?: Omit<S
 /**
  * Is used to add caching to the respective `ZustandeStore<T>` type, which basically adds the `CachingOptions` as the second property to the createStore function.
  */
-export type WithCaching<TStore extends (initial: Any) => Any, O = StoreCachingOptions> = TStore extends (initial: infer S) => infer R ? (prop: S & { options?: O }) => R : never
+export type WithCaching<TStore extends (initial: Any) => Any, O = StoreCachingOptions> = TStore extends (initial: infer S) => infer R ? (prop: S & { options: O }) => R : never
 
 type FunctionKeys<T> = {
   [K in keyof T]-?: T[K] extends (...args: Any) => Any ? K : never

@@ -16,7 +16,7 @@ type StoreInitializer<T> = (set: SetFn<T>, get: GetFn<T>) => T
 
 type CreateStoreProps_WithCache<T> = {
   caching: true
-  options: Required<Pick<StoreCachingOptions, 'cacheKey'>> & { debounceTime?: number }
+  options: StoreCachingOptions
   /**
    * Used to initialize the respective store
    * @param set Modifies the state of the store, while also caching the changes when `caching` is set to true

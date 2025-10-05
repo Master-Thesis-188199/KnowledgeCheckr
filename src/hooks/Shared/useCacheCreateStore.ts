@@ -13,12 +13,17 @@ export type useCacheCreateStoreOptions<T> = StoreCachingOptions & {
  * @param createStoreFunc The function which initializes the store
  * @param initialStoreProps The initial properties that are being used when no data is cached
  */
-export default function useCacheCreateStore<Store extends object>(
-  session_key: string,
-  createStoreFunc: WithCaching<ZustandStore<Store>>,
-  initialStoreProps?: StoreState_fromStore<Store>,
-  options?: useCacheCreateStoreOptions<StoreState_fromStore<Store>>,
-): ReturnType<typeof createStoreFunc> {
+export default function useCacheCreateStore<Store extends object>({
+  session_key,
+  createStoreFunc,
+  initialStoreProps,
+  options,
+}: {
+  session_key: string
+  createStoreFunc: WithCaching<ZustandStore<Store>>
+  initialStoreProps?: StoreState_fromStore<Store>
+  options: useCacheCreateStoreOptions<StoreState_fromStore<Store>>
+}): ReturnType<typeof createStoreFunc> {
   const { getStoredValue } = useSessionStorageContext()
   const storeRef = useRef<ReturnType<typeof createStoreFunc>>(null)
 

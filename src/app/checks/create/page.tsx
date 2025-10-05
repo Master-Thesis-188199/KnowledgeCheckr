@@ -75,5 +75,5 @@ export default async function CreateCheckPage() {
     redirect('/checks')
   }
 
-  return <ConfigureKnowledgeCheck mode='create' />
+  return <ConfigureKnowledgeCheck mode='create' options={{ cacheKey: 'check-store' }} />
 }
