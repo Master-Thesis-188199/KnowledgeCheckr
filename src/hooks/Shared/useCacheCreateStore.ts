@@ -1,8 +1,8 @@
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { CreateStoreOptions, CreateStoreType } from '@/types/Shared/CreateStoreType'
+import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import { useRef } from 'react'
 
-export type useCacheCreateStoreOptions<T> = CreateStoreOptions & {
+export type useCacheCreateStoreOptions<T> = StoreCachingOptions & {
   expiresAfter?: number
   discardCache?: (cached: T | null) => boolean
 }
@@ -13,17 +13,17 @@ export type useCacheCreateStoreOptions<T> = CreateStoreOptions & {
  * @param createStoreFunc The function which initializes the store
  * @param initialStoreProps The initial properties that are being used when no data is cached
  */
-export default function useCacheCreateStore<StoreState extends object>(
+export default function useCacheCreateStore<Store extends object>(
   session_key: string,
-  createStoreFunc: CreateStoreType<StoreState>,
-  initialStoreProps?: StoreState,
-  options?: useCacheCreateStoreOptions<StoreState>,
+  createStoreFunc: WithCaching<ZustandStore<Store>>,
+  initialStoreProps?: StoreState_fromStore<Store>,
+  options?: useCacheCreateStoreOptions<StoreState_fromStore<Store>>,
 ): ReturnType<typeof createStoreFunc> {
   const { getStoredValue } = useSessionStorageContext()
   const storeRef = useRef<ReturnType<typeof createStoreFunc>>(null)
 
   if (!storeRef.current) {
-    const cached = getStoredValue<StoreState>(session_key, { expiresAfter: options?.expiresAfter })
+    const cached = getStoredValue<StoreState_fromStore<Store>>(session_key, { expiresAfter: options?.expiresAfter })
     let props = cached ?? initialStoreProps
 
     if (options?.discardCache && options.discardCache(cached)) {
