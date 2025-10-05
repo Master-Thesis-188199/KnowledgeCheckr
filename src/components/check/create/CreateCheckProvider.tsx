@@ -21,6 +21,7 @@ export function CheckStoreProvider({ children, initialStoreProps, options }: Che
     //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
     //? drafted checks may not be discarded when they were either not yet cached or when no initialProps were provided (thus indicating that a new check is being created)
     discardCache: (cache) => cache?.id !== undefined && initialStoreProps?.id !== undefined && cache?.id !== initialStoreProps?.id,
+    cacheKey: 'check-store',
     ...options,
   })
 

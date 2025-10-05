@@ -8,7 +8,7 @@ import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
  */
 export default function useCacheStoreUpdate<StoreProps extends object>(
   set: (updater: (prev: StoreProps) => StoreProps | Partial<StoreProps>) => void,
-  { debounceTime = 150, options, cache_key }: { debounceTime?: number; options?: StoreCachingOptions; cache_key: string },
+  { debounceTime = 150, disableCache, cacheKey }: StoreCachingOptions,
 ) {
   const { storeSessionValue } = useSessionStorageContext()
   let storeTimer: ReturnType<typeof setTimeout> | null = null
@@ -22,7 +22,7 @@ export default function useCacheStoreUpdate<StoreProps extends object>(
       const update = { ...prev, ...func(prev) }
 
       storeTimer = setTimeout(() => {
-        if (!options?.disableCache) storeSessionValue(cache_key, { ...update })
+        if (!disableCache) storeSessionValue(cacheKey, { ...update })
       }, debounceTime)
 
       return update

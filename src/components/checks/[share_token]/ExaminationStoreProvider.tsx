@@ -20,6 +20,7 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
   const props = useCacheCreateStore<ExaminationStore>(options?.cacheKey ?? 'examination-store', createExaminationStore, initialStoreProps, {
     expiresAfter: 10 * 60 * 1000,
     discardCache: (cache) => cache?.knowledgeCheck.id !== initialStoreProps?.knowledgeCheck.id,
+    cacheKey: 'examination-store',
     ...options,
   }) //expire after 10 minutes of inactivity or when cached check-id differs from the initialStore-id (because ids are constants)
 

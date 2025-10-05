@@ -30,7 +30,7 @@ const defaultInitState: ExaminationState = {
 
 export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>> = (initialState = defaultInitState, options) => {
   return createStore<ExaminationStore>()((set) => {
-    const { modify: modifyState } = useCacheStoreUpdate(set, { options, cache_key: options?.cacheKey ?? 'examination-store' })
+    const { modify: modifyState } = useCacheStoreUpdate(set, { cacheKey: options?.cacheKey ?? 'examination-store' })
 
     return {
       ...initialState,

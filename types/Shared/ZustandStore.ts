@@ -1,7 +1,7 @@
 import { Any } from '@/types'
 import type { StoreApi } from 'zustand/vanilla'
 
-export type StoreCachingOptions = { disableCache?: boolean; cacheKey?: string }
+export type StoreCachingOptions = { disableCache?: boolean; cacheKey: string; debounceTime?: number }
 
 /**
  * Defines the structure of how a `create[ X ]Store` function should look like in terms of its properties and return-type.
