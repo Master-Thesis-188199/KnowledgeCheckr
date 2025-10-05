@@ -1,5 +1,5 @@
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { CreateStoreOptions } from '@/types/Shared/CreateStoreType'
+import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
 /**
  * This hook takes in the 'set' function that updates the state of a given store and exposes a 'modify' function that will update the store-state just like the set function, but will also cache the updated-state using the sessionStorage after a debounceTime [default: 150ms]
@@ -8,7 +8,7 @@ import { CreateStoreOptions } from '@/types/Shared/CreateStoreType'
  */
 export default function useCacheStoreUpdate<StoreProps extends object>(
   set: (updater: (prev: StoreProps) => StoreProps | Partial<StoreProps>) => void,
-  { debounceTime = 150, options, cache_key }: { debounceTime?: number; options?: CreateStoreOptions; cache_key: string },
+  { debounceTime = 150, options, cache_key }: { debounceTime?: number; options?: StoreCachingOptions; cache_key: string },
 ) {
   const { storeSessionValue } = useSessionStorageContext()
   let storeTimer: ReturnType<typeof setTimeout> | null = null
