@@ -2,7 +2,7 @@ import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
 import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/Examination'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { CreateStoreType } from '@/types/Shared/CreateStoreType'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import _ from 'lodash'
 import { createStore } from 'zustand/vanilla'
 
@@ -28,7 +28,7 @@ const defaultInitState: ExaminationState = {
   isLastQuestion: false,
 }
 
-export const createExaminationStore: CreateStoreType<ExaminationState> = (initialState = defaultInitState, options) => {
+export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>> = (initialState = defaultInitState, options) => {
   return createStore<ExaminationStore>()((set) => {
     const { modify: modifyState } = useCacheStoreUpdate(set, { options, cache_key: options?.cacheKey ?? 'examination-store' })
 

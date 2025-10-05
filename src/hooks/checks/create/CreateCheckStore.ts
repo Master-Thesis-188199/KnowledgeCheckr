@@ -1,7 +1,7 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
-import { CreateStoreType } from '@/types/Shared/CreateStoreType'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { createStore } from 'zustand/vanilla'
@@ -40,7 +40,7 @@ const defaultInitState: CheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckStore: CreateStoreType<CheckState> = (initialState = defaultInitState, options) => {
+export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = (initialState = defaultInitState, options) => {
   return createStore<CheckStore>()((set) => {
     const { modify: modifyState } = useCacheStoreUpdate(set, { options, debounceTime: 750, cache_key: options?.cacheKey ?? 'check-store' })
 
