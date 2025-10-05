@@ -7,22 +7,22 @@ import { ButtonHTMLAttributes } from 'react'
 
 export function MultiStageNextButton({
   ...props
-}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> &
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
   const { nextStage, stage, stages } = useMultiStageStore((store) => store)
 
-  return <Button disabled={stage === stages.length} {...props} onClick={() => nextStage()} />
+  return <Button disabled={stage === stages.length} {...props} type='button' onClick={() => nextStage()} />
 }
 
 export function MultiStageBackButton({
   ...props
-}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> &
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
   const { previousStage, stage } = useMultiStageStore((store) => store)
 
-  return <Button {...props} disabled={stage === 1} onClick={() => previousStage()} />
+  return <Button {...props} disabled={stage === 1} type='button' onClick={() => previousStage()} />
 }
