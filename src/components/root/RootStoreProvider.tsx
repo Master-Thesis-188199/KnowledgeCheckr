@@ -1,8 +1,8 @@
 'use client'
 
+import { createRootStore, RootState, type RootStore } from '@/hooks/root/RootStore'
 import { createContext, type ReactNode, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
-import { createRootStore, RootState, type RootStore } from '@/hooks/root/RootStore'
 
 export type RootStoreApi = ReturnType<typeof createRootStore>
 
@@ -16,7 +16,7 @@ export interface RootStoreProviderProps {
 export function RootStoreProvider({ children, initialStoreProps }: RootStoreProviderProps) {
   const storeRef = useRef<RootStoreApi>(null)
   if (!storeRef.current) {
-    storeRef.current = createRootStore(initialStoreProps)
+    storeRef.current = createRootStore({ initialState: initialStoreProps })
   }
 
   return <RootStoreContext.Provider value={storeRef.current}>{children}</RootStoreContext.Provider>
