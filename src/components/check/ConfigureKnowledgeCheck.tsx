@@ -10,16 +10,17 @@ import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgr
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
-type CreateProps = Pick<CheckStoreProviderProps, 'options' | 'initialStoreProps'> & {
-  mode: 'create'
-}
+type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
+  Partial<Pick<CheckStoreProviderProps, 'options'>> & {
+    mode: 'create'
+  }
 
 type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
   Pick<CheckStoreProviderProps, 'options'> & {
     mode: 'edit'
   }
 
-export function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options = { cacheKey: 'check-store' } }: CreateProps | EditProps) {
+export function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   return (
     <CheckStoreProvider initialStoreProps={initialStoreProps} options={options}>
       <MultiStageStoreProvider

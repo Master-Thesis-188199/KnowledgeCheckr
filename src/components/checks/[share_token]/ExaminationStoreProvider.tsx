@@ -13,10 +13,10 @@ export const ExaminationStoreContext = createContext<ExaminationStoreApi | undef
 export interface ExaminationStoreProviderProps {
   children: ReactNode
   initialStoreProps?: ExaminationState
-  options: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useCacheCreateStoreOptions<ExaminationState>, ''>>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useCacheCreateStoreOptions<ExaminationState>, ''>>
 }
 
-export function ExaminationStoreProvider({ children, initialStoreProps, options }: ExaminationStoreProviderProps) {
+export function ExaminationStoreProvider({ children, initialStoreProps, options = { cacheKey: 'examination-store' } }: ExaminationStoreProviderProps) {
   //todo consider switching to localStorage to ensure that users do not loose their progress e.g. when their browser / system crashes
   const props = useCacheCreateStore<ExaminationStore>({
     session_key: options.cacheKey,
