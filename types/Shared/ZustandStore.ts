@@ -7,7 +7,6 @@ export type StoreCachingOptions = { disableCache?: boolean; cacheKey: string; de
  * Defines the structure of how a `create[ X ]Store` function should look like in terms of its properties and return-type.
  */
 export type ZustandStore<Store extends object, TInitial = Omit<Store, FunctionKeys<Store>>> = (props: { initialState?: TInitial }) => StoreApi<Store>
-// export type ZustandStore<Store extends object> = (props: { initialState?: Partial<Omit<Store, FunctionKeys<Store>>> }) => StoreApi<Store>
 
 /**
  * Is used to add caching to the respective `ZustandeStore<T>` type, which basically adds the `CachingOptions` as the second property to the createStore function.
