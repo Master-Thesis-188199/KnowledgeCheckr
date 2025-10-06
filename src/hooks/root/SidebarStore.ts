@@ -1,5 +1,3 @@
-import { SideBarProps } from '@/components/root/Navigation/SideBar'
-import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
@@ -7,7 +5,7 @@ export type SidebarState = {
   isOpen: boolean
   canDeviceHover: boolean
   isAnimationEnabled: boolean
-  config: SideBarProps
+  // config: SideBarProps
 }
 
 export type SidebarActions = {
@@ -24,7 +22,6 @@ export type SidebarStore = SidebarState & SidebarActions
 export const defaultInitState: SidebarState = {
   isOpen: false,
   isAnimationEnabled: true,
-  config: sideBarConfiguration,
   canDeviceHover: true,
 }
 
@@ -38,7 +35,6 @@ export const createSidebarStore: WithCaching<ZustandStore<SidebarStore>> = ({ in
 
       return {
         ...initialState,
-        config: {} as SidebarStore['config'], //* cannot store jsx elements in session-store (converting their circular structure to json fails)
         toggleSidebar: () => set((state) => (!state.isAnimationEnabled ? state : { isOpen: !state.isOpen })),
         toggleAnimation: () => set((state) => ({ isAnimationEnabled: state.canDeviceHover ? !state.isAnimationEnabled : state.isAnimationEnabled })),
         setOpen: (open_state) => set(() => ({ isOpen: open_state })),

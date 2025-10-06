@@ -24,7 +24,6 @@ export function SidebarStoreProvider({ children, initialStoreProps, options = { 
 
   if (!storeRef.current) {
     const cached = getStoredValue<StoreState_fromStore<SidebarStore>>(options.cacheKey)
-    if (cached) Object.assign(cached, { config: initialStoreProps?.config ?? {} })
 
     storeRef.current = createSidebarStore({ initialState: cached ?? initialStoreProps, options })
   }
