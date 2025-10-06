@@ -16,14 +16,14 @@ export const MultiStageStoreContext = createContext<MultiStageStoreApi | undefin
 
 export interface MultiStageStoreProviderProps {
   children: ReactNode
-  initialStoreProps?: Partial<MultiStageState> | MultiStageState
+  initialStoreProps?: Partial<MultiStageState>
 }
 
 export function MultiStageStoreProvider({ children, initialStoreProps }: MultiStageStoreProviderProps) {
   const storeRef = useRef<MultiStageStoreApi>(null)
 
   if (!storeRef.current) {
-    storeRef.current = createMultiStageStore(initialStoreProps)
+    storeRef.current = createMultiStageStore({ initialState: initialStoreProps })
   }
 
   return <MultiStageStoreContext.Provider value={storeRef.current}>{children}</MultiStageStoreContext.Provider>
