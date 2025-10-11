@@ -1,7 +1,7 @@
 'use client'
 
-import { InputGroup } from '@/src/app/checks/create/GeneralSection'
-import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
+import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'

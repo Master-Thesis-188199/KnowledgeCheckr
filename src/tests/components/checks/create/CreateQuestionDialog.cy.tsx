@@ -1,5 +1,5 @@
-import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
-import { CheckStoreProvider } from '@/src/components/check/create/CreateCheckProvider'
+import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
+import { CheckStoreProvider } from '@/src/components/checks/create/CreateCheckProvider'
 import RootProviders from '@/src/components/root/RootProviders'
 
 describe('<CreateQuestionDialog />', () => {

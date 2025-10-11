@@ -1,5 +1,5 @@
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import { ConfigureKnowledgeCheck } from '@/src/components/check/ConfigureKnowledgeCheck'
+import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'

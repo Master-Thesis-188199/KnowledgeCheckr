@@ -1,6 +1,6 @@
 'use client'
 
-import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
 import { Textarea } from '@headlessui/react'

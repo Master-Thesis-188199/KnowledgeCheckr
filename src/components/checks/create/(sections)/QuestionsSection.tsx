@@ -1,9 +1,9 @@
 'use client'
 
-import { useCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
-import CreateQuestionDialog from '@/src/components/check/create/(create-question)/CreateQuestionDialog'
+import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
 import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 export default function QuestionsSection() {

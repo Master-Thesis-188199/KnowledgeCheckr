@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckState, CheckStore, createCheckStore } from '@/hooks/checks/create/CreateCheckStore'
-import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
+import UnsavedCheckChangesAlert from '@/src/components/checks/create/UnsavedCheckChangesAlert'
 import useCacheCreateStore, { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'

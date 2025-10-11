@@ -1,6 +1,6 @@
 'use client'
 
-import { ShareKnowledgeCheckButton } from '@/src/components/check/ShareKnowledgeCheckButton'
+import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'

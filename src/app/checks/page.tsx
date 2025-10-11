@@ -1,5 +1,5 @@
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
-import { KnowledgeCheckCard } from '@/src/components/check/KnowledgeCheckCard'
+import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
