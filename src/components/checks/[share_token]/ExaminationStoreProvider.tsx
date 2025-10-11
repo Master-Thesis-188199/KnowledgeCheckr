@@ -1,8 +1,7 @@
 'use client'
 
 import { createExaminationStore, ExaminationState, ExaminationStore } from '@/hooks/checks/[share_token]/ExaminationStore'
-import { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
-import { useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
@@ -14,7 +13,7 @@ export const ExaminationStoreContext = createContext<ExaminationStoreApi | undef
 export interface ExaminationStoreProviderProps {
   children: ReactNode
   initialStoreProps?: ExaminationState
-  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useCacheCreateStoreOptions<ExaminationState>, ''>>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<ExaminationState>, ''>>
 }
 
 export function ExaminationStoreProvider({ children, initialStoreProps, options = { cacheKey: 'examination-store' } }: ExaminationStoreProviderProps) {
