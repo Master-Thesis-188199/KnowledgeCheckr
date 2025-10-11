@@ -1,16 +1,20 @@
 'use client'
 
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
-import { StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
+import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import { useRef } from 'react'
 import { StoreApi } from 'zustand'
+
+export type useStoreCachingOptions<Store extends object> = StoreCachingOptions & {
+  expiresAfter?: number
+  discardCache?: (cached: StoreState_fromStore<Store> | null) => boolean
+}
 
 interface useStoreProps_WithCache<Store extends object, TInitial = StoreState_fromStore<Store>> {
   caching: true
   createStoreFunc: WithCaching<ZustandStore<Store, TInitial>>
   initialStoreProps?: TInitial
-  options: useCacheCreateStoreOptions<StoreState_fromStore<Store>>
+  options: useStoreCachingOptions<Store>
 }
 
 interface useStoreProps_WithoutCache<Store extends object, TInitial = StoreState_fromStore<Store>> {
