@@ -40,7 +40,11 @@ export function useZustandStore<TStore extends object, TInitial extends object =
   const { getStoredValue } = useSessionStorageContext()
 
   //* Re-create store when caching is disabled
-  if (!rest.caching) return rest.createStoreFunc({ initialState: initialStoreProps })
+  if (!rest.caching) {
+    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps })
+
+    return storeRef.current
+  }
 
   //* Caching of store props when caching is enabled
   if (!storeRef.current) {
@@ -49,7 +53,10 @@ export function useZustandStore<TStore extends object, TInitial extends object =
     const props = (cached ?? initialStoreProps) as TInitial
 
     //* initialization of store without caching
-    if (rest.options.disableCache || (rest.options.discardCache && rest.options.discardCache(cached))) return rest.createStoreFunc({ initialState: initialStoreProps, options: rest.options })
+    if (rest.options.disableCache || (rest.options.discardCache && rest.options.discardCache(cached))) {
+      storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, options: rest.options })
+      return storeRef.current
+    }
 
     storeRef.current = rest.createStoreFunc({ initialState: props, options: rest.options })
   }
