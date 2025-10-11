@@ -45,7 +45,7 @@ export function createZustandStore<T extends object>({ initializer, ...props }: 
   return store((set, get) => {
     if (!props.caching) return initializer(set, get)
 
-    const { modify } = useCacheStoreUpdate<T>(set, props.options)
+    const { modify } = useCacheStoreUpdate<T>({ set, options: props.options })
 
     return initializer(modify as Parameters<StoreInitializer<T>>['0'], get)
   })
