@@ -1,6 +1,6 @@
 'use client'
 
-import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
+import useStoreCaching from '@/src/hooks/Shared/useStoreCaching'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 import { createStore, StoreApi } from 'zustand/vanilla'
 type SetFn<T> = StoreApi<T>['setState']
@@ -45,7 +45,7 @@ export function createZustandStore<T extends object>({ initializer, ...props }: 
   return store((set, get) => {
     if (!props.caching) return initializer(set, get)
 
-    const cacheChanges = useCacheStoreUpdate<T>({ set, options: props.options })
+    const cacheChanges = useStoreCaching<T>({ set, options: props.options })
 
     return initializer(cacheChanges, get)
   })

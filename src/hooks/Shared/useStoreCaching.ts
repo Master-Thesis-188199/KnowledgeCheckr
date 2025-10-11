@@ -2,7 +2,7 @@ import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import { StoreInitializer } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
-interface useCacheStoreUpdateProps<Store extends object> {
+interface useStoreCachingProps<Store extends object> {
   set: Parameters<StoreInitializer<Store>>['0']
   options: StoreCachingOptions
 }
@@ -12,7 +12,7 @@ interface useCacheStoreUpdateProps<Store extends object> {
  * @param set The function used to update a given store's state
  * @param debounceTime The time after which a state-update will be cached - to eliminate rapid changes e.g. after each key-stroke
  */
-export default function useCacheStoreUpdate<StoreProps extends object>({ set, options: { disableCache, cacheKey, debounceTime } }: useCacheStoreUpdateProps<StoreProps>) {
+export default function useStoreCaching<StoreProps extends object>({ set, options: { disableCache, cacheKey, debounceTime } }: useStoreCachingProps<StoreProps>) {
   const { storeSessionValue } = useSessionStorageContext()
   let storeTimer: ReturnType<typeof setTimeout> | null = null
 
