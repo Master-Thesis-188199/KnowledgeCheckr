@@ -1,8 +1,9 @@
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import { StoreInitializer } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
 interface useCacheStoreUpdateProps<Store extends object> {
-  set: (updater: (prev: Store) => Store | Partial<Store>) => void
+  set: Parameters<StoreInitializer<Store>>['0']
   options: StoreCachingOptions
 }
 
@@ -15,13 +16,16 @@ export default function useCacheStoreUpdate<StoreProps extends object>({ set, op
   const { storeSessionValue } = useSessionStorageContext()
   let storeTimer: ReturnType<typeof setTimeout> | null = null
 
-  const modify = (func: (prev: StoreProps) => StoreProps | Partial<StoreProps>) => {
-    set((prev: StoreProps) => {
+  const cacheChanges: Parameters<StoreInitializer<StoreProps>>['0'] = (modifications) => {
+    set((prev) => {
       if (storeTimer) {
         clearTimeout(storeTimer)
       }
 
-      const update = { ...prev, ...func(prev) }
+      let update: typeof prev
+
+      if (typeof modifications === 'function') update = { ...prev, ...modifications(prev) }
+      else update = { ...prev, ...modifications }
 
       storeTimer = setTimeout(() => {
         if (!disableCache) storeSessionValue(cacheKey, { ...update })
@@ -31,5 +35,5 @@ export default function useCacheStoreUpdate<StoreProps extends object>({ set, op
     })
   }
 
-  return { modify }
+  return cacheChanges
 }

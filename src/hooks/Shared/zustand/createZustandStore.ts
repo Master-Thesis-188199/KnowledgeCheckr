@@ -12,7 +12,7 @@ type GetFn<T> = StoreApi<T>['getState']
  * @param get Returns the current store
  * @returns
  */
-type StoreInitializer<T> = (set: SetFn<T>, get: GetFn<T>) => T
+export type StoreInitializer<T> = (set: SetFn<T>, get: GetFn<T>) => T
 
 type CreateStoreProps_WithCache<T> = {
   caching: true
@@ -45,8 +45,8 @@ export function createZustandStore<T extends object>({ initializer, ...props }: 
   return store((set, get) => {
     if (!props.caching) return initializer(set, get)
 
-    const { modify } = useCacheStoreUpdate<T>({ set, options: props.options })
+    const cacheChanges = useCacheStoreUpdate<T>({ set, options: props.options })
 
-    return initializer(modify as Parameters<StoreInitializer<T>>['0'], get)
+    return initializer(cacheChanges, get)
   })
 }
