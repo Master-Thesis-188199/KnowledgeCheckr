@@ -1,0 +1,53 @@
+'use client'
+
+import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
+import { StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
+import { useRef } from 'react'
+import { StoreApi } from 'zustand'
+
+interface useStoreProps_WithCache<Store extends object> {
+  caching: true
+  createStoreFunc: WithCaching<ZustandStore<Store>>
+  initialStoreProps?: StoreState_fromStore<Store>
+  options: useCacheCreateStoreOptions<StoreState_fromStore<Store>>
+}
+
+interface useStoreProps_WithoutCache<Store extends object> {
+  caching: false
+  initialStoreProps?: StoreState_fromStore<Store>
+  createStoreFunc: ZustandStore<Store>
+}
+
+type useStoreProps<Store extends object> = useStoreProps_WithoutCache<Store> | useStoreProps_WithCache<Store>
+
+/**
+ * This hook is used to instantiate a given store. Depending on whether or not the respective store should be cached the arguments this hook accepts will differ.
+ * When the store should not be cached by setting [cached: false] it will essentially just call the createStoreFunc with the provided initialProps.
+ * Otherwise, when caching is enabled it will either instantiate the store with the cached properties if they exist or use the initialProps.
+ * @param caching Will determinate whether the store is instantiated with potentially cached data or the initialProps.
+ * @param createStoreFunc The function / handler used to create the respective store.
+ * @param initialStoreProps The initial-properties that are to be used when no data is cached or caching is disabled.
+ * @param options Are only accepted when `caching` is set to true. Allows users to configure the caching behavior.
+ * @returns It returns the (store / context)-props that are then passed to the respective provider.
+ */
+export function useZustandStore<TStore extends object>({ initialStoreProps, ...rest }: useStoreProps<TStore>): StoreApi<TStore> {
+  const storeRef = useRef<ReturnType<typeof rest.createStoreFunc>>(null)
+  const { getStoredValue } = useSessionStorageContext()
+
+  //* Re-create store when caching is disabled
+  if (!rest.caching) return rest.createStoreFunc({ initialState: initialStoreProps })
+
+  //* Caching of store props when caching is enabled
+  if (!storeRef.current) {
+    const cached = getStoredValue<StoreState_fromStore<TStore>>(rest.options.cacheKey, { expiresAfter: rest.options.expiresAfter })
+    const props = cached ?? initialStoreProps
+
+    //* initialization of store without caching
+    if (rest.options.disableCache || (rest.options.discardCache && rest.options.discardCache(cached))) return rest.createStoreFunc({ initialState: initialStoreProps, options: rest.options })
+
+    storeRef.current = rest.createStoreFunc({ initialState: props, options: rest.options })
+  }
+
+  return storeRef.current
+}
