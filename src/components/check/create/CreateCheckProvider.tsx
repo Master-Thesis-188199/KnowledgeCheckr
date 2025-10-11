@@ -2,7 +2,8 @@
 
 import { CheckState, CheckStore, createCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
-import useCacheCreateStore, { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
+import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 
@@ -13,15 +14,21 @@ const CheckStoreContext = createContext<CheckStoreApi | undefined>(undefined)
 export interface CheckStoreProviderProps {
   children: ReactNode
   initialStoreProps?: CheckState
-  options?: useCacheCreateStoreOptions<CheckState>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CheckState>, ''>>
 }
 
-export function CheckStoreProvider({ children, initialStoreProps, options }: CheckStoreProviderProps) {
-  const props = useCacheCreateStore<CheckState>(options?.cacheKey ?? 'check-store', createCheckStore, initialStoreProps, {
-    //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
-    //? drafted checks may not be discarded when they were either not yet cached or when no initialProps were provided (thus indicating that a new check is being created)
-    discardCache: (cache) => cache?.id !== undefined && initialStoreProps?.id !== undefined && cache?.id !== initialStoreProps?.id,
-    ...options,
+export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'check-store' } }: CheckStoreProviderProps) {
+  const props = useZustandStore({
+    caching: true,
+    createStoreFunc: createCheckStore,
+    initialStoreProps,
+    options: {
+      //     //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
+      //     //? drafted checks may not be discarded when they were either not yet cached or when no initialProps were provided (thus indicating that a new check is being created)
+      discardCache: (cache) => cache?.id !== undefined && initialStoreProps?.id !== undefined && cache?.id !== initialStoreProps?.id,
+      debounceTime: 750,
+      ...options,
+    },
   })
 
   return (

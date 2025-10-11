@@ -10,16 +10,17 @@ import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgr
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
-type CreateProps = Pick<CheckStoreProviderProps, 'options' | 'initialStoreProps'> & {
-  mode: 'create'
-}
+type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
+  Partial<Pick<CheckStoreProviderProps, 'options'>> & {
+    mode: 'create'
+  }
 
 type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
   Pick<CheckStoreProviderProps, 'options'> & {
     mode: 'edit'
   }
 
-export function ConfigureKnowledgeCheck({ mode, initialStoreProps, options }: CreateProps | EditProps = { mode: 'create' }) {
+export function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   return (
     <CheckStoreProvider initialStoreProps={initialStoreProps} options={options}>
       <MultiStageStoreProvider
@@ -31,7 +32,7 @@ export function ConfigureKnowledgeCheck({ mode, initialStoreProps, options }: Cr
             { stage: 4, title: 'Conclusion' },
           ],
         }}>
-        <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps.name}`} />
+        <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps?.name}`} />
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
         <div className='mx-[1.5%] grid grid-cols-1 gap-8'>
