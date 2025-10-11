@@ -8,9 +8,12 @@ interface useStoreCachingProps<Store extends object> {
 }
 
 /**
- * This hook takes in the 'set' function that updates the state of a given store and exposes a 'modify' function that will update the store-state just like the set function, but will also cache the updated-state using the sessionStorage after a debounceTime [default: 150ms]
- * @param set The function used to update a given store's state
- * @param debounceTime The time after which a state-update will be cached - to eliminate rapid changes e.g. after each key-stroke
+ * This hoook provides a wrapper function that allows users to modify a given store-state, while also caching said changes, if enabled.
+ * This way cached changes can be recovered / re-applied to a given store.
+ * @param set The original set-function that updates the store-state.
+ * @param options.disableCache When set to true, the returned caching-function will no longer cache changes.
+ * @param options.cacheKey The key under which the cached-data is stored.
+ * @param options.debounceTime The time that has pass, without changes, until the store-changes are cached.
  */
 export default function useStoreCaching<StoreProps extends object>({ set, options: { disableCache, cacheKey, debounceTime } }: useStoreCachingProps<StoreProps>) {
   const { storeSessionValue } = useSessionStorageContext()
