@@ -1,6 +1,6 @@
 'use client'
 
-import { saveAction } from '@/src/app/checks/create/SaveAction'
+import { saveAction } from '@/src/lib/checks/create/SaveAction'
 import { useCheckStore } from '@/src/components/check/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
