@@ -12,7 +12,7 @@ import getTheme from '@/src/lib/Shared/getTheme'
 export default function RootProviders({ children, defaultTheme }: { children: React.ReactNode; defaultTheme?: Awaited<ReturnType<typeof getTheme>> }) {
   return (
     <SessionStorageProvider>
-      <RootStoreProvider initialStoreProps={{ theme_cookie: defaultTheme }}>
+      <RootStoreProvider>
         <NavigationAbortProvider>{children}</NavigationAbortProvider>
       </RootStoreProvider>
     </SessionStorageProvider>
