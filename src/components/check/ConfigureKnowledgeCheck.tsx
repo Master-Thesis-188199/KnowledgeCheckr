@@ -1,4 +1,4 @@
-import { SaveCheckButton } from '@/src/app/checks/create/SaveCheckButton'
+import { SaveCheckButton } from '@/src/components/check/create/SaveCheckButton'
 import GeneralSection from '@/src/components/check/create/(sections)/GeneralSection'
 import { OverviewSection } from '@/src/components/check/create/(sections)/OverviewSection'
 import QuestionsSection from '@/src/components/check/create/(sections)/QuestionsSection'
