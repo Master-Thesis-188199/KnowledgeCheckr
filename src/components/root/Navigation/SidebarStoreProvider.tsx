@@ -1,10 +1,10 @@
 'use client'
 
 import { createSidebarStore, SidebarState, type SidebarStore } from '@/hooks/root/SidebarStore'
-import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
-import { StoreCachingOptions, StoreState_fromStore } from '@/types/Shared/ZustandStore'
-import { createContext, type ReactNode, useContext, useRef } from 'react'
+import { useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
+import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 
 export type SidebarStoreApi = ReturnType<typeof createSidebarStore>
@@ -19,16 +19,14 @@ export interface SidebarStoreProviderProps {
 }
 
 export function SidebarStoreProvider({ children, initialStoreProps, options = { cacheKey: 'sidebar-store' } }: SidebarStoreProviderProps) {
-  const storeRef = useRef<SidebarStoreApi>(null)
-  const { getStoredValue } = useSessionStorageContext()
+  const props = useZustandStore({
+    caching: true,
+    createStoreFunc: createSidebarStore,
+    initialStoreProps,
+    options,
+  })
 
-  if (!storeRef.current) {
-    const cached = getStoredValue<StoreState_fromStore<SidebarStore>>(options.cacheKey)
-
-    storeRef.current = createSidebarStore({ initialState: cached ?? initialStoreProps, options })
-  }
-
-  return <SidebarStoreContext.Provider value={storeRef.current}>{children}</SidebarStoreContext.Provider>
+  return <SidebarStoreContext.Provider value={props}>{children}</SidebarStoreContext.Provider>
 }
 
 export function useSidebarStore<T>(selector: (store: SidebarStore) => T): T {

@@ -2,7 +2,8 @@
 
 import { CheckState, CheckStore, createCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/check/create/UnsavedCheckChangesAlert'
-import useCacheCreateStore, { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
+import { useCacheCreateStoreOptions } from '@/src/hooks/Shared/useCacheCreateStore'
+import { useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
@@ -18,8 +19,8 @@ export interface CheckStoreProviderProps {
 }
 
 export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'check-store' } }: CheckStoreProviderProps) {
-  const props = useCacheCreateStore<CheckStore>({
-    session_key: options.cacheKey,
+  const props = useZustandStore({
+    caching: true,
     createStoreFunc: createCheckStore,
     initialStoreProps,
     options: {
