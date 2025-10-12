@@ -4,6 +4,8 @@ import { usePracticeStore } from '@/src/components/checks/[share_token]/practice
 import RenderQuestionType from '@/src/components/checks/[share_token]/practice/RenderQuestionType'
 import { Button } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
+import { Question } from '@/src/schemas/QuestionSchema'
+import { notFound } from 'next/navigation'
 import TextareaAutosize from 'react-textarea-autosize'
 
 export function RenderPracticeQuestion() {
@@ -13,14 +15,7 @@ export function RenderPracticeQuestion() {
 
   const question = questions.at(currentQuestionIndex)
 
-  const question_action_descriptor =
-    question?.type === 'multiple-choice'
-      ? 'Pick one or more answers from these options'
-      : question?.type === 'single-choice'
-        ? 'Pick one answer-option from these options'
-        : question?.type === 'drag-drop'
-          ? 'Arrange these options in the correct order'
-          : 'Write your answer into the designated field'
+  if (!question) notFound()
 
   return (
     <form className='flex flex-col gap-4'>
@@ -29,7 +24,7 @@ export function RenderPracticeQuestion() {
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
           <h2 className='text-2xl font-semibold'>What colors are part of france&apos;s flag?</h2>
         </div>
-        <span className='text-neutral-300'>{question_action_descriptor}</span>
+        <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
 
       <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
@@ -110,4 +105,17 @@ export function RenderPracticeQuestion() {
       </div>
     </form>
   )
+}
+
+function getQuestionActionDescriptor(question_type: Question['type']) {
+  switch (question_type) {
+    case 'single-choice':
+      return 'Pick one answer-option from these options'
+    case 'multiple-choice':
+      return 'Pick one or more answers from these options'
+    case 'drag-drop':
+      return 'Arrange these options in the correct order'
+    case 'open-question':
+      return 'Write your answer into the designated field'
+  }
 }
