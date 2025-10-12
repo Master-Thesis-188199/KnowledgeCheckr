@@ -34,6 +34,7 @@ export function RenderPracticeQuestion() {
     reset,
     handleSubmit,
     setError,
+    setValue,
     formState: { isSubmitting, isValidating, isValid, isSubmitted, isSubmitSuccessful, errors },
     getValues,
   } = useForm({
@@ -63,6 +64,7 @@ export function RenderPracticeQuestion() {
 
   useEffect(() => {
     reset()
+    setValue('answer.type', question.type)
   }, [question.id])
 
   const onSubmit = (_data: z.infer<typeof PracticeSchema>, e?: React.BaseSyntheticEvent) => {
