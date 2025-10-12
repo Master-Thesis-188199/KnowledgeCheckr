@@ -13,7 +13,7 @@ export const PracticeSchema = z.object({
       z.object({
         type: z.literal('multiple-choice'),
         //* The identifiers of the selected answer [the answer itself]
-        selection: z.array(z.string()).min(1, 'Please select at least one answer'),
+        selection: z.array(z.string().optional()).min(1, 'Please select at least one answer'),
       }),
       z.object({
         type: z.literal('drag-drop'),
