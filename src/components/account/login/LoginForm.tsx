@@ -11,7 +11,7 @@ import Input from '@/src/components/Shared/form/Input'
 import { LoginSchema } from '@/src/schemas/AuthenticationSchema'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { signin } from './actions'
+import { signin } from '../../../lib/account/login/AccountActions'
 
 type FormValues = z.infer<typeof LoginSchema>
 

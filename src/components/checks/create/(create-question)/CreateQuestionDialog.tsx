@@ -1,4 +1,4 @@
-import { useCheckStore } from '@/components/check/create/CreateCheckProvider'
+import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import FieldError from '@/src/components/Shared/form/FormFieldError'

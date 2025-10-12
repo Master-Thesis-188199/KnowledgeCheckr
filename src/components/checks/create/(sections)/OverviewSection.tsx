@@ -1,6 +1,6 @@
-import GeneralSection from '@/src/app/checks/create/GeneralSection'
-import QuestionsSection from '@/src/app/checks/create/QuestionsSection'
-import SettingsSection from '@/src/app/checks/create/SettingsSection'
+import GeneralSection from '@/src/components/checks/create/(sections)/GeneralSection'
+import QuestionsSection from '@/src/components/checks/create/(sections)/QuestionsSection'
+import SettingsSection from '@/src/components/checks/create/(sections)/SettingsSection'
 import Card from '@/src/components/Shared/Card'
 
 export function OverviewSection() {

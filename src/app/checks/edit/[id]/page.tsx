@@ -1,5 +1,5 @@
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
-import { ConfigureKnowledgeCheck } from '@/src/components/check/ConfigureKnowledgeCheck'
+import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { notFound } from 'next/navigation'
 
