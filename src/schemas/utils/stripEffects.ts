@@ -120,7 +120,7 @@ export function stripEffects<T extends z.ZodTypeAny, OmitKeys extends readonly P
       return out
     }
     if ((z as Any).ZodCatch && s instanceof (z as Any).ZodCatch) {
-      const out = (z as Any).ZodCatch.create(go((s as Any)._def.innerType))
+      const out = (go((s as Any)._def.innerType) as Any).catch((s as Any)._def.catchValue)
       memo.set(s, out)
       return out
     }
