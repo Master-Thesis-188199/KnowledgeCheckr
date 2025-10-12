@@ -8,12 +8,12 @@ export const PracticeSchema = z.object({
       z.object({
         type: z.literal('single-choice'),
         //* The identifier of the selected answer [the answer itself]
-        selection: z.string().nonempty('Please select an answer'),
+        selection: z.string().uuid().nonempty('Please select an answer'),
       }),
       z.object({
         type: z.literal('multiple-choice'),
         //* The identifiers of the selected answer [the answer itself]
-        selection: z.array(z.string()).min(1, 'Please select at least one answer'),
+        selection: z.array(z.string().uuid()).min(1, 'Please select at least one answer'),
       }),
       z.object({
         type: z.literal('drag-drop'),
@@ -22,7 +22,7 @@ export const PracticeSchema = z.object({
       }),
       z.object({
         type: z.literal('open-question'),
-        input: z.string().min(1, 'Please provide an answer'),
+        input: z.string().uuid().min(1, 'Please provide an answer'),
       }),
     ])
     .optional(),

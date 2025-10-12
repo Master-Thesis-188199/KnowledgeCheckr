@@ -121,7 +121,15 @@ export function RenderPracticeQuestion() {
                 htmlFor={`${q.id}-answer-${i}`}>
                 {a.answer}
 
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='radio' {...register('answer.selection')} readOnly={isSubmitted} value={a.answer} />
+                <input
+                  className='hidden'
+                  id={`${q.id}-answer-${i}`}
+                  type='radio'
+                  {...register('answer.selection')}
+                  onChange={(e) => register('answer.selection').onChange({ target: { value: a.id, name: 'answer.selection' } })}
+                  readOnly={isSubmitted}
+                  value={a.answer}
+                />
 
                 {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
                 <FormFieldError field='answer.selection' errors={errors} />
