@@ -3,10 +3,19 @@
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import RenderQuestionType from '@/src/components/checks/[share_token]/practice/RenderQuestionType'
 import { Button } from '@/src/components/shadcn/button'
+import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
+import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { isEmpty } from 'lodash'
+import { LoaderCircleIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { useActionState, useEffect, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
+import { z } from 'zod'
 
 export function RenderPracticeQuestion() {
   const { questions, currentQuestionIndex, navigateToQuestion } = usePracticeStore((store) => store)
@@ -17,8 +26,57 @@ export function RenderPracticeQuestion() {
 
   if (!question) notFound()
 
+  const [state, formAction] = useActionState(EvaluateAnswer, { success: false })
+  const [isPending, start] = useTransition()
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    setError,
+    formState: { isSubmitting, isValidating, isValid, isSubmitted, isSubmitSuccessful, errors },
+    getValues,
+  } = useForm({
+    resolver: zodResolver<PracticeData>(PracticeSchema),
+    defaultValues: {
+      question_id: state.values?.question_id ?? question.id,
+      answer: {
+        type: state.values?.answer?.type ?? question.type,
+      },
+    },
+  })
+
+  //* Apply server-side validation errors (if any) - so that they show up in the form
+  useEffect(() => {
+    if (state.fieldErrors) {
+      Object.entries(state.fieldErrors).forEach(([key, msgs]) => {
+        if (msgs?.length) {
+          setError(key as keyof PracticeData, { type: 'server', message: msgs[0] })
+        }
+      })
+    }
+
+    if (state.rootError) {
+      setError('root', { type: 'server', message: state.rootError })
+    }
+  }, [state.fieldErrors, state.rootError, setError])
+
+  useEffect(() => {
+    reset()
+  }, [question.id])
+
+  const onSubmit = (_data: z.infer<typeof PracticeSchema>, e?: React.BaseSyntheticEvent) => {
+    console.log('Submitting practice answer...', _data, e)
+    start(() => {
+      formAction(_data)
+    })
+  }
+
+  console.log(getValues())
+  if (!isEmpty(errors)) console.log('error', errors)
+
   return (
-    <form className='flex flex-col gap-4'>
+    <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
@@ -62,7 +120,12 @@ export function RenderPracticeQuestion() {
                 )}
                 htmlFor={`${q.id}-answer-${i}`}>
                 {a.answer}
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='radio' name={`${q.id}-answer`} value={a.answer} />
+
+                <input className='hidden' id={`${q.id}-answer-${i}`} type='radio' {...register('answer.selection')} readOnly={isSubmitted} value={a.answer} />
+
+                {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
+                <FormFieldError field='answer.selection' errors={errors} />
+                <FormFieldError field='answer' errors={errors} />
               </label>
             ))
           }
@@ -99,8 +162,19 @@ export function RenderPracticeQuestion() {
       </div>
 
       <div className='flex justify-center'>
-        <Button className='mx-auto mt-2' variant='secondary' onClick={nextRandomQuestion} type='button'>
+        <Button
+          title={!isValid ? 'Before checking this question you must first answer it' : undefined}
+          disabled={!isValid}
+          hidden={isSubmitted && isSubmitSuccessful && !isPending}
+          className='mx-auto mt-2 dark:bg-neutral-700'
+          variant='secondary'
+          type='submit'>
+          <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isValidating || isPending) && 'block')} />
           Check Answer
+        </Button>
+
+        <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 dark:bg-neutral-700' variant='secondary' onClick={nextRandomQuestion} type='button'>
+          Continue
         </Button>
       </div>
     </form>
