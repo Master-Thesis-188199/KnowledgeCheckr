@@ -31,7 +31,7 @@ export const createPracticeStore: ZustandStore<PracticeStore, Partial<PracticeSt
         getQuestion: () => get().questions.at(get().currentQuestionIndex) ?? null,
         nextQuestion: () => set((prev) => ({ currentQuestionIndex: prev.questions.length > prev.currentQuestionIndex + 1 ? prev.currentQuestionIndex + 1 : prev.currentQuestionIndex })),
         previousQuestion: () => set((prev) => ({ currentQuestionIndex: prev.currentQuestionIndex > 0 ? prev.currentQuestionIndex - 1 : prev.currentQuestionIndex })),
-        navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index + 1 < prev.questions.length && index >= 0 ? index : prev.currentQuestionIndex })),
+        navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.questions.length && index >= 0 ? index : prev.currentQuestionIndex })),
       }
     },
   })
