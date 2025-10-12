@@ -102,7 +102,7 @@ export function RenderPracticeQuestion() {
                 )}
                 htmlFor={`${q.id}-answer-${i}`}>
                 {a.answer}
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='checkbox' name={`${q.id}-answer-${i}`} value={a.answer} />
+                <input className='hidden' id={`${q.id}-answer-${i}`} type='checkbox' {...register(`answer.selection.${i}`)} value={a.answer} />
               </label>
             ))
           }
