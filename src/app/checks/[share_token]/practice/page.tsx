@@ -1,6 +1,6 @@
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
-import { Button } from '@/src/components/shadcn/button'
+import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { notFound } from 'next/navigation'
 
@@ -27,15 +27,7 @@ export default async function PracticePage({ params }: { params: Promise<{ share
           ))}
         </div>
 
-        <div className='my-8 flex flex-col items-center justify-center gap-2'>
-          <span className='text-2xl font-semibold'>What colors are part of france&apos;s flag?</span>
-          <span className='text-neutral-300'>Pick one or more answers</span>
-        </div>
-
-        <div className='mx-auto h-[55vh] w-[40vw] rounded-md ring-1'></div>
-        <div className='mt-6 flex justify-center px-8'>
-          <Button variant='secondary'>Check</Button>
-        </div>
+        <RenderPracticeQuestion />
       </div>
     </PracticeStoreProvider>
   )
