@@ -1,4 +1,5 @@
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { z } from 'zod'
 
@@ -22,7 +23,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('single-choice'),
     answers: z
-      .array(z.object({ answer: z.string(), correct: z.boolean() }))
+      .array(z.object({ id: z.string().uuid('An answer must have an uuid to identify it!').optional().catch(getUUID()), answer: z.string(), correct: z.boolean() }))
       .min(1, 'Please provide at least one answer')
       .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
@@ -37,7 +38,9 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('multiple-choice'),
     answers: z
-      .array(z.object({ answer: z.string().min(1, 'An answer must not be empty!'), correct: z.boolean() }))
+      .array(
+        z.object({ id: z.string().uuid('An answer must have an uuid to identify it!').optional().catch(getUUID()), answer: z.string().min(1, 'An answer must not be empty!'), correct: z.boolean() }),
+      )
       .min(1, 'Please provide at least one answer')
       .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
@@ -52,7 +55,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('drag-drop'),
     answers: z
-      .array(z.object({ answer: z.string(), position: z.number().min(0, 'Position must be positive') }))
+      .array(z.object({ id: z.string().uuid('An answer must have an uuid to identify it!').optional().catch(getUUID()), answer: z.string(), position: z.number().min(0, 'Position must be positive') }))
       .default([
         { answer: 'Answer 1', position: 1 },
         { answer: 'Answer 2', position: 2 },
@@ -62,7 +65,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' }),
   }),
 
-  z.object({ type: z.literal('open-question'), expectation: z.string().optional() }),
+  z.object({ id: z.string().uuid('An answer must have an uuid to identify it!').optional().catch(getUUID()), type: z.literal('open-question'), expectation: z.string().optional() }),
 ])
 
 export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
@@ -70,16 +73,16 @@ export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
 export type Question = z.infer<typeof QuestionSchema>
 
 const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities<Question>(QuestionSchema)
-export { validateQuestion, instantiateQuestion, safeParseQuestion }
+export { instantiateQuestion, safeParseQuestion, validateQuestion }
 
 export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
 const { validate: validateChoiceQuestion, instantiate: instantiateChoiceQuestion, safeParse: safeParseChoiceQuestion } = schemaUtilities<ChoiceQuestion>(QuestionSchema)
-export { validateChoiceQuestion, instantiateChoiceQuestion, safeParseChoiceQuestion }
+export { instantiateChoiceQuestion, safeParseChoiceQuestion, validateChoiceQuestion }
 
 export type OpenQuestion = Extract<Question, { type: 'open-question' }>
 const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities<OpenQuestion>(QuestionSchema)
-export { validateOpenQuestion, instantiateOpenQuestion, safeParseOpenQuestion }
+export { instantiateOpenQuestion, safeParseOpenQuestion, validateOpenQuestion }
 
 export type DragDropQuestion = Extract<Question, { type: 'drag-drop' }>
 const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = schemaUtilities<DragDropQuestion>(QuestionSchema)
-export { validateDragDropQuestion, instantiateDragDropQuestion, safeParseDragDropQuestion }
+export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }
