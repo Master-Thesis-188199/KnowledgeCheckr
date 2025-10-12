@@ -125,7 +125,7 @@ export function stripEffects<T extends z.ZodTypeAny, OmitKeys extends readonly P
       return out
     }
     if ((z as Any).ZodReadonly && s instanceof (z as Any).ZodReadonly) {
-      const out = (z as Any).ZodReadonly.create(go((s as Any)._def.innerType))
+      const out = (go((s as Any)._def.innerType) as Any).readonly((s as Any)._def.innerType)
       memo.set(s, out)
       return out
     }
