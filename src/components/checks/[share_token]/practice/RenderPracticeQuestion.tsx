@@ -3,6 +3,9 @@
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import RenderQuestionType from '@/src/components/checks/[share_token]/practice/RenderQuestionType'
 import { Button } from '@/src/components/shadcn/button'
+import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
+import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
+import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
@@ -14,7 +17,6 @@ import { LoaderCircleIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { useActionState, useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
 import { z } from 'zod'
 
 export function RenderPracticeQuestion() {
@@ -35,6 +37,7 @@ export function RenderPracticeQuestion() {
     handleSubmit,
     setError,
     setValue,
+    trigger,
     formState: { isSubmitting, isValidating, isValid, isSubmitted, isSubmitSuccessful, errors },
     getValues,
   } = useForm({
@@ -131,36 +134,34 @@ export function RenderPracticeQuestion() {
               </label>
             ))
           }
-          dragDrop={(q) =>
-            q.answers.map((a, i) => (
-              <label
-                key={`${q.id}-answer-${i}`}
-                className={cn(
-                  'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-                  'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
-                  'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
-                  'flex items-center justify-center',
-                  'resize-none select-none',
-                  'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
-                )}
-                htmlFor={`${q.id}-answer-${i}`}>
-                {a.answer}
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='number' name={`${q.id}-answer`} value={a.answer} readOnly />
-              </label>
-            ))
-          }
-          openQuestion={(q) => (
-            <TextareaAutosize
-              maxRows={11}
-              minRows={11}
-              className={cn(
-                'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
-                'resize-none',
-                'my-auto',
-              )}
-            />
-          )}
         />
+        {question.type === 'drag-drop' && (
+          <DragDropContainer
+            key={question.id + question.type}
+            className='col-span-2 my-auto space-y-6'
+            onSwapEnd={(e) => {
+              e.slotItemMap.asArray.map((el, i) => setValue(`answer.input.${i}` as const, el.item))
+              trigger('answer.input')
+            }}>
+            {question.answers.map((a, i) => (
+              <DragDropItem key={a.answer} name={a.answer}>
+                <DragDropItemPositionCounter initialIndex={i} />
+                {a.answer}
+              </DragDropItem>
+            ))}
+          </DragDropContainer>
+        )}
+
+        {question.type === 'open-question' && (
+          <textarea
+            {...register('answer.input')}
+            className={cn(
+              'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
+              'resize-none',
+              'my-auto h-full',
+            )}
+          />
+        )}
       </div>
 
       <div className='flex justify-center'>
