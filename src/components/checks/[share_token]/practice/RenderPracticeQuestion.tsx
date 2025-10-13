@@ -104,7 +104,14 @@ export function RenderPracticeQuestion() {
               )}
               htmlFor={`${question.id}-answer-${i}`}>
               {a.answer}
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`answer.selection.${i}`)} value={a.answer} />
+              <input
+                className='hidden'
+                id={`${question.id}-answer-${i}`}
+                type='checkbox'
+                {...register(`answer.selection.${i}`)}
+                disabled={isSubmitted && isSubmitSuccessful && !isPending}
+                value={a.answer}
+              />
             </label>
           ))}
 
@@ -123,7 +130,7 @@ export function RenderPracticeQuestion() {
               htmlFor={`${question.id}-answer-${i}`}>
               {a.answer}
 
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} readOnly={isSubmitted} value={a.answer} />
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.answer} />
 
               {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
               <FormFieldError field='answer.selection' errors={errors} />
@@ -133,24 +140,34 @@ export function RenderPracticeQuestion() {
 
         {question.type === 'drag-drop' && (
           <DragDropContainer
-            key={question.id + question.type}
+            key={question.id + question.type + (isSubmitted && isSubmitSuccessful && !isPending).toString()}
             className='col-span-2 my-auto space-y-6'
+            enabled={!(isSubmitted && isSubmitSuccessful && !isPending)}
             onSwapEnd={(e) => {
               e.slotItemMap.asArray.map((el, i) => setValue(`answer.input.${i}` as const, el.item))
               trigger('answer.input')
             }}>
-            {question.answers.map((a, i) => (
-              <DragDropItem key={a.answer} name={a.answer}>
-                <DragDropItemPositionCounter initialIndex={i} />
-                {a.answer}
-              </DragDropItem>
-            ))}
+            {state.values?.answer?.type === 'drag-drop' && state.values?.answer.input?.length === question.answers.length
+              ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
+                state.values.answer.input.map((ans, i) => (
+                  <DragDropItem key={ans} name={ans}>
+                    <DragDropItemPositionCounter initialIndex={i} />
+                    {ans}
+                  </DragDropItem>
+                ))
+              : question.answers.map((a, i) => (
+                  <DragDropItem key={a.answer} name={a.answer}>
+                    <DragDropItemPositionCounter initialIndex={i} />
+                    {a.answer}
+                  </DragDropItem>
+                ))}
           </DragDropContainer>
         )}
 
         {question.type === 'open-question' && (
           <textarea
             {...register('answer.input')}
+            disabled={isSubmitted && isSubmitSuccessful && !isPending}
             className={cn(
               'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
               'resize-none',
