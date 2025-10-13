@@ -37,7 +37,7 @@ export function RenderPracticeQuestion() {
     setError,
     setValue,
     trigger,
-    formState: { isSubmitting, isValidating, isValid, isSubmitted, isSubmitSuccessful, errors },
+    formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
     getValues,
   } = useForm({
     resolver: zodResolver<PracticeData>(PracticeSchema),
@@ -168,7 +168,7 @@ export function RenderPracticeQuestion() {
           className='mx-auto mt-2 dark:bg-neutral-700'
           variant='secondary'
           type='submit'>
-          <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isValidating || isPending) && 'block')} />
+          <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
           Check Answer
         </Button>
 
