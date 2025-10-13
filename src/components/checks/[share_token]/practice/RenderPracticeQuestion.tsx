@@ -1,7 +1,6 @@
 'use client'
 
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
-import RenderQuestionType from '@/src/components/checks/[share_token]/practice/RenderQuestionType'
 import { Button } from '@/src/components/shadcn/button'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
@@ -91,50 +90,47 @@ export function RenderPracticeQuestion() {
       </div>
 
       <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
-        <RenderQuestionType
-          question={question}
-          multipleChoice={(q) =>
-            q.answers.map((a, i) => (
-              <label
-                key={`${q.id}-answer-${i}`}
-                className={cn(
-                  'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-                  'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
-                  'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
-                  'flex items-center justify-center',
-                  'resize-none select-none',
-                  'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
-                )}
-                htmlFor={`${q.id}-answer-${i}`}>
-                {a.answer}
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='checkbox' {...register(`answer.selection.${i}`)} value={a.answer} />
-              </label>
-            ))
-          }
-          singleChoice={(q) =>
-            q.answers.map((a, i) => (
-              <label
-                key={`${q.id}-answer-${i}`}
-                className={cn(
-                  'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-                  'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
-                  'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
-                  'flex items-center justify-center',
-                  'resize-none select-none',
-                  'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
-                )}
-                htmlFor={`${q.id}-answer-${i}`}>
-                {a.answer}
+        {question.type === 'multiple-choice' &&
+          question.answers.map((a, i) => (
+            <label
+              key={`${question.id}-answer-${i}`}
+              className={cn(
+                'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+                'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
+                'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
+                'flex items-center justify-center',
+                'resize-none select-none',
+                'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
+              )}
+              htmlFor={`${question.id}-answer-${i}`}>
+              {a.answer}
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`answer.selection.${i}`)} value={a.answer} />
+            </label>
+          ))}
 
-                <input className='hidden' id={`${q.id}-answer-${i}`} type='radio' {...register('answer.selection')} readOnly={isSubmitted} value={a.answer} />
+        {question.type === 'single-choice' &&
+          question.answers.map((a, i) => (
+            <label
+              key={`${question.id}-answer-${i}`}
+              className={cn(
+                'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+                'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
+                'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
+                'flex items-center justify-center',
+                'resize-none select-none',
+                'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
+              )}
+              htmlFor={`${question.id}-answer-${i}`}>
+              {a.answer}
 
-                {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
-                <FormFieldError field='answer.selection' errors={errors} />
-                <FormFieldError field='answer' errors={errors} />
-              </label>
-            ))
-          }
-        />
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} readOnly={isSubmitted} value={a.answer} />
+
+              {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
+              <FormFieldError field='answer.selection' errors={errors} />
+              <FormFieldError field='answer' errors={errors} />
+            </label>
+          ))}
+
         {question.type === 'drag-drop' && (
           <DragDropContainer
             key={question.id + question.type}
