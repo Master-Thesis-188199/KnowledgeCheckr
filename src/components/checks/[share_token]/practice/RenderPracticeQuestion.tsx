@@ -108,7 +108,7 @@ export function RenderPracticeQuestion() {
                 className='hidden'
                 id={`${question.id}-answer-${i}`}
                 type='checkbox'
-                onChange={() => register(`answer.selection.${i}`).onChange({ target: { name: `answer.selection.${i}`, value: a.answer } })}
+                {...register(`answer.selection.${i}`)}
                 disabled={isSubmitted && isSubmitSuccessful && !isPending}
                 value={a.answer}
               />
