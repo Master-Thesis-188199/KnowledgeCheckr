@@ -65,6 +65,7 @@ export function RenderPracticeQuestion() {
     }
   }, [state.fieldErrors, state.rootError, setError])
 
+  //* Handle reseting form inputs when question changes
   useEffect(() => {
     if (watch('answer.type') === question.type && watch('question_id') === question.id) return
     else {
@@ -83,7 +84,7 @@ export function RenderPracticeQuestion() {
 
   useEffect(() => {
     const sub = watch((values, { name }) => {
-      console.log(`[${name ?? 'Form-State'}] changed`, values)
+      console.log(`[${name ?? 'Form-State (validation)'}] changed`, values)
     })
 
     return () => sub.unsubscribe()
