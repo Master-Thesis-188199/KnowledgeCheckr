@@ -10,6 +10,7 @@ import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/Evaluate
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { isEmpty } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
@@ -37,6 +38,7 @@ export function RenderPracticeQuestion() {
     setError,
     setValue,
     trigger,
+    watch,
     formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
     getValues,
   } = useForm({
@@ -65,9 +67,13 @@ export function RenderPracticeQuestion() {
   }, [state.fieldErrors, state.rootError, setError])
 
   useEffect(() => {
-    reset()
-    setValue('answer.type', question.type)
-  }, [question.id])
+    if (watch('answer.type') === question.type && watch('question_id') === question.id) return
+    else {
+      //* When the question is changed reset the form (and set the new question id and type)
+      reset({ question_id: question.id, answer: { type: question.type! } as Any })
+      return
+    }
+  }, [question.id, question.type])
 
   const onSubmit = (_data: z.infer<typeof PracticeSchema>, e?: React.BaseSyntheticEvent) => {
     console.log('Submitting practice answer...', _data, e)
