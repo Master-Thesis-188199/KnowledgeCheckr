@@ -40,7 +40,6 @@ export function RenderPracticeQuestion() {
     trigger,
     watch,
     formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
-    getValues,
   } = useForm({
     resolver: zodResolver<PracticeData>(PracticeSchema),
     defaultValues: {
@@ -82,7 +81,14 @@ export function RenderPracticeQuestion() {
     })
   }
 
-  console.log(getValues())
+  useEffect(() => {
+    const sub = watch((values, { name }) => {
+      console.log(`[${name ?? 'Form-State'}] changed`, values)
+    })
+
+    return () => sub.unsubscribe()
+  })
+
   if (!isEmpty(errors)) console.log('error', errors)
 
   return (
