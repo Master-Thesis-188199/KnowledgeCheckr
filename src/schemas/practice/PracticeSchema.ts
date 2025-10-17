@@ -31,7 +31,7 @@ export const PracticeSchema = z.object({
       }),
       z.object({
         type: z.literal('open-question'),
-        input: z.string().uuid().min(1, 'Please provide an answer'),
+        input: z.string().min(1, 'Please provide an answer'),
       }),
     ])
     .optional(),
