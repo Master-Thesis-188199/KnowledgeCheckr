@@ -1,3 +1,4 @@
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
 describe('Check: Drag Drop Question -', () => {
@@ -18,10 +19,10 @@ describe('Check: Drag Drop Question -', () => {
       points: 5,
       type: 'drag-drop',
       answers: [
-        { answer: 'Tokyo', position: 1 },
-        { answer: 'Delhi', position: 2 },
-        { answer: 'Shanghai', position: 3 },
-        { answer: 'São Paulo', position: 4 },
+        { id: getUUID(), answer: 'Tokyo', position: 1 },
+        { id: getUUID(), answer: 'Delhi', position: 2 },
+        { id: getUUID(), answer: 'Shanghai', position: 3 },
+        { id: getUUID(), answer: 'São Paulo', position: 4 },
       ],
     }
 
@@ -47,10 +48,10 @@ describe('Check: Drag Drop Question -', () => {
       points: 5,
       type: 'drag-drop',
       answers: [
-        { answer: 'Sao Paulo', position: 4 },
-        { answer: 'Delhi', position: 2 },
-        { answer: 'Shanghai', position: 3 },
-        { answer: 'Tokyo', position: 1 },
+        { id: getUUID(), answer: 'Sao Paulo', position: 4 },
+        { id: getUUID(), answer: 'Delhi', position: 2 },
+        { id: getUUID(), answer: 'Shanghai', position: 3 },
+        { id: getUUID(), answer: 'Tokyo', position: 1 },
       ],
     }
 
