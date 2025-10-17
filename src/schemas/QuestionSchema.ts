@@ -39,10 +39,10 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
       .default([
-        { answer: 'Answer 1', correct: false },
-        { answer: 'Answer 2', correct: true },
-        { answer: 'Answer 3', correct: false },
-        { answer: 'Answer 4', correct: false },
+        { id: getUUID(), answer: 'Answer 1', correct: false },
+        { id: getUUID(), answer: 'Answer 2', correct: true },
+        { id: getUUID(), answer: 'Answer 3', correct: false },
+        { id: getUUID(), answer: 'Answer 4', correct: false },
       ]),
   }),
 
@@ -65,10 +65,10 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
       .default([
-        { answer: 'Answer 1', correct: false },
-        { answer: 'Answer 2', correct: true },
-        { answer: 'Answer 3', correct: false },
-        { answer: 'Answer 4', correct: false },
+        { id: getUUID(), answer: 'Answer 1', correct: false },
+        { id: getUUID(), answer: 'Answer 2', correct: true },
+        { id: getUUID(), answer: 'Answer 3', correct: false },
+        { id: getUUID(), answer: 'Answer 4', correct: false },
       ]),
   }),
 
@@ -87,10 +87,10 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
         }),
       )
       .default([
-        { answer: 'Answer 1', position: 1 },
-        { answer: 'Answer 2', position: 2 },
-        { answer: 'Answer 3', position: 3 },
-        { answer: 'Answer 4', position: 4 },
+        { id: getUUID(), answer: 'Answer 1', position: 1 },
+        { id: getUUID(), answer: 'Answer 2', position: 2 },
+        { id: getUUID(), answer: 'Answer 3', position: 3 },
+        { id: getUUID(), answer: 'Answer 4', position: 4 },
       ])
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),
