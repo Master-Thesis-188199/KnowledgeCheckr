@@ -19,93 +19,92 @@ const baseQuestion = z.object({
     ),
 })
 
-const questionAnswerTypes = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('single-choice'),
-    answers: z
-      .array(
-        z.object({
-          id: z
-            .string()
-            .uuid('An answer must have an uuid to identify it!')
-            .optional()
-            .catch(() => getUUID()),
-          answer: z.string(),
-          correct: z.boolean(),
-        }),
-      )
-      .min(1, 'Please provide at least one answer')
-      .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
-      .default(() => [
-        { id: getUUID(), answer: 'Answer 1', correct: false },
-        { id: getUUID(), answer: 'Answer 2', correct: true },
-        { id: getUUID(), answer: 'Answer 3', correct: false },
-        { id: getUUID(), answer: 'Answer 4', correct: false },
-      ]),
-  }),
+const multipleChoiceAnswerSchema = z.object({
+  type: z.literal('multiple-choice'),
+  answers: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .uuid('An answer must have an uuid to identify it!')
+          .optional()
+          .catch(() => getUUID()),
+        answer: z.string().min(1, 'An answer must not be empty!'),
+        correct: z.boolean(),
+      }),
+    )
+    .min(1, 'Please provide at least one answer')
+    .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
+    .default(() => [
+      { id: getUUID(), answer: 'Answer 1', correct: false },
+      { id: getUUID(), answer: 'Answer 2', correct: true },
+      { id: getUUID(), answer: 'Answer 3', correct: false },
+      { id: getUUID(), answer: 'Answer 4', correct: false },
+    ]),
+})
 
-  z.object({
-    type: z.literal('multiple-choice'),
-    answers: z
-      .array(
-        z.object({
-          id: z
-            .string()
-            .uuid('An answer must have an uuid to identify it!')
-            .optional()
-            .catch(() => getUUID()),
-          answer: z.string().min(1, 'An answer must not be empty!'),
-          correct: z.boolean(),
-        }),
-      )
-      .min(1, 'Please provide at least one answer')
-      .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
-      .default(() => [
-        { id: getUUID(), answer: 'Answer 1', correct: false },
-        { id: getUUID(), answer: 'Answer 2', correct: true },
-        { id: getUUID(), answer: 'Answer 3', correct: false },
-        { id: getUUID(), answer: 'Answer 4', correct: false },
-      ]),
-  }),
+const singleChoiceAnswerSchema = z.object({
+  type: z.literal('single-choice'),
+  answers: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .uuid('An answer must have an uuid to identify it!')
+          .optional()
+          .catch(() => getUUID()),
+        answer: z.string(),
+        correct: z.boolean(),
+      }),
+    )
+    .min(1, 'Please provide at least one answer')
+    .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
+    .default(() => [
+      { id: getUUID(), answer: 'Answer 1', correct: false },
+      { id: getUUID(), answer: 'Answer 2', correct: true },
+      { id: getUUID(), answer: 'Answer 3', correct: false },
+      { id: getUUID(), answer: 'Answer 4', correct: false },
+    ]),
+})
 
-  z.object({
-    type: z.literal('drag-drop'),
-    answers: z
-      .array(
-        z.object({
-          id: z
-            .string()
-            .uuid('An answer must have an uuid to identify it!')
-            .optional()
-            .catch(() => getUUID()),
-          answer: z.string(),
-          position: z.number().min(0, 'Position must be positive'),
-        }),
-      )
-      .default(() => [
-        { id: getUUID(), answer: 'Answer 1', position: 1 },
-        { id: getUUID(), answer: 'Answer 2', position: 2 },
-        { id: getUUID(), answer: 'Answer 3', position: 3 },
-        { id: getUUID(), answer: 'Answer 4', position: 4 },
-      ])
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
-      .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),
-  }),
+const dragDropAnswerSchema = z.object({
+  type: z.literal('drag-drop'),
+  answers: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .uuid('An answer must have an uuid to identify it!')
+          .catch(() => getUUID()),
+        answer: z.string(),
+        position: z.number().min(0, 'Position must be positive'),
+      }),
+    )
+    .default(() => [
+      { id: getUUID(), answer: 'Answer 1', position: 1 },
+      { id: getUUID(), answer: 'Answer 2', position: 2 },
+      { id: getUUID(), answer: 'Answer 3', position: 3 },
+      { id: getUUID(), answer: 'Answer 4', position: 4 },
+    ])
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),
+})
 
-  z.object({
-    id: z
-      .string()
-      .uuid('An answer must have an uuid to identify it!')
-      .optional()
-      .catch(() => getUUID()),
-    type: z.literal('open-question'),
-    expectation: z.string().optional(),
-  }),
-])
+const openAnswerSchema = z.object({
+  id: z
+    .string()
+    .uuid('An answer must have an uuid to identify it!')
+    .optional()
+    .catch(() => getUUID()),
+  type: z.literal('open-question'),
+  expectation: z.string().optional(),
+})
+
+const questionAnswerTypes = z.discriminatedUnion('type', [singleChoiceAnswerSchema, multipleChoiceAnswerSchema, openAnswerSchema, dragDropAnswerSchema])
 
 export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
 
@@ -115,13 +114,26 @@ const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse:
 export { instantiateQuestion, safeParseQuestion, validateQuestion }
 
 export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
-const { validate: validateChoiceQuestion, instantiate: instantiateChoiceQuestion, safeParse: safeParseChoiceQuestion } = schemaUtilities<ChoiceQuestion>(QuestionSchema)
-export { instantiateChoiceQuestion, safeParseChoiceQuestion, validateChoiceQuestion }
+export type SingleChoice = Extract<Question, { type: 'single-choice' }>
+const { validate: validateSingleChoice, instantiate: instantiateSingleChoice, safeParse: safeParseSingleChoice } = schemaUtilities<SingleChoice>(z.intersection(baseQuestion, singleChoiceAnswerSchema))
+export { instantiateSingleChoice, safeParseSingleChoice, validateSingleChoice }
+
+export type MultipleChoice = Extract<Question, { type: 'multiple-choice' }>
+const {
+  validate: validateMultipleChoice,
+  instantiate: instantiateMultipleChoice,
+  safeParse: safeParseMultipleChoice,
+} = schemaUtilities<MultipleChoice>(z.intersection(baseQuestion, multipleChoiceAnswerSchema))
+export { instantiateMultipleChoice, safeParseMultipleChoice, validateMultipleChoice }
 
 export type OpenQuestion = Extract<Question, { type: 'open-question' }>
-const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities<OpenQuestion>(QuestionSchema)
+const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities<OpenQuestion>(z.intersection(baseQuestion, openAnswerSchema))
 export { instantiateOpenQuestion, safeParseOpenQuestion, validateOpenQuestion }
 
 export type DragDropQuestion = Extract<Question, { type: 'drag-drop' }>
-const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = schemaUtilities<DragDropQuestion>(QuestionSchema)
+const {
+  validate: validateDragDropQuestion,
+  instantiate: instantiateDragDropQuestion,
+  safeParse: safeParseDragDropQuestion,
+} = schemaUtilities<DragDropQuestion>(z.intersection(baseQuestion, dragDropAnswerSchema))
 export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }
