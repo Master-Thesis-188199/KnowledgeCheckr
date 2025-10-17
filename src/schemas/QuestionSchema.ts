@@ -38,7 +38,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
-      .default([
+      .default(() => [
         { id: getUUID(), answer: 'Answer 1', correct: false },
         { id: getUUID(), answer: 'Answer 2', correct: true },
         { id: getUUID(), answer: 'Answer 3', correct: false },
@@ -64,7 +64,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
       .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
       .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
-      .default([
+      .default(() => [
         { id: getUUID(), answer: 'Answer 1', correct: false },
         { id: getUUID(), answer: 'Answer 2', correct: true },
         { id: getUUID(), answer: 'Answer 3', correct: false },
@@ -86,7 +86,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [
           position: z.number().min(0, 'Position must be positive'),
         }),
       )
-      .default([
+      .default(() => [
         { id: getUUID(), answer: 'Answer 1', position: 1 },
         { id: getUUID(), answer: 'Answer 2', position: 2 },
         { id: getUUID(), answer: 'Answer 3', position: 3 },
