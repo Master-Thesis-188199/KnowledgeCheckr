@@ -5,7 +5,16 @@ import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import {
+  ChoiceQuestion,
+  instantiateDragDropQuestion,
+  instantiateMultipleChoice,
+  instantiateOpenQuestion,
+  instantiateSingleChoice,
+  OpenQuestion,
+  Question,
+  QuestionSchema,
+} from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,62 +27,34 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const { addQuestion, questionCategories } = useCheckStore((state) => state)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
-    const baseValues: Partial<Pick<Question, 'category' | 'points' | 'question'>> & Pick<Question, 'id'> = {
-      id: getUUID(),
-      points: 1,
-      category: 'general',
-    }
-
     switch (type) {
       case 'multiple-choice':
         return {
-          ...baseValues,
-          // question: 'Which of the following is a programming language?',
-          type,
-          answers: [
-            { answer: '', correct: true },
-            { answer: '', correct: true },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-          ],
+          ...instantiateMultipleChoice(),
+          question: '',
+          points: 1,
         }
       case 'single-choice':
         return {
-          ...baseValues,
-          // question: 'What does RGB stand for?',
-          type,
-          answers: [
-            { answer: '', correct: true },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-          ],
+          ...instantiateSingleChoice(),
+          question: '',
+          points: 1,
         }
 
       case 'open-question':
         return {
-          ...baseValues,
-          // question: 'Describe the essential parts of a computer.',
-          type,
-          expectation: '',
+          ...instantiateOpenQuestion(),
+          question: '',
+          points: 1,
         }
 
       case 'drag-drop':
         return {
-          ...baseValues,
-          // question: 'Move these activities based the order in which they should be performed',
-          type,
-          answers: [
-            { answer: '', position: 1 },
-            { answer: '', position: 2 },
-            { answer: '', position: 3 },
-            { answer: '', position: 4 },
-          ],
-        }
+          ...instantiateDragDropQuestion(),
+          question: '',
+          points: 1,
 
-      default:
-        return {
-          ...baseValues,
+          answers: instantiateDragDropQuestion().answers.map((a, i) => ({ ...a, position: i + 1 })),
         }
     }
   }
@@ -378,7 +359,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
       <button
         type='button'
         aria-label='Add Answer'
-        onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
+        onClick={() => append({ id: getUUID(), answer: '', position: watch('answers').length + 1 })}
         className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
