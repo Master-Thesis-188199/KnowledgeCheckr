@@ -1,7 +1,7 @@
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
-import { z } from 'zod'
+import { z, ZodIssueCode } from 'zod'
 
 const baseQuestion = z.object({
   id: z.string().uuid(),
@@ -84,6 +84,55 @@ const dragDropAnswerSchema = z.object({
         position: z.number().min(0, 'Position must be positive'),
       }),
     )
+    .superRefine((answers, ctx) => {
+      const n = answers.length
+      const seen = new Set<number>()
+
+      answers.forEach((answer, i) => {
+        if (answer.position < 0) {
+          ctx.addIssue({
+            code: ZodIssueCode.too_small,
+            minimum: 1,
+            type: 'number',
+            inclusive: true,
+            message: '[drag-drop] positions must begin from 0 or 1',
+            path: [i, 'position'],
+          })
+        }
+
+        if (answer.position > n) {
+          ctx.addIssue({
+            code: ZodIssueCode.too_big,
+            maximum: n,
+            type: 'number',
+            inclusive: true,
+            message: `[drag-drop] position must be ≤ ${n}; cannot exceed ${n} = answers-length`,
+            path: [i, 'position'],
+          })
+        }
+
+        if (seen.has(answer.position)) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            message: `[drag-drop] duplicate position: ${answer.position}`,
+            path: [i, 'position'],
+          })
+        }
+        seen.add(answer.position)
+      })
+
+      //* Identify gaps in continuous range of positions
+      for (let pos = 1; pos <= n; pos++) {
+        if (!seen.has(pos)) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            message: `[drag-drop] positions must be within a continuous range [0...${n - 1}] or [1...${n}]. Position ${pos} is missing! `,
+            path: [],
+          })
+          break
+        }
+      }
+    })
     .default(() => [
       { id: getUUID(), answer: 'Answer 1', position: 1 },
       { id: getUUID(), answer: 'Answer 2', position: 2 },
