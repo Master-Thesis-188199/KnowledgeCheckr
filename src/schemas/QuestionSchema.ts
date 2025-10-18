@@ -138,7 +138,6 @@ const dragDropAnswerSchema = z.object({
 })
 
 const openAnswerSchema = z.object({
-  id: AnswerId,
   type: z.literal('open-question'),
   expectation: z.string().optional(),
 })
