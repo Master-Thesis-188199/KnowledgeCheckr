@@ -1,6 +1,6 @@
 'use server'
 
-import { DBConnection } from '@/database/Database'
+import getDatabase, { DBConnection } from '@/database/Database'
 import { DBAnswer, DBCategory, DbQuestion } from '@/database/knowledgeCheck/questions/type'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -70,4 +70,27 @@ async function parseCategory(db: DBConnection, category_id: string): Promise<Que
   const categories = await db.exec<DBCategory[]>('SELECT * FROM Category WHERE id = ?', [category_id])
 
   return categories.at(0)!.name
+}
+
+export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Question>(question_id: Question['id']): Promise<ExpectedQuestion | null> {
+  //todo: Protect this route against unauthorized access -> to prevent users from accessing the questions' answers.
+
+  const db = await getDatabase()
+
+  const [dbQuestion] = await db.exec<Array<DbQuestion | undefined>>('SELECT * FROM Question WHERE id = ? LIMIT 1', [question_id])
+  if (!dbQuestion) return null
+
+  const answers = await db.exec<DBAnswer[]>('SELECT * FROM Answer WHERE Question_id = ?', [dbQuestion.id])
+  const category = await parseCategory(db, dbQuestion.category_id)
+
+  const question = {
+    id: dbQuestion.id,
+    type: dbQuestion.type as Any,
+    question: dbQuestion.question,
+    category,
+    points: dbQuestion.points,
+    ...parseAnswer(dbQuestion.type, answers as DBAnswer[]),
+  }
+
+  return question as ExpectedQuestion
 }
