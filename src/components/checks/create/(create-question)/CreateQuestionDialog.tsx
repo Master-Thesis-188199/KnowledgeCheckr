@@ -49,12 +49,13 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         }
 
       case 'drag-drop':
+        const dragQuestion = instantiateDragDropQuestion()
         return {
-          ...instantiateDragDropQuestion(),
+          ...dragQuestion,
           question: '',
           points: 1,
 
-          answers: instantiateDragDropQuestion().answers.map((a, i) => ({ ...a, position: i })),
+          answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
         }
     }
   }
