@@ -81,26 +81,16 @@ const dragDropAnswerSchema = z.object({
     .superRefine((answers, ctx) => {
       const n = answers.length
       const seen = new Set<number>()
+      const minPos = Math.min(...answers.map((a) => a.position))
 
       answers.forEach((answer, i) => {
         if (answer.position < 0) {
           ctx.addIssue({
             code: ZodIssueCode.too_small,
-            minimum: 1,
+            minimum: 0,
             type: 'number',
             inclusive: true,
             message: '[drag-drop] positions must begin from 0 or 1',
-            path: [i, 'position'],
-          })
-        }
-
-        if (answer.position > n) {
-          ctx.addIssue({
-            code: ZodIssueCode.too_big,
-            maximum: n,
-            type: 'number',
-            inclusive: true,
-            message: `[drag-drop] position must be ≤ ${n}; cannot exceed ${n} = answers-length`,
             path: [i, 'position'],
           })
         }
@@ -116,13 +106,16 @@ const dragDropAnswerSchema = z.object({
       })
 
       //* Identify gaps in continuous range of positions
-      for (let pos = 1; pos <= n; pos++) {
+      const expectedMin = minPos === 1 ? 1 : 0
+      const expectedMax = minPos === 1 ? n : n - 1
+
+      for (let pos = expectedMin; pos <= expectedMax; pos++) {
         if (!seen.has(pos)) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
-            message: `[drag-drop] positions must be within a continuous range [0...${n - 1}] or [1...${n}]. Position ${pos} is missing! `,
-            path: [],
+            message: `[drag-drop] positions must form a continuous range: [${expectedMin}...${expectedMax}] or [${expectedMin === 1 ? 0 : 1}...${expectedMax === n ? n - 1 : n}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
           })
+
           break
         }
       }
