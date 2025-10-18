@@ -1,6 +1,8 @@
 'use server'
 
+import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questions/select'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
+import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
 
 export type AuthState = {
   success: boolean
@@ -9,6 +11,7 @@ export type AuthState = {
   }
   rootError?: string
   values?: PracticeData
+  feedback?: Feedback
 }
 
 export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<AuthState> {
@@ -16,8 +19,6 @@ export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<
 
   await new Promise((r) => setTimeout(r, 500))
 
-  //* Purposely produce an error for server-side form-field validation
-  // const parsed = PracticeSchema.safeParse({ question_id: data.question_id, answer: { type: 'single-choice', selection: '' } } as Partial<PracticeData>)
   const parsed = PracticeSchema.safeParse(data)
 
   if (!parsed.success) {
@@ -26,5 +27,52 @@ export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<
     return { success: false, fieldErrors, values: data }
   }
 
-  return { success: true, values: data }
+  const feedback = await createFeedback(data)
+  return { success: true, values: data, feedback }
+}
+
+type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string; solution: string }, 'question_id' | 'selection'>
+type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[] }, 'question_id' | 'selection'>
+type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string }, 'question_id'>
+type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[] }, 'question_id' | 'input'>
+
+type Feedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
+
+async function createFeedback({ question_id, ...answer }: PracticeData): Promise<Feedback> {
+  let question = await getKnowledgeCheckQuestionById(question_id)
+  //todo: Generate question-feedback-reasoning using a local llm to explain the wrongful selection of answers to the user with a encouraging tone
+
+  switch (answer.type) {
+    case 'single-choice':
+      question = question as SingleChoice
+      return {
+        type: answer.type,
+        solution: question.answers.find((a) => a.correct)!.id,
+        reasoning: 'This answer is correct because...',
+      }
+
+    case 'multiple-choice':
+      question = question as MultipleChoice
+      return {
+        type: answer.type,
+        solution: question.answers.filter((a) => a.correct).map((answer) => answer.id),
+        reasoning: question.answers.map((answer, i) => (answer.correct ? `Answer ${i} is correct because...` : `Answer ${i} is false because..`)),
+      }
+
+    case 'open-question':
+      question = question as OpenQuestion
+      return {
+        type: answer.type,
+        input: question.expectation ?? '',
+        reasoning: 'This answer is correct because...',
+      }
+
+    case 'drag-drop':
+      question = question as DragDropQuestion
+      return {
+        type: answer.type,
+        solution: question.answers.map((answer) => answer.id),
+        reasoning: 'This answer is correct because...',
+      }
+  }
 }
