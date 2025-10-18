@@ -34,9 +34,7 @@ describe('Check: Drag Drop Question -', () => {
 
     for (let i = 0; i < answers.length; i++) {
       cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(answers[i].answer)
-      cy.get(`#question-answers * input[name='answers.${i}.position']`)
-        .should('exist')
-        .should('have.value', answers[i].position + 1)
+      cy.get(`#question-answers * input[name='answers.${i}.position']`).should('exist').should('have.value', answers[i].position)
     }
 
     cy.get("#question-dialog * button[type='submit']").should('exist').click({ force: true })
