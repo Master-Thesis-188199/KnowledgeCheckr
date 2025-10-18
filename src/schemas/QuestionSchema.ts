@@ -3,6 +3,11 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { z, ZodIssueCode } from 'zod'
 
+const AnswerId = z
+  .string()
+  .uuid('An answer must have an uuid to identify it!')
+  .catch(() => getUUID())
+
 const baseQuestion = z.object({
   id: z.string().uuid(),
   points: z.number().positive(),
@@ -24,10 +29,7 @@ const multipleChoiceAnswerSchema = z.object({
   answers: z
     .array(
       z.object({
-        id: z
-          .string()
-          .uuid('An answer must have an uuid to identify it!')
-          .catch(() => getUUID()),
+        id: AnswerId,
         answer: z.string().min(1, 'An answer must not be empty!'),
         correct: z.boolean(),
       }),
@@ -49,10 +51,7 @@ const singleChoiceAnswerSchema = z.object({
   answers: z
     .array(
       z.object({
-        id: z
-          .string()
-          .uuid('An answer must have an uuid to identify it!')
-          .catch(() => getUUID()),
+        id: AnswerId,
         answer: z.string(),
         correct: z.boolean(),
       }),
@@ -74,10 +73,7 @@ const dragDropAnswerSchema = z.object({
   answers: z
     .array(
       z.object({
-        id: z
-          .string()
-          .uuid('An answer must have an uuid to identify it!')
-          .catch(() => getUUID()),
+        id: AnswerId,
         answer: z.string(),
         position: z.number().min(0, 'Position must be positive'),
       }),
@@ -142,10 +138,7 @@ const dragDropAnswerSchema = z.object({
 })
 
 const openAnswerSchema = z.object({
-  id: z
-    .string()
-    .uuid('An answer must have an uuid to identify it!')
-    .catch(() => getUUID()),
+  id: AnswerId,
   type: z.literal('open-question'),
   expectation: z.string().optional(),
 })
