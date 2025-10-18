@@ -44,9 +44,7 @@ export function RenderPracticeQuestion() {
     resolver: zodResolver<PracticeData>(PracticeSchema),
     defaultValues: {
       question_id: state.values?.question_id ?? question.id,
-      answer: {
-        type: state.values?.answer?.type ?? question.type,
-      },
+      type: state.values?.type ?? question.type,
     },
   })
 
@@ -67,10 +65,10 @@ export function RenderPracticeQuestion() {
 
   //* Handle reseting form inputs when question changes
   useEffect(() => {
-    if (watch('answer.type') === question.type && watch('question_id') === question.id) return
+    if (watch('type') === question.type && watch('question_id') === question.id) return
     else {
       //* When the question is changed reset the form (and set the new question id and type)
-      reset({ question_id: question.id, answer: { type: question.type! } as Any })
+      reset({ question_id: question.id, type: question.type as Any })
       return
     }
   }, [question.id, question.type])
@@ -117,14 +115,7 @@ export function RenderPracticeQuestion() {
               )}
               htmlFor={`${question.id}-answer-${i}`}>
               {a.answer}
-              <input
-                className='hidden'
-                id={`${question.id}-answer-${i}`}
-                type='checkbox'
-                {...register(`answer.selection.${i}`)}
-                disabled={isSubmitted && isSubmitSuccessful && !isPending}
-                value={a.id}
-              />
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`selection.${i}`)} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
             </label>
           ))}
 
@@ -143,11 +134,11 @@ export function RenderPracticeQuestion() {
               htmlFor={`${question.id}-answer-${i}`}>
               {a.answer}
 
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
 
               {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
               <FormFieldError field='answer.selection' errors={errors} />
-              <FormFieldError field='answer' errors={errors} />
+              {/* <FormFieldError field='answer' errors={errors} /> */}
             </label>
           ))}
 
@@ -157,12 +148,12 @@ export function RenderPracticeQuestion() {
             className='col-span-2 my-auto space-y-6'
             enabled={!(isSubmitted && isSubmitSuccessful && !isPending)}
             onSwapEnd={(e) => {
-              e.slotItemMap.asArray.map((el, i) => setValue(`answer.input.${i}` as const, el.item))
-              trigger('answer.input')
+              e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
+              trigger('input')
             }}>
-            {state.values?.answer?.type === 'drag-drop' && state.values?.answer.input?.length === question.answers.length
+            {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length
               ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
-                state.values.answer.input.map((answer_id, i) => (
+                state.values.input.map((answer_id, i) => (
                   <DragDropItem key={answer_id} name={answer_id}>
                     <DragDropItemPositionCounter initialIndex={i} />
                     {question.answers.find((a) => a.id === answer_id)?.answer ?? 'Unknown Answer'}
@@ -179,7 +170,7 @@ export function RenderPracticeQuestion() {
 
         {question.type === 'open-question' && (
           <textarea
-            {...register('answer.input')}
+            {...register('input')}
             disabled={isSubmitted && isSubmitSuccessful && !isPending}
             className={cn(
               'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
