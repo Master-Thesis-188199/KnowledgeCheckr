@@ -44,7 +44,7 @@ describe('Check: Drag Drop Question -', () => {
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
   })
 
-  it.only('Verify that drag-drop answers can be re-ordered', () => {
+  it('Verify that drag-drop answers can be re-ordered', () => {
     const { question, points, type, answers }: Partial<DragDropQuestion> = {
       question: 'Please arrange the following cities in order of their population size:',
       points: 5,
