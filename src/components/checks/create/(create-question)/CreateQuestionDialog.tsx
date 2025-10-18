@@ -305,16 +305,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
                 <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
-                  <input
-                    tabIndex={-1}
-                    type='number'
-                    value={index}
-                    readOnly
-                    disabled
-                    {...register(`answers.${index}.position` as const)}
-                    onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
-                    className='hidden'
-                  />
+                  <input type='hidden' value={index} {...register(`answers.${index}.position` as const, { valueAsNumber: true })} />
                   <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
                 </label>
               </Tooltip>
