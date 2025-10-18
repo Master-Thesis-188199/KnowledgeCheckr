@@ -27,7 +27,6 @@ const multipleChoiceAnswerSchema = z.object({
         id: z
           .string()
           .uuid('An answer must have an uuid to identify it!')
-          .optional()
           .catch(() => getUUID()),
         answer: z.string().min(1, 'An answer must not be empty!'),
         correct: z.boolean(),
@@ -53,7 +52,6 @@ const singleChoiceAnswerSchema = z.object({
         id: z
           .string()
           .uuid('An answer must have an uuid to identify it!')
-          .optional()
           .catch(() => getUUID()),
         answer: z.string(),
         correct: z.boolean(),
@@ -147,7 +145,6 @@ const openAnswerSchema = z.object({
   id: z
     .string()
     .uuid('An answer must have an uuid to identify it!')
-    .optional()
     .catch(() => getUUID()),
   type: z.literal('open-question'),
   expectation: z.string().optional(),
