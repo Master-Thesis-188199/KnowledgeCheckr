@@ -1,11 +1,10 @@
-'use server'
-
 import getDatabase, { DBConnection } from '@/database/Database'
 import { DBAnswer, DBCategory, DbQuestion } from '@/database/knowledgeCheck/questions/type'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
+import 'server-only'
 
 export default async function getKnowledgeCheckQuestions(db: DBConnection, knowledgeCheck_id: KnowledgeCheck['id']) {
   await requireAuthentication()
@@ -73,8 +72,6 @@ async function parseCategory(db: DBConnection, category_id: string): Promise<Que
 }
 
 export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Question>(question_id: Question['id']): Promise<ExpectedQuestion | null> {
-  //todo: Protect this route against unauthorized access -> to prevent users from accessing the questions' answers.
-
   const db = await getDatabase()
 
   const [dbQuestion] = await db.exec<Array<DbQuestion | undefined>>('SELECT * FROM Question WHERE id = ? LIMIT 1', [question_id])
