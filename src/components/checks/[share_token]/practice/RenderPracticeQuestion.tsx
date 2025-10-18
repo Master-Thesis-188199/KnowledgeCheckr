@@ -123,7 +123,7 @@ export function RenderPracticeQuestion() {
                 type='checkbox'
                 {...register(`answer.selection.${i}`)}
                 disabled={isSubmitted && isSubmitSuccessful && !isPending}
-                value={a.answer}
+                value={a.id}
               />
             </label>
           ))}
@@ -143,7 +143,7 @@ export function RenderPracticeQuestion() {
               htmlFor={`${question.id}-answer-${i}`}>
               {a.answer}
 
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.answer} />
+              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('answer.selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
 
               {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
               <FormFieldError field='answer.selection' errors={errors} />
@@ -162,14 +162,14 @@ export function RenderPracticeQuestion() {
             }}>
             {state.values?.answer?.type === 'drag-drop' && state.values?.answer.input?.length === question.answers.length
               ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
-                state.values.answer.input.map((ans, i) => (
-                  <DragDropItem key={ans} name={ans}>
+                state.values.answer.input.map((answer_id, i) => (
+                  <DragDropItem key={answer_id} name={answer_id}>
                     <DragDropItemPositionCounter initialIndex={i} />
-                    {ans}
+                    {question.answers.find((a) => a.id === answer_id)?.answer ?? 'Unknown Answer'}
                   </DragDropItem>
                 ))
               : question.answers.map((a, i) => (
-                  <DragDropItem key={a.answer} name={a.answer}>
+                  <DragDropItem key={a.id} name={a.id}>
                     <DragDropItemPositionCounter initialIndex={i} />
                     {a.answer}
                   </DragDropItem>

@@ -8,7 +8,7 @@ export const PracticeSchema = z.object({
       z.object({
         type: z.literal('single-choice'),
         //* The identifier of the selected answer [the answer itself]
-        selection: z.string().nonempty('Please select an answer'),
+        selection: z.string().uuid().nonempty('Please select an answer'),
       }),
       z.object({
         type: z.literal('multiple-choice'),
@@ -17,6 +17,7 @@ export const PracticeSchema = z.object({
           .array(
             z
               .string()
+              .uuid()
               .or(z.boolean())
               .transform((v) => (v === false ? null : v))
               .nullable(),
