@@ -133,7 +133,7 @@ const dragDropAnswerSchema = z.object({
       { id: getUUID(), answer: 'Answer 3', position: 3 },
       { id: getUUID(), answer: 'Answer 4', position: 4 },
     ])
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning thaqt answers must be distinct!' })
+    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
     .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),
 })
 
