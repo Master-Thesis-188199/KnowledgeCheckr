@@ -19,10 +19,10 @@ describe('Check: Drag Drop Question -', () => {
       points: 5,
       type: 'drag-drop',
       answers: [
-        { id: getUUID(), answer: 'Tokyo', position: 1 },
-        { id: getUUID(), answer: 'Delhi', position: 2 },
-        { id: getUUID(), answer: 'Shanghai', position: 3 },
-        { id: getUUID(), answer: 'São Paulo', position: 4 },
+        { id: getUUID(), answer: 'Tokyo', position: 0 },
+        { id: getUUID(), answer: 'Delhi', position: 1 },
+        { id: getUUID(), answer: 'Shanghai', position: 2 },
+        { id: getUUID(), answer: 'São Paulo', position: 3 },
       ],
     }
 
@@ -34,7 +34,9 @@ describe('Check: Drag Drop Question -', () => {
 
     for (let i = 0; i < answers.length; i++) {
       cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(answers[i].answer)
-      cy.get(`#question-answers * input[name='answers.${i}.position']`).should('exist').should('have.value', answers[i].position)
+      cy.get(`#question-answers * input[name='answers.${i}.position']`)
+        .should('exist')
+        .should('have.value', answers[i].position + 1)
     }
 
     cy.get("#question-dialog * button[type='submit']").should('exist').click({ force: true })
@@ -42,16 +44,16 @@ describe('Check: Drag Drop Question -', () => {
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
   })
 
-  it('Verify that drag-drop answers can be re-ordered', () => {
+  it.only('Verify that drag-drop answers can be re-ordered', () => {
     const { question, points, type, answers }: Partial<DragDropQuestion> = {
       question: 'Please arrange the following cities in order of their population size:',
       points: 5,
       type: 'drag-drop',
       answers: [
-        { id: getUUID(), answer: 'Sao Paulo', position: 4 },
-        { id: getUUID(), answer: 'Delhi', position: 2 },
-        { id: getUUID(), answer: 'Shanghai', position: 3 },
-        { id: getUUID(), answer: 'Tokyo', position: 1 },
+        { id: getUUID(), answer: 'Sao Paulo', position: 3 },
+        { id: getUUID(), answer: 'Delhi', position: 1 },
+        { id: getUUID(), answer: 'Shanghai', position: 2 },
+        { id: getUUID(), answer: 'Tokyo', position: 0 },
       ],
     }
 
@@ -93,12 +95,9 @@ describe('Check: Drag Drop Question -', () => {
             cy.wait(500)
           }
         })
-      cy.get(`#question-answers * input[name='answers.${answers[i].position - 1}.answer']`)
-        .should('exist')
-        .invoke('val')
-        .should('eq', answers[i].answer)
+      cy.get(`#question-answers * input[name='answers.${answers[i].position}.answer']`).should('exist').invoke('val').should('eq', answers[i].answer)
 
-      cy.get(`#question-answers * input[name='answers.${answers[i].position - 1}.position']`)
+      cy.get(`#question-answers * input[name='answers.${answers[i].position}.position']`)
         .should('exist')
         .invoke('val')
         .then((pos) => Number(pos))

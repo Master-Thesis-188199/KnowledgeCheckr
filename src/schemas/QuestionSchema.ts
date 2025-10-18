@@ -83,18 +83,19 @@ const dragDropAnswerSchema = z.object({
       const seen = new Set<number>()
       const minPos = Math.min(...answers.map((a) => a.position))
 
-      answers.forEach((answer, i) => {
-        if (answer.position < 0) {
-          ctx.addIssue({
-            code: ZodIssueCode.too_small,
-            minimum: 0,
-            type: 'number',
-            inclusive: true,
-            message: '[drag-drop] positions must begin from 0 or 1',
-            path: [i, 'position'],
-          })
-        }
+      if (minPos !== 0) {
+        ctx.addIssue({
+          code: ZodIssueCode.too_small,
+          minimum: 0,
+          type: 'number',
+          inclusive: true,
+          message: `[drag-drop] positions must begin from 0; received: ${minPos} `,
+          path: [answers.findIndex((a) => a.position === minPos), 'position'],
+        })
+        return
+      }
 
+      answers.forEach((answer, i) => {
         if (seen.has(answer.position)) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
@@ -106,14 +107,11 @@ const dragDropAnswerSchema = z.object({
       })
 
       //* Identify gaps in continuous range of positions
-      const expectedMin = minPos === 1 ? 1 : 0
-      const expectedMax = minPos === 1 ? n : n - 1
-
-      for (let pos = expectedMin; pos <= expectedMax; pos++) {
+      for (let pos = 0; pos <= n - 1; pos++) {
         if (!seen.has(pos)) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
-            message: `[drag-drop] positions must form a continuous range: [${expectedMin}...${expectedMax}] or [${expectedMin === 1 ? 0 : 1}...${expectedMax === n ? n - 1 : n}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
+            message: `[drag-drop] positions must form a continuous range: [0...${n - 1}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
           })
 
           break
@@ -121,10 +119,10 @@ const dragDropAnswerSchema = z.object({
       }
     })
     .default(() => [
-      { id: getUUID(), answer: 'Answer 1', position: 1 },
-      { id: getUUID(), answer: 'Answer 2', position: 2 },
-      { id: getUUID(), answer: 'Answer 3', position: 3 },
-      { id: getUUID(), answer: 'Answer 4', position: 4 },
+      { id: getUUID(), answer: 'Answer 1', position: 0 },
+      { id: getUUID(), answer: 'Answer 2', position: 1 },
+      { id: getUUID(), answer: 'Answer 3', position: 2 },
+      { id: getUUID(), answer: 'Answer 4', position: 3 },
     ])
     .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
     .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),

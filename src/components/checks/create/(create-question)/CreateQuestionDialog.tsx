@@ -54,7 +54,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
           question: '',
           points: 1,
 
-          answers: instantiateDragDropQuestion().answers.map((a, i) => ({ ...a, position: i + 1 })),
+          answers: instantiateDragDropQuestion().answers.map((a, i) => ({ ...a, position: i })),
         }
     }
   }
@@ -308,13 +308,14 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   <input
                     tabIndex={-1}
                     type='number'
-                    value={index + 1}
+                    value={index}
                     readOnly
                     disabled
                     {...register(`answers.${index}.position` as const)}
                     onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
-                    className='hidden-spin-button field-sizing-content text-center outline-0'
+                    className='hidden'
                   />
+                  <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
                 </label>
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Moveable exemplary Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
@@ -324,11 +325,11 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   type='button'
                   onClick={() => {
                     move(index, index - 1)
-                    setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
-                    setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
+                    setValue(`answers.${index}.position`, index, { shouldValidate: true })
+                    setValue(`answers.${index - 1}.position`, index - 1, { shouldValidate: true })
                   }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-300 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
-                  disabled={index - 1 < 0}>
+                  disabled={index < 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
                 <button
@@ -337,8 +338,8 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   disabled={index + 1 >= fields.length}
                   onClick={() => {
                     move(index, index + 1)
-                    setValue(`answers.${index}.position`, index + 1)
-                    setValue(`answers.${index + 1}.position`, index + 2)
+                    setValue(`answers.${index}.position`, index)
+                    setValue(`answers.${index + 1}.position`, index + 1)
                   }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
                   <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:hover:text-neutral-600/80 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
