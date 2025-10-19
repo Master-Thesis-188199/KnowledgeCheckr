@@ -10,15 +10,15 @@ import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/us
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
-import { Question } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, Variants } from 'framer-motion'
 import { isEmpty } from 'lodash'
 import { CheckIcon, LoaderCircleIcon, XIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import React, { useActionState, useEffect, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { HTMLProps, useActionState, useEffect, useTransition } from 'react'
+import { FieldErrors, useForm, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
 
 export function RenderPracticeQuestion() {
@@ -301,4 +301,56 @@ function FeedbackIndicators({ correctlySelected, missingSelection, falslySelecte
       <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-yellow-500/80', missingSelection && 'block')} />
     </>
   )
+}
+
+/**
+ * This component renders the answer-options for ChoiceQuestions as they are almost identical, to reduce code duplication
+ */
+function ChoiceAnswerOption<Q extends ChoiceQuestion>({
+  register,
+  registerKey,
+  question,
+  getFeedbackEvaluation,
+  errors,
+  isEvaluated,
+  type,
+}: {
+  isEvaluated: boolean
+  register: UseFormRegister<PracticeData>
+  errors: FieldErrors<PracticeData>
+  type: Required<HTMLProps<HTMLInputElement>['type']>
+  registerKey: (index: number) => Parameters<UseFormRegister<PracticeData>>['0']
+  question: Q
+  getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
+}) {
+  return question.answers.map((a, i) => {
+    const { isCorrectlySelected, isFalslySelected, isMissingSelection } = getFeedbackEvaluation(question as SingleChoice)
+
+    return (
+      <label
+        key={a.id}
+        className={cn(
+          'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-neutral-500 has-enabled:dark:hover:ring-neutral-300/60',
+          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
+          'flex items-center justify-center',
+          'resize-none select-none',
+          'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
+
+          isEvaluated && 'relative ring-2',
+          isCorrectlySelected(a) && 'dark:ring-green-500/70',
+          isFalslySelected(a) && 'dark:ring-red-400/70',
+          isMissingSelection(a) && 'dark:ring-yellow-400/70',
+        )}
+        htmlFor={a.id}>
+        {a.answer}
+
+        <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
+
+        <input className='hidden' id={a.id} type={type} {...register(registerKey(i))} disabled={isEvaluated} value={a.id} />
+
+        <FormFieldError field={registerKey(i)} errors={errors} />
+      </label>
+    )
+  })
 }
