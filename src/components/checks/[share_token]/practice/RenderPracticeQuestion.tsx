@@ -219,7 +219,7 @@ export function RenderPracticeQuestion() {
         )}
       </div>
 
-      <FeedbackLegend show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending)} />
+      <FeedbackLegend show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')} />
 
       <div className='flex justify-center'>
         <Button
