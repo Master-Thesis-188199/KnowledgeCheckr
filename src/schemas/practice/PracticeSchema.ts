@@ -19,7 +19,8 @@ const MultipleChoiceAnswerSchema = z.object({
         .string()
         .uuid()
         .or(z.literal(false))
-        .transform((v) => (v === false ? null : v))
+        .optional()
+        .transform((v) => (v === false || v === undefined ? null : v))
         .nullable(),
     )
     .refine((values) => values.filter((v) => !!v).length > 0, 'Please select at least one answer'),
