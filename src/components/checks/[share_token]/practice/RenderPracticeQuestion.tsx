@@ -6,6 +6,7 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
@@ -48,6 +49,9 @@ export function RenderPracticeQuestion() {
       type: state.values?.type ?? question.type,
     },
   })
+
+  const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
+  const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending)
 
   //* Apply server-side validation errors (if any) - so that they show up in the form
   useEffect(() => {
@@ -109,12 +113,7 @@ export function RenderPracticeQuestion() {
       <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' &&
           question.answers.map((a, i) => {
-            const feedback = state.feedback?.type === question.type ? state.feedback : undefined
-            const user_answers = state.values?.type === question.type ? state.values : undefined
-
-            const correctlySelcted = isSubmitSuccessful && !!feedback?.solution.find((s) => s === a.id) && !!user_answers?.selection.find((s) => s === a.id)
-            const falslySelected = isSubmitSuccessful && !!user_answers?.selection.find((s) => s === a.id) && !feedback?.solution.find((s) => s === a.id)
-            const missingSelection = isSubmitSuccessful && !!feedback?.solution.find((s) => s === a.id) && !user_answers?.selection.find((s) => s === a.id)
+            const { isCorrectlySelected, isFalslySelected, isMissingSelection } = getFeedbackEvaluation(question)
 
             return (
               <label
@@ -126,15 +125,15 @@ export function RenderPracticeQuestion() {
                   'flex items-center justify-center',
                   'resize-none select-none',
                   'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
-                  isSubmitSuccessful && 'relative ring-2',
-                  correctlySelcted && 'dark:ring-green-500/70',
-                  falslySelected && 'dark:ring-red-400/70',
-                  missingSelection && 'dark:ring-yellow-400/70',
+                  isEvaluated && 'relative ring-2',
+                  isCorrectlySelected(a) && 'dark:ring-green-500/70',
+                  isFalslySelected(a) && 'dark:ring-red-400/70',
+                  isMissingSelection(a) && 'dark:ring-yellow-400/70',
                 )}
                 htmlFor={`${question.id}-answer-${i}`}>
                 {a.answer}
 
-                <FeedbackIndicators correctlySelected={correctlySelcted} missingSelection={missingSelection} falslySelected={falslySelected} />
+                <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
 
                 <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`selection.${i}`)} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
               </label>
@@ -143,12 +142,7 @@ export function RenderPracticeQuestion() {
 
         {question.type === 'single-choice' &&
           question.answers.map((a, i) => {
-            const feedback = state.feedback?.type === question.type ? state.feedback : undefined
-            const user_answers = state.values?.type === question.type ? state.values : undefined
-
-            const correctlySelcted = isSubmitSuccessful && feedback?.solution === user_answers?.selection && a.id === user_answers?.selection
-            const falslySelected = isSubmitSuccessful && feedback?.solution !== user_answers?.selection && a.id === user_answers?.selection
-            const missingSelection = isSubmitSuccessful && feedback?.solution === a.id && user_answers?.selection !== a.id
+            const { isCorrectlySelected, isFalslySelected, isMissingSelection } = getFeedbackEvaluation(question)
 
             return (
               <label
@@ -161,15 +155,15 @@ export function RenderPracticeQuestion() {
                   'resize-none select-none',
                   'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
 
-                  isSubmitSuccessful && 'relative ring-2',
-                  correctlySelcted && 'dark:ring-green-500/70',
-                  falslySelected && 'dark:ring-red-400/70',
-                  missingSelection && 'dark:ring-yellow-400/70',
+                  isEvaluated && 'relative ring-2',
+                  isCorrectlySelected(a) && 'dark:ring-green-500/70',
+                  isFalslySelected(a) && 'dark:ring-red-400/70',
+                  isMissingSelection(a) && 'dark:ring-yellow-400/70',
                 )}
                 htmlFor={`${question.id}-answer-${i}`}>
                 {a.answer}
 
-                <FeedbackIndicators correctlySelected={correctlySelcted} missingSelection={missingSelection} falslySelected={falslySelected} />
+                <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
 
                 <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
 
