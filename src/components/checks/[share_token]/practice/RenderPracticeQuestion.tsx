@@ -6,7 +6,7 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
-import { EvaluateAnswer, PracticeFeedback } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
@@ -16,7 +16,7 @@ import { motion, Variants } from 'framer-motion'
 import { isEmpty } from 'lodash'
 import { CheckIcon, LoaderCircleIcon, XIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import { useActionState, useEffect, useTransition } from 'react'
+import React, { useActionState, useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -109,12 +109,12 @@ export function RenderPracticeQuestion() {
       <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' &&
           question.answers.map((a, i) => {
-            const feedback = state.feedback as Extract<PracticeFeedback, { type: 'multiple-choice' }> | undefined
-            const user_answers = state.values?.type === 'multiple-choice' ? state.values : undefined
+            const feedback = state.feedback?.type === question.type ? state.feedback : undefined
+            const user_answers = state.values?.type === question.type ? state.values : undefined
 
-            const correctlySelcted = isSubmitSuccessful && feedback?.solution.find((s) => s === a.id) && user_answers?.selection.find((s) => s === a.id)
-            const falslySelected = isSubmitSuccessful && user_answers?.selection.find((s) => s === a.id) && !feedback?.solution.find((s) => s === a.id)
-            const missingSelection = isSubmitSuccessful && feedback?.solution.find((s) => s === a.id) && !user_answers?.selection.find((s) => s === a.id)
+            const correctlySelcted = isSubmitSuccessful && !!feedback?.solution.find((s) => s === a.id) && !!user_answers?.selection.find((s) => s === a.id)
+            const falslySelected = isSubmitSuccessful && !!user_answers?.selection.find((s) => s === a.id) && !feedback?.solution.find((s) => s === a.id)
+            const missingSelection = isSubmitSuccessful && !!feedback?.solution.find((s) => s === a.id) && !user_answers?.selection.find((s) => s === a.id)
 
             return (
               <label
@@ -133,29 +133,8 @@ export function RenderPracticeQuestion() {
                 )}
                 htmlFor={`${question.id}-answer-${i}`}>
                 {a.answer}
-                <CheckIcon
-                  className={cn(
-                    'absolute top-1 right-1 hidden size-5 text-green-500',
-                    //* selected and correct
-                    correctlySelcted && 'block',
-                  )}
-                />
-                <XIcon
-                  className={cn(
-                    'absolute top-1 right-1 hidden size-5 text-red-500',
-                    //* selected but false
-                    falslySelected && 'block',
-                  )}
-                />
 
-                {/* <CircleDotDashed */}
-                <CheckIcon
-                  className={cn(
-                    'absolute top-1 right-1 hidden size-5 text-yellow-500/80',
-                    //* selected but false
-                    missingSelection && 'block',
-                  )}
-                />
+                <FeedbackIndicators correctlySelected={correctlySelcted} missingSelection={missingSelection} falslySelected={falslySelected} />
 
                 <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`selection.${i}`)} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
               </label>
@@ -298,5 +277,18 @@ function FeedbackLegend({ show }: { show: boolean }) {
         <div className='text-red-400/70' children='Wrong answer' />
       </div>
     </motion.div>
+  )
+}
+
+/**
+ * Renders feedback-indicators in the form of icons that are positioned at the top right of an answer-option indicate whether the user made the correct selection.
+ */
+function FeedbackIndicators({ correctlySelected, missingSelection, falslySelected }: { correctlySelected?: boolean; missingSelection?: boolean; falslySelected?: boolean }) {
+  return (
+    <>
+      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-green-500', correctlySelected && 'block')} />
+      <XIcon className={cn('absolute top-1 right-1 hidden size-5 text-red-500', falslySelected && 'block')} />
+      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-yellow-500/80', missingSelection && 'block')} />
+    </>
   )
 }
