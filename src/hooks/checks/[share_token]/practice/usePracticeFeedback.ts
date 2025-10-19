@@ -2,12 +2,27 @@
 
 import { AuthState, PracticeFeedback } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
-import { ChoiceQuestion, Question } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { FormState } from 'react-hook-form'
 
-type EvaluationFunction = (...args: Any) => boolean
+type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEvaluation<Type> & {
+  isCorrectlySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
+  isMissingSelection: (answer: ChoiceQuestion['answers'][number]) => boolean
+  isFalslySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
+}
 
+type FeedbackEvaluation<Type extends Question['type']> = {
+  type: Type
+  feedback?: Extract<PracticeFeedback, { type: Type }>
+  submittedAnswers?: Extract<PracticeData, { type: Type }>
+}
+
+type PracticeFeedbackReturn =
+  | ChoiceFeedbackEvaluation<SingleChoice['type']>
+  | ChoiceFeedbackEvaluation<MultipleChoice['type']>
+  | FeedbackEvaluation<OpenQuestion['type']>
+  | FeedbackEvaluation<DragDropQuestion['type']>
 /**
  * This hook returns a simple utility function used to determine whether or not a answer-option was select correctly, wrongfuly or should have been selected (missing).
  * @param state The useActionState state
@@ -18,50 +33,79 @@ export function usePracticeFeeback(
   state: AuthState,
   { isPending, isSubmitSuccessful, isSubmitted, isSubmitting }: Pick<FormState<Any>, 'isSubmitting' | 'isSubmitted' | 'isSubmitSuccessful'> & { isPending: boolean },
 ) {
-  const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending)
+  function getFeedbackEvaluation(question: SingleChoice): ChoiceFeedbackEvaluation<SingleChoice['type']>
+  function getFeedbackEvaluation(question: MultipleChoice): ChoiceFeedbackEvaluation<MultipleChoice['type']>
+  function getFeedbackEvaluation(question: OpenQuestion): FeedbackEvaluation<OpenQuestion['type']>
+  function getFeedbackEvaluation(question: DragDropQuestion): FeedbackEvaluation<DragDropQuestion['type']>
+  function getFeedbackEvaluation(question: Question): PracticeFeedbackReturn {
+    const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && state.values?.question_id === question.id
 
-  const getFeedbackEvaluation = <T extends Question>(question: T) => {
-    let isCorrectlySelected: EvaluationFunction = () => false,
-      isMissingSelection: EvaluationFunction = () => false,
-      isFalslySelected: EvaluationFunction = () => false
-
-    const feedback = state.feedback?.type === question.type ? (state.feedback as Extract<PracticeFeedback, { type: T['type'] }>) : undefined
-    const submittedAnswers = state.values?.type === question.type ? (state.values as Extract<PracticeData, { type: T['type'] }> | undefined) : undefined
-
-    if (!isEvaluated || submittedAnswers?.question_id !== question.id) return { feedback: undefined, submittedAnswers: undefined, isCorrectlySelected, isMissingSelection, isFalslySelected }
+    const feedback = state.feedback?.type === question.type ? state.feedback : undefined
+    const submittedAnswers = state.values?.type === question.type ? state.values : undefined
 
     switch (question.type) {
       case 'single-choice': {
-        const submission = submittedAnswers as Extract<PracticeData, { type: typeof question.type }> | undefined
-        const evaluation = feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
-        isCorrectlySelected = (answer: ChoiceQuestion['answers'][number]) => submission?.selection === evaluation?.solution && submission?.selection === answer.id
-        isMissingSelection = (answer: ChoiceQuestion['answers'][number]) => evaluation?.solution === answer.id && evaluation.solution !== submission?.selection
-        isFalslySelected = (answer: ChoiceQuestion['answers'][number]) => submission?.selection !== evaluation?.solution && submission?.selection === answer.id
-        break
+        const submission = submittedAnswers as Extract<PracticeData, { type: 'single-choice' }> | undefined
+        const evaluation = feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
+
+        const isCorrectlySelected = (answer: ChoiceQuestion['answers'][number]) => isEvaluated && submission?.selection === evaluation?.solution && submission?.selection === answer.id
+        const isMissingSelection = (answer: ChoiceQuestion['answers'][number]) => isEvaluated && evaluation?.solution === answer.id && evaluation.solution !== submission?.selection
+        const isFalslySelected = (answer: ChoiceQuestion['answers'][number]) => isEvaluated && submission?.selection !== evaluation?.solution && submission?.selection === answer.id
+
+        return {
+          feedback: evaluation,
+          submittedAnswers: submission,
+          type: question.type,
+          isCorrectlySelected,
+          isMissingSelection,
+          isFalslySelected,
+        }
       }
 
       case 'multiple-choice': {
-        const submission = submittedAnswers as Extract<PracticeData, { type: typeof question.type }> | undefined
-        const evaluation = feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
-        isCorrectlySelected = (answer: ChoiceQuestion['answers'][number]) => !!submission?.selection.find((s) => s === answer.id) && !!evaluation?.solution.find((s) => s === answer.id)
-        isMissingSelection = (answer: ChoiceQuestion['answers'][number]) => !submission?.selection.find((s) => s === answer.id) && !!evaluation?.solution.find((s) => s === answer.id)
-        isFalslySelected = (answer: ChoiceQuestion['answers'][number]) => !!submission?.selection.find((s) => s === answer.id) && !evaluation?.solution.find((s) => s === answer.id)
-        break
+        const submission = submittedAnswers as Extract<PracticeData, { type: 'multiple-choice' }> | undefined
+        const evaluation = feedback as Extract<PracticeFeedback, { type: 'multiple-choice' }> | undefined
+
+        const isCorrectlySelected = (answer: ChoiceQuestion['answers'][number]) =>
+          isEvaluated && !!submission?.selection.find((s) => s === answer.id) && !!evaluation?.solution.find((s) => s === answer.id)
+
+        const isMissingSelection = (answer: ChoiceQuestion['answers'][number]) =>
+          isEvaluated && !submission?.selection.find((s) => s === answer.id) && !!evaluation?.solution.find((s) => s === answer.id)
+
+        const isFalslySelected = (answer: ChoiceQuestion['answers'][number]) =>
+          isEvaluated && !!submission?.selection.find((s) => s === answer.id) && !evaluation?.solution.find((s) => s === answer.id)
+
+        return {
+          feedback: evaluation,
+          submittedAnswers: submission,
+          type: question.type,
+          isCorrectlySelected,
+          isMissingSelection,
+          isFalslySelected,
+        }
       }
 
       // todo evaluate open- and drag-drop questions
       case 'open-question': {
         console.error(`Feedback evaluation not available for ${question.type}`)
-        break
+
+        return {
+          type: question.type,
+          feedback: feedback as Extract<PracticeFeedback, { type: 'open-question' }> | undefined,
+          submittedAnswers: submittedAnswers as Extract<PracticeData, { type: 'open-question' }> | undefined,
+        }
       }
 
       case 'drag-drop': {
         console.error(`Feedback evaluation not available for ${question.type}`)
-        break
+
+        return {
+          type: question.type,
+          feedback: feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined,
+          submittedAnswers: submittedAnswers as Extract<PracticeData, { type: typeof question.type }> | undefined,
+        }
       }
     }
-
-    return { feedback, submittedAnswers, isCorrectlySelected, isMissingSelection, isFalslySelected }
   }
 
   return getFeedbackEvaluation
