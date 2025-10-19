@@ -6,14 +6,15 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
-import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { EvaluateAnswer, PracticeFeedback } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { motion, Variants } from 'framer-motion'
 import { isEmpty } from 'lodash'
-import { LoaderCircleIcon } from 'lucide-react'
+import { CheckIcon, LoaderCircleIcon, XIcon } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { useActionState, useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -89,6 +90,11 @@ export function RenderPracticeQuestion() {
   })
 
   if (!isEmpty(errors)) console.log('error', errors)
+  if (isSubmitted && isSubmitSuccessful && !isPending) {
+    console.log('Question has been answered...')
+
+    console.log(state)
+  }
 
   return (
     <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
@@ -102,22 +108,59 @@ export function RenderPracticeQuestion() {
 
       <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' &&
-          question.answers.map((a, i) => (
-            <label
-              key={`${question.id}-answer-${i}`}
-              className={cn(
-                'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-                'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
-                'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
-                'flex items-center justify-center',
-                'resize-none select-none',
-                'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
-              )}
-              htmlFor={`${question.id}-answer-${i}`}>
-              {a.answer}
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`selection.${i}`)} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
-            </label>
-          ))}
+          question.answers.map((a, i) => {
+            const feedback = state.feedback as Extract<PracticeFeedback, { type: 'multiple-choice' }> | undefined
+            const user_answers = state.values?.type === 'multiple-choice' ? state.values : undefined
+
+            const correctlySelcted = isSubmitSuccessful && feedback?.solution.find((s) => s === a.id) && user_answers?.selection.find((s) => s === a.id)
+            const falslySelected = isSubmitSuccessful && user_answers?.selection.find((s) => s === a.id) && !feedback?.solution.find((s) => s === a.id)
+            const missingSelection = isSubmitSuccessful && feedback?.solution.find((s) => s === a.id) && !user_answers?.selection.find((s) => s === a.id)
+
+            return (
+              <label
+                key={`${question.id}-answer-${i}`}
+                className={cn(
+                  'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+                  'has-enabled:hover:cursor-pointer has-enabled:hover:ring-neutral-500 has-enabled:dark:hover:ring-neutral-300/60',
+                  'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
+                  'flex items-center justify-center',
+                  'resize-none select-none',
+                  'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
+                  isSubmitSuccessful && 'relative ring-2',
+                  correctlySelcted && 'dark:ring-green-500/70',
+                  falslySelected && 'dark:ring-red-400/70',
+                  missingSelection && 'dark:ring-yellow-400/70',
+                )}
+                htmlFor={`${question.id}-answer-${i}`}>
+                {a.answer}
+                <CheckIcon
+                  className={cn(
+                    'absolute top-1 right-1 hidden size-5 text-green-500',
+                    //* selected and correct
+                    correctlySelcted && 'block',
+                  )}
+                />
+                <XIcon
+                  className={cn(
+                    'absolute top-1 right-1 hidden size-5 text-red-500',
+                    //* selected but false
+                    falslySelected && 'block',
+                  )}
+                />
+
+                {/* <CircleDotDashed */}
+                <CheckIcon
+                  className={cn(
+                    'absolute top-1 right-1 hidden size-5 text-yellow-500/80',
+                    //* selected but false
+                    missingSelection && 'block',
+                  )}
+                />
+
+                <input className='hidden' id={`${question.id}-answer-${i}`} type='checkbox' {...register(`selection.${i}`)} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
+              </label>
+            )
+          })}
 
         {question.type === 'single-choice' &&
           question.answers.map((a, i) => (
@@ -181,6 +224,8 @@ export function RenderPracticeQuestion() {
         )}
       </div>
 
+      <FeedbackLegend show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending)} />
+
       <div className='flex justify-center'>
         <Button
           title={!isValid ? 'Before checking this question you must first answer it' : undefined}
@@ -212,4 +257,46 @@ function getQuestionActionDescriptor(question_type: Question['type']) {
     case 'open-question':
       return 'Write your answer into the designated field'
   }
+}
+
+function FeedbackLegend({ show }: { show: boolean }) {
+  const variants: Variants = {
+    show: {
+      opacity: 100,
+      translateY: 0,
+      display: 'grid',
+      transition: {
+        duration: 0.5,
+      },
+    },
+    hide: {
+      display: 'none',
+      opacity: 0,
+      translateY: -5,
+    },
+  }
+
+  return (
+    <motion.div
+      variants={variants}
+      initial='hide'
+      animate={show ? 'show' : 'hide'}
+      className={cn(
+        'result-legend mx-auto grid h-auto grid-cols-2 gap-x-8 gap-y-3',
+        // !isSubmitSuccessful && !isSubmitted && 'absolute top-0 right-1/2 -z-50 size-0 opacity-0 select-none',
+      )}>
+      <div className='flex items-center gap-2'>
+        <div className='size-3 bg-green-400/70' />
+        <div className='text-green-400/70' children='Correctly answered' />
+      </div>
+      <div className='flex items-center gap-2'>
+        <div className='size-3 bg-yellow-400/70' />
+        <div className='text-yellow-400/70' children='Correct (missing)' />
+      </div>
+      <div className='col-span-2 flex items-center justify-center gap-2'>
+        <div className='size-3 bg-red-400/70' />
+        <div className='text-red-400/70' children='Wrong answer' />
+      </div>
+    </motion.div>
+  )
 }
