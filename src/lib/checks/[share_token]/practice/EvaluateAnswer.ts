@@ -31,10 +31,10 @@ export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<
   return { success: true, values: data, feedback }
 }
 
-type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string; solution: string }, 'question_id' | 'selection'>
-type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[] }, 'question_id' | 'selection'>
-type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string }, 'question_id'>
-type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[] }, 'question_id' | 'input'>
+type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
+type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
+type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question' }, 'question_id'>
+type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
