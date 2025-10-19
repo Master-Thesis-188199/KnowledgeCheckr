@@ -142,27 +142,43 @@ export function RenderPracticeQuestion() {
           })}
 
         {question.type === 'single-choice' &&
-          question.answers.map((a, i) => (
-            <label
-              key={`${question.id}-answer-${i}`}
-              className={cn(
-                'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-                'hover:cursor-pointer hover:ring-neutral-500 dark:hover:ring-neutral-300/60',
-                'focus:ring-[1.2px] focus:ring-neutral-700 dark:focus:ring-neutral-300/80',
-                'flex items-center justify-center',
-                'resize-none select-none',
-                'has-checked:ring-[1.5px] dark:has-checked:bg-neutral-700/60 dark:has-checked:ring-neutral-300',
-              )}
-              htmlFor={`${question.id}-answer-${i}`}>
-              {a.answer}
+          question.answers.map((a, i) => {
+            const feedback = state.feedback?.type === question.type ? state.feedback : undefined
+            const user_answers = state.values?.type === question.type ? state.values : undefined
 
-              <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
+            const correctlySelcted = isSubmitSuccessful && feedback?.solution === user_answers?.selection && a.id === user_answers?.selection
+            const falslySelected = isSubmitSuccessful && feedback?.solution !== user_answers?.selection && a.id === user_answers?.selection
+            const missingSelection = isSubmitSuccessful && feedback?.solution === a.id && user_answers?.selection !== a.id
 
-              {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
-              <FormFieldError field='answer.selection' errors={errors} />
-              {/* <FormFieldError field='answer' errors={errors} /> */}
-            </label>
-          ))}
+            return (
+              <label
+                key={`${question.id}-answer-${i}`}
+                className={cn(
+                  'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+                  'has-enabled:hover:cursor-pointer has-enabled:hover:ring-neutral-500 has-enabled:dark:hover:ring-neutral-300/60',
+                  'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
+                  'flex items-center justify-center',
+                  'resize-none select-none',
+                  'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
+
+                  isSubmitSuccessful && 'relative ring-2',
+                  correctlySelcted && 'dark:ring-green-500/70',
+                  falslySelected && 'dark:ring-red-400/70',
+                  missingSelection && 'dark:ring-yellow-400/70',
+                )}
+                htmlFor={`${question.id}-answer-${i}`}>
+                {a.answer}
+
+                <FeedbackIndicators correctlySelected={correctlySelcted} missingSelection={missingSelection} falslySelected={falslySelected} />
+
+                <input className='hidden' id={`${question.id}-answer-${i}`} type='radio' {...register('selection')} disabled={isSubmitted && isSubmitSuccessful && !isPending} value={a.id} />
+
+                {/* @ts-expect-error: The FormFieldError component does not yet recognize deeply-nested schema-properties, e.g. arrays*/}
+                <FormFieldError field='answer.selection' errors={errors} />
+                {/* <FormFieldError field='answer' errors={errors} /> */}
+              </label>
+            )
+          })}
 
         {question.type === 'drag-drop' && (
           <DragDropContainer
