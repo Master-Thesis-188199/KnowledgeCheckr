@@ -12,7 +12,7 @@ export default function FormFieldError<FormData extends FieldValues>({
   errors,
   className,
 }: {
-  field: Parameters<UseFormRegister<FormData>>['0']
+  field: Parameters<UseFormRegister<FormData>>['0'] | 'root'
   errors: FieldErrors<FormData>
   className?: string
 }) {
