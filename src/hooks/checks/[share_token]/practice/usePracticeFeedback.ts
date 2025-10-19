@@ -38,6 +38,7 @@ export function usePracticeFeeback(
   function getFeedbackEvaluation(question: OpenQuestion): FeedbackEvaluation<OpenQuestion['type']>
   function getFeedbackEvaluation(question: DragDropQuestion): FeedbackEvaluation<DragDropQuestion['type']>
   function getFeedbackEvaluation(question: Question): PracticeFeedbackReturn {
+    //? Indicates whether the pre-conditions are satisfied so that a feedback-evaluation may be returned. Namely, whether the answers are submitted and whether the received feedback is for the respective question.
     const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && state.values?.question_id === question.id
 
     switch (question.type) {
