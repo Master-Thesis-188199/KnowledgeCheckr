@@ -174,7 +174,10 @@ export function RenderPracticeQuestion() {
         )}
       </div>
 
-      <FeedbackLegend show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')} />
+      <FeedbackLegend
+        disabled={(!isEvaluated && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
+        show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')}
+      />
 
       <div className='flex justify-center'>
         <Button
@@ -209,7 +212,7 @@ function getQuestionActionDescriptor(question_type: Question['type']) {
   }
 }
 
-function FeedbackLegend({ show }: { show: boolean }) {
+function FeedbackLegend({ show, disabled }: { show: boolean; disabled?: boolean }) {
   const variants: Variants = {
     show: {
       opacity: 100,
@@ -225,16 +228,10 @@ function FeedbackLegend({ show }: { show: boolean }) {
       translateY: -5,
     },
   }
+  if (disabled) return null
 
   return (
-    <motion.div
-      variants={variants}
-      initial='hide'
-      animate={show ? 'show' : 'hide'}
-      className={cn(
-        'result-legend mx-auto grid h-auto grid-cols-2 gap-x-8 gap-y-3',
-        // !isSubmitSuccessful && !isSubmitted && 'absolute top-0 right-1/2 -z-50 size-0 opacity-0 select-none',
-      )}>
+    <motion.div variants={variants} initial='hide' animate={show ? 'show' : 'hide'} className={cn('result-legend mx-auto grid h-auto grid-cols-2 gap-x-8 gap-y-3')}>
       <div className='flex items-center gap-2'>
         <div className='size-3 bg-green-400/70' />
         <div className='text-green-400/70' children='Correctly answered' />
