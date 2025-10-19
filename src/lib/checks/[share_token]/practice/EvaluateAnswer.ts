@@ -11,7 +11,7 @@ export type AuthState = {
   }
   rootError?: string
   values?: PracticeData
-  feedback?: Feedback
+  feedback?: PracticeFeedback
 }
 
 export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<AuthState> {
@@ -36,9 +36,9 @@ type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choic
 type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string }, 'question_id'>
 type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[] }, 'question_id' | 'input'>
 
-type Feedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
+export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
-async function createFeedback({ question_id, ...answer }: PracticeData): Promise<Feedback> {
+async function createFeedback({ question_id, ...answer }: PracticeData): Promise<PracticeFeedback> {
   let question = await getKnowledgeCheckQuestionById(question_id)
   //todo: Generate question-feedback-reasoning using a local llm to explain the wrongful selection of answers to the user with a encouraging tone
 
