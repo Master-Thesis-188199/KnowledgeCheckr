@@ -35,5 +35,6 @@ declare global {
 
 Cypress.Commands.add('mount', mount)
 
+process.env = Cypress.env()
 // Example use:
 // cy.mount(<MyComponent />)
