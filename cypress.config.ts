@@ -23,6 +23,11 @@ export default defineConfig({
       bundler: 'webpack',
     },
     setupNodeEvents(on, config) {
+      config.env = {
+        ...process.env,
+        ...config.env,
+      }
+
       ccTask(on, config)
 
       return config
