@@ -1,10 +1,10 @@
+import 'server-only'
 import getDatabase, { DBConnection } from '@/database/Database'
 import { DBAnswer, DBCategory, DbQuestion } from '@/database/knowledgeCheck/questions/type'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-import 'server-only'
 
 export default async function getKnowledgeCheckQuestions(db: DBConnection, knowledgeCheck_id: KnowledgeCheck['id']) {
   await requireAuthentication()
