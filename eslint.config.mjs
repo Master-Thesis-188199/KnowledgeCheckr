@@ -1,6 +1,8 @@
+import { FlatCompat } from '@eslint/eslintrc'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
+import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -18,6 +20,24 @@ const eslintConfig = [
       'react-hooks/exhaustive-deps': 0,
     },
   }),
+  {
+    plugins: {
+      'server-only-first': serverOnlyPlugin,
+      'simple-import-sort': simpleImportSort,
+    },
+    rules: {
+      'server-only-first/server-only-first': 'error',
+
+      'simple-import-sort/imports': [
+        'warn',
+        {
+          groups: [['^server-only$', '^\\u0000', '^react$', '^next$', '^@?\\w', '^@/', '^\\.\\.(?:/.*)?$', '^\\./(?=.*/).*$', '^\\.(?!/?$)', '^\\./?$']],
+        },
+      ],
+
+      'import/first': 'error',
+    },
+  },
 ]
 
 export default eslintConfig
