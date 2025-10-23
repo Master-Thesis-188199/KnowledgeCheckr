@@ -70,9 +70,10 @@ jobs:
         id: compute-image-specs
         shell: bash
         run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          SHA_SHORT="$(git rev-parse --short HEAD)"
+          echo "sha_short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
 
-          TAG="${{ steps.previoustag.outputs.tag }}-${sha_short}"
+          TAG="${{ steps.previoustag.outputs.tag }}-${SHA_SHORT}"
           echo "imageTag=${TAG}" >> "$GITHUB_OUTPUT"
 
           OWNER_LOWER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
