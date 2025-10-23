@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Check Database Schema Modifications"
     outputs:
-      db_changed: "true"
+      db_changed: ${{ steps.changed.outputs.db_changed }}
 
     steps:
       - name: Checkout with tags
@@ -81,8 +81,7 @@ jobs:
         id: tags
         uses: ./.github/actions/compute-db-image-tags
         with:
-          branch: "canary"
-          override-tag: "v1.12.0-canary.5"
+          branch: ${{ github.ref_name }}
 
       - name: Show resolved tags (debug)
         if: needs.schema-modified.outputs.db_changed == 'true'
