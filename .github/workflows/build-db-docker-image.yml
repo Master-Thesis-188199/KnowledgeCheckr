@@ -31,9 +31,6 @@ jobs:
           set -euo pipefail
           BASE="${{ github.event.before }}"
           HEAD="${{ github.sha }}"
-
-          echo "ref-name: ${{ github.ref_name }}"
-
           # Fallback for cases where 'before' may be empty (e.g. first push)
           if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             BASE="$(git rev-parse "${HEAD}^" 2>/dev/null || true)"
