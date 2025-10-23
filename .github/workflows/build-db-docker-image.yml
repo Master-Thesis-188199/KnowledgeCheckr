@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Check Database Schema Modifications"
     outputs:
-      db_changed: "true"
+      db_changed: ${{ steps.changed.outputs.db_changed }}
 
     steps:
       - name: Checkout with tags
@@ -200,5 +200,6 @@ jobs:
           # Build & push
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
+            --push \
             "${TAG_ARGS[@]}" \
             ./database
