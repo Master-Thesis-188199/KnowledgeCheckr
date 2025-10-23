@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Check Database Schema Modifications"
     outputs:
-      db_changed: ${{ steps.changed.outputs.db_changed }}
+      db_changed: "true"
 
     steps:
       - name: Checkout with tags
