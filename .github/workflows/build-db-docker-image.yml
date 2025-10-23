@@ -101,7 +101,7 @@ jobs:
         run: |
           set -euo pipefail
           IMAGE="${{ steps.compute-image-specs.outputs.image_name }}"
-          HEAD_TAG="v1.11.0"
+          HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
           # Expect vX.Y.Z
           if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             {
