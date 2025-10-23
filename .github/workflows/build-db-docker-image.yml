@@ -81,8 +81,8 @@ jobs:
         id: tags
         uses: ./.github/actions/compute-db-image-tags
         with:
-          branch: "main"
-          override-tag: "v1.11.0"
+          branch: "canary"
+          override-tag: "v1.12.0-canary.5"
 
       - name: Show resolved tags (debug)
         if: needs.schema-modified.outputs.db_changed == 'true'
