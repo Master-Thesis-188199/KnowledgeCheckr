@@ -63,7 +63,7 @@ runs:
               add_tag "stable" 
               add_tag "latest" 
             else
-              add_tag "${SHA_SHORT}"
+              add_tag "${BRANCH}-${SHA_SHORT}"
               add_tag "stable" 
               add_tag "latest" 
               WARNING="Failed to retrieve latest-tag on main; fell back to SHA ${SHA_SHORT}"
@@ -75,7 +75,7 @@ runs:
               add_tag "canary" 
               add_tag "latest" 
             else
-              add_tag "${SHA_SHORT}"
+              add_tag "${BRANCH}-${SHA_SHORT}"
               add_tag "canary"
               add_tag "latest"
               WARNING="Failed to retrieve latest-tag on canary; fell back to SHA ${SHA_SHORT}"
@@ -83,7 +83,7 @@ runs:
             ;;
           *)
             # Feature branches: SHA only
-            add_tag "${SHA_SHORT}"
+            add_tag "${BRANCH}-${SHA_SHORT}"
             ;;
         esac
 
