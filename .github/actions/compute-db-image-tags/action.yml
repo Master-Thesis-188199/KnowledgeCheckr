@@ -30,7 +30,7 @@ runs:
       run: |
         set -euo pipefail
 
-        REPO_LOWER="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
+        REPO_LOWER="$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
         echo "image_name=ghcr.io/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
 
     - name: 'Get Previous tag'
