@@ -11,9 +11,9 @@ inputs:
     default: ''
 
 outputs:
-  image_repo:
+  image_name:
     description: 'Resolved image repository (ghcr.io/owner/repo-database)'
-    value: ${{ steps.repo.outputs.image_repo }}
+    value: ${{ steps.repo.outputs.image_name }}
   tags:
     description: 'Newline-separated list of tags to pass to docker buildx (multiple -t)'
     value: ${{ steps.out.outputs.tags }}
@@ -32,7 +32,7 @@ runs:
 
         OWNER_LOWER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
         REPO_LOWER="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
-        echo "image_repo=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
+        echo "image_name=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
 
     - name: 'Get Previous tag'
       id: previoustag
@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        IMAGE="${{ steps.repo.outputs.image_repo }}"
+        IMAGE="${{ steps.repo.outputs.image_name }}"
         BRANCH="${{ inputs.branch }}"
         SHA_SHORT="$(git rev-parse --short HEAD)"
 
