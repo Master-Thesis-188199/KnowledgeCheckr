@@ -19,7 +19,7 @@ outputs:
     value: ${{ steps.out.outputs.tags }}
   warning:
     description: 'Potential warning if tags were not found'
-    value: ${{ steps.out.outputs.reason }}
+    value: ${{ steps.out.outputs.warning }}
 
 runs:
   using: 'composite'
