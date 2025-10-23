@@ -58,8 +58,7 @@ jobs:
         run: echo "init.sql not changed since previous release — skipping image build."
 
       - name: "Get Previous tag"
-        if: needs.schema-modified.outputs.db_changed == 'true'
-        id: previoustag
+        if: needs.schema-modified.outputs.db_changed == 'true' && ( github.ref_name == 'main' || github.ref_name == 'canary')
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Compute image name and tag
