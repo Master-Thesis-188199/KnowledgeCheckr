@@ -104,7 +104,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t ghcr.io/${{ steps.compute-image-specs.outputs.image_repo }}:latest \
-            -t ghcr.io/${{ steps.compute-image-specs.outputs.image_repo }}:${{ steps.compute-image-specs.outcome.imageTag }} \
+            -t ${{ steps.compute-image-specs.outputs.image_repo }}:latest \
+            -t ${{ steps.compute-image-specs.outputs.image_repo }}:${{ steps.compute-image-specs.outputs.imageTag }} \
             $Extra_Docker_Build_Args \
             --push ./database
