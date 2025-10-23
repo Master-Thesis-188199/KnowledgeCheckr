@@ -70,9 +70,6 @@ jobs:
           SHA_SHORT="$(git rev-parse --short HEAD)"
           echo "sha_short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
 
-          TAG="${{ steps.previoustag.outputs.tag }}-${SHA_SHORT}"
-          echo "imageTag=${TAG}" >> "$GITHUB_OUTPUT"
-
           OWNER_LOWER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
           REPO_LOWER="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
           echo "image_repo=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
