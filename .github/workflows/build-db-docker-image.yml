@@ -112,7 +112,7 @@ jobs:
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::No stable semver tag (vX.Y.Z) found on HEAD; falling back to SHA tag."
+            echo "::warning::No stable release tag (vX.Y.Z) found on HEAD; falling back to SHA tag."
             {
               echo "tags<<EOF"
               echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
