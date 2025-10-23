@@ -93,7 +93,7 @@ jobs:
           install: true
           platforms: linux/amd64,linux/arm64
 
-      - name: Generate Dynamic Image Tag
+      - name: Compute Dynamic Image Tag
         if: needs.schema-modified.outputs.db_changed == 'true'
         id: tags
         uses: ./.github/actions/compute-db-image-tags
@@ -104,7 +104,7 @@ jobs:
         if: needs.schema-modified.outputs.db_changed == 'true'
         shell: bash
         run: |
-          echo "Tags to apply:"
+          echo "Tags to apply for ${{github.ref_name}}:"
           echo "Image:  ${{ steps.tags.outputs.image_name }}"
 
           WARNING="${{ steps.tags.outputs.warning }}"
