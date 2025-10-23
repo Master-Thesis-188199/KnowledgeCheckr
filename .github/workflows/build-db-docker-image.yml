@@ -96,7 +96,7 @@ jobs:
       # -------- branch-specific docker-image tags --------
       - name: compute-tag-main
         id: t_main
-        if: github.ref_name == 'main'
+        if: true
         shell: bash
         run: |
           set -euo pipefail
@@ -150,7 +150,7 @@ jobs:
 
       - name: compute-tag-feature-branch
         id: t_other
-        if: github.ref_name != 'main' && github.ref_name != 'canary'
+        if: false
         shell: bash
         run: |
           set -euo pipefail
