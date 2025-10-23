@@ -58,7 +58,7 @@ jobs:
         run: echo "init.sql not changed since previous release — skipping image build."
 
       - name: "Get Previous tag"
-        if: needs.schema-modified.outputs.db_changed == 'true' && ( github.ref_name == 'main' || github.ref_name == 'canary')
+        if: true
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Compute image name and tag
@@ -121,7 +121,7 @@ jobs:
 
       - name: compute-tag-canary
         id: t_canary
-        if: github.ref_name == 'canary'
+        if: true
         shell: bash
         run: |
           set -euo pipefail
@@ -147,7 +147,7 @@ jobs:
 
       - name: compute-tag-feature-branch
         id: t_other
-        if: github.ref_name != 'main' && github.ref_name != 'canary'
+        if: false
         shell: bash
         run: |
           set -euo pipefail
