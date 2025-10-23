@@ -142,6 +142,8 @@ jobs:
             {
               echo "tags<<EOF"
               echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
+              echo "${IMAGE}:canary"         
+              echo "${IMAGE}:latest"           
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
