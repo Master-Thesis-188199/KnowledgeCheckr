@@ -57,23 +57,6 @@ jobs:
         if: needs.schema-modified.outputs.db_changed == 'false'
         run: echo "init.sql not changed since previous release — skipping image build."
 
-      - name: "Get Previous tag"
-        if: needs.schema-modified.outputs.db_changed == 'true'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
-      - name: Compute docker-image name
-        if: needs.schema-modified.outputs.db_changed == 'true'
-        id: compute-image-specs
-        shell: bash
-        run: |
-          SHA_SHORT="$(git rev-parse --short HEAD)"
-          echo "sha_short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
-
-          OWNER_LOWER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
-          REPO_LOWER="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
-          echo "image_name=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
-
       - name: Set up QEMU
         if: needs.schema-modified.outputs.db_changed == 'true'
         uses: docker/setup-qemu-action@v3
