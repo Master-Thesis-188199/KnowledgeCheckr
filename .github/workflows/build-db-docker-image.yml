@@ -71,7 +71,7 @@ jobs:
 
           OWNER_LOWER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
           REPO_LOWER="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
-          echo "image_repo=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
+          echo "image_name=ghcr.io/${OWNER_LOWER}/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         if: needs.schema-modified.outputs.db_changed == 'true'
@@ -99,7 +99,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          IMAGE="${{ steps.compute-image-specs.outputs.image_name }}"
           HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
           # Expect vX.Y.Z
           if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -125,7 +125,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          IMAGE="${{ steps.compute-image-specs.outputs.image_name }}"
           HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
           # Expect vX.Y.Z-canary.N
           if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-canary\.[0-9]+$ ]]; then
@@ -151,7 +151,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          IMAGE="${{ steps.compute-image-specs.outputs.image_name }}"
           # Feature branches: SHA only (no latest, no stable, no semver)
           {
             echo "tags<<EOF"
