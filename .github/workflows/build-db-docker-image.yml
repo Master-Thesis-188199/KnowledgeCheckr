@@ -107,7 +107,7 @@ jobs:
             {
               echo "tags<<EOF"
               echo "${IMAGE}:${HEAD_TAG}"      # vX.Y.Z
-              echo "${IMAGE}:stable"           # stable 
+              echo "${IMAGE}:stable"           
               echo "${IMAGE}:latest"           
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
@@ -116,6 +116,8 @@ jobs:
             {
               echo "tags<<EOF"
               echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
+              echo "${IMAGE}:stable"           
+              echo "${IMAGE}:latest"           
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
