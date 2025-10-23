@@ -81,7 +81,8 @@ jobs:
         id: tags
         uses: ./.github/actions/compute-db-image-tags
         with:
-          branch: ${{ github.ref_name }}
+          branch: "main"
+          override-tag: "v1.11.0"
 
       - name: Show resolved tags (debug)
         if: needs.schema-modified.outputs.db_changed == 'true'
