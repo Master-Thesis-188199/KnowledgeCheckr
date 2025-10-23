@@ -6,9 +6,6 @@ permissions:
 
 on:
   push:
-    branches-ignore:
-      - main
-      - canary
 
 jobs:
   schema-modified:
@@ -99,12 +96,109 @@ jobs:
           install: true
           platforms: linux/amd64,linux/arm64
 
+      # -------- branch-specific docker-image tags --------
+      - name: compute-tag-main
+        id: t_main
+        if: github.ref_name == 'main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
+          # Expect vX.Y.Z
+          if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            {
+              echo "tags<<EOF"
+              echo "${IMAGE}:${HEAD_TAG}"      # vX.Y.Z
+              echo "${IMAGE}:stable"           # stable 
+              echo "${IMAGE}:latest"           
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No stable semver tag (vX.Y.Z) found on HEAD; falling back to SHA tag."
+            {
+              echo "tags<<EOF"
+              echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: compute-tag-canary
+        id: t_canary
+        if: github.ref_name == 'canary'
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
+          # Expect vX.Y.Z-canary.N
+          if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-canary\.[0-9]+$ ]]; then
+            {
+              echo "tags<<EOF"
+              echo "${IMAGE}:${HEAD_TAG}"      # vX.Y.Z-canary.N
+              echo "${IMAGE}:canary"         
+              echo "${IMAGE}:latest"           
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No canary prerelease tag found on HEAD; falling back to SHA tag."
+            {
+              echo "tags<<EOF"
+              echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: compute-tag-feature-branch
+        id: t_other
+        if: github.ref_name != 'main' && github.ref_name != 'canary'
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE="${{ steps.compute-image-specs.outputs.image_repo }}"
+          # Feature branches: SHA only (no latest, no stable, no semver)
+          {
+            echo "tags<<EOF"
+            echo "${IMAGE}:${{ steps.compute-image-specs.outputs.sha_short }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # -------- build using whichever tag set exists --------
+      - name: Show resolved tags (debug)
+        shell: bash
+        run: |
+          echo "Tags to apply:"
+          echo "${{ steps.t_main.outputs.tags || steps.t_canary.outputs.tags || steps.t_other.outputs.tags }}"
+
+      # -------- build using whichever tag set exists --------
       - name: Build and Push Multi-Platform Image
         if: needs.schema-modified.outputs.db_changed == 'true'
         run: |
+          set -euo pipefail
+
+          # Collect the newline-separated tags from whichever step ran
+          TAGS_COMBINED="${{ steps.t_main.outputs.tags || steps.t_canary.outputs.tags || steps.t_other.outputs.tags }}"
+
+          # Turn them into an array safely (preserve spaces, handle newlines)
+          mapfile -t TAGS < <(printf '%s\n' "$TAGS_COMBINED" | sed '/^$/d')
+
+          if [ ${#TAGS[@]} -eq 0 ]; then
+            echo "No tags were produced by the compute-tag steps."
+            exit 1
+          fi
+
+          echo "Tags to apply:"
+          printf '  %s\n' "${TAGS[@]}"
+
+          # Build list of -t args
+          TAG_ARGS=()
+          for t in "${TAGS[@]}"; do
+            TAG_ARGS+=( -t "$t" )
+          done
+
+          # Build & push
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t ${{ steps.compute-image-specs.outputs.image_repo }}:latest \
-            -t ${{ steps.compute-image-specs.outputs.image_repo }}:${{ steps.compute-image-specs.outputs.imageTag }} \
-            $Extra_Docker_Build_Args \
-            --push ./database
+            --push \
+            "${TAG_ARGS[@]}" \
+            ./database
