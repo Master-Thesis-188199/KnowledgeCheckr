@@ -5,6 +5,10 @@ inputs:
   branch:
     description: 'Branch name to evaluate (e.g., main, canary, feature/foo)'
     required: true
+  override-tag:
+    description: 'Optional: override the used tag (e.g., v1.2.3 or v1.2.3-canary.4) for testing-purposes'
+    required: false
+    default: ''
 
 outputs:
   image_repo:
@@ -42,7 +46,11 @@ runs:
         IMAGE="${{ steps.repo.outputs.image_repo }}"
         BRANCH="${{ inputs.branch }}"
         SHA_SHORT="$(git rev-parse --short HEAD)"
+
         HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
+        if [ -n "${{ inputs.override-tag }}" ]; then
+          HEAD_TAG="${{ inputs.override-tag }}"
+        fi
 
         add_tag() { TAGS+=("${IMAGE}:$1"); }
 
