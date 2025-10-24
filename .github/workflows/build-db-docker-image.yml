@@ -1,4 +1,4 @@
-name: "Build Database Docker Image"
+name: "Database Docker Image"
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ on:
 jobs:
   schema-modified:
     runs-on: ubuntu-latest
-    name: "Check Database Schema Modifications"
+    name: "Check for Database Schema Update"
     outputs:
       db_changed: ${{ steps.changed.outputs.db_changed }}
 
@@ -43,7 +43,7 @@ jobs:
 
   build-db-image:
     runs-on: ubuntu-latest
-    name: "Build Database Docker Image"
+    name: "Build new Database Docker Image"
     needs: [schema-modified]
 
     steps:
