@@ -1,4 +1,4 @@
-name: "Database Docker Image"
+name: "Database Docker Image (feature-branch)"
 
 permissions:
   contents: read
