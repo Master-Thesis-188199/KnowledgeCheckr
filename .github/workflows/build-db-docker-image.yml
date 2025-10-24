@@ -6,6 +6,9 @@ permissions:
 
 on:
   push:
+    branches-ignore:
+      - main
+      - canary
 
 jobs:
   schema-modified:
