@@ -3,6 +3,7 @@
 import { DBConnection } from '@/database/Database'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
@@ -19,13 +20,15 @@ async function insertQuestion(db: DBConnection, question: Question, check_id: Kn
   await requireAuthentication()
 
   const category_id = await findInsertCategory(db, question.category)
-  const { id } = await db.insert('INSERT INTO Question (id, type, question, points, category_id, knowledgecheck_id) Values (?, ?, ?, ?, ?, ?)', [
+  const { id } = await db.insert('INSERT INTO Question (id, type, question, points, category_id, knowledgecheck_id, createdAt, updatedAt) Values (?, ?, ?, ?, ?, ?, ? , ?)', [
     question.id,
     question.type,
     question.question,
     question.points,
     category_id,
     check_id,
+    formatDatetime(new Date(Date.now())),
+    formatDatetime(new Date(Date.now())),
   ])
 
   switch (question.type) {
@@ -50,7 +53,13 @@ async function findInsertCategory(db: DBConnection, category: Question['category
   const [categories] = await db.execute<Any[]>('SELECT id, name FROM Category WHERE name = ?', [category])
 
   if (categories.length === 0) {
-    const { id } = await db.insert('INSERT INTO Category (id, name, prequisite_category_id) Values (?, ?, ?)', [getUUID(), category, null])
+    const { id } = await db.insert('INSERT INTO Category (id, name, prequisite_category_id, createdAt, updatedAt) Values (?, ?, ?, ?, ?)', [
+      getUUID(),
+      category,
+      null,
+      formatDatetime(new Date(Date.now())),
+      formatDatetime(new Date(Date.now())),
+    ])
     return id
   }
 
@@ -61,20 +70,41 @@ async function insertChoiceAnswers(db: DBConnection, question_id: Question['id']
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.correct ? 1 : 0])
+    await db.insert('INSERT INTO Answer (id, answer, Question_id, correct, createdAt, updatedAt) Values (?, ?, ?, ?, ?, ?)', [
+      getUUID(),
+      answer.answer,
+      question_id,
+      answer.correct ? 1 : 0,
+      formatDatetime(new Date(Date.now())),
+      formatDatetime(new Date(Date.now())),
+    ])
   }
 }
 
 async function insertOpenAnswer(db: DBConnection, question_id: Question['id'], answer: string) {
   await requireAuthentication()
 
-  await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer, question_id, null])
+  await db.insert('INSERT INTO Answer (id, answer, Question_id, correct, createdAt, updatedAt) Values (?, ?, ?, ?, ?, ?)', [
+    getUUID(),
+    answer,
+    question_id,
+    null,
+    formatDatetime(new Date(Date.now())),
+    formatDatetime(new Date(Date.now())),
+  ])
 }
 
 async function insertDragDropAnswers(db: DBConnection, question_id: Question['id'], answers: DragDropQuestion['answers']) {
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, position) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.position])
+    await db.insert('INSERT INTO Answer (id, answer, Question_id, position, createdAt, updatedAt) Values (?, ?, ?, ?, ?, ?)', [
+      getUUID(),
+      answer.answer,
+      question_id,
+      answer.position,
+      formatDatetime(new Date(Date.now())),
+      formatDatetime(new Date(Date.now())),
+    ])
   }
 }
