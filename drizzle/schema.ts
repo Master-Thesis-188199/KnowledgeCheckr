@@ -9,7 +9,7 @@ const primaryKeyUUID = varchar({ length: 36 })
   //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
   .$defaultFn(() => getUUID())
 
-export const account = mysqlTable(
+export const db_account = mysqlTable(
   'Account',
   {
     id: varchar({ length: 36 }).notNull(),
@@ -17,7 +17,7 @@ export const account = mysqlTable(
     providerId: tinytext().notNull(),
     userId: varchar('user_id', { length: 36 })
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => db_user.id, { onDelete: 'cascade' }),
     accessToken: mediumtext(),
     refreshToken: mediumtext(),
     idToken: mediumtext(),
@@ -31,7 +31,7 @@ export const account = mysqlTable(
   (table) => [index('fk_account_user1_idx').on(table.userId), primaryKey({ columns: [table.id], name: 'Account_id' })],
 )
 
-export const answer = mysqlTable(
+export const db_answer = mysqlTable(
   'Answer',
   {
     id: primaryKeyUUID,
@@ -47,12 +47,12 @@ export const answer = mysqlTable(
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     questionId: varchar('Question_id', { length: 36 })
       .notNull()
-      .references(() => question.id, { onDelete: 'cascade' }),
+      .references(() => db_question.id, { onDelete: 'cascade' }),
   },
   (table) => [index('fk_Answer_Question1_idx').on(table.questionId), primaryKey({ columns: [table.id], name: 'Answer_id' })],
 )
 
-export const category = mysqlTable(
+export const db_category = mysqlTable(
   'Category',
   {
     id: varchar({ length: 36 })
@@ -81,7 +81,7 @@ export const category = mysqlTable(
   ],
 )
 
-export const knowledgeCheck = mysqlTable(
+export const db_knowledgeCheck = mysqlTable(
   'KnowledgeCheck',
   {
     id: primaryKeyUUID,
@@ -89,7 +89,7 @@ export const knowledgeCheck = mysqlTable(
     description: mediumtext(),
     owner_id: varchar('owner_id', { length: 36 })
       .notNull()
-      .references(() => user.id),
+      .references(() => db_user.id),
     share_key: tinytext('public_token'),
     openDate: datetime({ mode: 'string' }).notNull(),
     closeDate: datetime({ mode: 'string' }).$default(() => sql`NULL`),
@@ -106,13 +106,13 @@ export const knowledgeCheck = mysqlTable(
   (table) => [index('fk_KnowledgeCheck_user1_idx').on(table.owner_id), primaryKey({ columns: [table.id], name: 'KnowledgeCheck_id' })],
 )
 
-export const knowledgeCheckSettings = mysqlTable(
+export const db_knowledgeCheckSettings = mysqlTable(
   'KnowledgeCheck_Settings',
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
       .notNull()
-      .references(() => knowledgeCheck.id, { onDelete: 'cascade' }),
+      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
     allowAnonymous: tinyint('allow_anonymous').default(1),
     randomizeQuestions: tinyint('randomize_questions').default(1),
     allowFreeNavigation: tinyint('allow_free_navigation').default(1),
@@ -120,7 +120,7 @@ export const knowledgeCheckSettings = mysqlTable(
   (table) => [index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId), primaryKey({ columns: [table.id], name: 'KnowledgeCheck_Settings_id' })],
 )
 
-export const question = mysqlTable(
+export const db_question = mysqlTable(
   'Question',
   {
     id: primaryKeyUUID,
@@ -136,15 +136,15 @@ export const question = mysqlTable(
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     categoryId: varchar('category_id', { length: 36 })
       .notNull()
-      .references(() => category.id, { onDelete: 'cascade' }),
+      .references(() => db_category.id, { onDelete: 'cascade' }),
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
       .notNull()
-      .references(() => knowledgeCheck.id, { onDelete: 'cascade' }),
+      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
   },
   (table) => [index('fk_Question_Category1_idx').on(table.categoryId), index('fk_Question_KnowledgeCheck1_idx').on(table.knowledgecheckId), primaryKey({ columns: [table.id], name: 'Question_id' })],
 )
 
-export const session = mysqlTable(
+export const db_session = mysqlTable(
   'Session',
   {
     id: varchar({ length: 36 }).notNull(),
@@ -156,12 +156,12 @@ export const session = mysqlTable(
     userAgent: tinytext(),
     userId: varchar('user_id', { length: 36 })
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => db_user.id, { onDelete: 'cascade' }),
   },
   (table) => [index('fk_session_user_idx').on(table.userId), primaryKey({ columns: [table.id], name: 'Session_id' })],
 )
 
-export const user = mysqlTable(
+export const db_user = mysqlTable(
   'User',
   {
     id: varchar({ length: 36 }).notNull(),
@@ -175,15 +175,15 @@ export const user = mysqlTable(
   (table) => [primaryKey({ columns: [table.id], name: 'User_id' })],
 )
 
-export const userContributesToKnowledgeCheck = mysqlTable(
+export const db_userContributesToKnowledgeCheck = mysqlTable(
   'User_contributesTo_KnowledgeCheck',
   {
     userId: varchar('user_id', { length: 36 })
       .notNull()
-      .references(() => user.id, { onUpdate: 'cascade' }),
+      .references(() => db_user.id, { onUpdate: 'cascade' }),
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
       .notNull()
-      .references(() => knowledgeCheck.id, { onDelete: 'cascade' }),
+      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
   },
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck1_idx').on(table.knowledgecheckId),
@@ -192,16 +192,16 @@ export const userContributesToKnowledgeCheck = mysqlTable(
   ],
 )
 
-export const userHasDoneKnowledgeCheck = mysqlTable(
+export const db_userHasDoneKnowledgeCheck = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
     userId: varchar('user_id', { length: 36 })
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => db_user.id, { onDelete: 'cascade' }),
     knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 })
       .notNull()
-      .references(() => knowledgeCheck.id, { onDelete: 'cascade' }),
+      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
     startedAt: datetime({ mode: 'string' }).notNull(),
     finishedAt: datetime({ mode: 'string' }).notNull(),
     score: int().notNull(),
@@ -214,7 +214,7 @@ export const userHasDoneKnowledgeCheck = mysqlTable(
   ],
 )
 
-export const verification = mysqlTable(
+export const db_verification = mysqlTable(
   'Verification',
   {
     id: varchar({ length: 36 }).notNull(),
