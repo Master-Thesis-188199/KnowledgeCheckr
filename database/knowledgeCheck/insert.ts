@@ -10,7 +10,7 @@ import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
-export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck, transaction = true) {
+export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
   await requireAuthentication()
 
   const db = await getDrizzleDatabase()
