@@ -2,7 +2,7 @@
 
 import { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
-import getDatabase, { getDrizzleDatabase } from '@/database/Database'
+import { getDrizzleDatabase } from '@/database/Database'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { db_knowledgeCheck } from '@/drizzle/schema'
