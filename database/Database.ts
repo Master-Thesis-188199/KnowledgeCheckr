@@ -1,7 +1,9 @@
-import { drizzle } from 'drizzle-orm/mysql2'
+import { drizzle, MySql2Database } from 'drizzle-orm/mysql2'
 import { Connection, createConnection } from 'mysql2/promise'
 import env from '@/src/lib/Shared/Env'
 import { Any } from '@/types'
+
+export type DrizzleDB = MySql2Database
 
 export type DBConnection = Connection & {
   insert: <T = Any>(query: string, values?: Any[]) => Promise<{ [key: string]: T } | never>
