@@ -2,6 +2,12 @@ import { datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTab
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 
+const primaryKeyUUID = varchar({ length: 36 })
+  .notNull()
+  .primaryKey()
+  //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
+  .$defaultFn(() => getUUID())
+
 export const account = mysqlTable(
   'Account',
   {
@@ -27,11 +33,7 @@ export const account = mysqlTable(
 export const answer = mysqlTable(
   'Answer',
   {
-    id: varchar({ length: 36 })
-      .notNull()
-      .primaryKey()
-      //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
-      .$defaultFn(() => getUUID()),
+    id: primaryKeyUUID,
     answer: mediumtext().notNull(),
     correct: tinyint(),
     position: int(),
@@ -81,11 +83,7 @@ export const category = mysqlTable(
 export const knowledgeCheck = mysqlTable(
   'KnowledgeCheck',
   {
-    id: varchar({ length: 36 })
-      .notNull()
-      .primaryKey()
-      //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
-      .$defaultFn(() => getUUID()),
+    id: primaryKeyUUID,
     name: tinytext().notNull(),
     description: mediumtext(),
     owner_id: varchar('owner_id', { length: 36 })
@@ -110,11 +108,7 @@ export const knowledgeCheck = mysqlTable(
 export const knowledgeCheckSettings = mysqlTable(
   'KnowledgeCheck_Settings',
   {
-    id: varchar({ length: 36 })
-      .notNull()
-      .primaryKey()
-      //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
-      .$defaultFn(() => getUUID()),
+    id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
       .notNull()
       .references(() => knowledgeCheck.id, { onDelete: 'cascade' }),
@@ -128,11 +122,7 @@ export const knowledgeCheckSettings = mysqlTable(
 export const question = mysqlTable(
   'Question',
   {
-    id: varchar({ length: 36 })
-      .notNull()
-      .primaryKey()
-      //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
-      .$defaultFn(() => getUUID()),
+    id: primaryKeyUUID,
     type: mysqlEnum(['single-choice', 'multiple-choice', 'open-question', 'drag-drop']).notNull(),
     question: mediumtext().notNull(),
     points: int().notNull(),
