@@ -100,11 +100,11 @@ jobs:
       - name: Set lowercase repository name as environment variable
         run: echo "LOWER_REPO_NAME=$(echo ${{ env.REPO_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: 'Get Previous tag'
+      - name: "Get Previous tag"
         id: previoustag
-        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-      - name: 'Store Version Information'
+      - name: "Store Version Information"
         run: |
           echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
 
@@ -165,7 +165,7 @@ jobs:
             BASE="$(git rev-parse "${HEAD}^" 2>/dev/null || true)"
           fi
           echo "Diff range: ${BASE:-<none>}..${HEAD}"
-          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'database/init.sql'; then
+          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'init.sql'; then
             echo "db_changed=true" >> "$GITHUB_OUTPUT"
             echo "Database schema (init.sql) has changed."
           else

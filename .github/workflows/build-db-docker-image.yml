@@ -36,7 +36,7 @@ jobs:
             BASE="$(git rev-parse "${HEAD}^" 2>/dev/null || true)"
           fi
           echo "Diff range: ${BASE:-<none>}..${HEAD}"
-          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'database/init.sql'; then
+          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'init.sql'; then
             echo "db_changed=true" >> "$GITHUB_OUTPUT"
             echo "Database schema (init.sql) has changed."
           else
