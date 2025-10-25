@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import { datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -39,10 +40,10 @@ export const answer = mysqlTable(
     position: int(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now()))),
+      .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now())))
+      .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     questionId: varchar('Question_id', { length: 36 })
       .notNull()
@@ -62,7 +63,7 @@ export const category = mysqlTable(
     name: tinytext().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now()))),
+      .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
       .default(formatDatetime(new Date(Date.now())))
@@ -91,16 +92,16 @@ export const knowledgeCheck = mysqlTable(
       .references(() => user.id),
     share_key: tinytext('public_token'),
     openDate: datetime({ mode: 'string' }).notNull(),
-    closeDate: datetime({ mode: 'string' }),
+    closeDate: datetime({ mode: 'string' }).$default(() => sql`NULL`),
     difficulty: int().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now()))),
+      .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now())))
+      .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
-    expiresAt: datetime({ mode: 'string' }),
+    expiresAt: datetime({ mode: 'string' }).default(sql`NULL`),
   },
   (table) => [index('fk_KnowledgeCheck_user1_idx').on(table.owner_id), primaryKey({ columns: [table.id], name: 'KnowledgeCheck_id' })],
 )
@@ -128,10 +129,10 @@ export const question = mysqlTable(
     points: int().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now()))),
+      .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
-      .default(formatDatetime(new Date(Date.now())))
+      .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     categoryId: varchar('category_id', { length: 36 })
       .notNull()
