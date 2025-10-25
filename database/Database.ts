@@ -22,6 +22,14 @@ export default async function getDatabase() {
   return convertConnection(connection)
 }
 
+export async function getDrizzleDatabase() {
+  if (connection === null || !(await isConnectionAlive())) {
+    connection = await getConnection()
+  }
+
+  return drizzle({ client: connection })
+}
+
 async function insert(query: string, values?: Any[]) {
   await connection!.execute<Any>(query, values)
 
