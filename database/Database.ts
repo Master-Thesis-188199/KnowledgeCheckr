@@ -1,13 +1,14 @@
+import { drizzle } from 'drizzle-orm/mysql2'
+import { Connection, createConnection } from 'mysql2/promise'
 import env from '@/src/lib/Shared/Env'
 import { Any } from '@/types'
-import { Connection, createConnection } from 'mysql2/promise'
 
 export type DBConnection = Connection & {
   insert: <T = Any>(query: string, values?: Any[]) => Promise<{ [key: string]: T } | never>
   exec: <T extends object = Any>(query: string, values?: Any[]) => Promise<T | never>
 }
 
-let connection: DBConnection | null = null
+let connection: Connection | null = null
 
 async function isConnectionAlive() {
   return (await connection?.ping().catch(() => false)) === true
@@ -18,7 +19,7 @@ export default async function getDatabase() {
     connection = await getConnection()
   }
 
-  return connection
+  return convertConnection(connection)
 }
 
 async function insert(query: string, values?: Any[]) {
@@ -70,16 +71,14 @@ export function convertConnection(connection: Connection): DBConnection {
   return dbConnection
 }
 
-async function getConnection(): Promise<DBConnection> {
+async function getConnection() {
   if (process.env.NODE_ENV === 'production') {
-    connection = convertConnection(
-      await createConnection({
-        host: env.DATABASE_HOST,
-        user: env.DATABASE_USER,
-        password: env.DATABASE_PASSWORD,
-        database: env.DATABASE_NAME,
-      }),
-    )
+    connection = await createConnection({
+      host: env.DATABASE_HOST,
+      user: env.DATABASE_USER,
+      password: env.DATABASE_PASSWORD,
+      database: env.DATABASE_NAME,
+    })
   } else {
     if (!global.connection || !(await isConnectionAlive())) {
       console.log('Creating new database connection for development environment.')
@@ -90,7 +89,7 @@ async function getConnection(): Promise<DBConnection> {
         database: env.DATABASE_NAME,
       })
     }
-    connection = convertConnection(global.connection)
+    connection = global.connection
   }
 
   return connection
