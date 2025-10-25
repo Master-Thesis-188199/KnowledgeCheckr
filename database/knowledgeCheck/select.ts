@@ -1,23 +1,28 @@
 'use server'
 
-import getDatabase from '@/database/Database'
+import { User } from 'better-auth'
+import { desc, eq } from 'drizzle-orm'
+import { getDrizzleDatabase } from '@/database/Database'
 import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
-import { DbKnowledgeCheck } from '@/database/knowledgeCheck/type'
+import { db_knowledgeCheck } from '@/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { User } from 'better-auth'
 
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
-  const db = await getDatabase()
+  const db = await getDrizzleDatabase()
   const checks: KnowledgeCheck[] = []
 
-  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE owner_id = ? Order By updatedAt DESC Limit ${limit > 100 ? 100 : limit} OFFSET ?`, [
-    user_id,
-    (offset ?? '0').toString(),
-  ])
+  const knowledgeChecks = await db
+    .select()
+    .from(db_knowledgeCheck)
+    .where(eq(db_knowledgeCheck.owner_id, user_id))
+    .offset(offset)
+    .limit(limit > 100 ? 100 : limit)
+    .orderBy(desc(db_knowledgeCheck.updatedAt))
+
   for (const knowledgeCheck of knowledgeChecks) {
     const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
     const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions)
@@ -31,10 +36,11 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
 export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck | null> {
   await requireAuthentication()
 
-  const db = await getDatabase()
+  const db = await getDrizzleDatabase()
   const checks: KnowledgeCheck[] = []
 
-  const knowledgeChecks = await db.exec<DbKnowledgeCheck[]>(`SELECT * FROM KnowledgeCheck WHERE id = ?`, [id])
+  const knowledgeChecks = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, id))
+
   for (const knowledgeCheck of knowledgeChecks) {
     const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
     const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions)
@@ -46,9 +52,9 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
 }
 
 export async function getKnowledgeCheckByShareToken(token: string) {
-  const db = await getDatabase()
+  const db = await getDrizzleDatabase()
 
-  const rawCheck = (await db.exec<DbKnowledgeCheck[]>('SELECT * from KnowledgeCheck WHERE public_token = ?', [token]))?.at(0)
+  const [rawCheck] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.share_key, token)).limit(1)
   if (!rawCheck) return null
 
   const questions = await getKnowledgeCheckQuestions(db, rawCheck.id)
@@ -57,12 +63,12 @@ export async function getKnowledgeCheckByShareToken(token: string) {
   return check
 }
 
-function parseKnowledgeCheck(knowledgeCheck: DbKnowledgeCheck, questions: Question[]): KnowledgeCheck {
+function parseKnowledgeCheck(knowledgeCheck: typeof db_knowledgeCheck.$inferSelect, questions: Question[]): KnowledgeCheck {
   return {
     id: knowledgeCheck.id,
     name: knowledgeCheck.name,
     description: knowledgeCheck.description,
-    share_key: knowledgeCheck.public_token,
+    share_key: knowledgeCheck.share_key,
     questions,
     difficulty: knowledgeCheck.difficulty,
     closeDate: knowledgeCheck.closeDate ? new Date(Date.parse(knowledgeCheck.closeDate)) : null,
