@@ -220,19 +220,15 @@ export const db_session = mysqlTable(
   ],
 )
 
-export const db_user = mysqlTable(
-  'User',
-  {
-    id: varchar({ length: 36 }).notNull().primaryKey(),
-    name: tinytext().notNull(),
-    email: tinytext().notNull(),
-    emailVerified: tinyint().notNull(),
-    image: varchar({ length: 512 }),
-    createdAt: datetime({ mode: 'string' }).notNull(),
-    updatedAt: datetime({ mode: 'string' }).notNull(),
-  },
-  (table) => [primaryKey({ columns: [table.id], name: 'User_id' })],
-)
+export const db_user = mysqlTable('User', {
+  id: varchar({ length: 36 }).notNull().primaryKey(),
+  name: tinytext().notNull(),
+  email: tinytext().notNull(),
+  emailVerified: tinyint().notNull(),
+  image: varchar({ length: 512 }),
+  createdAt: datetime({ mode: 'string' }).notNull(),
+  updatedAt: datetime({ mode: 'string' }).notNull(),
+})
 
 export const db_userContributesToKnowledgeCheck = mysqlTable(
   'User_contributesTo_KnowledgeCheck',
@@ -293,15 +289,11 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   ],
 )
 
-export const db_verification = mysqlTable(
-  'Verification',
-  {
-    id: varchar({ length: 36 }).notNull().primaryKey(),
-    identifier: tinytext().notNull(),
-    value: varchar({ length: 1024 }).notNull(),
-    expiresAt: datetime({ mode: 'string' }).notNull(),
-    createdAt: datetime({ mode: 'string' }).notNull(),
-    updatedAt: datetime({ mode: 'string' }).notNull(),
-  },
-  (table) => [primaryKey({ columns: [table.id], name: 'Verification_id' })],
-)
+export const db_verification = mysqlTable('Verification', {
+  id: varchar({ length: 36 }).notNull().primaryKey(),
+  identifier: tinytext().notNull(),
+  value: varchar({ length: 1024 }).notNull(),
+  expiresAt: datetime({ mode: 'string' }).notNull(),
+  createdAt: datetime({ mode: 'string' }).notNull(),
+  updatedAt: datetime({ mode: 'string' }).notNull(),
+})
