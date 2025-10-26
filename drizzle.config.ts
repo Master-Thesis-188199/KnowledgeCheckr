@@ -4,7 +4,7 @@ import env from '@/src/lib/Shared/Env'
 
 export default defineConfig({
   out: './drizzle',
-  schema: './database/schema/schema.ts',
+  schema: './drizzle/schema.ts',
   dialect: 'mysql',
   dbCredentials: {
     host: env.DATABASE_HOST,
