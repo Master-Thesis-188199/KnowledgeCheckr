@@ -43,9 +43,5 @@ export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id
   await requireAuthentication()
   const db = await getDrizzleDatabase()
 
-  const duplicateTokens = await db.select({ id: db_knowledgeCheck.id }).from(db_knowledgeCheck).where(eq(db_knowledgeCheck.share_key, token))
-
-  if (duplicateTokens.length > 0) throw new Error('Storing KnowledgeCheck share token failed because this token is already used!')
-
   await db.update(db_knowledgeCheck).set({ share_key: token }).where(eq(db_knowledgeCheck.id, check_id))
 }
