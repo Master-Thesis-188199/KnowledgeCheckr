@@ -243,9 +243,6 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     index('fk_user_has_KnowledgeCheck_user1_idx').on(table.userId),
-    primaryKey({
-      columns: [table.userId, table.knowledgecheckId],
-    }),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [db_user.id],
@@ -266,7 +263,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
 export const db_userHasDoneKnowledgeCheck = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
-    id: int().autoincrement().notNull(),
+    id: int().autoincrement().notNull().primaryKey(),
     userId: varchar('user_id', { length: 36 }).notNull(),
     knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 }).notNull(),
     startedAt: datetime({ mode: 'string' }).notNull(),
@@ -277,10 +274,6 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck2_idx').on(table.knowledgeCheckId),
     index('fk_user_has_KnowledgeCheck_user2_idx').on(table.userId),
-    primaryKey({
-      columns: [table.id, table.userId, table.knowledgeCheckId],
-      name: 'PRIMARY', // match MySQL’s PK name
-    }),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [db_user.id],
