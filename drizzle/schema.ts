@@ -108,7 +108,7 @@ export const db_knowledgeCheck = mysqlTable(
     description: mediumtext(),
     owner_id: varchar('owner_id', { length: 36 }).notNull(),
 
-    share_key: tinytext('public_token'),
+    share_key: varchar('public_token', { length: 50 }).unique(),
     openDate: datetime({ mode: 'string' }).notNull(),
     closeDate: datetime({ mode: 'string' }).$default(() => sql`NULL`),
     difficulty: int().notNull(),
