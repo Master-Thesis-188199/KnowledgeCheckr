@@ -1,6 +1,6 @@
 'use server'
 
-import getDatabase, { getDrizzleDatabase } from '@/database/Database'
+import { getDrizzleDatabase } from '@/database/Database'
 import { db_userHasDoneKnowledgeCheck } from '@/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
@@ -17,7 +17,7 @@ export default async function insertExaminationResults(examinationResult: Examin
       startedAt: formatDatetime(examinationResult.startedAt),
       finishedAt: formatDatetime(examinationResult.finishedAt ?? new Date(Date.now())),
       score: examinationResult.score,
-      results: JSON.stringify(examinationResult.results),
+      results: examinationResult.results,
     })
   } catch (e) {
     console.error('Failed to save examination results to database', e)
