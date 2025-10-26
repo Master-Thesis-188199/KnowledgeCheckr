@@ -16,7 +16,7 @@ async function isConnectionAlive() {
   return (await connection?.ping().catch(() => false)) === true
 }
 
-export async function getDrizzleDatabase() {
+export default async function getDrizzleDatabase() {
   if (connection === null || !(await isConnectionAlive())) {
     connection = await getConnection()
   }

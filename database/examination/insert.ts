@@ -1,6 +1,6 @@
 'use server'
 
-import { getDrizzleDatabase } from '@/database/Database'
+import getDrizzleDatabase from '@/database/Database'
 import { db_userHasDoneKnowledgeCheck } from '@/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
