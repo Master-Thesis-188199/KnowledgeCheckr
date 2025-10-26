@@ -96,7 +96,8 @@ CREATE TABLE `User` (
 --> statement-breakpoint
 CREATE TABLE `User_contributesTo_KnowledgeCheck` (
 	`user_id` varchar(36) NOT NULL,
-	`knowledgecheck_id` varchar(36) NOT NULL
+	`knowledgecheck_id` varchar(36) NOT NULL,
+	CONSTRAINT `User_has_done_KnowledgeCheck_pk` PRIMARY KEY(`user_id`,`knowledgecheck_id`)
 );
 --> statement-breakpoint
 CREATE TABLE `User_has_done_KnowledgeCheck` (
@@ -107,7 +108,7 @@ CREATE TABLE `User_has_done_KnowledgeCheck` (
 	`finishedAt` datetime NOT NULL,
 	`score` int NOT NULL,
 	`results` json NOT NULL,
-	CONSTRAINT `User_has_done_KnowledgeCheck_id` PRIMARY KEY(`id`)
+	CONSTRAINT `User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id_pk` PRIMARY KEY(`id`,`user_id`,`knowledgeCheck_id`)
 );
 --> statement-breakpoint
 CREATE TABLE `Verification` (

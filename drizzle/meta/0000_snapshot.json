@@ -760,7 +760,12 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "User_has_done_KnowledgeCheck_pk": {
+          "name": "User_has_done_KnowledgeCheck_pk",
+          "columns": ["user_id", "knowledgecheck_id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -850,9 +855,9 @@
         }
       },
       "compositePrimaryKeys": {
-        "User_has_done_KnowledgeCheck_id": {
-          "name": "User_has_done_KnowledgeCheck_id",
-          "columns": ["id"]
+        "User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id_pk": {
+          "name": "User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id_pk",
+          "columns": ["id", "user_id", "knowledgeCheck_id"]
         }
       },
       "uniqueConstraints": {},
