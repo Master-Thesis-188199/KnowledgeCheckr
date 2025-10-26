@@ -14,7 +14,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
   await requireAuthentication()
 
   const db = await getDrizzleDatabase()
-  db.transaction(async (transaction) => {
+  await db.transaction(async (transaction) => {
     try {
       const [{ id }] = await transaction
         .insert(db_knowledgeCheck)
