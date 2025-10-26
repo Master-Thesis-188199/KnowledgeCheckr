@@ -12,12 +12,10 @@ const primaryKeyUUID = varchar({ length: 36 })
 export const db_account = mysqlTable(
   'Account',
   {
-    id: varchar({ length: 36 }).notNull(),
+    id: varchar({ length: 36 }).notNull().primaryKey(),
     accountId: tinytext().notNull(),
     providerId: tinytext().notNull(),
-    userId: varchar('user_id', { length: 36 })
-      .notNull()
-      .references(() => db_user.id, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 36 }).notNull(),
     accessToken: mediumtext(),
     refreshToken: mediumtext(),
     idToken: mediumtext(),
@@ -28,7 +26,16 @@ export const db_account = mysqlTable(
     createdAt: datetime({ mode: 'string' }).notNull(),
     updatedAt: datetime({ mode: 'string' }).notNull(),
   },
-  (table) => [index('fk_account_user1_idx').on(table.userId), primaryKey({ columns: [table.id], name: 'Account_id' })],
+  (table) => [
+    index('fk_account_user1_idx').on(table.userId),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [db_user.id],
+      name: 'fk_account_user1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_answer = mysqlTable(
@@ -40,16 +47,25 @@ export const db_answer = mysqlTable(
     position: int(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
-    questionId: varchar('Question_id', { length: 36 })
-      .notNull()
-      .references(() => db_question.id, { onDelete: 'cascade' }),
+    questionId: varchar('Question_id', { length: 36 }).notNull(),
   },
-  (table) => [index('fk_Answer_Question1_idx').on(table.questionId), primaryKey({ columns: [table.id], name: 'Answer_id' })],
+  (table) => [
+    index('fk_Answer_Question1_idx').on(table.questionId),
+    foreignKey({
+      columns: [table.questionId],
+      foreignColumns: [db_question.id],
+      name: 'fk_Answer_Question1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_category = mysqlTable(
@@ -63,10 +79,12 @@ export const db_category = mysqlTable(
     name: tinytext().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
       .default(formatDatetime(new Date(Date.now())))
+      .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     prequisiteCategoryId: varchar('prequisite_category_id', { length: 36 }),
   },
@@ -76,8 +94,9 @@ export const db_category = mysqlTable(
       columns: [table.prequisiteCategoryId],
       foreignColumns: [table.id],
       name: 'fk_Category_Category1',
-    }).onDelete('set null'),
-    primaryKey({ columns: [table.id], name: 'Category_id' }),
+    })
+      .onDelete('set null')
+      .onUpdate('no action'),
   ],
 )
 
@@ -87,37 +106,54 @@ export const db_knowledgeCheck = mysqlTable(
     id: primaryKeyUUID,
     name: tinytext().notNull(),
     description: mediumtext(),
-    owner_id: varchar('owner_id', { length: 36 })
-      .notNull()
-      .references(() => db_user.id),
+    owner_id: varchar('owner_id', { length: 36 }).notNull(),
+
     share_key: tinytext('public_token'),
     openDate: datetime({ mode: 'string' }).notNull(),
     closeDate: datetime({ mode: 'string' }).$default(() => sql`NULL`),
     difficulty: int().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     expiresAt: datetime({ mode: 'string' }).default(sql`NULL`),
   },
-  (table) => [index('fk_KnowledgeCheck_user1_idx').on(table.owner_id), primaryKey({ columns: [table.id], name: 'KnowledgeCheck_id' })],
+  (table) => [
+    index('fk_KnowledgeCheck_user1_idx').on(table.owner_id),
+    foreignKey({
+      columns: [table.owner_id],
+      foreignColumns: [db_user.id],
+      name: 'fk_KnowledgeCheck_user1',
+    })
+      .onDelete('no action')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_knowledgeCheckSettings = mysqlTable(
   'KnowledgeCheck_Settings',
   {
     id: primaryKeyUUID,
-    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
-      .notNull()
-      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
+    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous').default(1),
     randomizeQuestions: tinyint('randomize_questions').default(1),
     allowFreeNavigation: tinyint('allow_free_navigation').default(1),
   },
-  (table) => [index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId), primaryKey({ columns: [table.id], name: 'KnowledgeCheck_Settings_id' })],
+  (table) => [
+    index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
+    foreignKey({
+      columns: [table.knowledgecheckId],
+      foreignColumns: [db_knowledgeCheck.id],
+      name: 'fk_KnowledgeCheck_Settings_KnowledgeCheck1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_question = mysqlTable(
@@ -129,42 +165,65 @@ export const db_question = mysqlTable(
     points: int().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now()))),
     updatedAt: datetime({ mode: 'string' })
       .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
-    categoryId: varchar('category_id', { length: 36 })
-      .notNull()
-      .references(() => db_category.id, { onDelete: 'cascade' }),
-    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
-      .notNull()
-      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
+    categoryId: varchar('category_id', { length: 36 }).notNull(),
+
+    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
-  (table) => [index('fk_Question_Category1_idx').on(table.categoryId), index('fk_Question_KnowledgeCheck1_idx').on(table.knowledgecheckId), primaryKey({ columns: [table.id], name: 'Question_id' })],
+  (table) => [
+    index('fk_Question_Category1_idx').on(table.categoryId),
+    index('fk_Question_KnowledgeCheck1_idx').on(table.knowledgecheckId),
+    foreignKey({
+      columns: [table.categoryId],
+      foreignColumns: [db_category.id],
+      name: 'fk_Question_Category1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+    foreignKey({
+      columns: [table.knowledgecheckId],
+      foreignColumns: [db_knowledgeCheck.id],
+      name: 'fk_Question_KnowledgeCheck1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_session = mysqlTable(
   'Session',
   {
-    id: varchar({ length: 36 }).notNull(),
+    id: varchar({ length: 36 }).notNull().primaryKey(),
     token: tinytext().notNull(),
     createdAt: datetime({ mode: 'string' }).notNull(),
     updatedAt: datetime({ mode: 'string' }).notNull(),
     expiresAt: datetime({ mode: 'string' }).notNull(),
     ipAddress: tinytext(),
     userAgent: tinytext(),
-    userId: varchar('user_id', { length: 36 })
-      .notNull()
-      .references(() => db_user.id, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 36 }).notNull(),
   },
-  (table) => [index('fk_session_user_idx').on(table.userId), primaryKey({ columns: [table.id], name: 'Session_id' })],
+  (table) => [
+    index('fk_session_user_idx').on(table.userId),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [db_user.id],
+      name: 'fk_session_user',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+  ],
 )
 
 export const db_user = mysqlTable(
   'User',
   {
-    id: varchar({ length: 36 }).notNull(),
+    id: varchar({ length: 36 }).notNull().primaryKey(),
     name: tinytext().notNull(),
     email: tinytext().notNull(),
     emailVerified: tinyint().notNull(),
@@ -178,17 +237,29 @@ export const db_user = mysqlTable(
 export const db_userContributesToKnowledgeCheck = mysqlTable(
   'User_contributesTo_KnowledgeCheck',
   {
-    userId: varchar('user_id', { length: 36 })
-      .notNull()
-      .references(() => db_user.id, { onUpdate: 'cascade' }),
-    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 })
-      .notNull()
-      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 36 }).notNull(),
+    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     index('fk_user_has_KnowledgeCheck_user1_idx').on(table.userId),
-    primaryKey({ columns: [table.userId, table.knowledgecheckId], name: 'User_contributesTo_KnowledgeCheck_user_id_knowledgecheck_id' }),
+    primaryKey({
+      columns: [table.userId, table.knowledgecheckId],
+    }),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [db_user.id],
+      name: 'fk_user_has_KnowledgeCheck_user1',
+    })
+      .onDelete('no action')
+      .onUpdate('cascade'),
+    foreignKey({
+      columns: [table.knowledgecheckId],
+      foreignColumns: [db_knowledgeCheck.id],
+      name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
   ],
 )
 
@@ -196,12 +267,8 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
-    userId: varchar('user_id', { length: 36 })
-      .notNull()
-      .references(() => db_user.id, { onDelete: 'cascade' }),
-    knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 })
-      .notNull()
-      .references(() => db_knowledgeCheck.id, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 36 }).notNull(),
+    knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 }).notNull(),
     startedAt: datetime({ mode: 'string' }).notNull(),
     finishedAt: datetime({ mode: 'string' }).notNull(),
     score: int().notNull(),
@@ -210,14 +277,31 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck2_idx').on(table.knowledgeCheckId),
     index('fk_user_has_KnowledgeCheck_user2_idx').on(table.userId),
-    primaryKey({ columns: [table.id, table.userId, table.knowledgeCheckId], name: 'User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id' }),
+    primaryKey({
+      columns: [table.id, table.userId, table.knowledgeCheckId],
+      name: 'PRIMARY', // match MySQL’s PK name
+    }),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [db_user.id],
+      name: 'fk_user_has_KnowledgeCheck_user2',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
+    foreignKey({
+      columns: [table.knowledgeCheckId],
+      foreignColumns: [db_knowledgeCheck.id],
+      name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck2',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
   ],
 )
 
 export const db_verification = mysqlTable(
   'Verification',
   {
-    id: varchar({ length: 36 }).notNull(),
+    id: varchar({ length: 36 }).notNull().primaryKey(),
     identifier: tinytext().notNull(),
     value: varchar({ length: 1024 }).notNull(),
     expiresAt: datetime({ mode: 'string' }).notNull(),
