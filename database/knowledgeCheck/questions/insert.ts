@@ -61,7 +61,7 @@ async function insertChoiceAnswers(db: DBConnection, question_id: Question['id']
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.correct ? 1 : 0])
+    await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [answer.id ?? getUUID(), answer.answer, question_id, answer.correct ? 1 : 0])
   }
 }
 
@@ -75,6 +75,6 @@ async function insertDragDropAnswers(db: DBConnection, question_id: Question['id
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, position) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.position])
+    await db.insert('INSERT INTO Answer (id, answer, Question_id, position) Values (?, ?, ?, ?)', [answer.id ?? getUUID(), answer.answer, question_id, answer.position])
   }
 }

@@ -1,6 +1,6 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck, instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateChoiceQuestion, instantiateDragDropQuestion, instantiateOpenQuestion } from '@/src/schemas/QuestionSchema'
+import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('Verify sharing of KnowledgeChecks', () => {
   it('Verify that notFound is displayed for invalid share-token', () => {
@@ -28,7 +28,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
     //? Insert dummy knowledge check with share-token
     const dummyCheck: KnowledgeCheck = Object.assign(instantiateKnowledgeCheck(), {
       share_key: null,
-      questions: [instantiateDragDropQuestion(), instantiateChoiceQuestion(), instantiateOpenQuestion()],
+      questions: [instantiateDragDropQuestion(), instantiateSingleChoice(), instantiateMultipleChoice(), instantiateOpenQuestion()],
     } as Partial<KnowledgeCheck>)
 
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
