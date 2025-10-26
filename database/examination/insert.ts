@@ -1,6 +1,6 @@
 'use server'
 
-import getDrizzleDatabase from '@/database/Database'
+import getDatabase from '@/database/Database'
 import { db_userHasDoneKnowledgeCheck } from '@/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
@@ -8,7 +8,7 @@ import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export default async function insertExaminationResults(examinationResult: ExaminationSchema) {
   const { user } = await requireAuthentication()
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
 
   try {
     await db.insert(db_userHasDoneKnowledgeCheck).values({

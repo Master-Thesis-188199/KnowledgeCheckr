@@ -2,7 +2,7 @@
 
 import { User } from 'better-auth'
 import { desc, eq } from 'drizzle-orm'
-import getDrizzleDatabase from '@/database/Database'
+import getDatabase from '@/database/Database'
 import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
 import { db_knowledgeCheck } from '@/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -12,7 +12,7 @@ import { Question } from '@/src/schemas/QuestionSchema'
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
   const knowledgeChecks = await db
@@ -36,7 +36,7 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
 export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck | null> {
   await requireAuthentication()
 
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
   const checks: KnowledgeCheck[] = []
 
   const knowledgeChecks = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, id))
@@ -52,7 +52,7 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
 }
 
 export async function getKnowledgeCheckByShareToken(token: string) {
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
 
   const [rawCheck] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.share_key, token)).limit(1)
   if (!rawCheck) return null

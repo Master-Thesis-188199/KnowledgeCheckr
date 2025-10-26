@@ -2,7 +2,7 @@
 
 import { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
-import getDrizzleDatabase from '@/database/Database'
+import getDatabase from '@/database/Database'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { db_knowledgeCheck } from '@/drizzle/schema'
@@ -13,7 +13,7 @@ import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
   await requireAuthentication()
 
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
   await db.transaction(async (transaction) => {
     try {
       const [{ id }] = await transaction
@@ -43,7 +43,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
 export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id'], token: string) {
   await requireAuthentication()
-  const db = await getDrizzleDatabase()
+  const db = await getDatabase()
 
   await db.update(db_knowledgeCheck).set({ share_key: token }).where(eq(db_knowledgeCheck.id, check_id))
 }
