@@ -24,7 +24,10 @@ async function insertQuestion(db: DrizzleDB, question: Question, check_id: Knowl
   const [{ id }] = await db
     .insert(db_question)
     .values({
-      ...question,
+      id: question.id,
+      type: question.type,
+      question: question.question,
+      points: question.points,
       categoryId: category_id,
       knowledgecheckId: check_id,
     })

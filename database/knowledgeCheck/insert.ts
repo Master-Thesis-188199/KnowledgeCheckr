@@ -19,12 +19,14 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
       const [{ id }] = await transaction
         .insert(db_knowledgeCheck)
         .values({
-          ...check,
+          id: check.id,
+          name: check.name,
+          description: check.description,
+          difficulty: check.difficulty,
+          share_key: check.share_key,
           owner_id: user_id,
           openDate: formatDatetime(check.openDate),
-          closeDate: formatDatetime(check.closeDate ?? new Date(Date.now())),
-          createdAt: undefined,
-          updatedAt: undefined,
+          closeDate: check.closeDate ? formatDatetime(check.closeDate) : null,
         })
         .$returningId()
 
