@@ -2,7 +2,7 @@
 
 import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
-import { db_answer, db_category, db_question } from '@/drizzle/schema'
+import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'

@@ -1,7 +1,7 @@
 'use server'
 
 import { DrizzleDB } from '@/database/Database'
-import { db_knowledgeCheckSettings } from '@/drizzle/schema'
+import { db_knowledgeCheckSettings } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'

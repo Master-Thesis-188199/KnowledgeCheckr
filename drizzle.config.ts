@@ -3,8 +3,8 @@ import { defineConfig } from 'drizzle-kit'
 import env from '@/src/lib/Shared/Env'
 
 export default defineConfig({
-  out: './drizzle',
-  schema: './drizzle/schema.ts',
+  out: './database/drizzle',
+  schema: './database/drizzle/schema.ts',
   dialect: 'mysql',
   dbCredentials: {
     host: env.DATABASE_HOST,

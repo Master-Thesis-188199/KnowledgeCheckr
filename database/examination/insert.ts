@@ -1,7 +1,7 @@
 'use server'
 
 import getDatabase from '@/database/Database'
-import { db_userHasDoneKnowledgeCheck } from '@/drizzle/schema'
+import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'

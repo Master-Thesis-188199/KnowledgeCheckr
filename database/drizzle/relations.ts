@@ -10,7 +10,7 @@ import {
   db_user,
   db_userContributesToKnowledgeCheck,
   db_userHasDoneKnowledgeCheck,
-} from '@/drizzle/schema'
+} from '@/database/drizzle/schema'
 
 export const accountRelations = relations(db_account, ({ one }) => ({
   user: one(db_user, {

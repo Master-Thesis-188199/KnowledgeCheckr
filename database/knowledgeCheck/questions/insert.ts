@@ -2,7 +2,7 @@
 
 import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
-import { db_answer, db_category, db_question } from '@/drizzle/schema'
+import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
