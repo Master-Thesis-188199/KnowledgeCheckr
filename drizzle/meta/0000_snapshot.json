@@ -1,108 +1,102 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
   "version": "5",
   "dialect": "mysql",
+  "id": "83cbda88-bb72-4c55-91c9-eb3fa56ccc62",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Account": {
       "name": "Account",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "accountId": {
-          "autoincrement": false,
           "name": "accountId",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "providerId": {
-          "autoincrement": false,
           "name": "providerId",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "user_id": {
-          "autoincrement": false,
           "name": "user_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "accessToken": {
-          "autoincrement": false,
           "name": "accessToken",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "refreshToken": {
-          "autoincrement": false,
           "name": "refreshToken",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "idToken": {
-          "autoincrement": false,
           "name": "idToken",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "accessTokenExpiresAt": {
-          "autoincrement": false,
           "name": "accessTokenExpiresAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "refreshTokenExpiresAt": {
-          "autoincrement": false,
           "name": "refreshTokenExpiresAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "scope": {
-          "autoincrement": false,
           "name": "scope",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "password": {
-          "autoincrement": false,
           "name": "password",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "createdAt": {
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "updatedAt": {
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "Account_id": {
-          "name": "Account_id",
-          "columns": ["id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -123,6 +117,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "Account_id": {
+          "name": "Account_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -130,61 +130,55 @@
       "name": "Answer",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "answer": {
-          "autoincrement": false,
           "name": "answer",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "correct": {
-          "autoincrement": false,
           "name": "correct",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "position": {
-          "autoincrement": false,
           "name": "position",
           "type": "int",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "createdAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "updatedAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "Question_id": {
-          "autoincrement": false,
           "name": "Question_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "Answer_id": {
-          "name": "Answer_id",
-          "columns": ["id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -205,6 +199,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "Answer_id": {
+          "name": "Answer_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -212,47 +212,41 @@
       "name": "Category",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "createdAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "updatedAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "prequisite_category_id": {
-          "autoincrement": false,
           "name": "prequisite_category_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "compositePrimaryKeys": {
-        "Category_id": {
-          "name": "Category_id",
-          "columns": ["id"]
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -273,6 +267,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "Category_id": {
+          "name": "Category_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -280,87 +280,84 @@
       "name": "KnowledgeCheck",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "description": {
-          "autoincrement": false,
           "name": "description",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "owner_id": {
-          "autoincrement": false,
           "name": "owner_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "public_token": {
-          "autoincrement": false,
           "name": "public_token",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "openDate": {
-          "autoincrement": false,
           "name": "openDate",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "closeDate": {
-          "autoincrement": false,
           "name": "closeDate",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "difficulty": {
-          "autoincrement": false,
           "name": "difficulty",
           "type": "int",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "createdAt": {
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "updatedAt": {
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "expiresAt": {
-          "autoincrement": false,
           "name": "expiresAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "compositePrimaryKeys": {
-        "KnowledgeCheck_id": {
-          "name": "KnowledgeCheck_id",
-          "columns": ["id"]
+          "notNull": false,
+          "autoincrement": false,
+          "default": "NULL"
         }
       },
       "indexes": {
@@ -381,6 +378,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "KnowledgeCheck_id": {
+          "name": "KnowledgeCheck_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -388,48 +391,42 @@
       "name": "KnowledgeCheck_Settings",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "knowledgecheck_id": {
-          "autoincrement": false,
           "name": "knowledgecheck_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "allow_anonymous": {
-          "default": 1,
-          "autoincrement": false,
           "name": "allow_anonymous",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": 1
         },
         "randomize_questions": {
-          "default": 1,
-          "autoincrement": false,
           "name": "randomize_questions",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": 1
         },
         "allow_free_navigation": {
-          "default": 1,
-          "autoincrement": false,
           "name": "allow_free_navigation",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "compositePrimaryKeys": {
-        "KnowledgeCheck_Settings_id": {
-          "name": "KnowledgeCheck_Settings_id",
-          "columns": ["id"]
+          "notNull": false,
+          "autoincrement": false,
+          "default": 1
         }
       },
       "indexes": {
@@ -450,6 +447,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "KnowledgeCheck_Settings_id": {
+          "name": "KnowledgeCheck_Settings_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -457,68 +460,62 @@
       "name": "Question",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "type": {
-          "autoincrement": false,
           "name": "type",
           "type": "enum('single-choice','multiple-choice','open-question','drag-drop')",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "question": {
-          "autoincrement": false,
           "name": "question",
           "type": "mediumtext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "points": {
-          "autoincrement": false,
           "name": "points",
           "type": "int",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "createdAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "updatedAt": {
-          "default": "(CURRENT_TIMESTAMP)",
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "category_id": {
-          "autoincrement": false,
           "name": "category_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "knowledgecheck_id": {
-          "autoincrement": false,
           "name": "knowledgecheck_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "Question_id": {
-          "name": "Question_id",
-          "columns": ["id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -553,6 +550,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "Question_id": {
+          "name": "Question_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -560,66 +563,60 @@
       "name": "Session",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "token": {
-          "autoincrement": false,
           "name": "token",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "createdAt": {
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "updatedAt": {
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "expiresAt": {
-          "autoincrement": false,
           "name": "expiresAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "ipAddress": {
-          "autoincrement": false,
           "name": "ipAddress",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "userAgent": {
-          "autoincrement": false,
           "name": "userAgent",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "user_id": {
-          "autoincrement": false,
           "name": "user_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "Session_id": {
-          "name": "Session_id",
-          "columns": ["id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -640,6 +637,12 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {
+        "Session_id": {
+          "name": "Session_id",
+          "columns": ["id"]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -647,63 +650,63 @@
       "name": "User",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "email": {
-          "autoincrement": false,
           "name": "email",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "emailVerified": {
-          "autoincrement": false,
           "name": "emailVerified",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "image": {
-          "autoincrement": false,
           "name": "image",
           "type": "varchar(512)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "autoincrement": false
         },
         "createdAt": {
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "updatedAt": {
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         }
       },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "User_id": {
           "name": "User_id",
           "columns": ["id"]
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -711,24 +714,18 @@
       "name": "User_contributesTo_KnowledgeCheck",
       "columns": {
         "user_id": {
-          "autoincrement": false,
           "name": "user_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "knowledgecheck_id": {
-          "autoincrement": false,
           "name": "knowledgecheck_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "User_contributesTo_KnowledgeCheck_user_id_knowledgecheck_id": {
-          "name": "User_contributesTo_KnowledgeCheck_user_id_knowledgecheck_id",
-          "columns": ["user_id", "knowledgecheck_id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -744,15 +741,6 @@
         }
       },
       "foreignKeys": {
-        "fk_user_has_KnowledgeCheck_KnowledgeCheck1": {
-          "name": "fk_user_has_KnowledgeCheck_KnowledgeCheck1",
-          "tableFrom": "User_contributesTo_KnowledgeCheck",
-          "tableTo": "KnowledgeCheck",
-          "columnsFrom": ["knowledgecheck_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "fk_user_has_KnowledgeCheck_user1": {
           "name": "fk_user_has_KnowledgeCheck_user1",
           "tableFrom": "User_contributesTo_KnowledgeCheck",
@@ -761,8 +749,18 @@
           "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "cascade"
+        },
+        "fk_user_has_KnowledgeCheck_KnowledgeCheck1": {
+          "name": "fk_user_has_KnowledgeCheck_KnowledgeCheck1",
+          "tableFrom": "User_contributesTo_KnowledgeCheck",
+          "tableTo": "KnowledgeCheck",
+          "columnsFrom": ["knowledgecheck_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -770,59 +768,53 @@
       "name": "User_has_done_KnowledgeCheck",
       "columns": {
         "id": {
-          "autoincrement": true,
           "name": "id",
           "type": "int",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": true
         },
         "user_id": {
-          "autoincrement": false,
           "name": "user_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "knowledgeCheck_id": {
-          "autoincrement": false,
           "name": "knowledgeCheck_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "startedAt": {
-          "autoincrement": false,
           "name": "startedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "finishedAt": {
-          "autoincrement": false,
           "name": "finishedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "score": {
-          "autoincrement": false,
           "name": "score",
           "type": "int",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "results": {
-          "autoincrement": false,
           "name": "results",
           "type": "json",
           "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id": {
-          "name": "User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id",
-          "columns": ["id", "user_id", "knowledgeCheck_id"]
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -838,15 +830,6 @@
         }
       },
       "foreignKeys": {
-        "fk_user_has_KnowledgeCheck_KnowledgeCheck2": {
-          "name": "fk_user_has_KnowledgeCheck_KnowledgeCheck2",
-          "tableFrom": "User_has_done_KnowledgeCheck",
-          "tableTo": "KnowledgeCheck",
-          "columnsFrom": ["knowledgeCheck_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "fk_user_has_KnowledgeCheck_user2": {
           "name": "fk_user_has_KnowledgeCheck_user2",
           "tableFrom": "User_has_done_KnowledgeCheck",
@@ -855,6 +838,21 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "fk_user_has_KnowledgeCheck_KnowledgeCheck2": {
+          "name": "fk_user_has_KnowledgeCheck_KnowledgeCheck2",
+          "tableFrom": "User_has_done_KnowledgeCheck",
+          "tableTo": "KnowledgeCheck",
+          "columnsFrom": ["knowledgeCheck_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "User_has_done_KnowledgeCheck_id": {
+          "name": "User_has_done_KnowledgeCheck_id",
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -864,56 +862,56 @@
       "name": "Verification",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "identifier": {
-          "autoincrement": false,
           "name": "identifier",
           "type": "tinytext",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "value": {
-          "autoincrement": false,
           "name": "value",
           "type": "varchar(1024)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "expiresAt": {
-          "autoincrement": false,
           "name": "expiresAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "createdAt": {
-          "autoincrement": false,
           "name": "createdAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "updatedAt": {
-          "autoincrement": false,
           "name": "updatedAt",
           "type": "datetime",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         }
       },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "Verification_id": {
           "name": "Verification_id",
           "columns": ["id"]
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
       "uniqueConstraints": {},
       "checkConstraint": {}
     }
@@ -925,38 +923,7 @@
     "columns": {}
   },
   "internal": {
-    "tables": {
-      "Answer": {
-        "columns": {
-          "createdAt": {
-            "isDefaultAnExpression": true
-          },
-          "updatedAt": {
-            "isDefaultAnExpression": true
-          }
-        }
-      },
-      "Category": {
-        "columns": {
-          "createdAt": {
-            "isDefaultAnExpression": true
-          },
-          "updatedAt": {
-            "isDefaultAnExpression": true
-          }
-        }
-      },
-      "Question": {
-        "columns": {
-          "createdAt": {
-            "isDefaultAnExpression": true
-          },
-          "updatedAt": {
-            "isDefaultAnExpression": true
-          }
-        }
-      }
-    },
+    "tables": {},
     "indexes": {}
   }
 }

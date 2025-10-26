@@ -1,6 +1,3 @@
--- Current sql file was generated after introspecting the database
--- If you want to run this migration please uncomment this code before executing migrations
-/*
 CREATE TABLE `Account` (
 	`id` varchar(36) NOT NULL,
 	`accountId` tinytext NOT NULL,
@@ -23,8 +20,8 @@ CREATE TABLE `Answer` (
 	`answer` mediumtext NOT NULL,
 	`correct` tinyint,
 	`position` int,
-	`createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-	`updatedAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`Question_id` varchar(36) NOT NULL,
 	CONSTRAINT `Answer_id` PRIMARY KEY(`id`)
 );
@@ -32,8 +29,8 @@ CREATE TABLE `Answer` (
 CREATE TABLE `Category` (
 	`id` varchar(36) NOT NULL,
 	`name` tinytext NOT NULL,
-	`createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-	`updatedAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`prequisite_category_id` varchar(36),
 	CONSTRAINT `Category_id` PRIMARY KEY(`id`)
 );
@@ -47,9 +44,9 @@ CREATE TABLE `KnowledgeCheck` (
 	`openDate` datetime NOT NULL,
 	`closeDate` datetime,
 	`difficulty` int NOT NULL,
-	`createdAt` datetime NOT NULL,
-	`updatedAt` datetime NOT NULL,
-	`expiresAt` datetime,
+	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`expiresAt` datetime DEFAULT NULL,
 	CONSTRAINT `KnowledgeCheck_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
@@ -67,8 +64,8 @@ CREATE TABLE `Question` (
 	`type` enum('single-choice','multiple-choice','open-question','drag-drop') NOT NULL,
 	`question` mediumtext NOT NULL,
 	`points` int NOT NULL,
-	`createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-	`updatedAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`category_id` varchar(36) NOT NULL,
 	`knowledgecheck_id` varchar(36) NOT NULL,
 	CONSTRAINT `Question_id` PRIMARY KEY(`id`)
@@ -99,8 +96,7 @@ CREATE TABLE `User` (
 --> statement-breakpoint
 CREATE TABLE `User_contributesTo_KnowledgeCheck` (
 	`user_id` varchar(36) NOT NULL,
-	`knowledgecheck_id` varchar(36) NOT NULL,
-	CONSTRAINT `User_contributesTo_KnowledgeCheck_user_id_knowledgecheck_id` PRIMARY KEY(`user_id`,`knowledgecheck_id`)
+	`knowledgecheck_id` varchar(36) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `User_has_done_KnowledgeCheck` (
@@ -111,7 +107,7 @@ CREATE TABLE `User_has_done_KnowledgeCheck` (
 	`finishedAt` datetime NOT NULL,
 	`score` int NOT NULL,
 	`results` json NOT NULL,
-	CONSTRAINT `User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id` PRIMARY KEY(`id`,`user_id`,`knowledgeCheck_id`)
+	CONSTRAINT `User_has_done_KnowledgeCheck_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `Verification` (
@@ -132,10 +128,10 @@ ALTER TABLE `KnowledgeCheck_Settings` ADD CONSTRAINT `fk_KnowledgeCheck_Settings
 ALTER TABLE `Question` ADD CONSTRAINT `fk_Question_Category1` FOREIGN KEY (`category_id`) REFERENCES `Category`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `Question` ADD CONSTRAINT `fk_Question_KnowledgeCheck1` FOREIGN KEY (`knowledgecheck_id`) REFERENCES `KnowledgeCheck`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `Session` ADD CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `User_contributesTo_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_KnowledgeCheck1` FOREIGN KEY (`knowledgecheck_id`) REFERENCES `KnowledgeCheck`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `User_contributesTo_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_user1` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE no action ON UPDATE cascade;--> statement-breakpoint
-ALTER TABLE `User_has_done_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_KnowledgeCheck2` FOREIGN KEY (`knowledgeCheck_id`) REFERENCES `KnowledgeCheck`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `User_contributesTo_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_KnowledgeCheck1` FOREIGN KEY (`knowledgecheck_id`) REFERENCES `KnowledgeCheck`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `User_has_done_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_user2` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `User_has_done_KnowledgeCheck` ADD CONSTRAINT `fk_user_has_KnowledgeCheck_KnowledgeCheck2` FOREIGN KEY (`knowledgeCheck_id`) REFERENCES `KnowledgeCheck`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX `fk_account_user1_idx` ON `Account` (`user_id`);--> statement-breakpoint
 CREATE INDEX `fk_Answer_Question1_idx` ON `Answer` (`Question_id`);--> statement-breakpoint
 CREATE INDEX `fk_Category_Category1_idx` ON `Category` (`prequisite_category_id`);--> statement-breakpoint
@@ -148,4 +144,3 @@ CREATE INDEX `fk_user_has_KnowledgeCheck_KnowledgeCheck1_idx` ON `User_contribut
 CREATE INDEX `fk_user_has_KnowledgeCheck_user1_idx` ON `User_contributesTo_KnowledgeCheck` (`user_id`);--> statement-breakpoint
 CREATE INDEX `fk_user_has_KnowledgeCheck_KnowledgeCheck2_idx` ON `User_has_done_KnowledgeCheck` (`knowledgeCheck_id`);--> statement-breakpoint
 CREATE INDEX `fk_user_has_KnowledgeCheck_user2_idx` ON `User_has_done_KnowledgeCheck` (`user_id`);
-*/
