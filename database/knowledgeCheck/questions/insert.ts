@@ -69,7 +69,7 @@ async function insertChoiceAnswers(db: DrizzleDB, question_id: Question['id'], a
 
   for (const answer of answers) {
     await db.insert(db_answer).values({
-      id: getUUID(),
+      id: answer.id,
       questionId: question_id,
       answer: answer.answer,
       correct: answer.correct ? 1 : 0,
@@ -92,7 +92,7 @@ async function insertDragDropAnswers(db: DrizzleDB, question_id: Question['id'],
 
   for (const answer of answers) {
     await db.insert(db_answer).values({
-      id: getUUID(),
+      id: answer.id,
       answer: answer.answer,
       questionId: question_id,
       position: answer.position,

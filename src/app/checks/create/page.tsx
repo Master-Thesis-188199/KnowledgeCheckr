@@ -1,9 +1,9 @@
+import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
+import { redirect } from 'next/navigation'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
-import { redirect } from 'next/navigation'
 
 export default async function CreateCheckPage() {
   await requireAuthentication()
@@ -36,10 +36,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of France?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },
@@ -49,10 +49,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of Greece?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },
@@ -62,10 +62,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of Australia?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },

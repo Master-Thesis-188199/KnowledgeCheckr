@@ -40,6 +40,7 @@ function parseAnswer(
     case 'multiple-choice':
       return {
         answers: answers.map((raw_mcq): ChoiceQuestion['answers'][number] => ({
+          id: raw_mcq.id,
           answer: raw_mcq.answer,
           correct: raw_mcq.correct === 1,
         })),
@@ -47,6 +48,7 @@ function parseAnswer(
     case 'single-choice':
       return {
         answers: answers.map((raw_mcq): ChoiceQuestion['answers'][number] => ({
+          id: raw_mcq.id,
           answer: raw_mcq.answer,
           correct: raw_mcq.correct === 1,
         })),
@@ -58,6 +60,7 @@ function parseAnswer(
     case 'drag-drop':
       return {
         answers: answers.map((raw_mcq): DragDropQuestion['answers'][number] => ({
+          id: raw_mcq.id,
           answer: raw_mcq.answer,
           position: raw_mcq.correct!,
         })),

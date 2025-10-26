@@ -1,3 +1,9 @@
+import { ReactNode, useState } from 'react'
+import { Tooltip } from '@heroui/tooltip'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
+import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
+import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
@@ -5,75 +11,51 @@ import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { ChoiceQuestion, OpenQuestion, Question, QuestionSchema } from '@/src/schemas/QuestionSchema'
+import {
+  ChoiceQuestion,
+  instantiateDragDropQuestion,
+  instantiateMultipleChoice,
+  instantiateOpenQuestion,
+  instantiateSingleChoice,
+  OpenQuestion,
+  Question,
+  QuestionSchema,
+} from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-import { Tooltip } from '@heroui/tooltip'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useState } from 'react'
-import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCheckStore((state) => state)
 
   const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
-    const baseValues: Partial<Pick<Question, 'category' | 'points' | 'question'>> & Pick<Question, 'id'> = {
-      id: getUUID(),
-      points: 1,
-      category: 'general',
-    }
-
     switch (type) {
       case 'multiple-choice':
         return {
-          ...baseValues,
-          // question: 'Which of the following is a programming language?',
-          type,
-          answers: [
-            { answer: '', correct: true },
-            { answer: '', correct: true },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-          ],
+          ...instantiateMultipleChoice(),
+          question: '',
+          points: 1,
         }
       case 'single-choice':
         return {
-          ...baseValues,
-          // question: 'What does RGB stand for?',
-          type,
-          answers: [
-            { answer: '', correct: true },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-            { answer: '', correct: false },
-          ],
+          ...instantiateSingleChoice(),
+          question: '',
+          points: 1,
         }
 
       case 'open-question':
         return {
-          ...baseValues,
-          // question: 'Describe the essential parts of a computer.',
-          type,
-          expectation: '',
+          ...instantiateOpenQuestion(),
+          question: '',
+          points: 1,
         }
 
       case 'drag-drop':
+        const dragQuestion = instantiateDragDropQuestion()
         return {
-          ...baseValues,
-          // question: 'Move these activities based the order in which they should be performed',
-          type,
-          answers: [
-            { answer: '', position: 1 },
-            { answer: '', position: 2 },
-            { answer: '', position: 3 },
-            { answer: '', position: 4 },
-          ],
-        }
+          ...dragQuestion,
+          question: '',
+          points: 1,
 
-      default:
-        return {
-          ...baseValues,
+          answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
         }
     }
   }
@@ -283,7 +265,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
       <button
         type='button'
         aria-label='Add Answer'
-        onClick={() => append({ answer: '', correct: false })}
+        onClick={() => append({ id: getUUID(), answer: '', correct: false })}
         className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
@@ -324,16 +306,8 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 // offset={-10}
                 className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
                 <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
-                  <input
-                    tabIndex={-1}
-                    type='number'
-                    value={index + 1}
-                    readOnly
-                    disabled
-                    {...register(`answers.${index}.position` as const)}
-                    onChange={(e) => console.log('Value changed: ', e.target.valueAsNumber)}
-                    className='hidden-spin-button field-sizing-content text-center outline-0'
-                  />
+                  <input type='hidden' value={index} {...register(`answers.${index}.position` as const, { valueAsNumber: true })} />
+                  <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
                 </label>
               </Tooltip>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Moveable exemplary Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
@@ -343,11 +317,11 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   type='button'
                   onClick={() => {
                     move(index, index - 1)
-                    setValue(`answers.${index}.position`, index + 1, { shouldValidate: true })
-                    setValue(`answers.${index - 1}.position`, index, { shouldValidate: true })
+                    setValue(`answers.${index}.position`, index, { shouldValidate: true })
+                    setValue(`answers.${index - 1}.position`, index - 1, { shouldValidate: true })
                   }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-300 dark:text-neutral-300/60 dark:disabled:text-neutral-600'
-                  disabled={index - 1 < 0}>
+                  disabled={index <= 0}>
                   <ArrowUp className='size-5 group-enabled:hover:scale-110 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
                 </button>
                 <button
@@ -356,8 +330,8 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   disabled={index + 1 >= fields.length}
                   onClick={() => {
                     move(index, index + 1)
-                    setValue(`answers.${index}.position`, index + 1)
-                    setValue(`answers.${index + 1}.position`, index + 2)
+                    setValue(`answers.${index}.position`, index)
+                    setValue(`answers.${index + 1}.position`, index + 1)
                   }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
                   <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:hover:text-neutral-600/80 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
@@ -378,7 +352,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
       <button
         type='button'
         aria-label='Add Answer'
-        onClick={() => append({ answer: '', position: watch('answers').length + 1 })}
+        onClick={() => append({ id: getUUID(), answer: '', position: watch('answers').length })}
         className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
         <Plus className='size-4' />
         Add Answer
