@@ -3,7 +3,7 @@ import { defineConfig } from 'drizzle-kit'
 import env from '@/src/lib/Shared/Env'
 
 export default defineConfig({
-  out: './database/drizzle',
+  out: './database/drizzle/migrations',
   schema: './database/drizzle/schema.ts',
   breakpoints: false,
   dialect: 'mysql',
