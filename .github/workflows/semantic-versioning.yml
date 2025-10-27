@@ -153,25 +153,13 @@ jobs:
           fetch-depth: 0
 
       # Did init.sql change ? (all commits included in the push)
-      - name: Check if database/init.sql changed in this push
+      - name: Check for Schema Changes
         id: changed
-        shell: bash
-        run: |
-          set -euo pipefail
-          BASE="${{ github.event.before }}"
-          HEAD="${{ github.sha }}"
-          # Fallback for cases where 'before' may be empty (e.g. first push)
-          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
-            BASE="$(git rev-parse "${HEAD}^" 2>/dev/null || true)"
-          fi
-          echo "Diff range: ${BASE:-<none>}..${HEAD}"
-          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'database/init.sql'; then
-            echo "db_changed=true" >> "$GITHUB_OUTPUT"
-            echo "Database schema (init.sql) has changed."
-          else
-            echo "db_changed=false" >> "$GITHUB_OUTPUT"
-            echo "Database schema (init.sql) has **not** changed. Aborting."
-          fi
+        uses: ./.github/actions/file-change
+        with:
+          base_commit: ${{ github.event.before }}
+          newest_commit: ${{ github.sha }}
+          regex_pattern: "drizzle/*/schema.ts"
 
   build-db-image:
     runs-on: ubuntu-latest
