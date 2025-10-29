@@ -7,6 +7,9 @@ on:
       - canary
   workflow_dispatch:
 
+#todo Check what branch is used to decide which database-image-tag to use. On a feature branch who's name matches db-image-tag, on main use stable and on canary use canary, on other feature branches use canary.
+#? as for branch-specific docker-tag images: e.g. 'ref/code-improvements' might be re-used and may have docker-images associated with it. -> check if pr has the latest branch-image-tag-commit-sha in its range.
+
 permissions:
   contents: write
   packages: write
@@ -100,11 +103,11 @@ jobs:
       - name: Set lowercase repository name as environment variable
         run: echo "LOWER_REPO_NAME=$(echo ${{ env.REPO_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: 'Get Previous tag'
+      - name: "Get Previous tag"
         id: previoustag
-        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-      - name: 'Store Version Information'
+      - name: "Store Version Information"
         run: |
           echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
 
@@ -160,6 +163,7 @@ jobs:
           base_commit: ${{ github.event.before }}
           newest_commit: ${{ github.sha }}
           regex_pattern: "drizzle/*/schema.ts"
+          consider_initial_commit_relevant: false
 
   build-db-image:
     runs-on: ubuntu-latest

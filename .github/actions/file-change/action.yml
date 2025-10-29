@@ -12,6 +12,10 @@ inputs:
   regex_pattern:
     description: 'Used to determinate if a file was modified within the commit-range; when it matches the pattern'
     required: true
+  consider_initial_commit_relevant:
+    description: 'When set to true the output will be set to true when the base_commit is empty or an initial-commit. When set to false an initial / empty commit will not be considered relevant as a change.'
+    required: false
+    default: 'false'
   skip:
     description: 'When set to true, the action will always return changed=true'
     default: '0'
@@ -23,7 +27,7 @@ runs:
     - run: |
         set -euo pipefail
         # For a new branch or initial commit, treat as relevant
-        if [ "${{ inputs.base_commit }}" = "" ] || [ "${{ inputs.base_commit }}" = "0000000000000000000000000000000000000000" ]; then
+        if [ "${{ inputs.consider_initial_commit_relevant }}" = "true" ] && { [ "${{ inputs.base_commit }}" = "" ] || [ "${{ inputs.base_commit }}" = "0000000000000000000000000000000000000000" ]; }; then
           echo "New branch or initial commit. Considering changes relevant."
           echo "changed=true" >> $GITHUB_OUTPUT
         else

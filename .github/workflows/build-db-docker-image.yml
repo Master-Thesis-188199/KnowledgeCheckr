@@ -30,6 +30,7 @@ jobs:
           base_commit: ${{ github.event.before }}
           newest_commit: ${{ github.sha }}
           regex_pattern: "drizzle/*/schema.ts"
+          consider_initial_commit_relevant: false
 
   build-db-image:
     runs-on: ubuntu-latest
