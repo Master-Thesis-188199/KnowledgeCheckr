@@ -39,7 +39,8 @@ for f in "$@"; do
 
   {
     echo "# Accumulated migration step $i: '$base'"
-    cat "$f"
+    # Remove statement-breakpoints from initialization script
+    tr -d '\r' < "$f" | sed -E 's/[[:space:]]*-->[[:space:]]*statement-breakpoint[[:space:]]*//g'
     echo
     echo
   } >> "$OUTPUT_FILE"
