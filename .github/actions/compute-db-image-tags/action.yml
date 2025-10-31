@@ -63,10 +63,8 @@ runs:
               add_tag "stable" 
               add_tag "latest" 
             else
-              add_tag "${BRANCH}-${SHA_SHORT}"
-              add_tag "stable" 
-              add_tag "latest" 
               WARNING="Failed to retrieve latest-tag on main; fell back to SHA ${SHA_SHORT}"
+              exit 1;
             fi
             ;;
           canary)
@@ -75,10 +73,8 @@ runs:
               add_tag "canary" 
               add_tag "latest" 
             else
-              add_tag "${BRANCH}-${SHA_SHORT}"
-              add_tag "canary"
-              add_tag "latest"
               WARNING="Failed to retrieve latest-tag on canary; fell back to SHA ${SHA_SHORT}"
+              exit 1;
             fi
             ;;
           *)
