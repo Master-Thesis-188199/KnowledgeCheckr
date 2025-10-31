@@ -1,4 +1,5 @@
-CREATE TABLE `Account` (
+DROP TABLE IF EXISTS `Account`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Account` (
 	`id` varchar(36) NOT NULL,
 	`accountId` tinytext NOT NULL,
 	`providerId` tinytext NOT NULL,
@@ -15,7 +16,8 @@ CREATE TABLE `Account` (
 	CONSTRAINT `Account_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `Answer` (
+DROP TABLE IF EXISTS `Answer`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Answer` (
 	`id` varchar(36) NOT NULL,
 	`answer` mediumtext NOT NULL,
 	`correct` tinyint,
@@ -26,7 +28,31 @@ CREATE TABLE `Answer` (
 	CONSTRAINT `Answer_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `Category` (
+DROP TABLE IF EXISTS `KnowledgeCheck_Settings`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `KnowledgeCheck_Settings` (
+	`id` varchar(36) NOT NULL,
+	`knowledgecheck_id` varchar(36) NOT NULL,
+	`allow_anonymous` tinyint DEFAULT 1,
+	`randomize_questions` tinyint DEFAULT 1,
+	`allow_free_navigation` tinyint DEFAULT 1,
+	CONSTRAINT `KnowledgeCheck_Settings_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+DROP TABLE IF EXISTS `Question`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Question` (
+	`id` varchar(36) NOT NULL,
+	`type` enum('single-choice','multiple-choice','open-question','drag-drop') NOT NULL,
+	`question` mediumtext NOT NULL,
+	`points` int NOT NULL,
+	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`category_id` varchar(36) NOT NULL,
+	`knowledgecheck_id` varchar(36) NOT NULL,
+	CONSTRAINT `Question_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+DROP TABLE IF EXISTS `Category`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Category` (
 	`id` varchar(36) NOT NULL,
 	`name` tinytext NOT NULL,
 	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +61,40 @@ CREATE TABLE `Category` (
 	CONSTRAINT `Category_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `KnowledgeCheck` (
+DROP TABLE IF EXISTS `Session`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Session` (
+	`id` varchar(36) NOT NULL,
+	`token` tinytext NOT NULL,
+	`createdAt` datetime NOT NULL,
+	`updatedAt` datetime NOT NULL,
+	`expiresAt` datetime NOT NULL,
+	`ipAddress` tinytext,
+	`userAgent` tinytext,
+	`user_id` varchar(36) NOT NULL,
+	CONSTRAINT `Session_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+DROP TABLE IF EXISTS `User_contributesTo_KnowledgeCheck`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `User_contributesTo_KnowledgeCheck` (
+	`user_id` varchar(36) NOT NULL,
+	`knowledgecheck_id` varchar(36) NOT NULL,
+	CONSTRAINT `User_has_done_KnowledgeCheck_pk` PRIMARY KEY(`user_id`,`knowledgecheck_id`)
+);
+--> statement-breakpoint
+DROP TABLE IF EXISTS `User_has_done_KnowledgeCheck`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `User_has_done_KnowledgeCheck` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`user_id` varchar(36) NOT NULL,
+	`knowledgeCheck_id` varchar(36) NOT NULL,
+	`startedAt` datetime NOT NULL,
+	`finishedAt` datetime NOT NULL,
+	`score` int NOT NULL,
+	`results` json NOT NULL,
+	CONSTRAINT `User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id_pk` PRIMARY KEY(`id`,`user_id`,`knowledgeCheck_id`)
+);
+--> statement-breakpoint
+DROP TABLE IF EXISTS `KnowledgeCheck`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `KnowledgeCheck` (
 	`id` varchar(36) NOT NULL,
 	`name` tinytext NOT NULL,
 	`description` mediumtext,
@@ -50,40 +109,8 @@ CREATE TABLE `KnowledgeCheck` (
 	CONSTRAINT `KnowledgeCheck_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `KnowledgeCheck_Settings` (
-	`id` varchar(36) NOT NULL,
-	`knowledgecheck_id` varchar(36) NOT NULL,
-	`allow_anonymous` tinyint DEFAULT 1,
-	`randomize_questions` tinyint DEFAULT 1,
-	`allow_free_navigation` tinyint DEFAULT 1,
-	CONSTRAINT `KnowledgeCheck_Settings_id` PRIMARY KEY(`id`)
-);
---> statement-breakpoint
-CREATE TABLE `Question` (
-	`id` varchar(36) NOT NULL,
-	`type` enum('single-choice','multiple-choice','open-question','drag-drop') NOT NULL,
-	`question` mediumtext NOT NULL,
-	`points` int NOT NULL,
-	`createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`category_id` varchar(36) NOT NULL,
-	`knowledgecheck_id` varchar(36) NOT NULL,
-	CONSTRAINT `Question_id` PRIMARY KEY(`id`)
-);
---> statement-breakpoint
-CREATE TABLE `Session` (
-	`id` varchar(36) NOT NULL,
-	`token` tinytext NOT NULL,
-	`createdAt` datetime NOT NULL,
-	`updatedAt` datetime NOT NULL,
-	`expiresAt` datetime NOT NULL,
-	`ipAddress` tinytext,
-	`userAgent` tinytext,
-	`user_id` varchar(36) NOT NULL,
-	CONSTRAINT `Session_id` PRIMARY KEY(`id`)
-);
---> statement-breakpoint
-CREATE TABLE `User` (
+DROP TABLE IF EXISTS `User`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `User` (
 	`id` varchar(36) NOT NULL,
 	`name` tinytext NOT NULL,
 	`email` tinytext NOT NULL,
@@ -94,24 +121,8 @@ CREATE TABLE `User` (
 	CONSTRAINT `User_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `User_contributesTo_KnowledgeCheck` (
-	`user_id` varchar(36) NOT NULL,
-	`knowledgecheck_id` varchar(36) NOT NULL,
-	CONSTRAINT `User_has_done_KnowledgeCheck_pk` PRIMARY KEY(`user_id`,`knowledgecheck_id`)
-);
---> statement-breakpoint
-CREATE TABLE `User_has_done_KnowledgeCheck` (
-	`id` int AUTO_INCREMENT NOT NULL,
-	`user_id` varchar(36) NOT NULL,
-	`knowledgeCheck_id` varchar(36) NOT NULL,
-	`startedAt` datetime NOT NULL,
-	`finishedAt` datetime NOT NULL,
-	`score` int NOT NULL,
-	`results` json NOT NULL,
-	CONSTRAINT `User_has_done_KnowledgeCheck_id_user_id_knowledgeCheck_id_pk` PRIMARY KEY(`id`,`user_id`,`knowledgeCheck_id`)
-);
---> statement-breakpoint
-CREATE TABLE `Verification` (
+DROP TABLE IF EXISTS `Verification`;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Verification` (
 	`id` varchar(36) NOT NULL,
 	`identifier` tinytext NOT NULL,
 	`value` varchar(1024) NOT NULL,
