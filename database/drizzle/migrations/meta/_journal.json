@@ -15,6 +15,13 @@
       "when": 1761473649520,
       "tag": "0001_share_key_uniqueness",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1761924684252,
+      "tag": "0002_seed-test-data",
+      "breakpoints": true
     }
   ]
 }
