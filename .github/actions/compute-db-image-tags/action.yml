@@ -78,8 +78,8 @@ runs:
             fi
             ;;
           *)
-            # Feature branches: SHA only
             add_tag "${BRANCH}-${SHA_SHORT}"
+            add_tag "latest"  # --> may cause issues for other branches that use the latest db-image, e.g. when the schema was changed in another branch
             ;;
         esac
 
