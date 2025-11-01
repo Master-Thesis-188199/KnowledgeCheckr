@@ -11,17 +11,15 @@ import { notFound } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
+import DragDropAnswerOptions from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
-import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
-import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
-import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
-import { EvaluateAnswer, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
-import { ChoiceQuestion, DragDropQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
@@ -138,31 +136,7 @@ export function RenderPracticeQuestion() {
           />
         )}
 
-        {question.type === 'drag-drop' && (
-          <DragDropContainer
-            key={question.id + question.type + (isSubmitted && isSubmitSuccessful && !isPending).toString()}
-            className='col-span-2 my-auto space-y-6'
-            enabled={!(isSubmitted && isSubmitSuccessful && !isPending)}
-            onSwapEnd={(e) => {
-              e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
-              trigger('input')
-            }}>
-            {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id
-              ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
-                state.values.input.map((answer_id, i) => (
-                  <DragDropItem key={answer_id} name={answer_id}>
-                    <DragDropItemPositionCounter initialIndex={i} />
-                    {question.answers.find((a) => a.id === answer_id)?.answer ?? 'Unknown Answer'}
-                  </DragDropItem>
-                ))
-              : question.answers.map((a, i) => (
-                  <DragDropItem key={a.id} name={a.id}>
-                    <DragDropItemPositionCounter initialIndex={i} />
-                    {a.answer}
-                  </DragDropItem>
-                ))}
-          </DragDropContainer>
-        )}
+        {question.type === 'drag-drop' && <DragDropAnswerOptions question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
 
         {question.type === 'open-question' && (
           <textarea
