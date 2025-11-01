@@ -18,10 +18,10 @@ import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
-import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { EvaluateAnswer, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
-import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {

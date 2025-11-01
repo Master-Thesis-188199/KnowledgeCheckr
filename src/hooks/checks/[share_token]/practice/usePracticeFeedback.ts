@@ -1,10 +1,10 @@
 'use client'
 
-import { AuthState, PracticeFeedback } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { FormState } from 'react-hook-form'
+import { PracticeFeedback,PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-import { FormState } from 'react-hook-form'
 
 type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEvaluation<Type> & {
   isCorrectlySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
@@ -30,7 +30,7 @@ type PracticeFeedbackReturn =
  * @returns
  */
 export function usePracticeFeeback(
-  state: AuthState,
+  state: PracticeFeedbackServerState,
   { isPending, isSubmitSuccessful, isSubmitted, isSubmitting }: Pick<FormState<Any>, 'isSubmitting' | 'isSubmitted' | 'isSubmitSuccessful'> & { isPending: boolean },
 ) {
   function getFeedbackEvaluation(question: SingleChoice): ChoiceFeedbackEvaluation<SingleChoice['type']>

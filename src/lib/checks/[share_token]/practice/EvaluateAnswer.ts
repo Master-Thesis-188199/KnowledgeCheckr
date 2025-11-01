@@ -4,7 +4,7 @@ import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questio
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
 
-export type AuthState = {
+export type PracticeFeedbackServerState = {
   success: boolean
   fieldErrors?: {
     [K in keyof PracticeData]?: string[]
@@ -14,7 +14,7 @@ export type AuthState = {
   feedback?: PracticeFeedback
 }
 
-export async function EvaluateAnswer(_: AuthState, data: PracticeData): Promise<AuthState> {
+export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: PracticeData): Promise<PracticeFeedbackServerState> {
   console.log('Evaluating practice answers...', data)
 
   await new Promise((r) => setTimeout(r, 500))
