@@ -108,7 +108,7 @@ export function RenderPracticeQuestion() {
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
-          <h2 className='text-2xl font-semibold'>What colors are part of france&apos;s flag?</h2>
+          <h2 className='text-2xl font-semibold'>{question.question}</h2>
         </div>
         <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
