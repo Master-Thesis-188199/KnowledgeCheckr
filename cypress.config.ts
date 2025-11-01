@@ -12,6 +12,7 @@ export default defineConfig({
     codeCoverage: {
       url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
+    ...process.env,
   },
   retries: 2,
   component: {
@@ -23,11 +24,6 @@ export default defineConfig({
       bundler: 'webpack',
     },
     setupNodeEvents(on, config) {
-      config.env = {
-        ...process.env,
-        ...config.env,
-      }
-
       ccTask(on, config)
 
       return config
