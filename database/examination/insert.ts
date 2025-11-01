@@ -1,6 +1,7 @@
 'use server'
 
 import getDatabase from '@/database/Database'
+import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
@@ -10,15 +11,14 @@ export default async function insertExaminationResults(examinationResult: Examin
   const db = await getDatabase()
 
   try {
-    await db.exec('INSERT INTO `User_has_done_KnowledgeCheck`(`user_id`, `knowledgeCheck_id`, `startedAt`, `finishedAt`, `score`, `results`) VALUES (?, ?, ?, ?, ?, ?)', [
-      user.id,
-      examinationResult.knowledgeCheck.id,
-      // todo use actual start and end times
-      formatDatetime(examinationResult.startedAt),
-      formatDatetime(examinationResult.finishedAt ?? new Date(Date.now())),
-      examinationResult.score,
-      JSON.stringify(examinationResult.results),
-    ])
+    await db.insert(db_userHasDoneKnowledgeCheck).values({
+      userId: user.id,
+      knowledgeCheckId: examinationResult.knowledgeCheck.id,
+      startedAt: formatDatetime(examinationResult.startedAt),
+      finishedAt: formatDatetime(examinationResult.finishedAt ?? new Date(Date.now())),
+      score: examinationResult.score,
+      results: examinationResult.results,
+    })
   } catch (e) {
     console.error('Failed to save examination results to database', e)
   }

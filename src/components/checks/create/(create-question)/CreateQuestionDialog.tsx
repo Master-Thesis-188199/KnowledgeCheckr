@@ -1,3 +1,9 @@
+import { ReactNode, useState } from 'react'
+import { Tooltip } from '@heroui/tooltip'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
+import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
+import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
@@ -16,12 +22,6 @@ import {
   QuestionSchema,
 } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-import { Tooltip } from '@heroui/tooltip'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { ReactNode, useState } from 'react'
-import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCheckStore((state) => state)

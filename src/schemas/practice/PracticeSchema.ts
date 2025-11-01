@@ -1,5 +1,5 @@
-import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 import { z } from 'zod'
+import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 export const PracticeSchema = z.object({
   question_id: z.string().min(1, 'Question ID is required'),

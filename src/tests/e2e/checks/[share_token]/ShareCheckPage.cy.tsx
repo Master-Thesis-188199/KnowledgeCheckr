@@ -1,5 +1,5 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { KnowledgeCheck, instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateKnowledgeCheck,KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('Verify sharing of KnowledgeChecks', () => {
