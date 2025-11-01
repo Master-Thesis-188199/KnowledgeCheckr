@@ -147,7 +147,7 @@ export function RenderPracticeQuestion() {
               e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
               trigger('input')
             }}>
-            {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length
+            {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id
               ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
                 state.values.input.map((answer_id, i) => (
                   <DragDropItem key={answer_id} name={answer_id}>
