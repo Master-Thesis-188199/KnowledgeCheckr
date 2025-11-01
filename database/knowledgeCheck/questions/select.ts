@@ -62,7 +62,7 @@ function parseAnswer(
         answers: answers.map((raw_mcq): DragDropQuestion['answers'][number] => ({
           id: raw_mcq.id,
           answer: raw_mcq.answer,
-          position: raw_mcq.correct!,
+          position: raw_mcq.position!,
         })),
       }
   }
