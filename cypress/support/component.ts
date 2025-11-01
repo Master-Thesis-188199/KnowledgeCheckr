@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.
@@ -35,6 +36,6 @@ declare global {
 
 Cypress.Commands.add('mount', mount)
 
-process.env = Cypress.env()
+Object.assign(process.env, Cypress.env())
 // Example use:
 // cy.mount(<MyComponent />)

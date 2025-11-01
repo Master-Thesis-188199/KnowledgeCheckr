@@ -18,4 +18,4 @@ import './commands'
 import '@cypress/code-coverage/support'
 import 'cypress-real-events'
 
-process.env = Cypress.env()
+Object.assign(process.env, Cypress.env())
