@@ -296,13 +296,14 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
           'flex items-center justify-center',
           'resize-none select-none',
-          'has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
+          'has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
-          isCorrectlySelected(a) && 'dark:ring-green-500/70',
-          isFalslySelected(a) && 'dark:ring-red-400/70',
-          isMissingSelection(a) && 'dark:ring-yellow-400/70',
+          isCorrectlySelected(a) && 'bg-radial from-neutral-700/60 via-neutral-700/60 to-green-500/20 font-semibold dark:ring-green-500/70',
+          isFalslySelected(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-red-400/20 has-checked:bg-radial has-checked:font-semibold dark:ring-red-400/70',
+          isMissingSelection(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-yellow-400/20 ring-0 outline-2 outline-yellow-400/60 outline-dashed dark:ring-yellow-400/60',
         )}
+        title={isCorrectlySelected(a) ? '' : isFalslySelected(a) ? 'This answer-option was incorrectly selected' : isMissingSelection(a) ? 'You missed selecting this correct answer-option' : ''}
         htmlFor={a.id}>
         {a.answer}
 
