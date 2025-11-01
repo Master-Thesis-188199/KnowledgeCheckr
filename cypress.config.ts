@@ -3,6 +3,7 @@ import ccTask from '@cypress/code-coverage/task'
 import { defineConfig } from 'cypress'
 import { GitHubSocialLogin, GoogleSocialLogin } from 'cypress-social-logins/src/Plugins'
 import * as dotenv from 'dotenv'
+import { rm } from 'fs'
 import mysql from 'mysql2'
 dotenv.config()
 
@@ -74,6 +75,14 @@ export default defineConfig({
         console.log('Tests have finished running. Cleaning up test data...')
 
         connection.query('DELETE FROM KnowledgeCheck WHERE owner_id = (SELECT id FROM User WHERE email = "test@email.com")')
+
+        rm('cypress/downloads', { recursive: true, force: true }, (err) => {
+          if (err) {
+            console.error('Error while deleting downloads folder:', err)
+          } else {
+            console.log('Downloads folder deleted successfully.')
+          }
+        })
       })
 
       return config
