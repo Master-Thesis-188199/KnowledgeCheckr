@@ -54,7 +54,7 @@ export function RenderPracticeQuestion() {
   })
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
-  const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending)
+  const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending
 
   //* Apply server-side validation errors (if any) - so that they show up in the form
   useEffect(() => {
