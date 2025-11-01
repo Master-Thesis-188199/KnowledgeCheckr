@@ -38,8 +38,14 @@ type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { re
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
-async function createFeedback({ question_id, ...answer }: PracticeData): Promise<PracticeFeedback> {
+async function createFeedback({ question_id, ...answer }: PracticeData): Promise<PracticeFeedback | undefined> {
   let question = await getKnowledgeCheckQuestionById(question_id)
+
+  if (!question) {
+    console.warn(`Question with id ${question_id} not found when creating feedback.`)
+    return undefined
+  }
+
   //todo: Generate question-feedback-reasoning using a local llm to explain the wrongful selection of answers to the user with a encouraging tone
 
   switch (answer.type) {
