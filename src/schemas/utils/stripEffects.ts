@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Any } from '@/types'
 import * as z from 'zod'
+import { Any } from '@/types'
 
 type StripOptions = {
   /** Remove only refinements/transforms (effects), or also drop built-in checks like .min/.max/.regex */

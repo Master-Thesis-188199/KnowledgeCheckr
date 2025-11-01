@@ -1,23 +1,23 @@
+import { User } from 'better-auth'
+import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
+import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { User } from 'better-auth'
 
 export async function updateKnowledgeCheck(user_id: User['id'], updatedCheck: KnowledgeCheck) {
   await requireAuthentication()
 
   const db = await getDatabase()
 
-  await db.beginTransaction()
-
-  try {
-    await db.exec('DELETE FROM KnowledgeCheck WHERE id = ?', [updatedCheck.id])
-    await insertKnowledgeCheck(user_id, updatedCheck, false)
-
-    await db.commit()
-  } catch (err) {
-    await db.rollback()
-    console.error('[Rollback]: Error updating knowledge check:', err)
-  }
+  await db.transaction(async (tx) => {
+    try {
+      await tx.delete(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, updatedCheck.id))
+      await insertKnowledgeCheck(user_id, updatedCheck)
+    } catch (err) {
+      await tx.rollback()
+      console.error('[Rollback]: Error updating knowledge check:', err)
+    }
+  })
 }
