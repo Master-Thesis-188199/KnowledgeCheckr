@@ -68,6 +68,15 @@ export default defineConfig({
         launchOptions.args.push('--no-sandbox')
         launchOptions.args.push('--disable-setuid-sandbox')
 
+        launchOptions.preferences.default = {
+          ...launchOptions.preferences.default,
+          profile: {
+            //* Disable password simplicity / breach warnings
+            password_manager_leak_detection: false,
+            password_manager_enabled: false,
+          },
+        }
+
         return launchOptions
       })
 
