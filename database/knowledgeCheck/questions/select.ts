@@ -84,14 +84,14 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
 
   const category = await parseCategory(db, dbQuestion.categoryId)
 
-  const question: Question = {
+  const question = {
     id: dbQuestion.id,
     type: dbQuestion.type as Any,
     question: dbQuestion.question,
     category,
     points: dbQuestion.points,
     ...parseAnswer(dbQuestion.type, answers),
-  }
+  } as ExpectedQuestion
 
-  return question as ExpectedQuestion
+  return question
 }
