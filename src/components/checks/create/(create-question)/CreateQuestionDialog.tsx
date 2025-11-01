@@ -330,8 +330,8 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                   disabled={index + 1 >= fields.length}
                   onClick={() => {
                     move(index, index + 1)
-                    setValue(`answers.${index}.position`, index)
-                    setValue(`answers.${index + 1}.position`, index + 1)
+                    setValue(`answers.${index}.position`, index, { shouldValidate: true })
+                    setValue(`answers.${index + 1}.position`, index + 1, { shouldValidate: true })
                   }}
                   className='group flex cursor-pointer items-center gap-1 rounded-md py-1 text-neutral-400 disabled:cursor-not-allowed disabled:text-neutral-200 dark:text-neutral-300/60 dark:disabled:text-neutral-600'>
                   <ArrowDown className='size-5 group-enabled:hover:scale-110 group-enabled:hover:text-neutral-600/80 group-enabled:active:scale-125 dark:group-enabled:hover:text-neutral-300/80' />
