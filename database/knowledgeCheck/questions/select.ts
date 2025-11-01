@@ -3,7 +3,6 @@ import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
-import { DBAnswer, DbQuestion } from '@/database/knowledgeCheck/questions/type'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
@@ -80,19 +79,18 @@ async function parseCategory(db: DrizzleDB, category_id: string): Promise<Questi
 export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Question>(question_id: Question['id']): Promise<ExpectedQuestion | null> {
   const db = await getDatabase()
 
-  const [dbQuestion] = await db.exec<Array<DbQuestion | undefined>>('SELECT * FROM Question WHERE id = ? LIMIT 1', [question_id])
-  if (!dbQuestion) return null
+  const [dbQuestion] = await db.select().from(db_question).where(eq(db_question.id, question_id)).limit(1)
+  const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id))
 
-  const answers = await db.exec<DBAnswer[]>('SELECT * FROM Answer WHERE Question_id = ?', [dbQuestion.id])
-  const category = await parseCategory(db, dbQuestion.category_id)
+  const category = await parseCategory(db, dbQuestion.categoryId)
 
-  const question = {
+  const question: Question = {
     id: dbQuestion.id,
     type: dbQuestion.type as Any,
     question: dbQuestion.question,
     category,
     points: dbQuestion.points,
-    ...parseAnswer(dbQuestion.type, answers as DBAnswer[]),
+    ...parseAnswer(dbQuestion.type, answers),
   }
 
   return question as ExpectedQuestion
