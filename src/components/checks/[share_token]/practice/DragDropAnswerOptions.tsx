@@ -32,23 +32,22 @@ export default function DragDropAnswers({
   )
 }
 
-export function DragDropAnswerOptions({ question, state }: { question: DragDropQuestion; isEvaluated: boolean; state: PracticeFeedbackServerState }) {
-  return (
-    <>
-      {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id
-        ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
-          state.values.input.map((answer_id, pos) => (
-            <DragDropItem key={answer_id} name={answer_id}>
-              <DragDropItemPositionCounter initialIndex={pos} />
-              {question.answers.find((a) => a.id === answer_id)?.answer ?? 'Unknown Answer'} (ev)
-            </DragDropItem>
-          ))
-        : question.answers.map((a, initPos) => (
-            <DragDropItem key={a.id} name={a.id}>
-              <DragDropItemPositionCounter initialIndex={initPos} />
-              {a.answer}
-            </DragDropItem>
-          ))}
-    </>
-  )
+function DragDropAnswerOptions({ question, state, isEvaluated }: { question: DragDropQuestion; isEvaluated: boolean; state: PracticeFeedbackServerState }) {
+  //? default: display the answers in their given order, but update position to be their index to prevent data leakage.
+  let options: DragDropQuestion['answers'] = question.answers.map((a, i) => ({ ...a, position: i }))
+
+  if (isEvaluated && state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id) {
+    //? Order question answers based on submitted positions
+    options = state.values.input.map((id, submittedPos) => {
+      const answer = question.answers.find((a) => a.id === id)
+      return { id, answer: answer?.answer ?? 'Failed to retrieve `answer`', position: submittedPos }
+    })
+  }
+
+  return options.map(({ id, answer, position }) => (
+    <DragDropItem key={id} name={id}>
+      <DragDropItemPositionCounter initialIndex={position} />
+      {answer}
+    </DragDropItem>
+  ))
 }
