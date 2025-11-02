@@ -38,9 +38,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('#answer-options').children().should('have.length', question.answers.length)
     cy.get('#practice-form * #action-descriptor').should('exist').should('have.attr', 'data-question-type', question.type)
 
-    for (const ans of correctAnswers) {
-      cy.get('#answer-options').contains(ans.answer).click()
-    }
+    cy.simulatePracticeSelection(question, 'correct')
 
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
