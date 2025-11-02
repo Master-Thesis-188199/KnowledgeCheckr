@@ -62,7 +62,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('.result-legend').should('exist').and('be.visible')
   })
 
-  it('Verify that users can answer and submit correct answers to questions', () => {
+  it('Verify that users can answer & submit correct answers to questions and that their submission is evaluated & displayed correctly', () => {
     cy.viewport(1280, 900)
 
     const check = {
