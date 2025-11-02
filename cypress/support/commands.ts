@@ -112,3 +112,53 @@ Cypress.Commands.add('waitServerAction', (alias, callback) => {
     callback(body, actionResponse as Any)
   })
 })
+
+Cypress.Commands.add('simulatePracticeSelection', (question, correctness) => {
+  cy.url().should('include', '/practice')
+
+  if (question.type === 'single-choice') {
+    const answers = question.answers
+    let selection = answers.filter((a) => a.correct).at(0)!
+
+    if (correctness === 'incorrect') selection = answers.filter((a) => !a.correct).at(0)!
+
+    cy.get('#answer-options').contains(selection.answer).click()
+
+    return
+  }
+
+  if (question.type === 'multiple-choice') {
+    const answers = question.answers
+    let selection = answers.filter((a) => a.correct)
+
+    if (correctness === 'incorrect') selection = selection.concat(answers.filter((a) => !a.correct))
+    if (correctness === 'all') selection = answers.filter((a) => a.id !== selection.at(0)?.id)
+
+    for (const ans of selection) {
+      cy.get('#answer-options').contains(ans.answer).click()
+    }
+
+    return
+  }
+
+  if (question.type === 'drag-drop') {
+    const answers = question.answers
+    let selection: typeof answers = answers.toSorted((a, b) => a.position - b.position)
+
+    // 'correct' | 'partly-correct' | 'completly-incorrect'
+    if (correctness === 'partly-correct') selection = [selection[1], selection[0], ...selection.slice(2)]
+    if (correctness === 'incorrect') selection.reverse()
+
+    for (const a of selection) {
+      cy.dragDrop(cy.get(`div[data-swapy-item='${a.id}']`).contains(a.answer).should('exist').should('be.visible'), cy.get('#answer-options').children().children().eq(a.position))
+      cy.wait(500)
+    }
+  }
+
+  if (question.type === 'open-question') {
+    let input = question.expectation || 'Correct input is missing'
+    if (correctness === 'incorrect') input = 'Wrong Answer'
+
+    cy.get('#answer-options').children().eq(0).type(input)
+  }
+})

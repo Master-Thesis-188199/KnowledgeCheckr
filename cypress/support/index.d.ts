@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare namespace Cypress {
+  type SingleChoice = import('../../src/schemas/QuestionSchema').SingleChoice
+  type MultipleChoice = import('../../src/schemas/QuestionSchema').MultipleChoice
+  type OpenQuestion = import('../../src/schemas/QuestionSchema').OpenQuestion
+  type DragDropQuestion = import('../../src/schemas/QuestionSchema').DragDropQuestion
+  type Question = import('../../src/schemas/QuestionSchema').Question
+  type CorrectnessFor<Q> = Q extends SingleChoice
+    ? 'correct' | 'incorrect'
+    : Q extends MultipleChoice
+      ? 'correct' | 'incorrect' | 'all'
+      : Q extends OpenQuestion
+        ? 'correct' | 'incorrect'
+        : Q extends DragDropQuestion
+          ? 'correct' | 'partly-correct' | 'incorrect'
+          : never
+
   interface Chainable<Subject = any> {
     skip(message?: string, skipCondition?: boolean): void
     login(email: string, password: string): void
@@ -13,5 +28,6 @@ declare namespace Cypress {
 
     //? response type assertion needed because Interception<any, any> translates to any when used within tests.
     waitServerAction<Response>(alias: string, callback: (body?: Response, response: { statusCode?: number }) => void): void
+    simulatePracticeSelection<Q extends Question>(question: Q, correctness: CorrectnessFor<Q>): Chainable<void>
   }
 }
