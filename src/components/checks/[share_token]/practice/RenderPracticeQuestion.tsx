@@ -111,7 +111,7 @@ export function RenderPracticeQuestion() {
         <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
 
-      <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
+      <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' && (
           <ChoiceAnswerOption
             type='checkbox'
