@@ -33,10 +33,10 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
     cy.visit(`/checks/${check.share_key}/practice`)
 
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
+    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get('#answer-options').children().should('have.length', question.answers.length)
-    cy.get('#practice-form * #action-descriptor').should('exist').should('have.attr', 'data-question-type', question.type)
 
     cy.simulatePracticeSelection(question, 'correct')
 
@@ -102,7 +102,9 @@ describe('RenderPracticeQuestion Test Suite', () => {
           if (question.type === 'open-question') cy.get('#answer-options').children().should('have.length', 1)
           else if (question.type === 'drag-drop') cy.get('#answer-options').children().children().should('have.length', question.answers.length)
           else cy.get('#answer-options').children().should('have.length', question.answers.length)
-          cy.get('#practice-form * #action-descriptor').should('exist').should('have.attr', 'data-question-type', question.type)
+
+          cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+          cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
 
           cy.simulatePracticeSelection(question, 'correct')
 

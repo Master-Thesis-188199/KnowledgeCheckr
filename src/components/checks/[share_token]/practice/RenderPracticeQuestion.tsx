@@ -102,15 +102,13 @@ export function RenderPracticeQuestion() {
   }
 
   return (
-    <form id='practice-form' className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
+    <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
           <h2 className='text-2xl font-semibold'>{question.question}</h2>
         </div>
-        <span id='action-descriptor' data-question-type={question.type} className='text-neutral-300'>
-          {getQuestionActionDescriptor(question.type)}
-        </span>
+        <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
 
       <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
