@@ -80,6 +80,8 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
   const db = await getDatabase()
 
   const [dbQuestion] = await db.select().from(db_question).where(eq(db_question.id, question_id)).limit(1)
+  if (!dbQuestion) return null
+
   const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id))
 
   const category = await parseCategory(db, dbQuestion.categoryId)
