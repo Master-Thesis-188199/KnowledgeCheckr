@@ -3,6 +3,7 @@ import { UseFormSetValue, UseFormTrigger } from 'react-hook-form'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
+import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
@@ -49,8 +50,17 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     })
   }
 
+  const getFeedbackEvaluation = usePracticeFeeback(state, {
+    isSubmitSuccessful: isEvaluated,
+    isSubmitted: isEvaluated,
+    isPending: false,
+    isSubmitting: false,
+  })
+
+  const { isCorrectlyPositioned, isFalslyPositioned } = getFeedbackEvaluation(question)
+
   return options.map(({ id, answer, position }) => (
-    <DragDropItem key={id} name={id}>
+    <DragDropItem key={id} name={id} data-evaluation-result={isEvaluated ? (isCorrectlyPositioned(id) ? 'correct' : isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
       <AnswerFeedback show={isEvaluated} state={state} answerId={id} />
