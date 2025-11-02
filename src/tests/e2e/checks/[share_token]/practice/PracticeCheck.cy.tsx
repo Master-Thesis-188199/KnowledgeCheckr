@@ -34,10 +34,9 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.visit(`/checks/${check.share_key}/practice`)
 
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-
     cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-
     cy.get('#answer-options').children().should('have.length', question.answers.length)
+    cy.get('#practice-form * #action-descriptor').should('exist').should('have.attr', 'data-question-type', question.type)
 
     for (const ans of correctAnswers) {
       cy.get('#answer-options').contains(ans.answer).click()
