@@ -8,6 +8,9 @@ import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
+/**
+ * Renders the answer-options for a drag-drop question within a drag-and-drop container. Depending on the provided props it allows interaction for reordering answers or displays feedback based on the feedback and submission.
+ */
 export default function DragDropAnswers({
   isEvaluated,
   setValue,
