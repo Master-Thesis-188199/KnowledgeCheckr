@@ -108,7 +108,9 @@ export function RenderPracticeQuestion() {
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
           <h2 className='text-2xl font-semibold'>{question.question}</h2>
         </div>
-        <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
+        <span id='action-descriptor' data-question-type={question.type} className='text-neutral-300'>
+          {getQuestionActionDescriptor(question.type)}
+        </span>
       </div>
 
       <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
