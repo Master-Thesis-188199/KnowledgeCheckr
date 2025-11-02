@@ -1,7 +1,7 @@
 'use client'
 
 import { FormState } from 'react-hook-form'
-import { PracticeFeedback,PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
@@ -12,17 +12,19 @@ type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEva
   isFalslySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
 }
 
+type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
+  isCorrectlyPositioned: (answerId: string) => boolean
+  isFalslyPositioned: (answerId: string) => boolean
+  getCorrectPosition: (answerId: string) => number
+}
+
 type FeedbackEvaluation<Type extends Question['type']> = {
   type: Type
   feedback?: Extract<PracticeFeedback, { type: Type }>
   submittedAnswers?: Extract<PracticeData, { type: Type }>
 }
 
-type PracticeFeedbackReturn =
-  | ChoiceFeedbackEvaluation<SingleChoice['type']>
-  | ChoiceFeedbackEvaluation<MultipleChoice['type']>
-  | FeedbackEvaluation<OpenQuestion['type']>
-  | FeedbackEvaluation<DragDropQuestion['type']>
+type PracticeFeedbackReturn = ChoiceFeedbackEvaluation<SingleChoice['type']> | ChoiceFeedbackEvaluation<MultipleChoice['type']> | FeedbackEvaluation<OpenQuestion['type']> | DragDropFeedbackEvaluation
 /**
  * This hook returns a simple utility function used to determine whether or not a answer-option was select correctly, wrongfuly or should have been selected (missing).
  * @param state The useActionState state
@@ -36,7 +38,7 @@ export function usePracticeFeeback(
   function getFeedbackEvaluation(question: SingleChoice): ChoiceFeedbackEvaluation<SingleChoice['type']>
   function getFeedbackEvaluation(question: MultipleChoice): ChoiceFeedbackEvaluation<MultipleChoice['type']>
   function getFeedbackEvaluation(question: OpenQuestion): FeedbackEvaluation<OpenQuestion['type']>
-  function getFeedbackEvaluation(question: DragDropQuestion): FeedbackEvaluation<DragDropQuestion['type']>
+  function getFeedbackEvaluation(question: DragDropQuestion): DragDropFeedbackEvaluation
   function getFeedbackEvaluation(question: Question): PracticeFeedbackReturn {
     //? Indicates whether the pre-conditions are satisfied so that a feedback-evaluation may be returned. Namely, whether the answers are submitted and whether the received feedback is for the respective question.
     const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && state.values?.question_id === question.id
@@ -101,12 +103,17 @@ export function usePracticeFeeback(
         const submittedAnswers = state.values?.type === question.type ? state.values : undefined
         const feedback = state.feedback?.type === question.type ? state.feedback : undefined
 
-        console.error(`Feedback evaluation not available for ${question.type}`)
+        const isCorrectlyPositioned = (answerId: string) => isEvaluated && submittedAnswers?.input.indexOf(answerId) === feedback?.solution.indexOf(answerId)
+        const isFalslyPositioned = (answerId: string) => isEvaluated && submittedAnswers?.input.indexOf(answerId) !== feedback?.solution.indexOf(answerId)
+        const getCorrectPosition = (answerId: string) => feedback?.solution.indexOf(answerId) ?? -1
 
         return {
           type: question.type,
           feedback,
           submittedAnswers,
+          isCorrectlyPositioned,
+          isFalslyPositioned,
+          getCorrectPosition,
         }
       }
     }
