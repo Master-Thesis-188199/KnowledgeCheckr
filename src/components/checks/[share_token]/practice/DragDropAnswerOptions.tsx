@@ -6,12 +6,11 @@ import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/prac
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
-export default function DragDropAnswerOptions({
-  question,
+export default function DragDropAnswers({
   isEvaluated,
-  state,
   setValue,
   trigger,
+  ...props
 }: {
   question: DragDropQuestion
   isEvaluated: boolean
@@ -19,17 +18,23 @@ export default function DragDropAnswerOptions({
   setValue: UseFormSetValue<PracticeData>
   trigger: UseFormTrigger<PracticeData>
 }) {
-  //todo move drag-drop rendering into separate file to declare distinctive types.
-
   return (
     <DragDropContainer
-      key={question.id + question.type + isEvaluated.toString()}
+      key={props.question.id + props.question.type + isEvaluated.toString()}
       className='col-span-2 my-auto space-y-6'
       enabled={!isEvaluated}
       onSwapEnd={(e) => {
         e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
         trigger('input')
       }}>
+      <DragDropAnswerOptions {...props} isEvaluated={isEvaluated} />
+    </DragDropContainer>
+  )
+}
+
+export function DragDropAnswerOptions({ question, state }: { question: DragDropQuestion; isEvaluated: boolean; state: PracticeFeedbackServerState }) {
+  return (
+    <>
       {state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id
         ? //* Displays the answers from the submitted data, because `question.answers` was not modified and the component was re-rendered after submission, to not loose order
           state.values.input.map((answer_id, pos) => (
@@ -44,6 +49,6 @@ export default function DragDropAnswerOptions({
               {a.answer}
             </DragDropItem>
           ))}
-    </DragDropContainer>
+    </>
   )
 }

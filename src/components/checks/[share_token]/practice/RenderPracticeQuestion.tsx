@@ -11,7 +11,7 @@ import { notFound } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
-import DragDropAnswerOptions from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
+import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
@@ -136,7 +136,7 @@ export function RenderPracticeQuestion() {
           />
         )}
 
-        {question.type === 'drag-drop' && <DragDropAnswerOptions question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
+        {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
 
         {question.type === 'open-question' && (
           <textarea
