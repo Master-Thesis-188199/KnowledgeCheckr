@@ -77,7 +77,7 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
       question = question as DragDropQuestion
       return {
         type: answer.type,
-        solution: question.answers.map((answer) => answer.id),
+        solution: question.answers.sort((a, b) => a.position - b.position).map((answer) => answer.id),
         reasoning: 'This answer is correct because...',
       }
   }
