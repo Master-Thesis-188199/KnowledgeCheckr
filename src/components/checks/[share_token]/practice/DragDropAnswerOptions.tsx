@@ -1,8 +1,10 @@
+import { ArrowUpFromLineIcon, CheckIcon, XIcon } from 'lucide-react'
 import { UseFormSetValue, UseFormTrigger } from 'react-hook-form'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
@@ -48,6 +50,33 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     <DragDropItem key={id} name={id}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
+      <AnswerFeedback show={isEvaluated} state={state} answerId={id} />
     </DragDropItem>
   ))
+}
+
+function AnswerFeedback({ show, state: { feedback, values: submission }, answerId }: { show: boolean; state: PracticeFeedbackServerState; answerId: DragDropQuestion['answers'][number]['id'] }) {
+  if (!show || !submission || submission.type !== 'drag-drop' || !feedback || feedback.type !== 'drag-drop') return null
+
+  const correctPos = feedback.solution.findIndex((id) => id === answerId)
+  const submissionPos = submission.input.findIndex((id) => id === answerId)
+  const isCorrect = correctPos === submissionPos
+  const movesNeeded = correctPos - submissionPos
+
+  return (
+    <span className='ml-auto flex items-center gap-2' title={`Answer should be at ${correctPos + 1}. position`}>
+      {isCorrect ? (
+        <CheckIcon className='size-4 text-green-500/70' />
+      ) : (
+        <div className='flex items-center gap-4 text-red-500/70'>
+          <div className='flex items-center gap-1'>
+            {Array.from({ length: Math.abs(movesNeeded) }).map((_, i) => (
+              <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPos - submissionPos > 0 && 'rotate-180')} />
+            ))}
+          </div>
+          <XIcon className='size-4' />
+        </div>
+      )}
+    </span>
+  )
 }
