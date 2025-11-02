@@ -1,4 +1,7 @@
 /// <reference types="cypress" />
+
+import { Any } from '@/types'
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -98,4 +101,14 @@ Cypress.Commands.add('loginTestUser', () => {
 Cypress.Commands.add('dragDrop', (dragLocator, dropLocator) => {
   dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
   dropLocator.realMouseMove(0, -10, { position: 'center' }).realMouseUp()
+})
+
+Cypress.Commands.add('waitServerAction', (alias, callback) => {
+  cy.wait(alias).then((interception) => {
+    const actionResponse = interception.response
+    const actionResponseBody = actionResponse?.body.toString().split('1:').at(1)
+    const body = JSON.parse(actionResponseBody)
+
+    callback(body, actionResponse as Any)
+  })
 })
