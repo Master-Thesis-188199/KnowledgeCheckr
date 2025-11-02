@@ -102,7 +102,7 @@ export function RenderPracticeQuestion() {
   }
 
   return (
-    <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
+    <form id='practice-form' className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>

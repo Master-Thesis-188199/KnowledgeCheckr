@@ -35,7 +35,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
 
-    cy.get('main h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
 
     cy.get('#answer-options').children().should('have.length', question.answers.length)
 
