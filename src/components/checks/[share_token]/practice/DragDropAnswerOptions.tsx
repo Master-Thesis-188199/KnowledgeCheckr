@@ -57,39 +57,34 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     isSubmitting: false,
   })
 
-  const { isCorrectlyPositioned, isFalslyPositioned } = getFeedbackEvaluation(question)
+  const { isCorrectlyPositioned, isFalslyPositioned, getCorrectPosition } = getFeedbackEvaluation(question)
 
   return options.map(({ id, answer, position }) => (
     <DragDropItem key={id} name={id} data-evaluation-result={isEvaluated ? (isCorrectlyPositioned(id) ? 'correct' : isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
-      <AnswerFeedback show={isEvaluated} state={state} answerId={id} />
+      <AnswerFeedback show={isEvaluated} correctPosition={getCorrectPosition(id)} isCorrect={isCorrectlyPositioned(id)} position={position} />
     </DragDropItem>
   ))
 }
 
-function AnswerFeedback({ show, state: { feedback, values: submission }, answerId }: { show: boolean; state: PracticeFeedbackServerState; answerId: DragDropQuestion['answers'][number]['id'] }) {
-  if (!show || !submission || submission.type !== 'drag-drop' || !feedback || feedback.type !== 'drag-drop') return null
-
-  const correctPos = feedback.solution.findIndex((id) => id === answerId)
-  const submissionPos = submission.input.findIndex((id) => id === answerId)
-  const isCorrect = correctPos === submissionPos
-  const movesNeeded = correctPos - submissionPos
+function AnswerFeedback({ show, position, correctPosition, isCorrect }: { show: boolean; position: number; correctPosition: number; isCorrect: boolean }) {
+  if (!show) return null
 
   return (
-    <span className='ml-auto flex items-center gap-2' title={`Answer should be at ${correctPos + 1}. position`}>
+    <div className='ml-auto flex items-center gap-2' title={`Answer should be at ${correctPosition + 1}. position`}>
       {isCorrect ? (
         <CheckIcon className='size-4 text-green-500/70' />
       ) : (
         <div className='flex items-center gap-4 text-red-500/70'>
           <div className='flex items-center gap-1'>
-            {Array.from({ length: Math.abs(movesNeeded) }).map((_, i) => (
-              <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPos - submissionPos > 0 && 'rotate-180')} />
+            {Array.from({ length: Math.abs(correctPosition - position) }).map((_, i) => (
+              <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPosition - position > 0 && 'rotate-180')} />
             ))}
           </div>
           <XIcon className='size-4' />
         </div>
       )}
-    </span>
+    </div>
   )
 }
