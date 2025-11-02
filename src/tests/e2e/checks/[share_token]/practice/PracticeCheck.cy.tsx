@@ -46,17 +46,12 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.wait('@submit-request').then((interception) => {
-      cy.log(JSON.stringify(interception, null, 2))
-      const response = interception.response
-      const responseBody = response?.body.toString().split('1:').at(1)
-      const body = JSON.parse(responseBody) as PracticeFeedbackServerState
-
+    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
       expect(response?.statusCode).to.eq(200)
       expect(body).to.have.property('success')
-      expect(body.success).to.equal(true)
+      expect(body?.success).to.equal(true)
 
-      const feedback = body.feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
+      const feedback = body?.feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
 
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution).to.equal(correctAnswers.map((a) => a.id).join(','))
