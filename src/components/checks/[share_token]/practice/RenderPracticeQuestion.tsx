@@ -283,7 +283,15 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
 
         <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
 
-        <input className='hidden' id={a.id} type={type} {...register(registerKey(i))} disabled={isEvaluated} value={a.id} />
+        <input
+          className='hidden'
+          id={a.id}
+          type={type}
+          {...register(registerKey(i))}
+          disabled={isEvaluated}
+          value={a.id}
+          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'wrong' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
+        />
 
         <FormFieldError field={registerKey(i)} errors={errors} />
       </label>
