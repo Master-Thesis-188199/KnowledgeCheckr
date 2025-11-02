@@ -5,7 +5,7 @@ import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('RenderPracticeQuestion Test Suite', () => {
-  before(() => {
+  beforeEach(() => {
     cy.loginTestUser()
   })
   it('Verify that users can answer and submit single-choice question', () => {
