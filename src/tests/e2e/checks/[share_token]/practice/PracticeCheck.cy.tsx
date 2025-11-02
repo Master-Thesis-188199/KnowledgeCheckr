@@ -149,6 +149,8 @@ describe('RenderPracticeQuestion Test Suite', () => {
             for (const ans of question.answers.filter((a) => a.correct)) {
               cy.get('#answer-options').contains(ans.answer).children('input').should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
             }
+          } else if (question.type === 'drag-drop') {
+            cy.get("div[data-evaluation-result='correct']").should('have.length', question.answers.length)
           }
 
           cy.wait(500)
