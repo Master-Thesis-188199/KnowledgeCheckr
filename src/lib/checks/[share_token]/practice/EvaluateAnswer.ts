@@ -33,7 +33,10 @@ export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: Pract
 
 type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
 type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
-type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; solution?: string }, 'question_id' | 'input'>
+type OpenQuestionFeedback = Omit<
+  Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; degreeOfCorrectness: number; solution?: string },
+  'question_id' | 'input'
+>
 type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
@@ -67,10 +70,14 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
 
     case 'open-question':
       question = question as OpenQuestion
+      //todo: use llm to evaluate open-question answer correctness
+      const degreeOfCorrectness = Math.random()
+
       return {
         type: answer.type,
         solution: question.expectation,
-        reasoning: 'This answer is correct because...',
+        reasoning: `This answer is ${degreeOfCorrectness >= 0.5 ? 'correct' : 'incorrect'} because...`,
+        degreeOfCorrectness: degreeOfCorrectness,
       }
 
     case 'drag-drop':
