@@ -1,5 +1,6 @@
 'use client'
 
+import { is } from 'drizzle-orm'
 import { FormState } from 'react-hook-form'
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
@@ -18,13 +19,19 @@ type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> &
   getCorrectPosition: (answerId: string) => number
 }
 
+type OpenQuestionFeedbackEvaluation = FeedbackEvaluation<OpenQuestion['type']> & {
+  isCorrect: boolean
+  isIncorrect: boolean
+  degreeOfCorrectness: number
+}
+
 type FeedbackEvaluation<Type extends Question['type']> = {
   type: Type
   feedback?: Extract<PracticeFeedback, { type: Type }>
   submittedAnswers?: Extract<PracticeData, { type: Type }>
 }
 
-type PracticeFeedbackReturn = ChoiceFeedbackEvaluation<SingleChoice['type']> | ChoiceFeedbackEvaluation<MultipleChoice['type']> | FeedbackEvaluation<OpenQuestion['type']> | DragDropFeedbackEvaluation
+type PracticeFeedbackReturn = ChoiceFeedbackEvaluation<SingleChoice['type']> | ChoiceFeedbackEvaluation<MultipleChoice['type']> | OpenQuestionFeedbackEvaluation | DragDropFeedbackEvaluation
 /**
  * This hook returns a simple utility function used to determine whether or not a answer-option was select correctly, wrongfuly or should have been selected (missing).
  * @param state The useActionState state
@@ -37,7 +44,7 @@ export function usePracticeFeeback(
 ) {
   function getFeedbackEvaluation(question: SingleChoice): ChoiceFeedbackEvaluation<SingleChoice['type']>
   function getFeedbackEvaluation(question: MultipleChoice): ChoiceFeedbackEvaluation<MultipleChoice['type']>
-  function getFeedbackEvaluation(question: OpenQuestion): FeedbackEvaluation<OpenQuestion['type']>
+  function getFeedbackEvaluation(question: OpenQuestion): OpenQuestionFeedbackEvaluation
   function getFeedbackEvaluation(question: DragDropQuestion): DragDropFeedbackEvaluation
   function getFeedbackEvaluation(question: Question): PracticeFeedbackReturn {
     //? Indicates whether the pre-conditions are satisfied so that a feedback-evaluation may be returned. Namely, whether the answers are submitted and whether the received feedback is for the respective question.
@@ -85,16 +92,16 @@ export function usePracticeFeeback(
         }
       }
 
-      // todo evaluate open- and drag-drop questions
       case 'open-question': {
         const submittedAnswers = state.values?.type === question.type ? state.values : undefined
         const feedback = state.feedback?.type === question.type ? state.feedback : undefined
 
-        console.error(`Feedback evaluation not available for ${question.type}`)
-
         return {
           type: question.type,
           feedback,
+          degreeOfCorrectness: isEvaluated && feedback?.degreeOfCorrectness ? feedback.degreeOfCorrectness : 0,
+          isCorrect: isEvaluated && (feedback?.degreeOfCorrectness ?? 0) >= 0.5,
+          isIncorrect: isEvaluated && (feedback?.degreeOfCorrectness ?? 0) < 0.5,
           submittedAnswers,
         }
       }
