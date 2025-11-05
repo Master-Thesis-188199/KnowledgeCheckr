@@ -11,18 +11,21 @@ type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEva
   isCorrectlySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
   isMissingSelection: (answer: ChoiceQuestion['answers'][number]) => boolean
   isFalslySelected: (answer: ChoiceQuestion['answers'][number]) => boolean
+  reasoning?: Extract<PracticeFeedback, { type: Type }>['reasoning']
 }
 
 type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
   isCorrectlyPositioned: (answerId: string) => boolean
   isFalslyPositioned: (answerId: string) => boolean
   getCorrectPosition: (answerId: string) => number
+  reasoning?: Extract<PracticeFeedback, { type: DragDropQuestion['type'] }>['reasoning']
 }
 
 type OpenQuestionFeedbackEvaluation = FeedbackEvaluation<OpenQuestion['type']> & {
   isCorrect: boolean
   isIncorrect: boolean
   degreeOfCorrectness: number
+  reasoning?: Extract<PracticeFeedback, { type: OpenQuestion['type'] }>['reasoning']
 }
 
 type FeedbackEvaluation<Type extends Question['type']> = {
@@ -63,6 +66,7 @@ export function usePracticeFeeback(
           feedback: feedback,
           submittedAnswers: submittedAnswers,
           type: question.type,
+          reasoning: feedback?.reasoning,
           isCorrectlySelected,
           isMissingSelection,
           isFalslySelected,
@@ -86,6 +90,7 @@ export function usePracticeFeeback(
           feedback,
           submittedAnswers,
           type: question.type,
+          reasoning: feedback?.reasoning,
           isCorrectlySelected,
           isMissingSelection,
           isFalslySelected,
@@ -99,6 +104,7 @@ export function usePracticeFeeback(
         return {
           type: question.type,
           feedback,
+          reasoning: feedback?.reasoning,
           degreeOfCorrectness: isEvaluated && feedback?.degreeOfCorrectness ? feedback.degreeOfCorrectness : 0,
           isCorrect: isEvaluated && (feedback?.degreeOfCorrectness ?? 0) >= 0.5,
           isIncorrect: isEvaluated && (feedback?.degreeOfCorrectness ?? 0) < 0.5,
@@ -117,6 +123,7 @@ export function usePracticeFeeback(
         return {
           type: question.type,
           feedback,
+          reasoning: feedback?.reasoning,
           submittedAnswers,
           isCorrectlyPositioned,
           isFalslyPositioned,
