@@ -12,7 +12,7 @@ interface DragDropItemProps {
   initialIndex?: number
   showPositionCounter?: boolean
 }
-export function DragDropItem({ children, className, name, onSwap, initialIndex, showPositionCounter = true, ...props }: DragDropItemProps & Pick<HTMLProps<HTMLDivElement>, 'data'>) {
+export function DragDropItem({ children, className, name, onSwap, initialIndex, showPositionCounter = true, ...props }: DragDropItemProps & Pick<HTMLProps<HTMLDivElement>, 'data' | 'title'>) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
