@@ -139,7 +139,9 @@ export function RenderPracticeQuestion() {
 
         {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
 
-        {question.type === 'open-question' && <OpenQuestion register={register} disabled={isSubmitted && isSubmitSuccessful && !isPending} />}
+        {question.type === 'open-question' && (
+          <OpenQuestion getFeedbackEvaluation={getFeedbackEvaluation} question={question} register={register} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
+        )}
       </div>
 
       <FeedbackLegend
