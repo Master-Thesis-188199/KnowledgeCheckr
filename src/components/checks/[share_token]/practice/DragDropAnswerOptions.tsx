@@ -57,10 +57,15 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     isSubmitting: false,
   })
 
-  const { isCorrectlyPositioned, isFalslyPositioned, getCorrectPosition } = getFeedbackEvaluation(question)
+  const { isCorrectlyPositioned, isFalslyPositioned, getCorrectPosition, reasoning } = getFeedbackEvaluation(question)
 
-  return options.map(({ id, answer, position }) => (
-    <DragDropItem key={id} name={id} data-evaluation-result={isEvaluated ? (isCorrectlyPositioned(id) ? 'correct' : isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
+  return options.map(({ id, answer, position }, i) => (
+    <DragDropItem
+      key={id}
+      name={id}
+      title={isEvaluated ? reasoning?.at(i) : undefined}
+      className={cn(isEvaluated && 'cursor-help')}
+      data-evaluation-result={isEvaluated ? (isCorrectlyPositioned(id) ? 'correct' : isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
       <AnswerFeedback show={isEvaluated} correctPosition={getCorrectPosition(id)} isCorrect={isCorrectlyPositioned(id)} position={position} />
@@ -72,7 +77,7 @@ function AnswerFeedback({ show, position, correctPosition, isCorrect }: { show: 
   if (!show) return null
 
   return (
-    <div className='ml-auto flex items-center gap-2' title={`Answer should be at ${correctPosition + 1}. position`}>
+    <div className='ml-auto flex items-center gap-2'>
       {isCorrect ? (
         <CheckIcon className='size-4 text-green-500/70' />
       ) : (

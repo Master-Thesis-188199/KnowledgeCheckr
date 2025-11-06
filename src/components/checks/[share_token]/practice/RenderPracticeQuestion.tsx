@@ -252,7 +252,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
   getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
 }) {
   return question.answers.map((a, i) => {
-    const { isCorrectlySelected, isFalslySelected, isMissingSelection } = getFeedbackEvaluation(question as SingleChoice)
+    const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
 
     return (
       <label
@@ -270,7 +270,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           isFalslySelected(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-red-400/20 has-checked:bg-radial has-checked:font-semibold dark:ring-red-400/70',
           isMissingSelection(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-yellow-400/20 ring-0 outline-2 outline-yellow-400/60 outline-dashed dark:ring-yellow-400/60',
         )}
-        title={isCorrectlySelected(a) ? '' : isFalslySelected(a) ? 'This answer-option was incorrectly selected' : isMissingSelection(a) ? 'You missed selecting this correct answer-option' : ''}
+        title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
         htmlFor={a.id}>
         {a.answer}
 
