@@ -1,9 +1,10 @@
 'use server'
 
+import { redirect } from 'next/navigation'
 import { auth } from '@/src/lib/auth/server'
 import { LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
+// eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import { Any } from '@/types'
-import { redirect } from 'next/navigation'
 
 export type AuthState = {
   success: boolean
