@@ -71,7 +71,8 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
     case 'open-question':
       question = question as OpenQuestion
       //todo: use llm to evaluate open-question answer correctness
-      const degreeOfCorrectness = Math.random()
+      let degreeOfCorrectness = Math.random()
+      degreeOfCorrectness = answer.input.toLowerCase().includes('correct') ? 1 : 0
 
       return {
         type: answer.type,
