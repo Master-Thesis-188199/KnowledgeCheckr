@@ -2,7 +2,7 @@ import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, MultipleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('RenderPracticeQuestion Test Suite', () => {
   beforeEach(() => {
@@ -52,6 +52,60 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution).to.equal(correctAnswers.map((a) => a.id).join(','))
+    })
+
+    cy.get('button').contains('Continue').should('exist').and('be.visible')
+    for (const ans of correctAnswers) {
+      cy.get('#answer-options').contains(ans.answer).children('input').should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
+    }
+
+    cy.get('.result-legend').should('exist').and('be.visible')
+  })
+
+  it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly', () => {
+    cy.viewport(1280, 900)
+
+    const check = {
+      ...instantiateKnowledgeCheck(),
+      share_key: generateToken(16),
+      questions: [
+        {
+          ...instantiateMultipleChoice(),
+          question: 'What statements are correct?',
+          answers: [
+            { id: getUUID(), answer: 'The earth is flat', correct: false },
+            { id: getUUID(), answer: 'The earth is round', correct: true },
+            { id: getUUID(), answer: 'Birds can fly', correct: true },
+            { id: getUUID(), answer: 'Birds can not fly', correct: false },
+          ],
+        },
+      ],
+    }
+    const question = check.questions.at(0)! as MultipleChoice
+    const correctAnswers = question.answers.filter((a) => a.correct)
+
+    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+    cy.visit(`/checks/${check.share_key}/practice`)
+
+    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
+    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
+    cy.get('#answer-options').children().should('have.length', question.answers.length)
+
+    cy.simulatePracticeSelection(question, 'correct')
+
+    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.get('button').contains('Check Answer').click()
+
+    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
+      expect(response?.statusCode).to.eq(200)
+      expect(body).to.have.property('success')
+      expect(body?.success).to.equal(true)
+
+      const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
+
+      expect(feedback?.type).to.equal(question.type)
+      expect(feedback?.solution.join(',')).to.equal(correctAnswers.map((a) => a.id).join(','))
     })
 
     cy.get('button').contains('Continue').should('exist').and('be.visible')
