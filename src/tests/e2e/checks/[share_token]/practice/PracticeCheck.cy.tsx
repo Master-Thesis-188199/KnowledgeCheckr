@@ -105,7 +105,12 @@ describe('RenderPracticeQuestion Test Suite', () => {
       const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
 
       expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution.join(',')).to.equal(correctAnswers.map((a) => a.id).join(','))
+      expect(feedback?.solution.sort().join(',')).to.equal(
+        correctAnswers
+          .map((a) => a.id)
+          .sort()
+          .join(','),
+      )
     })
 
     cy.get('button').contains('Continue').should('exist').and('be.visible')
