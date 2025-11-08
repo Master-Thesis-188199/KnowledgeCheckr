@@ -1,7 +1,7 @@
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { z, ZodIssueCode } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import lorem from '@/src/lib/Shared/Lorem'
 
 const AnswerId = z
   .string()
@@ -17,7 +17,7 @@ const baseQuestion = z.object({
     .string()
     .refine((q) => q.split(' ').length > 2, 'Please reformulate your question to be at least 3 words long.')
     .default(
-      lorem
+      lorem()
         .substring(0, Math.floor(Math.random() * 100) + 20)
         .split('\n')
         .join(''),

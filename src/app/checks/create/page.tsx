@@ -1,9 +1,9 @@
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { redirect } from 'next/navigation'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import lorem from '@/src/lib/Shared/Lorem'
 
 export default async function CreateCheckPage() {
   await requireAuthentication()
@@ -20,7 +20,7 @@ export default async function CreateCheckPage() {
         .split('')
         .map((char) => String.fromCharCode(65 + parseInt(char)).toLowerCase())
         .join(''),
-      description: lorem
+      description: lorem()
         .split(' ')
         .slice(0, Math.random() * 100 + 10)
         .join(' '),
