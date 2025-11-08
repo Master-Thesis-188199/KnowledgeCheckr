@@ -2,7 +2,7 @@ import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, MultipleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { DragDropQuestion, instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, MultipleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('RenderPracticeQuestion Test Suite', () => {
   beforeEach(() => {
@@ -114,6 +114,62 @@ describe('RenderPracticeQuestion Test Suite', () => {
     }
 
     cy.get('.result-legend').should('exist').and('be.visible')
+  })
+
+  it('Verify that users can answer and submit drag-drop question, and that feedback is displayed correctly when answered correctly', () => {
+    cy.viewport(1280, 900)
+
+    const question: DragDropQuestion = {
+      ...instantiateDragDropQuestion(),
+      question: 'Please arrange these statements in their correct order',
+      answers: [
+        { id: getUUID(), answer: 'A', position: 0 },
+        { id: getUUID(), answer: 'B', position: 1 },
+        { id: getUUID(), answer: 'C', position: 2 },
+        { id: getUUID(), answer: 'D', position: 3 },
+      ],
+    }
+
+    const check = {
+      ...instantiateKnowledgeCheck(),
+      share_key: generateToken(16),
+      questions: [question],
+    }
+
+    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+    cy.visit(`/checks/${check.share_key}/practice`)
+
+    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
+    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
+    cy.get(`#answer-options * div[data-swapy-item]`).should('have.length', question.answers.length)
+
+    cy.simulatePracticeSelection(question, 'correct')
+
+    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.get('button').contains('Check Answer').click()
+
+    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
+      expect(response?.statusCode).to.eq(200)
+      expect(body).to.have.property('success')
+      expect(body?.success).to.equal(true)
+
+      const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
+
+      expect(feedback?.type).to.equal(question.type)
+      expect(feedback?.solution.join(',')).to.equal(
+        question.answers
+          .sort((a, b) => a.position - b.position)
+          .map((a) => a.id)
+          .join(','),
+      )
+    })
+
+    cy.get('button').contains('Continue').should('exist').and('be.visible')
+    cy.get(`#answer-options * div[data-swapy-item]`).should('have.attr', 'data-evaluation-result', 'correct')
+    cy.get('#answer-options').children().should('have.attr', 'data-enabled', 'false')
+
+    cy.get('.drag-drop-feedback-indicators').should('exist').and('be.visible')
   })
 
   it('Verify that users can answer & submit correct answers to questions and that their submission is evaluated & displayed correctly', () => {
