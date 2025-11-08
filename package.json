@@ -66,6 +66,7 @@
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.7",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "framer-motion": "^12.6.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.485.0",
