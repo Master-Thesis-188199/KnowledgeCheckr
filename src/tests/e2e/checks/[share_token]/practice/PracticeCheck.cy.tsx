@@ -17,7 +17,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
   beforeEach(() => {
     cy.loginTestUser()
   })
-  it('Verify that users can answer and submit single-choice question', () => {
+  it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered correctly', () => {
     cy.viewport(1280, 900)
 
     const check = {
@@ -71,7 +71,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('.result-legend').should('exist').and('be.visible')
   })
 
-  it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly', () => {
+  it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered correctly', () => {
     cy.viewport(1280, 900)
 
     const check = {
