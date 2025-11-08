@@ -103,6 +103,10 @@ describe('RenderPracticeQuestion Test Suite', () => {
           else if (question.type === 'drag-drop') cy.get('#answer-options').children().children().should('have.length', question.answers.length)
           else cy.get('#answer-options').children().should('have.length', question.answers.length)
 
+          if (question.type === 'open-question') {
+            question.expectation = 'correct' //? causes the feedback-evaluation to set the degreeOfCorrectness to 1 until an LLM is used
+          }
+
           cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
           cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
 
@@ -139,6 +143,9 @@ describe('RenderPracticeQuestion Test Suite', () => {
                   .map((a) => a.id)
                   .join(','),
               )
+            } else if (question.type === 'open-question') {
+              const openQuestionFeedback = feedback as Extract<PracticeFeedback, { type: 'open-question' }>
+              expect(openQuestionFeedback.degreeOfCorrectness).to.eq(1)
             }
           })
 
@@ -151,6 +158,8 @@ describe('RenderPracticeQuestion Test Suite', () => {
             }
           } else if (question.type === 'drag-drop') {
             cy.get("div[data-evaluation-result='correct']").should('have.length', question.answers.length)
+          } else if (question.type === 'open-question') {
+            cy.get('#answer-options').children().should('have.attr', 'data-evaluation-result', 'correct')
           }
 
           cy.wait(500)
