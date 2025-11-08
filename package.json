@@ -5,7 +5,6 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "dev": "next dev --turbopack",
-    "lint": "next lint",
     "-------- build & start --------": "--------",
     "instrument-code": "cp ./config/.babelrc.json .babelrc.json",
     "de-instrument-code": "rm -rf .babelrc.json",

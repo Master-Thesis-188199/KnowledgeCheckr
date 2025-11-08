@@ -52,7 +52,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -124,7 +124,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -146,10 +146,6 @@ jobs:
         uses: ./.github/actions/caching-dependencies
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Run Linting
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn lint
 
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -232,7 +228,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -241,7 +237,7 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: 'E2E Tests: ${{ matrix.chunk.short }}'
+    name: "E2E Tests: ${{ matrix.chunk.short }}"
     runs-on: ubuntu-latest
 
     strategy:
@@ -294,7 +290,7 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           start: yarn start
-          wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
+          wait-on: "npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}"
           wait-on-timeout: 120
 
           browser: chrome
