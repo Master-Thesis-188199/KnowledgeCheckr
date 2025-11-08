@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
+import { OpenQuestion } from '@/src/components/checks/[share_token]/practice/OpenQuestion'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
@@ -139,15 +140,7 @@ export function RenderPracticeQuestion() {
         {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
 
         {question.type === 'open-question' && (
-          <textarea
-            {...register('input')}
-            disabled={isSubmitted && isSubmitSuccessful && !isPending}
-            className={cn(
-              'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-neutral-500 focus:ring-[1.2px] focus:ring-neutral-700 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
-              'resize-none',
-              'my-auto h-full',
-            )}
-          />
+          <OpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} register={register} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
         )}
       </div>
 
@@ -259,7 +252,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
   getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
 }) {
   return question.answers.map((a, i) => {
-    const { isCorrectlySelected, isFalslySelected, isMissingSelection } = getFeedbackEvaluation(question as SingleChoice)
+    const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
 
     return (
       <label
@@ -277,7 +270,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           isFalslySelected(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-red-400/20 has-checked:bg-radial has-checked:font-semibold dark:ring-red-400/70',
           isMissingSelection(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-yellow-400/20 ring-0 outline-2 outline-yellow-400/60 outline-dashed dark:ring-yellow-400/60',
         )}
-        title={isCorrectlySelected(a) ? '' : isFalslySelected(a) ? 'This answer-option was incorrectly selected' : isMissingSelection(a) ? 'You missed selecting this correct answer-option' : ''}
+        title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
         htmlFor={a.id}>
         {a.answer}
 

@@ -31,10 +31,13 @@ export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: Pract
   return { success: true, values: data, feedback }
 }
 
-type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
+type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string[]; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
 type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
-type OpenQuestionFeedback = Omit<Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question' }, 'question_id'>
-type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
+type OpenQuestionFeedback = Omit<
+  Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; degreeOfCorrectness: number; solution?: string },
+  'question_id' | 'input'
+>
+type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string[]; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
@@ -54,7 +57,7 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
       return {
         type: answer.type,
         solution: question.answers.find((a) => a.correct)!.id,
-        reasoning: 'This answer is correct because...',
+        reasoning: question.answers.map((answer, i) => (answer.correct ? `Answer ${i} is correct because...` : `Answer ${i} is false because..`)),
       }
 
     case 'multiple-choice':
@@ -67,18 +70,29 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
 
     case 'open-question':
       question = question as OpenQuestion
+      //todo: use llm to evaluate open-question answer correctness
+      const degreeOfCorrectness = Math.random()
+
       return {
         type: answer.type,
-        input: question.expectation ?? '',
-        reasoning: 'This answer is correct because...',
+        solution: question.expectation,
+        reasoning: `This answer is ${degreeOfCorrectness >= 0.5 ? 'correct' : 'incorrect'} because...`,
+        degreeOfCorrectness: degreeOfCorrectness,
       }
 
     case 'drag-drop':
       question = question as DragDropQuestion
+      const orderedAnswers = question.answers.toSorted((a, b) => a.position - b.position)
+      const correctlyOrdered = orderedAnswers.map((a) => a.id)
+
       return {
         type: answer.type,
-        solution: question.answers.sort((a, b) => a.position - b.position).map((answer) => answer.id),
-        reasoning: 'This answer is correct because...',
+        solution: correctlyOrdered,
+        reasoning: correctlyOrdered.map((id, i) =>
+          answer.input.at(i) === id
+            ? `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is correct because...`
+            : `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because..`,
+        ),
       }
   }
 }
