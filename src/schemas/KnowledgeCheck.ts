@@ -1,7 +1,7 @@
-import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -18,7 +18,7 @@ export const KnowledgeCheckSchema = z
     description: z
       .string()
       .nullable()
-      .default(() => lorem.substring(0, Math.floor(Math.random() * 100))),
+      .default(() => lorem().substring(0, Math.floor(Math.random() * 100))),
 
     difficulty: z
       .number()
