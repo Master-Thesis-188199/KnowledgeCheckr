@@ -103,7 +103,7 @@ export function RenderPracticeQuestion() {
   }
 
   return (
-    <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
+    <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
@@ -112,7 +112,7 @@ export function RenderPracticeQuestion() {
         <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
 
-      <div className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
+      <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' && (
           <ChoiceAnswerOption
             type='checkbox'
@@ -276,7 +276,15 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
 
         <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
 
-        <input className='hidden' id={a.id} type={type} {...register(registerKey(i))} disabled={isEvaluated} value={a.id} />
+        <input
+          className='hidden'
+          id={a.id}
+          type={type}
+          {...register(registerKey(i))}
+          disabled={isEvaluated}
+          value={a.id}
+          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
+        />
 
         <FormFieldError field={registerKey(i)} errors={errors} />
       </label>

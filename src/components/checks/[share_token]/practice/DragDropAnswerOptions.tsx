@@ -77,7 +77,7 @@ function AnswerFeedback({ show, position, correctPosition, isCorrect }: { show: 
   if (!show) return null
 
   return (
-    <div className='ml-auto flex items-center gap-2'>
+    <div className='drag-drop-feedback-indicators ml-auto flex items-center gap-2'>
       {isCorrect ? (
         <CheckIcon className='size-4 text-green-500/70' />
       ) : (
