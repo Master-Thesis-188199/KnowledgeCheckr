@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import unusedImports from 'eslint-plugin-unused-imports'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
@@ -24,6 +25,7 @@ const eslintConfig = [
     plugins: {
       'server-only-first': serverOnlyPlugin,
       'simple-import-sort': simpleImportSort,
+      'unused-imports': unusedImports,
     },
     rules: {
       'server-only-first/server-only-first': 'error',
@@ -36,6 +38,7 @@ const eslintConfig = [
       ],
 
       'import/first': 'error',
+      'unused-imports/no-unused-imports': 'warn',
     },
   },
 ]
