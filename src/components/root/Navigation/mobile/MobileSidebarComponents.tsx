@@ -2,21 +2,19 @@
 
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
-import { motion } from 'motion/react'
+import { sideBarConfiguration } from '@/src/components/root/Navigation/SideBarConfiguration'
 import { Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { motion } from 'motion/react'
 import { twMerge as tw } from 'tailwind-merge'
 
 export function MobileMenubar() {
-  const {
-    config: { title },
-  } = useSidebarStore((state) => state)
   return (
     <div
       id='mobile-sidebar-menubar'
       className='sticky inset-x-0 top-0 z-50 flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
       <OpenButton />
-      <span className='tracking-widest'>{title}</span>
+      <span className='tracking-widest'>{sideBarConfiguration.title}</span>
       <ThemeSwitcher />
     </div>
   )

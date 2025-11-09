@@ -1,25 +1,24 @@
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
-import useCacheStoreUpdate from '@/src/hooks/Shared/useCacheStoreUpdate'
-import { CreateStoreType } from '@/types/Shared/CreateStoreType'
+import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 import { isEqual } from 'lodash'
 import { v4 as uuid } from 'uuid'
-import { createStore } from 'zustand/vanilla'
 
-export type CreateCheckState = KnowledgeCheck & {
+export type CheckState = KnowledgeCheck & {
   unsavedChanges?: boolean
 }
 
-export type CreateCheckActions = {
+export type CheckActions = {
   setName: (name: string) => void
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
 }
 
-export type CreateCheckStore = CreateCheckState & CreateCheckActions
+export type CheckStore = CheckState & CheckActions
 
-const defaultInitState: CreateCheckState = {
+const defaultInitState: CheckState = {
   id: uuid(),
   name: '',
   questions: [],
@@ -40,54 +39,55 @@ const defaultInitState: CreateCheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckCreateStore: CreateStoreType<CreateCheckState> = (initialState = defaultInitState, options) => {
-  return createStore<CreateCheckStore>()((set) => {
-    const { modify: modifyState } = useCacheStoreUpdate(set, { options, debounceTime: 750, cache_key: 'create-check-store' })
+export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initialState = defaultInitState, options }) =>
+  createZustandStore({
+    caching: true,
+    options,
+    initializer: (set) => {
+      const removeQuestion: CheckActions['removeQuestion'] = (questionId) =>
+        set((prev) => {
+          const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
 
-    const removeQuestion: CreateCheckActions['removeQuestion'] = (questionId) =>
-      modifyState((prev) => {
-        const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
+          const category = toRemoveQuestion?.category
+          const isCategoryUsed = prev.questions.filter((question) => question.id !== questionId).some((question) => question.category === category)
 
-        const category = toRemoveQuestion?.category
-        const isCategoryUsed = prev.questions.filter((question) => question.id !== questionId).some((question) => question.category === category)
-
-        return {
-          questions: prev.questions.filter((question) => question.id !== questionId),
-          questionCategories: isCategoryUsed ? prev.questionCategories : prev.questionCategories.filter((cat) => cat.name !== category),
-          unsavedChanges: true,
-        }
-      })
-
-    return {
-      ...initialState,
-      setName: (name) => modifyState((prev) => ({ ...prev, name, unsavedChanges: true })),
-      setDescription: (description) => modifyState((prev) => ({ ...prev, description, unsavedChanges: true })),
-      addQuestion: (question: Question) =>
-        modifyState((prev) => {
-          const { questionCategories } = prev
-
-          // Check if question already exists and has changed
-          const exists = prev.questions.find((q) => q.id === question.id)
-          if (exists && !isEqual(exists, question)) {
-            console.log('Removing existing question to update it...')
-            removeQuestion(question.id)
-          } else if (exists && isEqual(exists, question)) {
-            console.log('Question already exists and is unchanged, skipping...')
-            return prev // No changes needed
+          return {
+            questions: prev.questions.filter((question) => question.id !== questionId),
+            questionCategories: isCategoryUsed ? prev.questionCategories : prev.questionCategories.filter((cat) => cat.name !== category),
+            unsavedChanges: true,
           }
+        })
 
-          // Add new category if not part of check-categories
-          if (!questionCategories.find((category) => category.name === question.category)) {
-            questionCategories.push({
-              id: uuid(),
-              name: question.category,
-              skipOnMissingPrequisite: false,
-            })
-          }
+      return {
+        ...initialState,
+        setName: (name) => set((prev) => ({ ...prev, name, unsavedChanges: true })),
+        setDescription: (description) => set((prev) => ({ ...prev, description, unsavedChanges: true })),
+        addQuestion: (question: Question) =>
+          set((prev) => {
+            const { questionCategories } = prev
 
-          return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories, unsavedChanges: true }
-        }),
-      removeQuestion,
-    }
+            // Check if question already exists and has changed
+            const exists = prev.questions.find((q) => q.id === question.id)
+            if (exists && !isEqual(exists, question)) {
+              console.log('Removing existing question to update it...')
+              removeQuestion(question.id)
+            } else if (exists && isEqual(exists, question)) {
+              console.log('Question already exists and is unchanged, skipping...')
+              return prev // No changes needed
+            }
+
+            // Add new category if not part of check-categories
+            if (!questionCategories.find((category) => category.name === question.category)) {
+              questionCategories.push({
+                id: uuid(),
+                name: question.category,
+                skipOnMissingPrequisite: false,
+              })
+            }
+
+            return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories, unsavedChanges: true }
+          }),
+        removeQuestion,
+      }
+    },
   })
-}

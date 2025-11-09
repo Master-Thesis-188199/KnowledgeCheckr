@@ -1,16 +1,9 @@
-import QuestionsSection from '@/app/checks/create/QuestionsSection'
-import { CreateCheckStoreProvider } from '@/components/check/create/CreateCheckProvider'
-import Card from '@/components/Shared/Card'
-import PageHeading from '@/components/Shared/PageHeading'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import GeneralSection from '@/src/app/checks/create/GeneralSection'
-import { SaveCreateCheckButton } from '@/src/app/checks/create/SaveCheckButton'
-import SettingsSection from '@/src/app/checks/create/SettingsSection'
-import { Button } from '@/src/components/shadcn/button'
-import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { getUUID } from '@/src/lib/Shared/getUUID'
 import { lorem } from 'next/dist/client/components/react-dev-overlay/ui/utils/lorem'
 import { redirect } from 'next/navigation'
+import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 
 export default async function CreateCheckPage() {
   await requireAuthentication()
@@ -43,10 +36,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of France?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },
@@ -56,10 +49,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of Greece?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },
@@ -69,10 +62,10 @@ export default async function CreateCheckPage() {
           question: 'What is the capital of Australia?',
           category: 'Geography',
           answers: [
-            { answer: 'Paris', correct: true },
-            { answer: 'Berlin', correct: false },
-            { answer: 'Madrid', correct: false },
-            { answer: 'Rome', correct: true },
+            { id: getUUID(), answer: 'Paris', correct: true },
+            { id: getUUID(), answer: 'Berlin', correct: false },
+            { id: getUUID(), answer: 'Madrid', correct: false },
+            { id: getUUID(), answer: 'Rome', correct: true },
           ],
           points: 5,
         },
@@ -82,22 +75,5 @@ export default async function CreateCheckPage() {
     redirect('/checks')
   }
 
-  return (
-    <CreateCheckStoreProvider>
-      <PageHeading title='Create KnowledgeCheck' />
-      <div className='grid grid-cols-1 gap-8 lg:grid-cols-[repeat(auto-fill,minmax(680px,1fr))]'>
-        <GeneralSection />
-        <QuestionsSection />
-        <SettingsSection />
-        <Card className='h-60 break-inside-avoid' disableHoverStyles children={undefined} />
-      </div>
-      <form className='mt-4 flex justify-center gap-4'>
-        <SaveCreateCheckButton />
-        <Button variant='primary' className='' formAction={createDummyCheckAction}>
-          Create Dummy Check
-        </Button>
-      </form>
-      <div />
-    </CreateCheckStoreProvider>
-  )
+  return <ConfigureKnowledgeCheck mode='create' />
 }

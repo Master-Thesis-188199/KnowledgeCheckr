@@ -1,13 +1,14 @@
 'use server'
 
-import { DBConnection } from '@/database/Database'
+import { eq } from 'drizzle-orm'
+import { DrizzleDB } from '@/database/Database'
+import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
-import { Any } from '@/types'
 
-export default async function insertKnowledgeCheckQuestions(db: DBConnection, questions: Question[], check_id: KnowledgeCheck['id']) {
+export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Question[], check_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
   for (const question of questions) {
@@ -15,18 +16,22 @@ export default async function insertKnowledgeCheckQuestions(db: DBConnection, qu
   }
 }
 
-async function insertQuestion(db: DBConnection, question: Question, check_id: KnowledgeCheck['id']) {
+async function insertQuestion(db: DrizzleDB, question: Question, check_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
   const category_id = await findInsertCategory(db, question.category)
-  const { id } = await db.insert('INSERT INTO Question (id, type, question, points, category_id, knowledgecheck_id) Values (?, ?, ?, ?, ?, ?)', [
-    question.id,
-    question.type,
-    question.question,
-    question.points,
-    category_id,
-    check_id,
-  ])
+
+  const [{ id }] = await db
+    .insert(db_question)
+    .values({
+      id: question.id,
+      type: question.type,
+      question: question.question,
+      points: question.points,
+      categoryId: category_id,
+      knowledgecheckId: check_id,
+    })
+    .$returningId()
 
   switch (question.type) {
     case 'multiple-choice':
@@ -44,37 +49,56 @@ async function insertQuestion(db: DBConnection, question: Question, check_id: Kn
   }
 }
 
-async function findInsertCategory(db: DBConnection, category: Question['category']) {
+async function findInsertCategory(db: DrizzleDB, category_name: Question['category']) {
   await requireAuthentication()
 
-  const [categories] = await db.execute<Any[]>('SELECT id, name FROM Category WHERE name = ?', [category])
+  const categories = await db.select({ id: db_category.id }).from(db_category).where(eq(db_category.name, category_name))
 
   if (categories.length === 0) {
-    const { id } = await db.insert('INSERT INTO Category (id, name, prequisite_category_id) Values (?, ?, ?)', [getUUID(), category, null])
+    const [{ id }] = await db
+      .insert(db_category)
+      .values({
+        name: category_name,
+      })
+      .$returningId()
     return id
   }
 
-  return categories[0].id
+  return categories.at(0)!.id
 }
 
-async function insertChoiceAnswers(db: DBConnection, question_id: Question['id'], answers: ChoiceQuestion['answers']) {
+async function insertChoiceAnswers(db: DrizzleDB, question_id: Question['id'], answers: ChoiceQuestion['answers']) {
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.correct ? 1 : 0])
+    await db.insert(db_answer).values({
+      id: answer.id,
+      questionId: question_id,
+      answer: answer.answer,
+      correct: answer.correct ? 1 : 0,
+    })
   }
 }
 
-async function insertOpenAnswer(db: DBConnection, question_id: Question['id'], answer: string) {
+async function insertOpenAnswer(db: DrizzleDB, question_id: Question['id'], answer: string) {
   await requireAuthentication()
 
-  await db.insert('INSERT INTO Answer (id, answer, Question_id, correct) Values (?, ?, ?, ?)', [getUUID(), answer, question_id, null])
+  await db.insert(db_answer).values({
+    id: getUUID(),
+    answer: answer,
+    questionId: question_id,
+  })
 }
 
-async function insertDragDropAnswers(db: DBConnection, question_id: Question['id'], answers: DragDropQuestion['answers']) {
+async function insertDragDropAnswers(db: DrizzleDB, question_id: Question['id'], answers: DragDropQuestion['answers']) {
   await requireAuthentication()
 
   for (const answer of answers) {
-    await db.insert('INSERT INTO Answer (id, answer, Question_id, position) Values (?, ?, ?, ?)', [getUUID(), answer.answer, question_id, answer.position])
+    await db.insert(db_answer).values({
+      id: answer.id,
+      answer: answer.answer,
+      questionId: question_id,
+      position: answer.position,
+    })
   }
 }

@@ -1,4 +1,8 @@
 /// <reference types="cypress" />
+
+import { MultipleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { Any } from '@/types'
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -93,4 +97,83 @@ Cypress.Commands.add('removeDBUser', (email: string, username: string) => {
 
 Cypress.Commands.add('loginTestUser', () => {
   cy.login('test@email.com', 'testpassword')
+})
+
+Cypress.Commands.add('dragDrop', (dragLocator, dropLocator) => {
+  dragLocator.realHover().realMouseDown({ button: 'left', position: 'center' }).realMouseMove(0, 10, { position: 'center' }).wait(250)
+  dropLocator.realMouseMove(0, -10, { position: 'center' }).realMouseUp()
+})
+
+Cypress.Commands.add('waitServerAction', (alias, callback) => {
+  cy.wait(alias).then((interception) => {
+    const actionResponse = interception.response
+    const actionResponseBody = actionResponse?.body.toString().split('1:').at(1)
+    const body = JSON.parse(actionResponseBody)
+
+    callback(body, actionResponse as Any)
+  })
+})
+
+Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
+  cy.url().should('include', '/practice')
+  options.type = question.type
+  const { correctness } = options
+
+  if (question.type === 'single-choice') {
+    let selection: SingleChoice['answers'][number]['id'] = question.answers.filter((a) => a.correct).at(0)!.id
+
+    if (options.type === 'single-choice' && options.selection) {
+      selection = options.selection
+    } else if (correctness === 'incorrect') {
+      selection = question.answers.filter((a) => !a.correct).at(0)!.id
+    }
+
+    cy.get(`#answer-options input[id="${selection}"]`).parent().click()
+
+    return
+  }
+
+  if (question.type === 'multiple-choice') {
+    let selection: MultipleChoice['answers'][number]['id'][] = question.answers.filter((a) => a.correct).map((a) => a.id)
+
+    if (options.type === 'multiple-choice' && options.selection) selection = options.selection
+    else if (correctness === 'incorrect') selection = question.answers.filter((a) => !a.correct).map((a) => a.id)
+    else if (correctness === 'all') selection = question.answers.map((a) => a.id)
+
+    for (const id of selection) {
+      cy.get(`#answer-options input[id="${id}"]`).parent().click()
+    }
+
+    return
+  }
+
+  if (question.type === 'drag-drop') {
+    const sortedAnswers = question.answers.toSorted((a, b) => a.position - b.position)
+    let selection = sortedAnswers.map((a) => a.id)
+
+    if (options.type === 'drag-drop' && options.selection) selection = options.selection
+    else if (correctness === 'partly-correct') selection = [selection[1], selection[0], ...selection.slice(2)]
+    else if (correctness === 'incorrect') selection.reverse()
+
+    for (const id of selection) {
+      cy.dragDrop(
+        cy.get(`div[data-swapy-item='${id}']`).should('exist').should('be.visible'),
+        cy
+          .get('#answer-options')
+          .children()
+          .children()
+          .eq(selection.findIndex((answer_id) => answer_id === id)),
+      )
+      cy.wait(500)
+    }
+  }
+
+  if (question.type === 'open-question') {
+    let input = question.expectation || 'Correct input is missing'
+
+    if (options.type === 'open-question' && options.input) input = options.input
+    else if (correctness === 'incorrect') input = 'Wrong Answer'
+
+    cy.get('#answer-options').children().eq(0).type(input)
+  }
 })

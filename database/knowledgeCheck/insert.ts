@@ -1,56 +1,49 @@
 'use server'
 
+import { User } from 'better-auth'
+import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
+import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
-import { User } from 'better-auth'
 
-export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck, transaction = true) {
+export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
   await requireAuthentication()
 
   const db = await getDatabase()
+  await db.transaction(async (transaction) => {
+    try {
+      const [{ id }] = await transaction
+        .insert(db_knowledgeCheck)
+        .values({
+          id: check.id,
+          name: check.name,
+          description: check.description,
+          difficulty: check.difficulty,
+          share_key: check.share_key,
+          owner_id: user_id,
+          openDate: formatDatetime(check.openDate),
+          closeDate: check.closeDate ? formatDatetime(check.closeDate) : null,
+        })
+        .$returningId()
 
-  if (transaction) await db.beginTransaction()
+      if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
-  try {
-    // todo: update open-date value to be date-object or enforce date-string-format
-    const { id: check_id } = await db.insert(
-      'INSERT INTO KnowledgeCheck (id, name, description, owner_id, public_token, openDate, closeDate, difficulty, createdAt, updatedAt, expiresAt) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [
-        check.id,
-        check.name,
-        check.description || null,
-        user_id,
-        check.share_key || null,
-        formatDatetime(check.openDate || new Date(Date.now())),
-        formatDatetime(check.closeDate || new Date(Date.now())),
-        check.difficulty,
-        new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
-        new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
-        formatDatetime(check.closeDate || new Date(Date.now())),
-      ],
-    )
-
-    await insertKnowledgeCheckSettings(db, null, check_id)
-    await insertKnowledgeCheckQuestions(db, check.questions, check_id)
-  } catch (err) {
-    console.error('[Rollback]: Error inserting knowledge check:', err)
-    await db.rollback()
-  }
-
-  if (transaction) await db.commit()
+      await insertKnowledgeCheckSettings(transaction, null, id)
+      await insertKnowledgeCheckQuestions(transaction, check.questions, id)
+    } catch (err) {
+      console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
+      transaction.rollback()
+    }
+  })
 }
 
 export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id'], token: string) {
   await requireAuthentication()
   const db = await getDatabase()
 
-  const duplicateTokens = await db.exec<KnowledgeCheck['id'][]>(`SELECT id FROM KnowledgeCheck WHERE public_token = ?`, [token])
-
-  if (duplicateTokens.length > 0) throw new Error('Storing KnowledgeCheck share token failed because this token is already used!')
-
-  await db.exec('UPDATE KnowledgeCheck SET public_token = ? WHERE id = ? ', [token, check_id])
+  await db.update(db_knowledgeCheck).set({ share_key: token }).where(eq(db_knowledgeCheck.id, check_id))
 }

@@ -10,4 +10,4 @@ export type CreateStoreType<State extends object, Store extends object = Any> = 
 /**
  * Defines what options should be available when creating a store.
  */
-export type CreateStoreOptions = { disableCache?: boolean }
+export type CreateStoreOptions = { disableCache?: boolean; cacheKey?: string }

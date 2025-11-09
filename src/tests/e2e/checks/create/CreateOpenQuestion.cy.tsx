@@ -5,6 +5,9 @@ describe('Check: Open Question -', () => {
     cy.loginTestUser()
     cy.visit('/checks/create')
 
+    //* Switch to questions-stage
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()
+
     cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
   })
@@ -30,7 +33,7 @@ describe('Check: Open Question -', () => {
     cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
   })
 
-  it.only('Verify that a open question can be added when the optional "expectation" inputs is missing', () => {
+  it('Verify that a open question can be added when the optional "expectation" inputs is missing', () => {
     const { question, points, type }: Partial<OpenQuestion> = {
       question: 'What are the four most populous cities in the world?',
       points: 5,

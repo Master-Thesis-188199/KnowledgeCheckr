@@ -1,9 +1,13 @@
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 
 describe('Check: Create Choice Question -', () => {
   beforeEach(() => {
     cy.loginTestUser()
     cy.visit('/checks/create')
+
+    //* Switch to questions-stage
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()
 
     cy.get(".question-section * [data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
     cy.get(".question-section * [data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
@@ -15,10 +19,10 @@ describe('Check: Create Choice Question -', () => {
       points: 5,
       type: 'single-choice',
       answers: [
-        { answer: 'Berlin', correct: false },
-        { answer: 'Paris', correct: true },
-        { answer: 'Madrid', correct: false },
-        { answer: 'Rome', correct: false },
+        { id: getUUID(), answer: 'Berlin', correct: false },
+        { id: getUUID(), answer: 'Paris', correct: true },
+        { id: getUUID(), answer: 'Madrid', correct: false },
+        { id: getUUID(), answer: 'Rome', correct: false },
       ],
     }
 
@@ -55,10 +59,10 @@ describe('Check: Create Choice Question -', () => {
       points: -5,
       type: 'multiple-choice',
       answers: [
-        { answer: 'Duplicate', correct: false },
-        { answer: 'Duplicate', correct: false },
-        { answer: 'Madrid', correct: false },
-        { answer: 'Rome', correct: false },
+        { id: getUUID(), answer: 'Duplicate', correct: false },
+        { id: getUUID(), answer: 'Duplicate', correct: false },
+        { id: getUUID(), answer: 'Madrid', correct: false },
+        { id: getUUID(), answer: 'Rome', correct: false },
       ],
     }
 

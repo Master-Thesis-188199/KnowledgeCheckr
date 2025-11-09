@@ -1,0 +1,96 @@
+name: 'Compute DB image tags'
+description: 'Compute Docker image tags for the database image based on branch and semver tag on HEAD'
+
+inputs:
+  branch:
+    description: 'Branch name to evaluate (e.g., main, canary, feature/foo)'
+    required: true
+  override-tag:
+    description: 'Optional: override the used tag (e.g., v1.2.3 or v1.2.3-canary.4) for testing-purposes'
+    required: false
+    default: ''
+
+outputs:
+  image_name:
+    description: 'Resolved image repository (ghcr.io/owner/repo-database)'
+    value: ${{ steps.repo.outputs.image_name }}
+  tags:
+    description: 'Newline-separated list of tags to pass to docker buildx (multiple -t)'
+    value: ${{ steps.out.outputs.tags }}
+  warning:
+    description: 'Potential warning if tags were not found'
+    value: ${{ steps.out.outputs.warning }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Compute image repo (lowercased if not provided)
+      id: repo
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        REPO_LOWER="$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
+        echo "image_name=ghcr.io/${REPO_LOWER}-database" >> "$GITHUB_OUTPUT"
+
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+
+    - name: Compute tags (branch-aware)
+      id: out
+      shell: bash
+      run: |
+        set -euo pipefail
+        IMAGE="${{ steps.repo.outputs.image_name }}"
+        BRANCH="${{ inputs.branch }}"
+        SHA_SHORT="$(git rev-parse --short HEAD)"
+
+        HEAD_TAG="${{ steps.previoustag.outputs.tag }}"
+        if [ -n "${{ inputs.override-tag }}" ]; then
+          HEAD_TAG="${{ inputs.override-tag }}"
+        fi
+
+        add_tag() { TAGS+=("${IMAGE}:$1"); }
+
+        declare -a TAGS=()
+        WARNING=""
+
+        case "$BRANCH" in
+          main)
+            if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              add_tag "${HEAD_TAG}"                # vX.Y.Z
+              add_tag "stable" 
+              add_tag "latest" 
+            else
+              add_tag "${BRANCH}-${SHA_SHORT}"
+              add_tag "stable" 
+              add_tag "latest" 
+              WARNING="Failed to retrieve latest-tag on main; fell back to SHA ${SHA_SHORT}"
+            fi
+            ;;
+          canary)
+            if [[ "$HEAD_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-canary\.[0-9]+$ ]]; then
+              add_tag "${HEAD_TAG}"                # vX.Y.Z-canary.N
+              add_tag "canary" 
+              add_tag "latest" 
+            else
+              add_tag "${BRANCH}-${SHA_SHORT}"
+              add_tag "canary"
+              add_tag "latest"
+              WARNING="Failed to retrieve latest-tag on canary; fell back to SHA ${SHA_SHORT}"
+            fi
+            ;;
+          *)
+            # Feature branches: SHA only
+            add_tag "${BRANCH}-${SHA_SHORT}"
+            ;;
+        esac
+
+        {
+          echo "tags<<EOF"
+          printf '%s\n' "${TAGS[@]}"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
+
+        echo "warning=${WARNING}" >> "$GITHUB_OUTPUT"
