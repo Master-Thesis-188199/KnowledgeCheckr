@@ -65,46 +65,34 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
   it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered correctly', () => {
     cy.viewport(1280, 900)
-
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [
-        {
-          ...instantiateSingleChoice(),
-          question: 'What does the acronym RGB stand for?',
-          answers: [
-            { id: getUUID(), answer: 'Red Green Blue', correct: true },
-            { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
-            { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
-            { id: getUUID(), answer: 'Rose Green Baige', correct: false },
-          ],
-        },
+    const question = {
+      ...instantiateSingleChoice(),
+      question: 'What does the acronym RGB stand for?',
+      answers: [
+        { id: getUUID(), answer: 'Red Green Blue', correct: true },
+        { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
+        { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
+        { id: getUUID(), answer: 'Rose Green Baige', correct: false },
       ],
     }
-    const question = check.questions.at(0)! as SingleChoice
+
+    const {
+      share_key,
+      check: { questions },
+    } = insertKnowledgeCheck(question)
+
     const correctAnswers = question.answers.filter((a) => a.correct)
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-    cy.get('#answer-options').children().should('have.length', question.answers.length)
+    verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
     cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
-    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
-      expect(response?.statusCode).to.eq(200)
-      expect(body).to.have.property('success')
-      expect(body?.success).to.equal(true)
-
-      const feedback = body?.feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
-
+    validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution).to.equal(correctAnswers.map((a) => a.id).join(','))
     })
@@ -131,34 +119,24 @@ describe('RenderPracticeQuestion Test Suite', () => {
       ],
     }
 
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [question],
-    }
+    const {
+      share_key,
+      check: { questions },
+    } = insertKnowledgeCheck(question)
+
     const incorrectAnswerId = question.answers.filter((a) => !a.correct).at(0)!.id
     const correctAnswerId = question.answers.filter((a) => a.correct).at(0)!.id
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-    cy.get('#answer-options').children().should('have.length', question.answers.length)
+    verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
     cy.simulatePracticeSelection(question, { correctness: 'incorrect', selection: incorrectAnswerId })
 
-    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
-      expect(response?.statusCode).to.eq(200)
-      expect(body).to.have.property('success')
-      expect(body?.success).to.equal(true)
-
-      const feedback = body?.feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
-
+    validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution).to.equal(correctAnswerId)
     })
@@ -172,46 +150,34 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
   it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered correctly', () => {
     cy.viewport(1280, 900)
-
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [
-        {
-          ...instantiateMultipleChoice(),
-          question: 'What statements are correct?',
-          answers: [
-            { id: getUUID(), answer: 'The earth is flat', correct: false },
-            { id: getUUID(), answer: 'The earth is round', correct: true },
-            { id: getUUID(), answer: 'Birds can fly', correct: true },
-            { id: getUUID(), answer: 'Birds can not fly', correct: false },
-          ],
-        },
+    const question = {
+      ...instantiateMultipleChoice(),
+      question: 'What statements are correct?',
+      answers: [
+        { id: getUUID(), answer: 'The earth is flat', correct: false },
+        { id: getUUID(), answer: 'The earth is round', correct: true },
+        { id: getUUID(), answer: 'Birds can fly', correct: true },
+        { id: getUUID(), answer: 'Birds can not fly', correct: false },
       ],
     }
-    const question = check.questions.at(0)! as MultipleChoice
+
+    const {
+      share_key,
+      check: { questions },
+    } = insertKnowledgeCheck(question)
+
     const correctAnswers = question.answers.filter((a) => a.correct)
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-    cy.get('#answer-options').children().should('have.length', question.answers.length)
+    verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
     cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
-    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
-      expect(response?.statusCode).to.eq(200)
-      expect(body).to.have.property('success')
-      expect(body?.success).to.equal(true)
-
-      const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
-
+    validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution.sort().join(',')).to.equal(
         correctAnswers
@@ -243,32 +209,21 @@ describe('RenderPracticeQuestion Test Suite', () => {
       ],
     }
 
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [question],
-    }
+    const {
+      share_key,
+      check: { questions },
+    } = insertKnowledgeCheck(question)
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-    cy.get(`#answer-options * div[data-swapy-item]`).should('have.length', question.answers.length)
+    verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
     cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
-    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
-      expect(response?.statusCode).to.eq(200)
-      expect(body).to.have.property('success')
-      expect(body?.success).to.equal(true)
-
-      const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
-
+    validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
       expect(feedback?.solution.join(',')).to.equal(
         question.answers
@@ -294,32 +249,21 @@ describe('RenderPracticeQuestion Test Suite', () => {
       expectation: 'correct',
     }
 
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [question],
-    }
+    const {
+      share_key,
+      check: { questions },
+    } = insertKnowledgeCheck(question)
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
-    cy.get(`#answer-options`).children().should('have.length', 1)
+    verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
     cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
-    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
-    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
-      expect(response?.statusCode).to.eq(200)
-      expect(body).to.have.property('success')
-      expect(body?.success).to.equal(true)
-
-      const feedback = body?.feedback as Extract<PracticeFeedback, { type: typeof question.type }> | undefined
-
+    validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
     })
 
@@ -364,16 +308,11 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
           const question = check.questions.find((q) => q.question === questionText)!
 
-          if (question.type === 'open-question') cy.get('#answer-options').children().should('have.length', 1)
-          else if (question.type === 'drag-drop') cy.get('#answer-options').children().children().should('have.length', question.answers.length)
-          else cy.get('#answer-options').children().should('have.length', question.answers.length)
+          verifyQuestionIsDisplayedCorrectly(question, check.questions.length)
 
           if (question.type === 'open-question') {
             question.expectation = 'correct' //? causes the feedback-evaluation to set the degreeOfCorrectness to 1 until an LLM is used
           }
-
-          cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
-          cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
 
           cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
