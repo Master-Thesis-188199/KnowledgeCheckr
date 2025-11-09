@@ -14,7 +14,7 @@ import {
   SingleChoice,
 } from '@/src/schemas/QuestionSchema'
 
-describe('RenderPracticeQuestion Test Suite', () => {
+describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
   const insertKnowledgeCheck = (question: Question) => {
     const check = {
       ...instantiateKnowledgeCheck(),
@@ -64,7 +64,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.loginTestUser()
   })
   it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered correctly', () => {
-    cy.viewport(1280, 900)
     const question = {
       ...instantiateSingleChoice(),
       question: 'What does the acronym RGB stand for?',
@@ -103,8 +102,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
 
   it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered incorrectly', () => {
-    cy.viewport(1280, 900)
-
     const question: SingleChoice = {
       ...instantiateSingleChoice(),
       question: 'What does the acronym RGB stand for?',
@@ -146,7 +143,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
 
   it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered correctly', () => {
-    cy.viewport(1280, 900)
     const question = {
       ...instantiateMultipleChoice(),
       question: 'What statements are correct?',
@@ -188,8 +184,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
 
   it('Verify that users can answer and submit drag-drop question, and that feedback is displayed correctly when answered correctly', () => {
-    cy.viewport(1280, 900)
-
     const question: DragDropQuestion = {
       ...instantiateDragDropQuestion(),
       question: 'Please arrange these statements in their correct order',
@@ -230,8 +224,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
 
   it('Verify that users can answer and submit open-question question, and that feedback is displayed correctly when answered correctly', () => {
-    cy.viewport(1280, 900)
-
     const question: OpenQuestion = {
       ...instantiateOpenQuestion(),
       question: 'What does RGB stand for?',
@@ -261,8 +253,6 @@ describe('RenderPracticeQuestion Test Suite', () => {
   })
 
   it('Verify that users can answer & submit correct answers to questions and that their submission is evaluated & displayed correctly', () => {
-    cy.viewport(1280, 900)
-
     const check = {
       ...instantiateKnowledgeCheck(),
       share_key: generateToken(16),
