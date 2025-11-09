@@ -71,6 +71,59 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('.result-legend').should('exist').and('be.visible')
   })
 
+  it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered incorrectly', () => {
+    cy.viewport(1280, 900)
+
+    const question: SingleChoice = {
+      ...instantiateSingleChoice(),
+      question: 'What does the acronym RGB stand for?',
+      answers: [
+        { id: getUUID(), answer: 'Red Green Blue', correct: true },
+        { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
+        { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
+        { id: getUUID(), answer: 'Rose Green Baige', correct: false },
+      ],
+    }
+
+    const check = {
+      ...instantiateKnowledgeCheck(),
+      share_key: generateToken(16),
+      questions: [question],
+    }
+    const incorrectAnswerId = question.answers.filter((a) => !a.correct).at(0)!.id
+    const correctAnswerId = question.answers.filter((a) => a.correct).at(0)!.id
+
+    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+    cy.visit(`/checks/${check.share_key}/practice`)
+
+    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
+    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
+    cy.get('#answer-options').children().should('have.length', question.answers.length)
+
+    cy.simulatePracticeSelection(question, { correctness: 'incorrect', selection: incorrectAnswerId })
+
+    cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
+    cy.get('button').contains('Check Answer').click()
+
+    cy.waitServerAction<PracticeFeedbackServerState>('@submit-request', (body, response) => {
+      expect(response?.statusCode).to.eq(200)
+      expect(body).to.have.property('success')
+      expect(body?.success).to.equal(true)
+
+      const feedback = body?.feedback as Extract<PracticeFeedback, { type: 'single-choice' }> | undefined
+
+      expect(feedback?.type).to.equal(question.type)
+      expect(feedback?.solution).to.equal(correctAnswerId)
+    })
+
+    cy.get('button').contains('Continue').should('exist').and('be.visible')
+    cy.get(`#answer-options * input[id="${correctAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'missing').should('be.disabled')
+    cy.get(`#answer-options * input[id="${incorrectAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'incorrect')
+
+    cy.get('.result-legend').should('exist').and('be.visible')
+  })
+
   it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered correctly', () => {
     cy.viewport(1280, 900)
 
