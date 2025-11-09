@@ -5,6 +5,16 @@ declare namespace Cypress {
   type OpenQuestion = import('../../src/schemas/QuestionSchema').OpenQuestion
   type DragDropQuestion = import('../../src/schemas/QuestionSchema').DragDropQuestion
   type Question = import('../../src/schemas/QuestionSchema').Question
+  type QuestionOptions<Q> = Q extends SingleChoice
+    ? { selection: SingleChoice['answers'][number]['id']; type: Q['type'] }
+    : Q extends MultipleChoice
+      ? { selection: MultipleChoice['answers'][number]['id'][]; type: Q['type'] }
+      : Q extends OpenQuestion
+        ? { input: string; type: Q['type'] }
+        : Q extends DragDropQuestion
+          ? { selection: DragDropQuestion['answers'][number]['id'][]; type: Q['type'] }
+          : never
+
   type CorrectnessFor<Q> = Q extends SingleChoice
     ? 'correct' | 'incorrect'
     : Q extends MultipleChoice
@@ -28,6 +38,6 @@ declare namespace Cypress {
 
     //? response type assertion needed because Interception<any, any> translates to any when used within tests.
     waitServerAction<Response>(alias: string, callback: (body?: Response, response: { statusCode?: number }) => void): void
-    simulatePracticeSelection<Q extends Question>(question: Q, correctness: CorrectnessFor<Q>): Chainable<void>
+    simulatePracticeSelection<Q extends Question>(question: Q, options: Partial<{ correctness: CorrectnessFor<Q> } & QuestionOptions<Q>> = {}): Chainable<void>
   }
 }

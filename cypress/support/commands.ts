@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 
+import { MultipleChoice, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 // ***********************************************
@@ -113,51 +114,64 @@ Cypress.Commands.add('waitServerAction', (alias, callback) => {
   })
 })
 
-Cypress.Commands.add('simulatePracticeSelection', (question, correctness) => {
+Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
   cy.url().should('include', '/practice')
+  const { correctness } = options
 
   if (question.type === 'single-choice') {
-    const answers = question.answers
-    let selection = answers.filter((a) => a.correct).at(0)!
+    let selection: SingleChoice['answers'][number]['id'] = question.answers.filter((a) => a.correct).at(0)!.id
 
-    if (correctness === 'incorrect') selection = answers.filter((a) => !a.correct).at(0)!
+    if (options.type === 'single-choice' && options.selection) {
+      selection = options.selection
+    } else if (correctness === 'incorrect') {
+      selection = question.answers.filter((a) => !a.correct).at(0)!.id
+    }
 
-    cy.get('#answer-options').contains(selection.answer).click()
+    cy.get(`#answer-options input[id="${selection}"]`).parent().click()
 
     return
   }
 
   if (question.type === 'multiple-choice') {
-    const answers = question.answers
-    let selection = answers.filter((a) => a.correct)
+    let selection: MultipleChoice['answers'][number]['id'][] = question.answers.filter((a) => a.correct).map((a) => a.id)
 
-    if (correctness === 'incorrect') selection = selection.concat(answers.filter((a) => !a.correct))
-    if (correctness === 'all') selection = answers.filter((a) => a.id !== selection.at(0)?.id)
+    if (options.type === 'multiple-choice' && options.selection) selection = options.selection
+    else if (correctness === 'incorrect') selection = question.answers.filter((a) => !a.correct).map((a) => a.id)
+    else if (correctness === 'all') selection = question.answers.map((a) => a.id)
 
-    for (const ans of selection) {
-      cy.get('#answer-options').contains(ans.answer).click()
+    for (const id of selection) {
+      cy.get(`#answer-options input[id="${id}"]`).parent().click()
     }
 
     return
   }
 
   if (question.type === 'drag-drop') {
-    const answers = question.answers
-    let selection: typeof answers = answers.toSorted((a, b) => a.position - b.position)
+    const sortedAnswers = question.answers.toSorted((a, b) => a.position - b.position)
+    let selection = sortedAnswers.map((a) => a.id)
 
-    // 'correct' | 'partly-correct' | 'completly-incorrect'
-    if (correctness === 'partly-correct') selection = [selection[1], selection[0], ...selection.slice(2)]
-    if (correctness === 'incorrect') selection.reverse()
+    if (options.type === 'drag-drop' && options.selection) selection = options.selection
+    else if (correctness === 'partly-correct') selection = [selection[1], selection[0], ...selection.slice(2)]
+    else if (correctness === 'incorrect') selection.reverse()
 
-    for (const a of selection) {
-      cy.dragDrop(cy.get(`div[data-swapy-item='${a.id}']`).contains(a.answer).should('exist').should('be.visible'), cy.get('#answer-options').children().children().eq(a.position))
+    for (const id of selection) {
+      cy.dragDrop(
+        cy.get(`div[data-swapy-item='${id}']`).should('exist').should('be.visible'),
+        cy
+          .get('#answer-options')
+          .children()
+          .children()
+          .eq(sortedAnswers.find((a) => a.id === id)!.position),
+      )
       cy.wait(500)
     }
   }
 
   if (question.type === 'open-question') {
     let input = question.expectation || 'Correct input is missing'
-    if (correctness === 'incorrect') input = 'Wrong Answer'
+
+    if (options.type === 'open-question' && options.input) input = options.input
+    else if (correctness === 'incorrect') input = 'Wrong Answer'
 
     cy.get('#answer-options').children().eq(0).type(input)
   }

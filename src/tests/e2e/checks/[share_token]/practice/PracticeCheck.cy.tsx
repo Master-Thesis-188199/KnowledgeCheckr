@@ -47,7 +47,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get('#answer-options').children().should('have.length', question.answers.length)
 
-    cy.simulatePracticeSelection(question, 'correct')
+    cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
@@ -101,7 +101,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get('#answer-options').children().should('have.length', question.answers.length)
 
-    cy.simulatePracticeSelection(question, 'correct')
+    cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
@@ -158,7 +158,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get(`#answer-options * div[data-swapy-item]`).should('have.length', question.answers.length)
 
-    cy.simulatePracticeSelection(question, 'correct')
+    cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
@@ -209,7 +209,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
     cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
     cy.get(`#answer-options`).children().should('have.length', 1)
 
-    cy.simulatePracticeSelection(question, 'correct')
+    cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
     cy.intercept('POST', `/checks/${check.share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
@@ -276,7 +276,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
           cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
           cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
 
-          cy.simulatePracticeSelection(question, 'correct')
+          cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
           cy.intercept('POST', `/checks/${check.share_key}/practice`).as(`submit-request-${question.type}`)
           cy.log(`Checking answer for question-type: ${question.type}`)
