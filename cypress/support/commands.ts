@@ -162,7 +162,7 @@ Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
           .get('#answer-options')
           .children()
           .children()
-          .eq(sortedAnswers.find((a) => a.id === id)!.position),
+          .eq(selection.findIndex((answer_id) => answer_id === id)),
       )
       cy.wait(500)
     }
