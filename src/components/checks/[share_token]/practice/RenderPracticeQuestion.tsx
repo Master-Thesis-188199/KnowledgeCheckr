@@ -283,7 +283,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           {...register(registerKey(i))}
           disabled={isEvaluated}
           value={a.id}
-          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'wrong' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
+          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
         />
 
         <FormFieldError field={registerKey(i)} errors={errors} />
