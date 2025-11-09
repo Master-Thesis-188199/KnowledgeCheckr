@@ -1,7 +1,7 @@
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import {
   DragDropQuestion,
   instantiateDragDropQuestion,
@@ -10,10 +10,56 @@ import {
   instantiateSingleChoice,
   MultipleChoice,
   OpenQuestion,
+  Question,
   SingleChoice,
 } from '@/src/schemas/QuestionSchema'
 
 describe('RenderPracticeQuestion Test Suite', () => {
+  const insertKnowledgeCheck = (question: Question) => {
+    const check = {
+      ...instantiateKnowledgeCheck(),
+      share_key: generateToken(16),
+      questions: [question],
+    }
+
+    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+
+    return { share_key: check.share_key, check }
+  }
+
+  const verifyQuestionIsDisplayedCorrectly = (question: Question, questionCount: number) => {
+    cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
+    cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
+    cy.get('#practice-question-steps').should('exist').children().should('have.length', questionCount)
+
+    switch (question.type) {
+      case 'single-choice':
+        cy.get('#answer-options').children().should('have.length', question.answers.length)
+        break
+      case 'multiple-choice':
+        cy.get('#answer-options').children().should('have.length', question.answers.length)
+        break
+      case 'open-question':
+        cy.get('#answer-options').children().should('have.length', 1)
+        break
+      case 'drag-drop':
+        cy.get('#answer-options div[data-swapy-item]').should('have.length', question.answers.length)
+        break
+    }
+  }
+
+  const validateFeedback = <Q extends Question = SingleChoice>(requestAlias: string, callback: (feedback: Extract<PracticeFeedback, { type: Q['type'] }> | undefined) => void) => {
+    cy.waitServerAction<PracticeFeedbackServerState>(requestAlias, (body, response) => {
+      expect(response?.statusCode).to.eq(200)
+      expect(body).to.have.property('success')
+      expect(body?.success).to.equal(true)
+
+      const feedback = body?.feedback as Extract<PracticeFeedback, { type: Q['type'] }> | undefined
+
+      callback(feedback)
+    })
+  }
+
   beforeEach(() => {
     cy.loginTestUser()
   })
