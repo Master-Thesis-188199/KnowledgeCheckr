@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1761463778221,
+      "tag": "0000_initialization",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1761473649520,
+      "tag": "0001_share_key_uniqueness",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1761924684252,
+      "tag": "0002_seed-test-data",
+      "breakpoints": true
+    }
+  ]
+}
