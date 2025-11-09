@@ -63,84 +63,56 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   beforeEach(() => {
     cy.loginTestUser()
   })
-  it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered correctly', () => {
-    const question = {
-      ...instantiateSingleChoice(),
-      question: 'What does the acronym RGB stand for?',
-      answers: [
-        { id: getUUID(), answer: 'Red Green Blue', correct: true },
-        { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
-        { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
-        { id: getUUID(), answer: 'Rose Green Baige', correct: false },
-      ],
-    }
+  ;([{ type: 'correct' }, { type: 'incorrect' }] as const).forEach(({ type }) =>
+    it(`Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered ${type}ly`, () => {
+      const question = {
+        ...instantiateSingleChoice(),
+        question: 'What does the acronym RGB stand for?',
+        answers: [
+          { id: getUUID(), answer: 'Red Green Blue', correct: true },
+          { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
+          { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
+          { id: getUUID(), answer: 'Rose Green Baige', correct: false },
+        ],
+      }
 
-    const correctAnswerId = question.answers.filter((a) => a.correct).at(0)!.id
+      const selectionAnswerId = question.answers.filter((a) => (type === 'correct' ? a.correct : !a.correct)).at(0)!.id
 
-    const {
-      share_key,
-      check: { questions },
-    } = insertKnowledgeCheck(question)
+      const {
+        share_key,
+        check: { questions },
+      } = insertKnowledgeCheck(question)
 
-    cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/checks/${share_key}/practice`)
 
-    verifyQuestionIsDisplayedCorrectly(question, questions.length)
-    cy.simulatePracticeSelection(question, { selection: correctAnswerId })
+      verifyQuestionIsDisplayedCorrectly(question, questions.length)
+      cy.simulatePracticeSelection(question, { selection: selectionAnswerId })
 
-    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
-    cy.get('button').contains('Check Answer').click()
+      cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
+      cy.get('button').contains('Check Answer').click()
 
-    validateFeedback<typeof question>('@submit-request', (feedback) => {
-      expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution).to.equal(correctAnswerId)
-    })
+      validateFeedback<typeof question>('@submit-request', (feedback) => {
+        expect(feedback?.type).to.equal(question.type)
 
-    cy.get('button').contains('Continue').should('exist').and('be.visible')
-    cy.get(`#answer-options input[id="${correctAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
+        if (type === 'correct') expect(feedback?.solution).to.equal(selectionAnswerId)
+        else expect(feedback?.solution).to.not.equal(selectionAnswerId)
+      })
 
-    cy.get('.result-legend').should('exist').and('be.visible')
-  })
+      cy.get('button').contains('Continue').should('exist').and('be.visible')
 
-  it('Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered incorrectly', () => {
-    const question: SingleChoice = {
-      ...instantiateSingleChoice(),
-      question: 'What does the acronym RGB stand for?',
-      answers: [
-        { id: getUUID(), answer: 'Red Green Blue', correct: true },
-        { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
-        { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
-        { id: getUUID(), answer: 'Rose Green Baige', correct: false },
-      ],
-    }
+      cy.get(`#answer-options input[id="${selectionAnswerId}"]`)
+        .should('have.attr', 'data-evaluation-result', type === 'correct' ? 'correct' : 'incorrect')
+        .should('be.disabled')
 
-    const {
-      share_key,
-      check: { questions },
-    } = insertKnowledgeCheck(question)
+      if (type === 'incorrect') {
+        cy.get(`#answer-options input[id="${question.answers.find((a) => a.correct)!.id}"]`)
+          .should('have.attr', 'data-evaluation-result', 'missing')
+          .should('be.disabled')
+      }
 
-    const incorrectAnswerId = question.answers.filter((a) => !a.correct).at(0)!.id
-    const correctAnswerId = question.answers.filter((a) => a.correct).at(0)!.id
-
-    cy.visit(`/checks/${share_key}/practice`)
-
-    verifyQuestionIsDisplayedCorrectly(question, questions.length)
-
-    cy.simulatePracticeSelection(question, { selection: incorrectAnswerId })
-
-    cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
-    cy.get('button').contains('Check Answer').click()
-
-    validateFeedback<typeof question>('@submit-request', (feedback) => {
-      expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution).to.equal(correctAnswerId)
-    })
-
-    cy.get('button').contains('Continue').should('exist').and('be.visible')
-    cy.get(`#answer-options * input[id="${correctAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'missing').should('be.disabled')
-    cy.get(`#answer-options * input[id="${incorrectAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'incorrect')
-
-    cy.get('.result-legend').should('exist').and('be.visible')
-  })
+      cy.get('.result-legend').should('exist').and('be.visible')
+    }),
+  )
 
   it('Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered correctly', () => {
     const question = {
