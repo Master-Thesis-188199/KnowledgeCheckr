@@ -15,7 +15,7 @@ import {
 } from '@/src/schemas/QuestionSchema'
 
 describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
-  const insertKnowledgeCheck = (question: Question) => {
+  const insertKnowledgeCheck = (...question: Question[]) => {
     const check = {
       ...instantiateKnowledgeCheck(),
       share_key: generateToken(16),
@@ -242,41 +242,36 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   )
 
   it('Verify that users can answer & submit correct answers to questions and that their submission is evaluated & displayed correctly', () => {
-    const check = {
-      ...instantiateKnowledgeCheck(),
-      share_key: generateToken(16),
-      questions: [
-        {
-          ...instantiateSingleChoice(),
-          question: 'What does the acronym RGB stand for?',
-          answers: [
-            { id: getUUID(), answer: 'Red Green Blue', correct: true },
-            { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
-            { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
-            { id: getUUID(), answer: 'Rose Green Baige', correct: false },
-          ],
-        },
-        { ...instantiateMultipleChoice(), question: 'What is a multiple Choice question?' },
-        { ...instantiateOpenQuestion(), question: 'What is an open question?' },
-        { ...instantiateDragDropQuestion(), question: 'What is an drag-drop question?' },
-      ],
-    }
+    const questions = [
+      {
+        ...instantiateSingleChoice(),
+        question: 'What does the acronym RGB stand for?',
+        answers: [
+          { id: getUUID(), answer: 'Red Green Blue', correct: true },
+          { id: getUUID(), answer: 'Red Orange Yellow', correct: false },
+          { id: getUUID(), answer: 'Blue Orange Fuchsia', correct: false },
+          { id: getUUID(), answer: 'Rose Green Baige', correct: false },
+        ],
+      },
+      { ...instantiateMultipleChoice(), question: 'What is a multiple Choice question?' },
+      { ...instantiateOpenQuestion(), question: 'What is an open question?' },
+      { ...instantiateDragDropQuestion(), question: 'What is an drag-drop question?' },
+    ]
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
-    cy.visit(`/checks/${check.share_key}/practice`)
+    const { share_key } = insertKnowledgeCheck(...questions)
 
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', check.questions.length)
+    cy.visit(`/checks/${share_key}/practice`)
 
-    for (let i = 0; i < check.questions.length; i++) {
+    for (let i = 0; i < questions.length; i++) {
       cy.get('#practice-form h2')
         .should('exist')
         .invoke('text')
         .then((questionText) => {
-          expect(check.questions.some((q) => q.question === questionText)).to.be.eq(true)
+          expect(questions.some((q) => q.question === questionText)).to.be.eq(true)
 
-          const question = check.questions.find((q) => q.question === questionText)!
+          const question = questions.find((q) => q.question === questionText)!
 
-          verifyQuestionIsDisplayedCorrectly(question, check.questions.length)
+          verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
           if (question.type === 'open-question') {
             question.expectation = 'correct' //? causes the feedback-evaluation to set the degreeOfCorrectness to 1 until an LLM is used
@@ -284,40 +279,38 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
           cy.simulatePracticeSelection(question, { correctness: 'correct' })
 
-          cy.intercept('POST', `/checks/${check.share_key}/practice`).as(`submit-request-${question.type}`)
+          cy.intercept('POST', `/checks/${share_key}/practice`).as(`submit-request-${question.type}`)
           cy.log(`Checking answer for question-type: ${question.type}`)
           cy.get('button').contains('Check Answer').click()
 
-          cy.waitServerAction<PracticeFeedbackServerState>(`@submit-request-${question.type}`, (body, response) => {
-            expect(response?.statusCode).to.eq(200)
-            expect(body).to.have.property('success')
-            expect(body?.success).to.equal(true)
-
-            const feedback = body?.feedback
-
+          validateFeedback<typeof question>(`submit-request-${question.type}`, (feedback) => {
             expect(feedback?.type).to.equal(question.type)
-            if (question.type === 'single-choice') {
-              const singleChoiceFeedback = feedback as Extract<PracticeFeedback, { type: 'single-choice' }>
-              expect(singleChoiceFeedback.solution).to.eq(question.answers.filter((a) => a.correct).at(0)!.id)
-            } else if (question.type === 'multiple-choice') {
-              const multipleChoiceFeedback = feedback as Extract<PracticeFeedback, { type: 'multiple-choice' }>
-              expect(multipleChoiceFeedback.solution.join(',')).to.eq(
+            if (question.type !== feedback?.type) return
+
+            if (feedback.type === 'single-choice' && question.type === feedback.type) {
+              expect(feedback.solution).to.eq(question.answers.filter((a) => a.correct).at(0)!.id)
+            }
+
+            if (feedback.type === 'multiple-choice' && question.type === feedback.type) {
+              expect(feedback.solution.join(',')).to.eq(
                 question.answers
                   .filter((a) => a.correct)
                   .map((a) => a.id)
                   .join(','),
               )
-            } else if (question.type === 'drag-drop') {
-              const dragDropFeedback = feedback as Extract<PracticeFeedback, { type: 'drag-drop' }>
-              expect(dragDropFeedback.solution.join(',')).to.eq(
+            }
+
+            if (feedback.type === 'drag-drop' && question.type === feedback.type) {
+              expect(feedback.solution.join(',')).to.eq(
                 question.answers
                   .toSorted((a, b) => a.position - b.position)
                   .map((a) => a.id)
                   .join(','),
               )
-            } else if (question.type === 'open-question') {
-              const openQuestionFeedback = feedback as Extract<PracticeFeedback, { type: 'open-question' }>
-              expect(openQuestionFeedback.degreeOfCorrectness).to.eq(1)
+            }
+
+            if (feedback.type === 'open-question' && question.type === feedback.type) {
+              expect(feedback.degreeOfCorrectness).to.eq(1)
             }
           })
 
