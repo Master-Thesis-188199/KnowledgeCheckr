@@ -14,7 +14,7 @@ async function cleanupTestData() {
 
   if (users.length === 0 || !users.at(0)?.userId) {
     console.error(`No test-user found matching email: '${testEmail}'`)
-    process.exit()
+    process.exit(1)
   }
 
   await db.delete(db_knowledgeCheck).where(eq(db_knowledgeCheck.owner_id, users.at(0)!.userId))
