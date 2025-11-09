@@ -76,31 +76,28 @@ describe('RenderPracticeQuestion Test Suite', () => {
       ],
     }
 
+    const correctAnswerId = question.answers.filter((a) => a.correct).at(0)!.id
+
     const {
       share_key,
       check: { questions },
     } = insertKnowledgeCheck(question)
 
-    const correctAnswers = question.answers.filter((a) => a.correct)
-
     cy.visit(`/checks/${share_key}/practice`)
 
     verifyQuestionIsDisplayedCorrectly(question, questions.length)
-
-    cy.simulatePracticeSelection(question, { correctness: 'correct' })
+    cy.simulatePracticeSelection(question, { selection: correctAnswerId })
 
     cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
     validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution).to.equal(correctAnswers.map((a) => a.id).join(','))
+      expect(feedback?.solution).to.equal(correctAnswerId)
     })
 
     cy.get('button').contains('Continue').should('exist').and('be.visible')
-    for (const ans of correctAnswers) {
-      cy.get('#answer-options').contains(ans.answer).children('input').should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
-    }
+    cy.get(`#answer-options input[id="${correctAnswerId}"]`).should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
 
     cy.get('.result-legend').should('exist').and('be.visible')
   })
@@ -131,7 +128,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
     verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
-    cy.simulatePracticeSelection(question, { correctness: 'incorrect', selection: incorrectAnswerId })
+    cy.simulatePracticeSelection(question, { selection: incorrectAnswerId })
 
     cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
@@ -166,30 +163,25 @@ describe('RenderPracticeQuestion Test Suite', () => {
       check: { questions },
     } = insertKnowledgeCheck(question)
 
-    const correctAnswers = question.answers.filter((a) => a.correct)
+    const correctAnswerIds = question.answers.filter((a) => a.correct).map((a) => a.id)
 
     cy.visit(`/checks/${share_key}/practice`)
 
     verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
-    cy.simulatePracticeSelection(question, { correctness: 'correct' })
+    cy.simulatePracticeSelection(question, { selection: correctAnswerIds })
 
     cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
     validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution.sort().join(',')).to.equal(
-        correctAnswers
-          .map((a) => a.id)
-          .sort()
-          .join(','),
-      )
+      expect(feedback?.solution.sort().join(',')).to.equal(correctAnswerIds.sort().join(','))
     })
 
     cy.get('button').contains('Continue').should('exist').and('be.visible')
-    for (const ans of correctAnswers) {
-      cy.get('#answer-options').contains(ans.answer).children('input').should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
+    for (const id of correctAnswerIds) {
+      cy.get(`#answer-options input[id="${id}"]`).should('have.attr', 'data-evaluation-result', 'correct').should('be.disabled')
     }
 
     cy.get('.result-legend').should('exist').and('be.visible')
@@ -209,6 +201,8 @@ describe('RenderPracticeQuestion Test Suite', () => {
       ],
     }
 
+    const correctlySortedAnswerIds = question.answers.toSorted((a, b) => a.position - b.position).map((a) => a.id)
+
     const {
       share_key,
       check: { questions },
@@ -218,19 +212,14 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
     verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
-    cy.simulatePracticeSelection(question, { correctness: 'correct' })
+    cy.simulatePracticeSelection(question, { selection: correctlySortedAnswerIds })
 
     cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
 
     validateFeedback<typeof question>('@submit-request', (feedback) => {
       expect(feedback?.type).to.equal(question.type)
-      expect(feedback?.solution.join(',')).to.equal(
-        question.answers
-          .sort((a, b) => a.position - b.position)
-          .map((a) => a.id)
-          .join(','),
-      )
+      expect(feedback?.solution.join(',')).to.equal(correctlySortedAnswerIds.join(','))
     })
 
     cy.get('button').contains('Continue').should('exist').and('be.visible')
@@ -258,7 +247,7 @@ describe('RenderPracticeQuestion Test Suite', () => {
 
     verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
-    cy.simulatePracticeSelection(question, { correctness: 'correct' })
+    cy.simulatePracticeSelection(question, { input: 'correct' })
 
     cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
     cy.get('button').contains('Check Answer').click()
