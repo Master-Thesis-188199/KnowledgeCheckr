@@ -13,6 +13,10 @@ import {
   Question,
   SingleChoice,
 } from '@/src/schemas/QuestionSchema'
+import { DistributiveOmit, UndoPartial } from '@/types/Shared/Utils'
+
+//? Effectively strips the "correctness" option, which leaves on the 'type' and respective 'selection' or 'input' properties.
+type SimulateOptions = DistributiveOmit<UndoPartial<Parameters<typeof cy.simulatePracticeSelection>['1']>, 'correctness'>
 
 describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
   const insertKnowledgeCheck = (...question: Question[]) => {
@@ -271,13 +275,50 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
           const question = questions.find((q) => q.question === questionText)!
 
+          let answer: SimulateOptions | null = null
+
+          switch (question.type) {
+            case 'single-choice': {
+              answer = {
+                type: 'single-choice',
+                selection: question.answers
+                  .filter((a) => a.correct)
+                  .map((a) => a.id)
+                  .at(0)!,
+              }
+              break
+            }
+
+            case 'multiple-choice': {
+              answer = {
+                type: 'multiple-choice',
+                selection: question.answers.filter((a) => a.correct).map((a) => a.id),
+              }
+              break
+            }
+            case 'open-question': {
+              answer = {
+                type: 'open-question',
+                input: 'some input',
+              }
+              break
+            }
+            case 'drag-drop': {
+              answer = {
+                type: 'drag-drop',
+                selection: question.answers.toSorted((a, b) => a.position - b.position).map((a) => a.id),
+              }
+              break
+            }
+          }
+
           verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
           if (question.type === 'open-question') {
             question.expectation = 'correct' //? causes the feedback-evaluation to set the degreeOfCorrectness to 1 until an LLM is used
           }
 
-          cy.simulatePracticeSelection(question, { correctness: 'correct' })
+          cy.simulatePracticeSelection(question, { ...answer })
 
           cy.intercept('POST', `/checks/${share_key}/practice`).as(`submit-request-${question.type}`)
           cy.log(`Checking answer for question-type: ${question.type}`)
