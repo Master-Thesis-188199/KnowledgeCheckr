@@ -26,11 +26,11 @@ export function PracticeStoreProvider({ children, initialStoreProps }: Omit<Stor
 }
 
 export function usePracticeStore<T>(selector: (store: PracticeStore) => T): T {
-  const counterStoreContext = useContext(PracticeStoreContext)
+  const storeContext = useContext(PracticeStoreContext)
 
-  if (!counterStoreContext) {
+  if (!storeContext) {
     throw new Error(`usePracticeStore must be used within PracticeStoreProvider`)
   }
 
-  return useStore(counterStoreContext, selector)
+  return useStore(storeContext, selector)
 }
