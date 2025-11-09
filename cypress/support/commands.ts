@@ -116,6 +116,7 @@ Cypress.Commands.add('waitServerAction', (alias, callback) => {
 
 Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
   cy.url().should('include', '/practice')
+  options.type = question.type
   const { correctness } = options
 
   if (question.type === 'single-choice') {
