@@ -23,7 +23,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
     const check = {
       ...instantiateKnowledgeCheck(),
       share_key: generateToken(16),
-      questions: [question],
+      questions: question,
     }
 
     cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
