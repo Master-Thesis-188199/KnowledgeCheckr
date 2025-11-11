@@ -1,5 +1,8 @@
+import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import getDatabase from '@/database/Database'
+import { db_user } from '@/database/drizzle/schema'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import { SocialButton } from '@/src/components/account/SocialButton'
@@ -42,6 +45,7 @@ export default async function AccountPage() {
               'dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70',
             )}>
             Signout
+            {isAnonymous && <span className='ml-2 text-sm text-neutral-400'>(delete data)</span>}
           </button>
         </form>
       </div>
@@ -69,7 +73,17 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
 
 async function signout() {
   'use server'
+  //? Note that this would alloy users to delete their examination-results --> sign users automatically out after they submitted their examination-results
+
+  const { user } = await getServerSession()
+  const db = await getDatabase()
 
   await auth.api.signOut({ headers: await headers() })
+
+  if (user?.isAnonymous) {
+    console.log(`[BetterAuth]: Anonymous user (${user.email}) signed out, account about to be deleted...`)
+    await db.delete(db_user).where(eq(db_user.id, user.id))
+  }
+
   redirect('/account/login')
 }
