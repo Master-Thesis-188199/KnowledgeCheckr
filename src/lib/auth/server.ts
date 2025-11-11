@@ -57,6 +57,7 @@ export const auth = betterAuth({
     }),
   ],
 })
+export type BetterAuthUser = NonNullable<Awaited<ReturnType<typeof auth.api.getSession<boolean>>>>['user']
 
 export async function getServerSession(): Promise<NonNullable<Awaited<ReturnType<typeof auth.api.getSession<boolean>>>> | { user?: undefined; session?: undefined }> {
   const session = await auth.api.getSession({ headers: await headers() })
