@@ -1,4 +1,4 @@
-import { betterAuth, Session, User } from 'better-auth'
+import { betterAuth } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
 import { anonymous } from 'better-auth/plugins'
 import { eq } from 'drizzle-orm'
@@ -58,8 +58,8 @@ export const auth = betterAuth({
   ],
 })
 
-export async function getServerSession(): Promise<{ session?: Session; user?: User }> {
+export async function getServerSession(): Promise<NonNullable<Awaited<ReturnType<typeof auth.api.getSession<boolean>>>> | { user?: undefined; session?: undefined }> {
   const session = await auth.api.getSession({ headers: await headers() })
 
-  return session || {}
+  return session ?? { user: undefined, session: undefined }
 }
