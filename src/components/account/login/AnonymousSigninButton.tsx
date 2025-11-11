@@ -1,6 +1,6 @@
 'use client'
 
-import { GlassesIcon } from 'lucide-react'
+import { VenetianMaskIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 import { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
@@ -31,7 +31,7 @@ export function AnonymousSigninButton({ className, ...props }: ProviderButtonPro
         'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
         className,
       )}>
-      <GlassesIcon className={twMerge('size-6')} />
+      <VenetianMaskIcon className={twMerge('size-6')} />
       Continue Anonymously
     </button>
   )
