@@ -55,6 +55,8 @@ export default async function AccountPage() {
 }
 
 function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser }) {
+  if (!isAnonymous) return null
+
   return (
     <div className='mx-2 flex flex-col gap-6'>
       <Line className='text-neutral-500' dashSize={4} dashed dashSpacing={6} />
@@ -64,7 +66,7 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
           In order to keep your data after signing out or closing this tab, you can sign-in through a social-provider like Google to keep your data.{' '}
         </span>
       </div>
-      <div className={cn('mx-auto hidden w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90', isAnonymous && 'flex')}>
+      <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
         <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
       </div>
