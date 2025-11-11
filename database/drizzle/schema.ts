@@ -130,7 +130,7 @@ export const db_knowledgeCheck = mysqlTable(
       foreignColumns: [db_user.id],
       name: 'fk_KnowledgeCheck_user1',
     })
-      .onDelete('no action')
+      .onDelete('cascade')
       .onUpdate('no action'),
   ],
 )
@@ -246,7 +246,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
       foreignColumns: [db_user.id],
       name: 'fk_user_has_KnowledgeCheck_user1',
     })
-      .onDelete('no action')
+      .onDelete('cascade')
       .onUpdate('cascade'),
     foreignKey({
       columns: [table.knowledgecheckId],
