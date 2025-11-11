@@ -27,11 +27,12 @@ export default async function AccountPage() {
 
       <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
         <form className='flex min-w-sm flex-col gap-8 rounded-md bg-neutral-200/40 p-6 ring-1 ring-neutral-400/80 dark:bg-transparent dark:ring-neutral-600'>
-          <UserAvatar user={user} className='size-16 self-center' />
-
-          <div className='flex flex-col items-center gap-1'>
-            <span className='font-semibold capitalize'>{user.name}</span>
-            <span className='text-sm tracking-wide text-neutral-500 dark:text-neutral-400'>{user.email}</span>
+          <div className='flex flex-col items-center gap-5'>
+            <UserAvatar user={user} className='m-0 size-16 self-center' />
+            <div className='flex flex-col items-center gap-2'>
+              <span className='font-semibold capitalize'>{user.name}</span>
+              <span className='text-sm tracking-wide text-neutral-500 dark:text-neutral-400'>{user.email}</span>
+            </div>
           </div>
 
           <LinkAccountSection user={user} />
