@@ -1,7 +1,10 @@
 import { betterAuth, Session, User } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
 import { anonymous } from 'better-auth/plugins'
+import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
+import getDatabase from '@/database/Database'
+import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
 
@@ -44,8 +47,12 @@ export const auth = betterAuth({
     nextCookies(),
     anonymous({
       onLinkAccount: async ({ anonymousUser, newUser }) => {
-        console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' signed in with: '${newUser.user.email}'!`)
-        console.warn('[Better-Auth]: Transform anonymous user data to newUser.')
+        console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' was linked to: '${newUser.user.email}'!`)
+        const db = await getDatabase()
+
+        const [{ affectedRows: updatedChecks }] = await db.update(db_knowledgeCheck).set({ owner_id: newUser.user.id }).where(eq(db_knowledgeCheck.owner_id, anonymousUser.user.id))
+        const [{ affectedRows: updatedResults }] = await db.update(db_userHasDoneKnowledgeCheck).set({ userId: newUser.user.id }).where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
+        console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
       },
     }),
   ],
