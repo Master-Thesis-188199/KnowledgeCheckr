@@ -1,6 +1,7 @@
 'use client'
 
-import { VenetianMaskIcon } from 'lucide-react'
+import { useState } from 'react'
+import { LoaderCircle, VenetianMaskIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 import { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
@@ -8,12 +9,14 @@ import { auth_client } from '@/src/lib/auth/client'
 import { cn } from '@/src/lib/Shared/utils'
 
 export function AnonymousSigninButton({ className, ...props }: ProviderButtonProps) {
+  const [isLoading, setIsLoading] = useState(false)
   const { push, refresh } = useRouter()
 
   return (
     <button
       type='button'
       onClick={() => {
+        setIsLoading(true)
         auth_client.signIn
           .anonymous()
           .then(() => {
@@ -29,13 +32,14 @@ export function AnonymousSigninButton({ className, ...props }: ProviderButtonPro
 
             push((props.errorCallbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)!)
           })
+          .finally(() => setIsLoading(false))
       }}
       className={cn(
         'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
         'text-neutral-300/90',
         className,
       )}>
-      <VenetianMaskIcon className={twMerge('size-6')} />
+      {isLoading ? <LoaderCircle className='animate-spin' /> : <VenetianMaskIcon className={twMerge('size-6')} />}
       Continue Anonymously
     </button>
   )
