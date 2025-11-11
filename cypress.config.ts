@@ -1,9 +1,10 @@
-import env from '@/src/lib/Shared/Env'
 import ccTask from '@cypress/code-coverage/task'
 import { defineConfig } from 'cypress'
 import { GitHubSocialLogin, GoogleSocialLogin } from 'cypress-social-logins/src/Plugins'
 import * as dotenv from 'dotenv'
+import { rm } from 'fs'
 import mysql from 'mysql2'
+import env from '@/src/lib/Shared/Env'
 dotenv.config()
 
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
     codeCoverage: {
       url: `${env.NEXT_PUBLIC_BASE_URL}/api/coverage`,
     },
+    ...process.env,
   },
   retries: 2,
   component: {
@@ -66,13 +68,26 @@ export default defineConfig({
         launchOptions.args.push('--no-sandbox')
         launchOptions.args.push('--disable-setuid-sandbox')
 
+        launchOptions.preferences.default = {
+          ...launchOptions.preferences.default,
+          profile: {
+            //* Disable password simplicity / breach warnings
+            password_manager_leak_detection: false,
+            password_manager_enabled: false,
+          },
+        }
+
         return launchOptions
       })
 
       on('after:run', () => {
-        console.log('Tests have finished running. Cleaning up test data...')
-
-        connection.query('DELETE FROM KnowledgeCheck WHERE owner_id = (SELECT id FROM User WHERE email = "test@email.com")')
+        rm('cypress/downloads', { recursive: true, force: true }, (err) => {
+          if (err) {
+            console.error('Error while deleting downloads folder:', err)
+          } else {
+            console.log('Downloads folder deleted successfully.')
+          }
+        })
       })
 
       return config
