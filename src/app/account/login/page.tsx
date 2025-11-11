@@ -1,18 +1,15 @@
 /* eslint-disable prefer-const */
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
-import { twMerge } from 'tailwind-merge'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import { AnonymousSigninButton } from '@/src/components/account/login/AnonymousSigninButton'
 import LoginForm from '@/src/components/account/login/LoginForm'
-import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
 import SignupForm from '@/src/components/account/login/SignupForm'
+import { SocialButton } from '@/src/components/account/SocialButton'
 import { getServerSession } from '@/src/lib/auth/server'
-import env from '@/src/lib/Shared/Env'
 import { getReferer } from '@/src/lib/Shared/getReferer'
-import { cn } from '@/src/lib/Shared/utils'
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
   //? `referer` is passed along when the user switches between signin and signup
@@ -73,21 +70,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   )
 }
 
-function SocialButton({ icon: Icon, iconClassName, className, ...props }: { icon: React.ComponentType<{ className?: string }>; iconClassName?: string } & ProviderButtonProps) {
-  return (
-    <ProviderButton
-      type='button'
-      className={cn(
-        'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
-        className,
-      )}
-      callbackURL={props.callbackURL ?? env.NEXT_PUBLIC_BASE_URL}
-      errorCallbackURL={env.NEXT_PUBLIC_BASE_URL}
-      {...props}>
-      <Icon className={twMerge('size-6', iconClassName)} />
-    </ProviderButton>
-  )
-}
 function FormHeader({ title, subTitle }: { title: string; subTitle?: string }) {
   return (
     <div className='mb-2 flex flex-col items-center gap-2'>
