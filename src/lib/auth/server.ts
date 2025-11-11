@@ -1,8 +1,9 @@
-import createPool from '@/database/Pool'
-import env from '@/lib/Shared/Env'
 import { betterAuth, Session, User } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
+import { anonymous } from 'better-auth/plugins'
 import { headers } from 'next/headers'
+import createPool from '@/database/Pool'
+import env from '@/lib/Shared/Env'
 
 export const auth = betterAuth({
   user: {
@@ -39,7 +40,15 @@ export const auth = betterAuth({
       clientSecret: env.AUTH_GOOGLE_SECRET,
     },
   },
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+    anonymous({
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' signed in with: '${newUser.user.email}'!`)
+        console.warn('[Better-Auth]: Transform anonymous user data to newUser.')
+      },
+    }),
+  ],
 })
 
 export async function getServerSession(): Promise<{ session?: Session; user?: User }> {
