@@ -31,7 +31,7 @@ export default async function AccountPage() {
             <UserAvatar user={user} className='m-0 size-16 self-center' />
             <div className='flex flex-col items-center gap-2'>
               <span className='font-semibold capitalize'>{user.name}</span>
-              <span className='text-sm tracking-wide text-neutral-500 dark:text-neutral-400'>{user.email}</span>
+              <span className={cn('text-sm tracking-wide text-neutral-500 dark:text-neutral-400', isAnonymous && 'hidden')}>{user.email}</span>
             </div>
           </div>
 
