@@ -1,9 +1,13 @@
-import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
-import PageHeading from '@/src/components/Shared/PageHeading'
-import { auth, getServerSession } from '@/src/lib/auth/server'
-import { cn } from '@/src/lib/Shared/utils'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import GithubSvg from '@/public/icons/social/GithubSvg'
+import GoogleIcon from '@/public/icons/social/GoogleIcon'
+import { SocialButton } from '@/src/components/account/SocialButton'
+import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
+import Line from '@/src/components/Shared/Line'
+import PageHeading from '@/src/components/Shared/PageHeading'
+import { auth, BetterAuthUser, getServerSession } from '@/src/lib/auth/server'
+import { cn } from '@/src/lib/Shared/utils'
 
 export default async function AccountPage() {
   const { session, user } = await getServerSession()
@@ -12,13 +16,13 @@ export default async function AccountPage() {
     redirect('/account/login')
   }
 
-  const {} = session
+  const { isAnonymous } = user
 
   return (
     <>
       <PageHeading title='Account Information' />
 
-      <div className='flex h-full items-center justify-center pb-12'>
+      <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
         <form className='flex min-w-sm flex-col gap-8 rounded-md bg-neutral-200/40 p-6 ring-1 ring-neutral-400/80 dark:bg-transparent dark:ring-neutral-600'>
           <UserAvatar user={user} className='size-16 self-center' />
 
@@ -26,6 +30,8 @@ export default async function AccountPage() {
             <span className='font-semibold capitalize'>{user.name}</span>
             <span className='text-sm tracking-wide text-neutral-500 dark:text-neutral-400'>{user.email}</span>
           </div>
+
+          <LinkAccountSection user={user} />
 
           <button
             type='submit'
@@ -40,6 +46,24 @@ export default async function AccountPage() {
         </form>
       </div>
     </>
+  )
+}
+
+function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser }) {
+  return (
+    <div className='mx-2 flex flex-col gap-6'>
+      <Line className='text-neutral-500' dashSize={4} dashed dashSpacing={6} />
+      <div className='flex flex-col gap-2'>
+        <h2 className='text-lg font-semibold dark:text-neutral-300'>Link you Account</h2>
+        <span className='text-sm text-balance dark:text-neutral-400'>
+          In order to keep your data after signing out or closing this tab, you can sign-in through a social-provider like Google to keep your data.{' '}
+        </span>
+      </div>
+      <div className={cn('mx-auto hidden w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90', isAnonymous && 'flex')}>
+        <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
+        <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
+      </div>
+    </div>
   )
 }
 
