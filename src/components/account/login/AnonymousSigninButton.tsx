@@ -17,14 +17,17 @@ export function AnonymousSigninButton({ className, ...props }: ProviderButtonPro
         auth_client.signIn
           .anonymous()
           .then(() => {
-            if (!props.callbackURL || !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
+            if (!props.callbackURL && !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
 
-            push(props.callbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)
+            push((props.callbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)!)
+
+            //* to ensure user-icon is re-rendered when the new-url is the same as the previous url.
+            refresh()
           })
           .catch(() => {
-            if (!props.errorCallbackURL || !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
+            if (!props.errorCallbackURL && !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
 
-            push(props.errorCallbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)
+            push((props.errorCallbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)!)
           })
       }}
       className={cn(
