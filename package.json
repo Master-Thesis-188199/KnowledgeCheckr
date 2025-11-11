@@ -69,7 +69,7 @@
     "drizzle-orm": "^0.44.7",
     "framer-motion": "^12.6.2",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.485.0",
+    "lucide-react": "^0.553.0",
     "mongodb": "^6.14.2",
     "motion": "^12.4.7",
     "mysql2": "^3.14.0",
