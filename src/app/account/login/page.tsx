@@ -66,9 +66,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               </p>
             </div>
           </div>
-          <div className='mx-auto text-neutral-200/90'>
-            <AnonymousSigninButton className='col-span-4 row-start-2' callbackURL={callbackUrl ?? undefined} provider='github' />
-          </div>
+          <AnonymousSigninButton className='mx-auto' callbackURL={callbackUrl ?? undefined} provider='github' />
         </div>
       </div>
     </div>
