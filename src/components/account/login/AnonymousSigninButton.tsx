@@ -15,6 +15,7 @@ export function AnonymousSigninButton({ className, ...props }: ProviderButtonPro
   return (
     <button
       type='button'
+      data-auth-provider='anonymous'
       onClick={() => {
         setIsLoading(true)
         auth_client.signIn

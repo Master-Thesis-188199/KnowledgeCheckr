@@ -10,6 +10,7 @@ export function SocialButton({ icon: Icon, iconClassName, className, ...props }:
   return (
     <ProviderButton
       type='button'
+      data-auth-provider={props.provider}
       className={cn(
         'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
         className,
