@@ -1,14 +1,12 @@
-import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import getDatabase from '@/database/Database'
-import { db_user, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import { SocialButton } from '@/src/components/account/SocialButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { deleteUser } from '@/src/lib/auth/deleteUser'
 import { auth, BetterAuthUser, getServerSession } from '@/src/lib/auth/server'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -78,20 +76,11 @@ async function signout() {
   'use server'
 
   const { user } = await getServerSession()
-  const db = await getDatabase()
 
   await auth.api.signOut({ headers: await headers() })
 
   if (user?.isAnonymous) {
-    const hasExaminationAttempts = await db.select().from(db_userHasDoneKnowledgeCheck).where(eq(db_userHasDoneKnowledgeCheck.userId, user.id))
-
-    //? Prevents users from deleting their examination results by signing out.
-    if (!hasExaminationAttempts) {
-      console.log(`[BetterAuth]: Anonymous user (${user.email}) signed out, account about to be deleted...`)
-      await db.delete(db_user).where(eq(db_user.id, user.id))
-    } else {
-      console.log(`[BetterAuth]: Anonymous user (${user.email} signed out. Account not deleted because of examination attempts.`)
-    }
+    await deleteUser({ userId: user.id, abortOnExaminationResults: true })
   }
 
   redirect('/account/login')
