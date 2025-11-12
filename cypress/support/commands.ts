@@ -177,3 +177,14 @@ Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
     cy.get('#answer-options').children().eq(0).type(input)
   }
 })
+
+Cypress.Commands.add('loginAnonymously', () => {
+  cy.visit('/account/login')
+
+  cy.intercept('POST', '/api/auth/sign-in/anonymous').as('signin')
+  cy.get("button[data-auth-provider~='anonymous']").should('exist').and('be.visible').click()
+  cy.wait('@signin')
+
+  cy.getCookie('better-auth.session_token').should('exist')
+  cy.get("img[aria-label='user avatar']").should('exist').should('be.visible')
+})
