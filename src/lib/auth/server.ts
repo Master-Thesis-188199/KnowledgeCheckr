@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
-import { anonymous } from 'better-auth/plugins'
+import { anonymous, genericOAuth } from 'better-auth/plugins'
 import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import getDatabase from '@/database/Database'
@@ -54,6 +54,28 @@ export const auth = betterAuth({
         const [{ affectedRows: updatedResults }] = await db.update(db_userHasDoneKnowledgeCheck).set({ userId: newUser.user.id }).where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
         console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
       },
+    }),
+    genericOAuth({
+      config: [
+        {
+          providerId: 'dex',
+          clientId: env.DEX_CLIENT_ID,
+          clientSecret: env.DEX_CLIENT_SECRET,
+          authentication: 'basic',
+          authorizationUrl: `${env.DEX_PROVIDER_URL}/auth`,
+          tokenUrl: `${env.DEX_PROVIDER_URL}/token`,
+          userInfoUrl: `${env.DEX_PROVIDER_URL}/userinfo`,
+          scopes: ['openid', 'email', 'profile'],
+          mapProfileToUser(profile) {
+            return {
+              id: profile.sub,
+              name: profile.name || profile.email?.split('@')[0],
+              email: profile.email,
+              image: profile.picture ?? null,
+            }
+          },
+        },
+      ],
     }),
   ],
 })
