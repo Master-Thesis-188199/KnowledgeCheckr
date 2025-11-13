@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+import { LinkIcon } from 'lucide-react'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
@@ -6,6 +7,7 @@ import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import { AnonymousSigninButton } from '@/src/components/account/login/AnonymousSigninButton'
 import LoginForm from '@/src/components/account/login/LoginForm'
+import OAuthButton from '@/src/components/account/login/OAuthButton'
 import SignupForm from '@/src/components/account/login/SignupForm'
 import { SocialButton } from '@/src/components/account/SocialButton'
 import { getServerSession } from '@/src/lib/auth/server'
@@ -50,6 +52,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
             <SocialButton icon={GoogleIcon} callbackURL={callbackUrl ?? undefined} provider='google' aria-label='SignIn using Google' />
             <SocialButton icon={GithubSvg} callbackURL={callbackUrl ?? undefined} provider='github' aria-label='SignIn using GitHub' />
+            <OAuthButton providerId='dex' children={<LinkIcon />} callbackURL={callbackUrl ?? undefined} />
           </div>
 
           <div className='relative'>

@@ -1,7 +1,9 @@
+import { LinkIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
+import OAuthButton from '@/src/components/account/login/OAuthButton'
 import { SocialButton } from '@/src/components/account/SocialButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
 import Line from '@/src/components/Shared/Line'
@@ -67,6 +69,8 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
         <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
+
+        <OAuthButton providerId='dex' children={<LinkIcon />} callbackURL='http://localhost:3000' />
       </div>
     </div>
   )
