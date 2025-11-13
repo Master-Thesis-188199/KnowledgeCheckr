@@ -1,0 +1,9 @@
+services:
+  dex:
+    image: ghcr.io/dexidp/dex:latest
+    container_name: dex
+    ports:
+      - "5556:5556" # host:container
+    volumes:
+      - ./dex-config.yaml:/etc/dex/config.yaml:ro
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
