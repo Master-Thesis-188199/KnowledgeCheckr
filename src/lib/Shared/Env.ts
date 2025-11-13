@@ -32,6 +32,15 @@ export const envSchema = z.object({
     .string()
     .transform((val) => val.toLowerCase().trim() === 'true')
     .optional(),
+
+  //* Custom Provider
+  DEX_PROVIDER_URL: z.union([
+    z.string().regex(/^\S*$/, { message: 'When using the service-name as the host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
+    z.string().ip({ message: 'Please provide a valid host url / ip / service-name' }),
+    z.string().url({ message: 'Please provide a valid host url / ip / service-name' }),
+  ]),
+  DEX_CLIENT_ID: z.string().default('nextjs-client').catch('nextjs-client'),
+  DEX_CLIENT_SECRET: z.string().default('dev-secret').catch('dev-secret'),
 })
 
 const res = envSchema.safeParse(process.env)
