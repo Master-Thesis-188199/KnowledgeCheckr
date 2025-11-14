@@ -46,15 +46,12 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
   let signIn: () => Promise<Any>
 
   if (props.auth_type === 'anonymous') {
-    signIn = () => {
+    signIn = () =>
       auth_client.signIn
         .anonymous()
         .then(() => redirectUser('successful'))
         .catch(() => redirectUser('erroneous'))
         .finally(() => refresh()) //* ensure user-avater is loaded
-
-      return Promise.resolve()
-    }
   } else if (props.auth_type === 'social') {
     signIn = () =>
       auth_client.signIn
