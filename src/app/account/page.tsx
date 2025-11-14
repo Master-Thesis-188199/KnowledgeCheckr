@@ -1,3 +1,4 @@
+import { FlaskConicalIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
@@ -9,8 +10,8 @@ import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { deleteUser } from '@/src/lib/auth/deleteUser'
 import { auth, BetterAuthUser, getServerSession } from '@/src/lib/auth/server'
+import env from '@/src/lib/Shared/Env'
 import { cn } from '@/src/lib/Shared/utils'
-import { FlaskConicalIcon } from 'lucide-react'
 
 export default async function AccountPage() {
   const { session, user } = await getServerSession()
@@ -69,7 +70,7 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
         <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
-        <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL='http://localhost:3000' />
+        {env.MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL='http://localhost:3000' />}
       </div>
     </div>
   )
