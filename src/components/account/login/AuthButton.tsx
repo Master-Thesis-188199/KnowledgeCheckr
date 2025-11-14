@@ -67,6 +67,11 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
         .oauth2({ providerId: props.provider, callbackURL, errorCallbackURL })
         .then(() => redirectUser('successful'))
         .catch(() => redirectUser('erroneous'))
+  } else {
+    signIn = () => {
+      console.error('[AuthButton]: Unknown auth_type', props)
+      return Promise.reject(new Error('Unknown auth_type'))
+    }
   }
 
   return (
