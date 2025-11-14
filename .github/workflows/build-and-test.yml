@@ -52,7 +52,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -60,6 +60,15 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+      dex:
+        image: ghcr.io/dexidp/dex:latest
+        ports: [5556:5556]
+        volumes:
+          - ./authentication/config.docker.yaml:/etc/dex/config.docker.yaml:ro
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
 
     steps:
       - name: Checkout Code
@@ -124,7 +133,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -232,7 +241,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_HOST: "%"
           MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
         options: >-
@@ -241,7 +250,16 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    name: 'E2E Tests: ${{ matrix.chunk.short }}'
+      dex:
+        image: ghcr.io/dexidp/dex:latest
+        ports: [5556:5556]
+        volumes:
+          - ./authentication/config.docker.yaml:/etc/dex/config.docker.yaml:ro
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
+
+    name: "E2E Tests: ${{ matrix.chunk.short }}"
     runs-on: ubuntu-latest
 
     strategy:
