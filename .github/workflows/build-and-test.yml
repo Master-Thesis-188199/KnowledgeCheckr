@@ -67,10 +67,8 @@ jobs:
           --health-retries=5
 
       dex:
-        image: ghcr.io/dexidp/dex:latest
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-dex:latest
         ports: [5556:5556]
-        volumes:
-          - dex.config.yaml:/etc/dex/config.docker.yaml:ro
         options: >-
           --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
           --health-interval=5s --health-timeout=3s --health-retries=30
@@ -256,10 +254,8 @@ jobs:
           --health-retries=5
 
       dex:
-        image: ghcr.io/dexidp/dex:latest
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-dex:latest
         ports: [5556:5556]
-        volumes:
-          - dex.config.yaml:/etc/dex/config.docker.yaml:ro
         options: >-
           --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
           --health-interval=5s --health-timeout=3s --health-retries=30
