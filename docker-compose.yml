@@ -1,19 +1,19 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
     image: ghcr.io/master-thesis-188199/knowledgecheckr-database:1.0.0
-    restart: always
+    restart: on-failure
     environment:
-      MYSQL_ROOT_PASSWORD: '123'
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: "123"
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: KnowledgeCheckr
       MYSQL_USER: test
       MYSQL_PASSWORD: pass
     volumes:
       - ./mysql_data:/var/lib/mysql
     ports:
-      - '3305:3306'
+      - "3305:3306"
 
   knowledgeCheckr:
     image: ghcr.io/master-thesis-188199/knowledgecheckr:latest
@@ -29,3 +29,12 @@ services:
 
     env_file:
       - .env
+
+  dex:
+    restart: on-failure
+    image: ghcr.io/dexidp/dex:latest
+    container_name: dex
+    ports:
+      - "5556:5556"
+    volumes:
+      - ./dex.config.yaml:/etc/dex/config.docker.yaml:ro

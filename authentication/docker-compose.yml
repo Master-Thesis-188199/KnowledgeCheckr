@@ -1,8 +1,0 @@
-services:
-  dex:
-    image: ghcr.io/dexidp/dex:latest
-    container_name: dex
-    ports:
-      - "5556:5556" # host:container
-    volumes:
-      - ./config.docker.yaml:/etc/dex/config.docker.yaml:ro
