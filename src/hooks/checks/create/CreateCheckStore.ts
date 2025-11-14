@@ -1,9 +1,9 @@
+import isEqual from 'lodash/isEqual'
+import { v4 as uuid } from 'uuid'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
-import { isEqual } from 'lodash'
-import { v4 as uuid } from 'uuid'
 
 export type CheckState = KnowledgeCheck & {
   unsavedChanges?: boolean

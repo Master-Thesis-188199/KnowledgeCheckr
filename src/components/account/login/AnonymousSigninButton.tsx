@@ -1,47 +1,15 @@
-'use client'
-
-import { useState } from 'react'
-import { LoaderCircle, VenetianMaskIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { twMerge } from 'tailwind-merge'
-import { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
-import { auth_client } from '@/src/lib/auth/client'
+import AuthButton, { AnonymousAuthButtonProps } from '@/src/components/account/login/AuthButton'
 import { cn } from '@/src/lib/Shared/utils'
 
-export function AnonymousSigninButton({ className, ...props }: ProviderButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const { push, refresh } = useRouter()
+type Props = Omit<AnonymousAuthButtonProps, 'auth_type' | 'text'> & {
+  iconClassName?: string
+  icon: React.ComponentType<{ className?: string }>
+}
 
+export function AnonymousSigninButton({ callbackURL, errorCallbackURL, icon: Icon, iconClassName, ...props }: Props) {
   return (
-    <button
-      type='button'
-      data-auth-provider='anonymous'
-      onClick={() => {
-        setIsLoading(true)
-        auth_client.signIn
-          .anonymous()
-          .then(() => {
-            if (!props.callbackURL && !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
-
-            push((props.callbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)!)
-
-            //* to ensure user-icon is re-rendered when the new-url is the same as the previous url.
-            refresh()
-          })
-          .catch(() => {
-            if (!props.errorCallbackURL && !process.env.NEXT_PUBLIC_BASE_URL) return refresh()
-
-            push((props.errorCallbackURL ?? process.env.NEXT_PUBLIC_BASE_URL)!)
-          })
-          .finally(() => setIsLoading(false))
-      }}
-      className={cn(
-        'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
-        'text-neutral-300/90',
-        className,
-      )}>
-      {isLoading ? <LoaderCircle className='animate-spin' /> : <VenetianMaskIcon className={twMerge('size-6')} />}
-      Continue Anonymously
-    </button>
+    <AuthButton auth_type='anonymous' {...props} callbackURL={callbackURL} errorCallbackURL={errorCallbackURL} text='Continue Anonymously'>
+      <Icon className={cn('size-6', iconClassName)} />
+    </AuthButton>
   )
 }

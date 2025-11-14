@@ -1,13 +1,16 @@
+import { FlaskConicalIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
+import OAuthButton from '@/src/components/account/login/OAuthButton'
 import { SocialButton } from '@/src/components/account/SocialButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { deleteUser } from '@/src/lib/auth/deleteUser'
 import { auth, BetterAuthUser, getServerSession } from '@/src/lib/auth/server'
+import env from '@/src/lib/Shared/Env'
 import { cn } from '@/src/lib/Shared/utils'
 
 export default async function AccountPage() {
@@ -65,8 +68,9 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
         </span>
       </div>
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
-        <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' />
-        <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' />
+        <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
+        <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
+        {env.MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />}
       </div>
     </div>
   )

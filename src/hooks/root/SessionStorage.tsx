@@ -1,7 +1,7 @@
 'use client'
 
-import _ from 'lodash'
 import { createContext, useContext } from 'react'
+import isEqual from 'lodash/isEqual'
 
 interface SessionStorageContext {
   getStoredValue: <T extends object>(key: string, options?: { validation?: (value: T | null) => T | never; expiresAfter?: number }) => T | null
@@ -39,7 +39,7 @@ export function SessionStorageProvider({ children, defaultCacheDuration = 4 * 36
     if (!window) return
 
     const existingValue = getStoredValue(key)
-    if (_.isEqual(existingValue, value)) return
+    if (isEqual(existingValue, value)) return
 
     sessionStorage.setItem(key, JSON.stringify({ ...value, session_savedAt: Date.now() }))
   }

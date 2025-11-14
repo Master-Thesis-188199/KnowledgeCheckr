@@ -1,9 +1,9 @@
+import isEmpty from 'lodash/isEmpty'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/Examination'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
-import _ from 'lodash'
 
 export type ExaminationState = ExaminationSchema & {
   currentQuestionIndex: number
@@ -35,7 +35,7 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
       return {
         ...initialState,
 
-        results: _.isEmpty(initialState.results) ? initializeExaminationResults(initialState) : initialState.results,
+        results: isEmpty(initialState.results) ? initializeExaminationResults(initialState) : initialState.results,
 
         // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
         setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length - 1 })),
