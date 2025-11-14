@@ -21,22 +21,22 @@ export default async function deleteUser(userProps: Partial<BetterAuthUser>, { l
 
   for (const _key of Object.keys(userProps)) {
     const key = _key as keyof typeof userProps
-    if (!userProps[key]) continue
+    if (userProps[key] === null || userProps[key] === undefined) continue
+    if (db_user[key] === null || db_user[key] === undefined) continue
+    if (!(key in db_user)) continue
 
-    if (!!db_user[key] && !!userProps[key]) {
-      const stringifyProp = (value: Exclude<(typeof userProps)[keyof typeof userProps], null | undefined>): string => {
-        if (typeof value === 'object') {
-          return formatDatetime(value)
-        }
-        if (typeof value === 'boolean') {
-          return !!value ? '1' : '0'
-        }
-
-        return value
+    const stringifyProp = (value: Exclude<(typeof userProps)[keyof typeof userProps], null | undefined>): string => {
+      if (typeof value === 'object') {
+        return formatDatetime(value)
+      }
+      if (typeof value === 'boolean') {
+        return !!value ? '1' : '0'
       }
 
-      filters.push(eq(db_user[key], stringifyProp(userProps[key])))
+      return value
     }
+
+    filters.push(eq(db_user[key], stringifyProp(userProps[key])))
   }
 
   const users = await db
