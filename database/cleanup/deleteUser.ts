@@ -39,6 +39,11 @@ export default async function deleteUser(userProps: Partial<BetterAuthUser>, { l
     filters.push(eq(db_user[key], stringifyProp(userProps[key])))
   }
 
+  if (filters.length === 0) {
+    console.log('[DeleteUsers]: No valid filters derived from userProps, aborting delete. ', JSON.stringify(userProps))
+    return []
+  }
+
   const users = await db
     .select()
     .from(db_user)
