@@ -71,6 +71,9 @@ jobs:
         ports: [5556:5556]
         volumes:
           - dex.config.yaml:/etc/dex/config.docker.yaml:ro
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
 
     steps:
       - name: Checkout Code
@@ -257,6 +260,9 @@ jobs:
         ports: [5556:5556]
         volumes:
           - dex.config.yaml:/etc/dex/config.docker.yaml:ro
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
 
     name: "E2E Tests: ${{ matrix.chunk.short }}"
     runs-on: ubuntu-latest
