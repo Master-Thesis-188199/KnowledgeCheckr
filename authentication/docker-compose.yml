@@ -5,5 +5,4 @@ services:
     ports:
       - "5556:5556" # host:container
     volumes:
-      - ./dex-config.yaml:/etc/dex/config.yaml:ro
-    command: ["dex", "serve", "/etc/dex/config.yaml"]
+      - ./config.docker.yaml:/etc/dex/config.docker.yaml:ro
