@@ -19,6 +19,11 @@ env:
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
+  MODE: ${{ secrets.MODE }}
+  DEX_PROVIDER_URL: ${{ secrets.DEX_PROVIDER_URL }}
+  DEX_CLIENT_ID: ${{ secrets.DEX_CLIENT_ID}}
+  DEX_CLIENT_SECRET: ${{secrets.DEX_CLIENT_SECRET}}
+
   NODE_VERSION: 23.7
 
 jobs:
@@ -312,7 +317,7 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           start: yarn start
-          wait-on: 'npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}'
+          wait-on: "npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}"
           wait-on-timeout: 120
 
           browser: chrome
