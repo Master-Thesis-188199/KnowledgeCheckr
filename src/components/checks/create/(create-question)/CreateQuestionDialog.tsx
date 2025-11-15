@@ -1,7 +1,8 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -73,10 +74,18 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     watch,
     control,
     setValue,
+    getValues,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: defaultValues,
   })
+
+  useEffect(() => {
+    if (isEqual(getValues(), initialValues)) return
+
+    console.debug('initial value have changed, resetting form-fields...')
+    resetInputs(initialValues)
+  }, [initialValues])
 
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
