@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
+import isEmpty from 'lodash/isEmpty'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -61,6 +62,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   }
 
   const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const {
     register,
@@ -103,7 +105,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
-          <QuestionDialogHeader type={initialValues ? 'edit' : 'create'} />
+          <QuestionDialogHeader type={mode} />
           <input {...register('id')} id='id' value={defaultValues.id} className='hidden' />
 
           <div className='grid items-center gap-2'>
@@ -178,7 +180,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               Cancel
             </Button>
             <Button size='lg' variant='primary' type='submit'>
-              {isSubmitting ? 'Processing' : 'Add Question'}
+              {isSubmitting ? 'Processing' : mode === 'create' ? 'Add Question' : 'Update Question'}
             </Button>
             {errors.root && <div>{JSON.stringify(errors.root)}</div>}
           </DialogFooter>
