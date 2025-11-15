@@ -31,26 +31,26 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     switch (type) {
       case 'multiple-choice':
         return {
-          ...instantiateMultipleChoice(),
+          ...instantiateMultipleChoice({ overrideArraySize: 4 }),
           question: '',
           points: 1,
         }
       case 'single-choice':
         return {
-          ...instantiateSingleChoice(),
+          ...instantiateSingleChoice({ overrideArraySize: 4 }),
           question: '',
           points: 1,
         }
 
       case 'open-question':
         return {
-          ...instantiateOpenQuestion(),
+          ...instantiateOpenQuestion({ overrideArraySize: 4 }),
           question: '',
           points: 1,
         }
 
       case 'drag-drop':
-        const dragQuestion = instantiateDragDropQuestion()
+        const dragQuestion = instantiateDragDropQuestion({ overrideArraySize: 4 })
         return {
           ...dragQuestion,
           question: '',
