@@ -50,9 +50,16 @@ export const auth = betterAuth({
         console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' was linked to: '${newUser.user.email}'!`)
         const db = await getDatabase()
 
-        const [{ affectedRows: updatedChecks }] = await db.update(db_knowledgeCheck).set({ owner_id: newUser.user.id }).where(eq(db_knowledgeCheck.owner_id, anonymousUser.user.id))
-        const [{ affectedRows: updatedResults }] = await db.update(db_userHasDoneKnowledgeCheck).set({ userId: newUser.user.id }).where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
-        console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+        try {
+          const [{ affectedRows: updatedChecks }] = await db.update(db_knowledgeCheck).set({ owner_id: newUser.user.id }).where(eq(db_knowledgeCheck.owner_id, anonymousUser.user.id))
+          const [{ affectedRows: updatedResults }] = await db
+            .update(db_userHasDoneKnowledgeCheck)
+            .set({ userId: newUser.user.id })
+            .where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
+          console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+        } catch (e) {
+          console.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
+        }
       },
     }),
     genericOAuth({
