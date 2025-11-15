@@ -140,7 +140,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
-                    resetInputs({ ...getDefaultValues(type as Any), question: watch('question'), points: watch('points'), category: watch('category') })
+                    resetInputs({ ...getDefaultValues(type as Any), id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
                   }
                   register('type').onChange({ target: { value: type, name: 'type' } })
                 }}
