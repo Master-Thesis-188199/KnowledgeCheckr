@@ -98,6 +98,9 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
     closeDialog({ reset: true })
+
+    //* needed to set new form-values (unique question-id) as default-values are only set once within the form when the useForm initializes. Thus, updating the defaultValues variable will not lead to different form-defaultValues.
+    resetInputs(initialValues ?? getDefaultValues('drag-drop'))
   }
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
