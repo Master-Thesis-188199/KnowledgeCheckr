@@ -81,7 +81,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   })
 
   useEffect(() => {
-    if (isEqual(getValues(), initialValues)) return
+    if (isEqual(getValues(), initialValues) || isEmpty(initialValues)) return
 
     console.debug('initial value have changed, resetting form-fields...')
     resetInputs(initialValues)
