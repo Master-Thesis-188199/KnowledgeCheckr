@@ -81,7 +81,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
     if (reset) {
-      resetInputs()
+      resetInputs(mode === 'edit' ? initialValues : {})
     }
   }
 
@@ -95,7 +95,13 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
 
   return (
     <Dialog open={dialogOpenState} onOpenChange={(state) => (!state ? clearErrors() : null)}>
-      <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
+      <DialogTrigger
+        asChild
+        onClick={() => {
+          setDialogOpenState(true)
+          //* ensure that the dialog always displays data of the correct question (based on id)
+          if (mode === 'edit' && watch('id') !== initialValues?.id) resetInputs(initialValues)
+        }}>
         {children}
       </DialogTrigger>
       <DialogContent
