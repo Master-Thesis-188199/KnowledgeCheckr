@@ -85,7 +85,13 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
               })
             }
 
-            return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories, unsavedChanges: true }
+            //* updates questions by replacing to-update question with new version
+            const updatedQuestions = prev.questions.map((q) => (question.id !== q.id ? q : question))
+
+            //* adds a new question to the end of the array
+            if (!exists) updatedQuestions.push(question)
+
+            return { questions: [...updatedQuestions], questionCategories, unsavedChanges: true }
           }),
         removeQuestion,
       }
