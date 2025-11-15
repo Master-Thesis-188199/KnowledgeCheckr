@@ -85,6 +85,11 @@ jobs:
           echo "AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID }}" >> .env
           echo "AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET }}" >> .env
 
+          echo "MODE=${{ secrets.MODE }}" >> .env
+          echo "DEX_PROVIDER_URL=${{ secrets.DEX_PROVIDER_URL }}" >> .env
+          echo "DEX_CLIENT_ID=${{ secrets.DEX_CLIENT_ID }}" >> .env
+          echo "DEX_CLIENT_SECRET=${{ secrets.DEX_CLIENT_SECRET }}" >> .env
+
       - name: Create BuildKit Configuration
         run: |
           echo "[worker.oci]
