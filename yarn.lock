@@ -7229,10 +7229,10 @@ lru.min@^1.0.0:
   resolved "https://registry.npmjs.org/lru.min/-/lru.min-1.1.2.tgz"
   integrity sha512-Nv9KddBcQSlQopmBHXSsZVY5xsdlZkdH/Iey0BlcBYggMd4two7cZnKOK9vmy3nY0O5RGH99z1PCeTpPqszUYg==
 
-lucide-react@^0.485.0:
-  version "0.485.0"
-  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.485.0.tgz#96079022f766e7feabcc1b1d9c084bc529802ff6"
-  integrity sha512-NvyQJ0LKyyCxL23nPKESlr/jmz8r7fJO1bkuptSNYSy0s8VVj4ojhX0YAgmE1e0ewfxUZjIlZpvH+otfTnla8Q==
+lucide-react@^0.553.0:
+  version "0.553.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.553.0.tgz#50ea2ab682315be9b8a2df575403e4f14cc93e83"
+  integrity sha512-BRgX5zrWmNy/lkVAe0dXBgd7XQdZ3HTf+Hwe3c9WK6dqgnj9h+hxV+MDncM88xDWlCq27+TKvHGE70ViODNILw==
 
 make-dir@^3.0.0, make-dir@^3.0.2:
   version "3.1.0"

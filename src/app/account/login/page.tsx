@@ -1,16 +1,17 @@
-/* eslint-disable prefer-const */
+import { FlaskConicalIcon, VenetianMaskIcon } from 'lucide-react'
+import Image from 'next/image'
+import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
 import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
+import { AnonymousSigninButton } from '@/src/components/account/login/AnonymousSigninButton'
 import LoginForm from '@/src/components/account/login/LoginForm'
-import ProviderButton, { ProviderButtonProps } from '@/src/components/account/login/ProviderButton'
+import OAuthButton from '@/src/components/account/login/OAuthButton'
 import SignupForm from '@/src/components/account/login/SignupForm'
+import { SocialButton } from '@/src/components/account/SocialButton'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
 import { getReferer } from '@/src/lib/Shared/getReferer'
-import Image from 'next/image'
-import { redirect } from 'next/navigation'
-import { twMerge } from 'tailwind-merge'
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
   //? `referer` is passed along when the user switches between signin and signup
@@ -47,27 +48,31 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </div>
         </div>
 
-        <div className='mx-auto flex w-full max-w-64 items-center justify-center gap-5 text-neutral-200/90'>
-          <SocialButton icon={GoogleIcon} callbackURL={callbackUrl ?? undefined} provider='google' aria-label='SignIn using Google' />
-          <SocialButton icon={GithubSvg} callbackURL={callbackUrl ?? undefined} provider='github' aria-label='SignIn using GitHub' />
+        <div className='flex flex-col gap-3'>
+          <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
+            <SocialButton icon={GoogleIcon} callbackURL={callbackUrl ?? undefined} provider='google' aria-label='SignIn using Google' />
+            <SocialButton icon={GithubSvg} callbackURL={callbackUrl ?? undefined} provider='github' aria-label='SignIn using GitHub' />
+            {env.MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={callbackUrl ?? undefined} />}
+          </div>
+
+          <div className='relative'>
+            <div className='absolute inset-0 inset-x-12 flex items-center' aria-hidden='true'>
+              <div className='h-[1px] w-full bg-gradient-to-r from-neutral-700 via-neutral-300 to-neutral-700 dark:via-neutral-500' />
+            </div>
+
+            <div className='relative flex justify-center'>
+              <p className='flex gap-2 bg-neutral-200 px-3 text-sm leading-6 tracking-widest text-gray-900 dark:bg-neutral-800 dark:text-neutral-400'>
+                <span className=''>or</span>
+              </p>
+            </div>
+          </div>
+          <AnonymousSigninButton icon={VenetianMaskIcon} className='mx-auto' callbackURL={callbackUrl ?? undefined} />
         </div>
       </div>
     </div>
   )
 }
 
-function SocialButton({ icon: Icon, iconClassName, ...props }: { icon: React.ComponentType<{ className?: string }>; iconClassName?: string } & ProviderButtonProps) {
-  return (
-    <ProviderButton
-      type='button'
-      className='flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600'
-      callbackURL={props.callbackURL ?? env.NEXT_PUBLIC_BASE_URL}
-      errorCallbackURL={env.NEXT_PUBLIC_BASE_URL}
-      {...props}>
-      <Icon className={twMerge('size-6', iconClassName)} />
-    </ProviderButton>
-  )
-}
 function FormHeader({ title, subTitle }: { title: string; subTitle?: string }) {
   return (
     <div className='mb-2 flex flex-col items-center gap-2'>

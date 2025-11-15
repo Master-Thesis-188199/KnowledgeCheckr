@@ -20,6 +20,7 @@ export function InitialsIcon({
       src={`https://ui-avatars.com/api/?name=${encodeURI(name)}&background=${background}&size=${size > 512 ? 512 : size}&length=${characterLength}&rounded=${rounded}`}
       unoptimized={true}
       className={twMerge(className)}
+      aria-label='user avatar'
       alt={`initials for ${name}`}
       height={size}
       width={size}

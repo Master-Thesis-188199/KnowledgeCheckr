@@ -29,6 +29,7 @@ declare namespace Cypress {
     skip(message?: string, skipCondition?: boolean): void
     login(email: string, password: string): void
     loginTestUser(): void
+    loginAnonymously(): void
     signUp(username: string, email: string, password: string): void
     signOut(): void
 
