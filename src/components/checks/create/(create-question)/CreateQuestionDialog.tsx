@@ -15,6 +15,7 @@ import { default as CreateableSelect, default as Select } from '@/src/components
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import {
   ChoiceQuestion,
+  DragDropQuestion,
   instantiateDragDropQuestion,
   instantiateMultipleChoice,
   instantiateOpenQuestion,
@@ -155,7 +156,19 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
-                    resetInputs({ ...getDefaultValues(type as Any), id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
+                    let defaults = getDefaultValues(type as Any)
+
+                    if (mode === 'edit' && type === initialValues?.type && watch('type') === 'open-question') {
+                      //* Fill the initival values when swapping back to initial-edit-question and the values were lost because the user swapped to e.g. an open-question in between
+                      defaults = initialValues
+                    } else if ((type as Question['type']) !== 'open-question' && watch('type') !== 'open-question') {
+                      //* pre-fill answer-options based on previous-inputs when possible;  when the previous and new question-type has multiple answers
+                      defaults = { ...defaults, answers: (defaults as ChoiceQuestion | DragDropQuestion).answers.map((a, i) => ({ ...a, answer: watch(`answers.${i}.answer`) })) } as
+                        | ChoiceQuestion
+                        | DragDropQuestion
+                    }
+
+                    resetInputs({ ...defaults, id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
                   }
                   register('type').onChange({ target: { value: type, name: 'type' } })
                 }}
