@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getUUID } from '@/src/lib/Shared/getUUID'
 import { z, ZodTypeAny } from 'zod'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 
 /**
  * The default size of an array.
@@ -16,6 +16,7 @@ export interface SchemaOptionalProps {
   instantiate_Nullable_PrimitiveProps?: boolean
   instantiate_Optional_Objects?: boolean
   instantiate_Nullable_Objects?: boolean
+  overrideArraySize?: number
 }
 
 /**
@@ -69,7 +70,7 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
       const arraySchema = schema as z.ZodArray<any>
       const elementSchema = arraySchema.element
 
-      const elements = Array.from({ length: DEFAULT_ARRAY_SIZE }).map(() => schemaDefaults(elementSchema, options)) as z.TypeOf<Schema>
+      const elements = Array.from({ length: options.overrideArraySize ?? DEFAULT_ARRAY_SIZE }).map(() => schemaDefaults(elementSchema, options)) as z.TypeOf<Schema>
       return elements
     }
 
