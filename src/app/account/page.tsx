@@ -62,10 +62,8 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
     <div className='mx-2 flex flex-col gap-6'>
       <Line className='text-neutral-500' dashSize={4} dashed dashSpacing={6} />
       <div className='flex flex-col gap-2'>
-        <h2 className='text-lg font-semibold dark:text-neutral-300'>Link you Account</h2>
-        <span className='text-sm text-balance dark:text-neutral-400'>
-          In order to keep your data after signing out or closing this tab, you can sign-in through a social-provider like Google to keep your data.{' '}
-        </span>
+        <h2 className='text-lg font-semibold dark:text-neutral-300'>Link your Account</h2>
+        <span className='text-sm dark:text-neutral-400'>To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.</span>
       </div>
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
