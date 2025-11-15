@@ -16,6 +16,7 @@ export interface SchemaOptionalProps {
   instantiate_Nullable_PrimitiveProps?: boolean
   instantiate_Optional_Objects?: boolean
   instantiate_Nullable_Objects?: boolean
+  stripDefaultValues?: boolean
   overrideArraySize?: number
 }
 

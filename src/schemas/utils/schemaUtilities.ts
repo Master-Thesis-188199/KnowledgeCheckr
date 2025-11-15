@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SafeParseReturnType, z } from 'zod'
-import { stripZodDefault } from '@/schemas/utils/stripZodDefaultValues'
 import schemaDefaults, { SchemaOptionalProps } from '@/schemas/utils/schemaDefaults'
+import { stripZodDefault } from '@/schemas/utils/stripZodDefaultValues'
 
 /**
  * A hook that provides utility functions for working with zod schemas
@@ -21,7 +21,7 @@ export function schemaUtilities<Type>(schema: z.ZodTypeAny) {
    * @param options - Defines how optional properties should be handled in terms of their instantiation (undefined / value)
    */
   function instantiate(options?: SchemaOptionalProps): Type {
-    return schemaDefaults(schema, options)
+    return schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options)
   }
 
   /**
