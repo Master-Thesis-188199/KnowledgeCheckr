@@ -91,7 +91,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
     if (reset) {
-      resetInputs(mode === 'edit' ? initialValues : {})
+      resetInputs(mode === 'edit' ? initialValues : undefined)
     }
   }
 
