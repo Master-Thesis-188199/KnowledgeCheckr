@@ -162,6 +162,18 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                       //* Fill the initival values when swapping back to initial-edit-question and the values were lost because the user swapped to e.g. an open-question in between
                       defaults = initialValues
                     } else if ((type as Question['type']) !== 'open-question' && watch('type') !== 'open-question') {
+                      //* override the answer-options size to the previous size; e.g. when the prev. question had 3 answer-options and it is compatible the updated question-type will also show 3 options with the same values
+                      const previous = watch('answers').length
+                      if ((defaults as ChoiceQuestion | DragDropQuestion).answers.length !== previous) {
+                        console.debug(
+                          `Question-type changed ('${watch('type')}' --> '${type}'), overriding answer-options from previous compatible question-type from ${(defaults as ChoiceQuestion | DragDropQuestion).answers.length} to ${previous}`,
+                        )
+                        // @ts-expect-error potential type-mismatch the properties of (`answers.{i}`) might be of type DragDropQuestion while the defaults.answers could be of type ChoiceQuestion. Hence, it might include 'incorrect' / irrelevant props like position or correct.
+                        ;(defaults as ChoiceQuestion | DragDropQuestion).answers = Array.from({ length: previous }).map((_, i) => ({
+                          ...watch(`answers.${i}`),
+                        }))
+                      }
+
                       //* pre-fill answer-options based on previous-inputs when possible;  when the previous and new question-type has multiple answers
                       defaults = { ...defaults, answers: (defaults as ChoiceQuestion | DragDropQuestion).answers.map((a, i) => ({ ...a, answer: watch(`answers.${i}.answer`) })) } as
                         | ChoiceQuestion
