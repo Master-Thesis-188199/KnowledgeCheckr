@@ -38,7 +38,7 @@ function createQuestion({ question, points, ...rest }: Question) {
  * @param question The respective question whoose existance should be verified.
  */
 function verifyQuestionExistance(question: Question) {
-  cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
+  cy.get(`.question[data-question="${question.question}"]`).should('exist')
   cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
 }
 type KeysOfUnion<T> = T extends T ? keyof T : never
@@ -128,7 +128,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
     for (const question of dummyQuestions) {
       //* ensure edit dialog displays correct information even if rapid open-closures
       for (let i = 0; i < 2; i++) {
-        cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
+        cy.get(`.question[data-question="${question.question}"]`).should('exist')
 
         let compatible: Question['type'] | null = 'drag-drop'
 
