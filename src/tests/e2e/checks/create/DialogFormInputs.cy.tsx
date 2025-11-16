@@ -41,6 +41,14 @@ function verifyQuestionExistance(question: Question) {
   cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
   cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
 }
+type KeysOfUnion<T> = T extends T ? keyof T : never
+type VerifyEditMenuOptions = {
+  editAction_BeforeValidation?: () => void
+  editAction_AfterValidation?: () => void
+  validateProps?: {
+    [key in Exclude<KeysOfUnion<Question>, 'id' | 'category'>]?: boolean
+  }
+}
 
 /**
  * This helper function essentially opens the `edit` dialog of a given question.
@@ -48,11 +56,12 @@ function verifyQuestionExistance(question: Question) {
  * @param question The question for which the `edit` dialog is to be opened and that is to be validated.
  * @param options.editAction_BeforeValidation When provided this function will be called before the question is validated to make modification beforehand.
  * @param options.editAction_AfterValidation When provided this function will be called after the question was vaidated, but before the dialog is closed again.
+ * @param options.validateProps Defines which props the helper function should validate in regard to the current question. Default `question, points, type`
  */
 function verifyOpenCloseEditMenu(
   question: Question,
-  { editAction_AfterValidation, editAction_BeforeValidation }: { editAction_BeforeValidation?: () => void; editAction_AfterValidation?: () => void } = {},
-) {
+  { editAction_AfterValidation, editAction_BeforeValidation, validateProps = { question: true, points: true, type: true } }: VerifyEditMenuOptions = {},
+): void {
   cy.get('#question-dialog').should('not.exist')
 
   // open edit dialog
@@ -64,16 +73,16 @@ function verifyOpenCloseEditMenu(
   cy.get('#question-dialog input[id="points"]').should('have.value', question.points)
   cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
 
-  if (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop') {
+  if (validateProps.answers && (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop')) {
     for (const answer of question.answers) {
       cy.get(`#question-dialog input[name='answers.${question.answers.findIndex((a) => a.id === answer.id)}.answer']`)
         .should('exist')
         .and('be.visible')
         .should('have.value', answer.answer)
     }
-  } else if (question.type === 'open-question') {
+  } else if (question.type === 'open-question' && validateProps.expectation) {
     cy.get(`#question-dialog input[name='expectation']`).should('exist').and('be.visible').should('have.value', question.expectation)
-  } else throw new Error('Unsupported question-type')
+  }
 
   if (editAction_AfterValidation) editAction_AfterValidation()
 
