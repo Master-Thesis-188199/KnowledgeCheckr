@@ -184,6 +184,16 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
   })
 
   it('Verify that form-inputs are persisent when dialog is closed and re-opened for same question', () => {
+    //* Specify which properties should be validated within the edit dialog.
+    const validateProps: VerifyEditMenuOptions['validateProps'] = {
+      points: true,
+      question: true,
+      type: true,
+
+      // the answers are not validated because
+      answers: false,
+      expectation: false,
+    }
     cy.visit('/checks/create')
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
 
@@ -215,9 +225,15 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
           cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragType}"]`).click()
           cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragType)
         },
+        validateProps,
       })
-      // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
-      verifyOpenCloseEditMenu({ ...singleChoiceQuestion, type: dragType })
+      verifyOpenCloseEditMenu(
+        // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+        { ...singleChoiceQuestion, type: dragType },
+        {
+          validateProps,
+        },
+      )
 
       verifyOpenCloseEditMenu(dragDropQuestion, {
         editAction_AfterValidation: () => {
@@ -226,6 +242,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
           cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${choiceType}"]`).click()
           cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', choiceType)
         },
+        validateProps,
       })
       // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
       verifyOpenCloseEditMenu({ ...dragDropQuestion, type: choiceType })
@@ -241,6 +258,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${singleChoiceQuestion.type}"]`).click()
             cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', singleChoiceQuestion.type)
           },
+          validateProps,
         },
       )
       verifyOpenCloseEditMenu(
@@ -253,6 +271,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragDropQuestion.type}"]`).click()
             cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragDropQuestion.type)
           },
+          validateProps,
         },
       )
     }
