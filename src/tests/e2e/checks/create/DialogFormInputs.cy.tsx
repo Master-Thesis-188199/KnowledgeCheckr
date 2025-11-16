@@ -1,4 +1,13 @@
-import { DragDropQuestion, instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import {
+  DragDropQuestion,
+  instantiateDragDropQuestion,
+  instantiateMultipleChoice,
+  instantiateOpenQuestion,
+  instantiateSingleChoice,
+  MultipleChoice,
+  Question,
+  SingleChoice,
+} from '@/src/schemas/QuestionSchema'
 
 /**
  * This helper function creates / adds a new question by opening the `CreateQuestionDialog` entering question specific values and then submitting the form by clicking "Add Question".
@@ -74,11 +83,11 @@ function verifyOpenCloseEditMenu(
   cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
 
   if (validateProps.answers && (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop')) {
-    for (const answer of question.answers) {
-      cy.get(`#question-dialog input[name='answers.${question.answers.findIndex((a) => a.id === answer.id)}.answer']`)
-        .should('exist')
-        .and('be.visible')
-        .should('have.value', answer.answer)
+    cy.get('#question-dialog #question-answers input[name$=".answer"]').should('have.length', question.answers.length)
+
+    for (let i = 0; i < question.answers.length; i++) {
+      const answer = question.answers.at(i)!
+      cy.get(`#question-dialog input[name='answers.${i}.answer']`).should('exist').and('be.visible').should('have.value', answer.answer)
     }
   } else if (question.type === 'open-question' && validateProps.expectation) {
     cy.get(`#question-dialog input[name='expectation']`).should('exist').and('be.visible').should('have.value', question.expectation)
@@ -91,13 +100,89 @@ function verifyOpenCloseEditMenu(
 }
 
 // --------------------------------- TESTS -------------------------------
+const scQuestion: SingleChoice = {
+  ...instantiateSingleChoice(),
+  question: 'This is a single-choice question',
+  answers: [
+    {
+      id: '',
+      answer: 'First (single-choice) answer',
+      correct: true,
+    },
+    {
+      id: '',
+      answer: 'Second (single-choice) answer',
+      correct: false,
+    },
+    {
+      id: '',
+      answer: 'Third (single-choice) answer',
+      correct: false,
+    },
+    {
+      id: '',
+      answer: 'Fourth (single-choice) answer',
+      correct: false,
+    },
+  ],
+}
 
-const dummyQuestions = [
-  { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
-  { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
-  { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
-  { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
-]
+const mcQuestion: MultipleChoice = {
+  ...instantiateMultipleChoice(),
+  question: 'This is a multiple-choice question',
+  answers: [
+    {
+      id: '',
+      answer: 'First (multiple-choice) answer',
+      correct: true,
+    },
+    {
+      id: '',
+      answer: 'Second (multiple-choice) answer',
+      correct: true,
+    },
+    {
+      id: '',
+      answer: 'Third (multiple-choice) answer',
+      correct: false,
+    },
+    {
+      id: '',
+      answer: 'Fourth (multiple-choice) answer',
+      correct: false,
+    },
+  ],
+}
+
+const ddQuestion: DragDropQuestion = {
+  ...instantiateDragDropQuestion(),
+  question: 'This is an open-question question',
+
+  answers: [
+    {
+      id: '',
+      answer: 'First (drag-drop) answer',
+      position: 0,
+    },
+    {
+      id: '',
+      answer: 'Second (drag-drop) answer',
+      position: 1,
+    },
+    {
+      id: '',
+      answer: 'Third (drag-drop) answer',
+      position: 2,
+    },
+    {
+      id: '',
+      answer: 'Fourth (drag-drop) answer',
+      position: 3,
+    },
+  ],
+}
+
+const dummyQuestions = [mcQuestion, scQuestion, { ...instantiateOpenQuestion(), question: 'This is a open-question question' }, ddQuestion]
 
 describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, () => {
   beforeEach(() => {
@@ -261,6 +346,61 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
           validateProps,
         },
       )
+    }
+  })
+
+  it('Verify that question answers are persistent across compatible questions', () => {
+    /*
+      * Test Description:
+        We essentially want to edit a given question and switch between compatible types. 
+        We then want to ensure that the answer-options from the originally editted question are transferred / kept when switching between question-types. Both in the answer-option count and their texts.
+    */
+
+    //* Specify which properties should be validated within the edit dialog.
+    const validateProps: VerifyEditMenuOptions['validateProps'] = {
+      points: true,
+      question: true,
+      type: true,
+
+      // the answers are not validated because
+      answers: true,
+      expectation: true,
+    }
+    const question = dummyQuestions.find((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')!
+
+    let questionType: Exclude<Question['type'], 'open-question'> = question.type
+
+    for (let i = 0; i < 4; i++) {
+      let compatible = questionType
+
+      switch (questionType) {
+        case 'single-choice':
+          compatible = 'multiple-choice'
+          break
+        case 'multiple-choice':
+          compatible = 'drag-drop'
+          break
+        case 'drag-drop':
+          compatible = 'single-choice'
+          break
+      }
+
+      verifyOpenCloseEditMenu(
+        // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+        { ...question, type: questionType },
+        {
+          editAction_AfterValidation: () => {
+            //* change question-type but don't save
+            cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+            cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${compatible}"]`).click()
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', compatible)
+          },
+          validateProps,
+        },
+      )
+
+      //override question-type variable to switch between types in loop
+      questionType = compatible
     }
   })
 })
