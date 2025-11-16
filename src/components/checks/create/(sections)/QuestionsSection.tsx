@@ -23,7 +23,7 @@ export default function QuestionsSection() {
         </div>
         <div className={cn('my-4 grid grid-cols-1 gap-6')}>
           {questions.map((question, i) => (
-            <Card key={i + question.id} className='question flex gap-3 p-2 hover:bg-none'>
+            <Card data-question-id={question.id} data-question={question.question} key={i + question.id} className='question flex gap-3 p-2 hover:bg-none'>
               <div className='header flex flex-1 flex-col p-1'>
                 <div className='flex items-center justify-between'>
                   <h2 className='text-neutral-700 dark:text-neutral-300'>{question.question}</h2>
