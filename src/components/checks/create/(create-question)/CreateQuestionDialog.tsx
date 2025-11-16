@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
@@ -25,45 +25,46 @@ import {
   QuestionSchema,
 } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
+
+const generateQuestionDefaults = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
+  switch (type) {
+    case 'multiple-choice':
+      return {
+        ...instantiateMultipleChoice({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+    case 'single-choice':
+      return {
+        ...instantiateSingleChoice({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+
+    case 'open-question':
+      return {
+        ...instantiateOpenQuestion({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+
+    case 'drag-drop':
+      const dragQuestion = instantiateDragDropQuestion({ overrideArraySize: 4 })
+      return {
+        ...dragQuestion,
+        question: '',
+        points: 1,
+
+        answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
+      }
+  }
+}
+
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCheckStore((state) => state)
 
-  const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
-    switch (type) {
-      case 'multiple-choice':
-        return {
-          ...instantiateMultipleChoice({ overrideArraySize: 4 }),
-          question: '',
-          points: 1,
-        }
-      case 'single-choice':
-        return {
-          ...instantiateSingleChoice({ overrideArraySize: 4 }),
-          question: '',
-          points: 1,
-        }
-
-      case 'open-question':
-        return {
-          ...instantiateOpenQuestion({ overrideArraySize: 4 }),
-          question: '',
-          points: 1,
-        }
-
-      case 'drag-drop':
-        const dragQuestion = instantiateDragDropQuestion({ overrideArraySize: 4 })
-        return {
-          ...dragQuestion,
-          question: '',
-          points: 1,
-
-          answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
-        }
-    }
-  }
-
-  const computeFormDefaults = () => (initialValues === undefined || isEmpty(initialValues) ? getDefaultValues('drag-drop') : initialValues)
+  const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults('drag-drop') : initialValues), [initialValues])
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const {
@@ -159,7 +160,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
-                    let defaults = getDefaultValues(type as Any)
+                    let defaults = generateQuestionDefaults(type as Any)
 
                     if (mode === 'edit' && type === initialValues?.type && watch('type') === 'open-question') {
                       //* Fill the initival values when swapping back to initial-edit-question and the values were lost because the user swapped to e.g. an open-question in between
