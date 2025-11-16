@@ -90,9 +90,26 @@ function verifyOpenCloseEditMenu(
   cy.get('[data-slot="dialog-overlay"]').should('exist').and('have.attr', 'data-state', 'open').click({ force: true })
 }
 
+// --------------------------------- TESTS -------------------------------
+
+const dummyQuestions = [
+  { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
+  { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
+  { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
+  { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
+]
+
 describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, () => {
   beforeEach(() => {
     cy.loginAnonymously()
+
+    cy.visit('/checks/create')
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
+
+    for (const question of dummyQuestions) {
+      createQuestion(question)
+      verifyQuestionExistance(question)
+    }
   })
 
   it('Verify that form-inputs are properly displayed when rapidly edit-dialog is rapidly opened / closed and question-type is modified without submission', () => {
@@ -105,21 +122,6 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
       // the answers are not validated because
       answers: false,
       expectation: false,
-    }
-
-    cy.visit('/checks/create')
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
-
-    const dummyQuestions = [
-      { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
-      { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
-      { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
-      { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
-    ]
-
-    for (const question of dummyQuestions) {
-      createQuestion(question)
-      verifyQuestionExistance(question)
     }
 
     //* Rapid opening and closure of edit menu's while changing the type (without submission)
@@ -194,22 +196,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
       answers: false,
       expectation: false,
     }
-    cy.visit('/checks/create')
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
 
-    const dummyQuestions = [
-      { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
-      { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
-      { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
-      { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
-    ]
-
-    for (const question of dummyQuestions) {
-      createQuestion(question)
-      verifyQuestionExistance(question)
-    }
-
-    cy.log('Switch a couple of times between two different questions and modify their type (without submission)')
     //* Switch a couple of times between two different questions and modify their type (without submission)
     for (let i = 0; i < 2; i++) {
       const singleChoiceQuestion = dummyQuestions.find((q) => q.type === 'single-choice')!
