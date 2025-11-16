@@ -1,5 +1,9 @@
 import { DragDropQuestion, instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 
+/**
+ * This helper function creates / adds a new question by opening the `CreateQuestionDialog` entering question specific values and then submitting the form by clicking "Add Question".
+ * @param question The question that is to be inserted.
+ */
 function createQuestion({ question, points, ...rest }: Question) {
   cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
   cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
@@ -29,11 +33,22 @@ function createQuestion({ question, points, ...rest }: Question) {
   cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
 }
 
+/**
+ * This helper function essentially verifies that a respective question is displayed within the `QuestionsSection` after it was added by the CreateQuestionDialog.
+ * @param question The respective question whoose existance should be verified.
+ */
 function verifyQuestionExistance(question: Question) {
   cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
   cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
 }
 
+/**
+ * This helper function essentially opens the `edit` dialog of a given question.
+ * It then starts to validate that the dialog displays the properties of the question correctly (`type`, `question`, `points`, `answers`, `expectation`).
+ * @param question The question for which the `edit` dialog is to be opened and that is to be validated.
+ * @param options.editAction_BeforeValidation When provided this function will be called before the question is validated to make modification beforehand.
+ * @param options.editAction_AfterValidation When provided this function will be called after the question was vaidated, but before the dialog is closed again.
+ */
 function verifyOpenCloseEditMenu(
   question: Question,
   { editAction_AfterValidation, editAction_BeforeValidation }: { editAction_BeforeValidation?: () => void; editAction_AfterValidation?: () => void } = {},
