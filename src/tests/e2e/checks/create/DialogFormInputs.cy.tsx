@@ -1,0 +1,202 @@
+import { DragDropQuestion, instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+
+function createQuestion({ question, points, ...rest }: Question) {
+  cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
+  cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
+
+  cy.get("input[name='question']").clear().type(question)
+  cy.get("input[name='points']").clear().type(points.toString())
+
+  cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+  cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${rest.type}"]`).click()
+
+  if (rest.type !== 'open-question') {
+    for (let i = 0; i < rest.answers.length; i++) {
+      if (rest.type === 'drag-drop') {
+        cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(rest.answers[i].answer)
+      } else if (rest.type === 'single-choice' || rest.type === 'multiple-choice') {
+        cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(rest.answers[i].answer)
+      } else {
+        throw new Error('Unhandled question-type')
+      }
+    }
+  } else if (rest.expectation) {
+    cy.get('#question-answers input[id="expectation"]').should('exist').and('be.visible').type(rest.expectation)
+  }
+
+  cy.get("#question-dialog * button[type='submit']").should('exist').click({ force: true })
+
+  cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
+}
+
+function verifyQuestionExistance(question: Question) {
+  cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
+  cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
+}
+
+function verifyOpenCloseEditMenu(
+  question: Question,
+  { editAction_AfterValidation, editAction_BeforeValidation }: { editAction_BeforeValidation?: () => void; editAction_AfterValidation?: () => void } = {},
+) {
+  cy.get('#question-dialog').should('not.exist')
+
+  // open edit dialog
+  cy.get(`.question[data-question="${question.question}"] [data-slot="dialog-trigger"]`).should('exist').click().should('have.attr', 'data-state', 'open')
+
+  if (editAction_BeforeValidation) editAction_BeforeValidation()
+
+  cy.get('#question-dialog input[id="question"]').should('have.value', question.question)
+  cy.get('#question-dialog input[id="points"]').should('have.value', question.points)
+  cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
+
+  if (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop') {
+    for (const answer of question.answers) {
+      cy.get(`#question-dialog input[name='answers.${question.answers.findIndex((a) => a.id === answer.id)}.answer']`)
+        .should('exist')
+        .and('be.visible')
+        .should('have.value', answer.answer)
+    }
+  } else if (question.type === 'open-question') {
+    cy.get(`#question-dialog input[name='expectation']`).should('exist').and('be.visible').should('have.value', question.expectation)
+  } else throw new Error('Unsupported question-type')
+
+  if (editAction_AfterValidation) editAction_AfterValidation()
+
+  // close edit dialog
+  cy.get('[data-slot="dialog-overlay"]').should('exist').and('have.attr', 'data-state', 'open').click({ force: true })
+}
+
+describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, () => {
+  beforeEach(() => {
+    cy.loginAnonymously()
+  })
+
+  it('Verify that form-inputs are persisent when dialog is closed and re-opened for same question', () => {
+    cy.visit('/checks/create')
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
+
+    const dummyQuestions = [
+      { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
+      { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
+      { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
+      { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
+    ]
+
+    for (const question of dummyQuestions) {
+      createQuestion(question)
+      verifyQuestionExistance(question)
+    }
+
+    //* Rapid opening and closure of edit menu's while changing the type (without submission)
+    for (const question of dummyQuestions) {
+      //* ensure edit dialog displays correct information even if rapid open-closures
+      for (let i = 0; i < 2; i++) {
+        cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
+
+        let compatible: Question['type'] = 'drag-drop'
+
+        switch (question.type) {
+          case 'single-choice':
+            compatible = 'drag-drop'
+            break
+          case 'multiple-choice':
+            compatible = 'drag-drop'
+            break
+          case 'open-question':
+            compatible = 'open-question'
+            break
+          case 'drag-drop':
+            compatible = 'single-choice'
+            break
+        }
+
+        verifyOpenCloseEditMenu(question, {
+          editAction_AfterValidation: () => {
+            //* change question-type but don't save
+            cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+            cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${compatible}"]`).click()
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', compatible)
+          },
+        })
+
+        //* Verify that "cached" form inputs are shown when re-opening dialog
+        verifyOpenCloseEditMenu(
+          // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+          { ...question, type: compatible },
+          {
+            editAction_AfterValidation: () => {
+              // change back to original question-type
+              cy.log(`Change back to original question type (${question.type})`)
+              cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+              cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${question.type}"]`).click()
+              cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
+              cy.wait(150)
+            },
+          },
+        )
+
+        cy.wait(150)
+      }
+
+      cy.wait(150)
+    }
+
+    cy.log('Switch a couple of times between two different questions and modify their type (without submission)')
+    //* Switch a couple of times between two different questions and modify their type (without submission)
+    for (let i = 0; i < 2; i++) {
+      const singleChoiceQuestion = dummyQuestions.find((q) => q.type === 'single-choice')!
+      const dragDropQuestion = dummyQuestions.find((q) => q.type === 'drag-drop')!
+
+      const dragType: DragDropQuestion['type'] = 'drag-drop'
+      const choiceType: SingleChoice['type'] = 'single-choice'
+
+      verifyOpenCloseEditMenu(singleChoiceQuestion, {
+        editAction_AfterValidation: () => {
+          //* change question-type but don't save
+          cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+          cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragType}"]`).click()
+          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragType)
+        },
+      })
+      // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+      verifyOpenCloseEditMenu({ ...singleChoiceQuestion, type: dragType })
+
+      verifyOpenCloseEditMenu(dragDropQuestion, {
+        editAction_AfterValidation: () => {
+          //* change question-type but don't save
+          cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+          cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${choiceType}"]`).click()
+          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', choiceType)
+        },
+      })
+      // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+      verifyOpenCloseEditMenu({ ...dragDropQuestion, type: choiceType })
+
+      //* Verify that "cached" form inputs are displayed for the correct question; after change-back to original type
+      verifyOpenCloseEditMenu(
+        // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+        { ...singleChoiceQuestion, type: dragType },
+        {
+          editAction_AfterValidation: () => {
+            // change back to original question type
+            cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+            cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${singleChoiceQuestion.type}"]`).click()
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', singleChoiceQuestion.type)
+          },
+        },
+      )
+      verifyOpenCloseEditMenu(
+        // @ts-expect-error type-mismatch the question either misses the correct property for the overriden choice-question or the position for the overriden drag-drop question. However, it only uses the type verify the answer-texts and the question-type itself.
+        { ...dragDropQuestion, type: choiceType },
+        {
+          editAction_AfterValidation: () => {
+            // change back to original question type
+            cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+            cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragDropQuestion.type}"]`).click()
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragDropQuestion.type)
+          },
+        },
+      )
+    }
+  })
+})
