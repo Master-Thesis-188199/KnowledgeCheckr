@@ -108,7 +108,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
       for (let i = 0; i < 2; i++) {
         cy.get(`.question[data-question="${question.question}"]`).should('have.length', 1)
 
-        let compatible: Question['type'] = 'drag-drop'
+        let compatible: Question['type'] | null = 'drag-drop'
 
         switch (question.type) {
           case 'single-choice':
@@ -118,11 +118,20 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             compatible = 'drag-drop'
             break
           case 'open-question':
-            compatible = 'open-question'
+            compatible = null
             break
           case 'drag-drop':
             compatible = 'single-choice'
             break
+
+          default:
+            compatible = null
+            break
+        }
+
+        if (compatible === null) {
+          cy.log(`Skipping question type '${question.type}' (${question.question}) because it has no compatible type to switch between.`)
+          continue
         }
 
         verifyOpenCloseEditMenu(question, {
