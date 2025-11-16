@@ -95,7 +95,18 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
     cy.loginAnonymously()
   })
 
-  it('Verify that form-inputs are persisent when dialog is closed and re-opened for same question', () => {
+  it('Verify that form-inputs are properly displayed when rapidly edit-dialog is rapidly opened / closed and question-type is modified without submission', () => {
+    //* Specify which properties should be validated within the edit dialog.
+    const validateProps: VerifyEditMenuOptions['validateProps'] = {
+      points: true,
+      question: true,
+      type: true,
+
+      // the answers are not validated because
+      answers: false,
+      expectation: false,
+    }
+
     cy.visit('/checks/create')
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
 
@@ -150,6 +161,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${compatible}"]`).click()
             cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', compatible)
           },
+          validateProps,
         })
 
         //* Verify that "cached" form inputs are shown when re-opening dialog
@@ -163,15 +175,28 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
               cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
               cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${question.type}"]`).click()
               cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
-              cy.wait(150)
             },
+            validateProps,
           },
         )
-
-        cy.wait(150)
       }
+    }
+  })
 
-      cy.wait(150)
+  it('Verify that form-inputs are persisent when dialog is closed and re-opened for same question', () => {
+    cy.visit('/checks/create')
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
+
+    const dummyQuestions = [
+      { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
+      { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
+      { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
+      { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
+    ]
+
+    for (const question of dummyQuestions) {
+      createQuestion(question)
+      verifyQuestionExistance(question)
     }
 
     cy.log('Switch a couple of times between two different questions and modify their type (without submission)')
