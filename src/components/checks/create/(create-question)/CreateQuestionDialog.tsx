@@ -63,7 +63,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     }
   }
 
-  const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const computeFormDefaults = () => (initialValues === undefined || isEmpty(initialValues) ? getDefaultValues('drag-drop') : initialValues)
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const {
@@ -78,7 +78,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     getValues,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: defaultValues,
+    defaultValues: computeFormDefaults(),
   })
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
     if (reset) {
-      resetInputs(mode === 'edit' ? initialValues : undefined)
+      resetInputs(computeFormDefaults())
     }
   }
 
@@ -101,7 +101,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     closeDialog({ reset: true })
 
     //* needed to set new form-values (unique question-id) as default-values are only set once within the form when the useForm initializes. Thus, updating the defaultValues variable will not lead to different form-defaultValues.
-    resetInputs(initialValues ?? getDefaultValues('drag-drop'))
+    resetInputs(computeFormDefaults())
   }
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
@@ -125,7 +125,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <QuestionDialogHeader type={mode} />
-          <input {...register('id')} id='id' value={defaultValues.id} className='hidden' />
+          <input {...register('id')} id='id' value={watch('id')} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
