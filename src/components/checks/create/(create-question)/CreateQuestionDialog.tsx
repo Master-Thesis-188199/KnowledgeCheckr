@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
@@ -15,6 +15,7 @@ import { default as CreateableSelect, default as Select } from '@/src/components
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import {
   ChoiceQuestion,
+  DragDropQuestion,
   instantiateDragDropQuestion,
   instantiateMultipleChoice,
   instantiateOpenQuestion,
@@ -24,45 +25,46 @@ import {
   QuestionSchema,
 } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
+
+const generateQuestionDefaults = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
+  switch (type) {
+    case 'multiple-choice':
+      return {
+        ...instantiateMultipleChoice({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+    case 'single-choice':
+      return {
+        ...instantiateSingleChoice({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+
+    case 'open-question':
+      return {
+        ...instantiateOpenQuestion({ overrideArraySize: 4 }),
+        question: '',
+        points: 1,
+      }
+
+    case 'drag-drop':
+      const dragQuestion = instantiateDragDropQuestion({ overrideArraySize: 4 })
+      return {
+        ...dragQuestion,
+        question: '',
+        points: 1,
+
+        answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
+      }
+  }
+}
+
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCheckStore((state) => state)
 
-  const getDefaultValues = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
-    switch (type) {
-      case 'multiple-choice':
-        return {
-          ...instantiateMultipleChoice(),
-          question: '',
-          points: 1,
-        }
-      case 'single-choice':
-        return {
-          ...instantiateSingleChoice(),
-          question: '',
-          points: 1,
-        }
-
-      case 'open-question':
-        return {
-          ...instantiateOpenQuestion(),
-          question: '',
-          points: 1,
-        }
-
-      case 'drag-drop':
-        const dragQuestion = instantiateDragDropQuestion()
-        return {
-          ...dragQuestion,
-          question: '',
-          points: 1,
-
-          answers: dragQuestion.answers.map((a, i) => ({ ...a, position: i })),
-        }
-    }
-  }
-
-  const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults('drag-drop') : initialValues), [initialValues])
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const {
@@ -77,7 +79,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     getValues,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
-    defaultValues: defaultValues,
+    defaultValues: computeFormDefaults(),
   })
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
     if (reset) {
-      resetInputs(mode === 'edit' ? initialValues : undefined)
+      resetInputs(computeFormDefaults())
     }
   }
 
@@ -100,7 +102,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     closeDialog({ reset: true })
 
     //* needed to set new form-values (unique question-id) as default-values are only set once within the form when the useForm initializes. Thus, updating the defaultValues variable will not lead to different form-defaultValues.
-    resetInputs(initialValues ?? getDefaultValues('drag-drop'))
+    resetInputs(computeFormDefaults())
   }
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
@@ -124,7 +126,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <QuestionDialogHeader type={mode} />
-          <input {...register('id')} id='id' value={defaultValues.id} className='hidden' />
+          <input {...register('id')} id='id' value={watch('id')} className='hidden' />
 
           <div className='grid items-center gap-2'>
             <label htmlFor='question' className={twMerge(label_classes)}>
@@ -158,7 +160,31 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
-                    resetInputs({ ...getDefaultValues(type as Any), id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
+                    let defaults = generateQuestionDefaults(type as Any)
+
+                    if (mode === 'edit' && type === initialValues?.type && watch('type') === 'open-question') {
+                      //* Fill the initival values when swapping back to initial-edit-question and the values were lost because the user swapped to e.g. an open-question in between
+                      defaults = initialValues
+                    } else if ((type as Question['type']) !== 'open-question' && watch('type') !== 'open-question') {
+                      //* override the answer-options size to the previous size; e.g. when the prev. question had 3 answer-options and it is compatible the updated question-type will also show 3 options with the same values
+                      const previous = watch('answers').length
+                      if ((defaults as ChoiceQuestion | DragDropQuestion).answers.length !== previous) {
+                        console.debug(
+                          `Question-type changed ('${watch('type')}' --> '${type}'), overriding answer-options from previous compatible question-type from ${(defaults as ChoiceQuestion | DragDropQuestion).answers.length} to ${previous}`,
+                        )
+                        // @ts-expect-error potential type-mismatch the properties of (`answers.{i}`) might be of type DragDropQuestion while the defaults.answers could be of type ChoiceQuestion. Hence, it might include 'incorrect' / irrelevant props like position or correct.
+                        ;(defaults as ChoiceQuestion | DragDropQuestion).answers = Array.from({ length: previous }).map((_, i) => ({
+                          ...watch(`answers.${i}`),
+                        }))
+                      }
+
+                      //* pre-fill answer-options based on previous-inputs when possible;  when the previous and new question-type has multiple answers
+                      defaults = { ...defaults, answers: (defaults as ChoiceQuestion | DragDropQuestion).answers.map((a, i) => ({ ...a, answer: watch(`answers.${i}.answer`) })) } as
+                        | ChoiceQuestion
+                        | DragDropQuestion
+                    }
+
+                    resetInputs({ ...defaults, id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
                   }
                   register('type').onChange({ target: { value: type, name: 'type' } })
                 }}

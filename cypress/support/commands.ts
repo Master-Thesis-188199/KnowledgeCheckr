@@ -186,5 +186,7 @@ Cypress.Commands.add('loginAnonymously', () => {
   cy.wait('@signin')
 
   cy.getCookie('better-auth.session_token').should('exist')
-  cy.get("img[aria-label='user avatar']").should('exist').should('be.visible')
+  cy.get("img[aria-label='user avatar']", { timeout: 10 * 1000 })
+    .should('exist')
+    .should('be.visible')
 })

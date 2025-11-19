@@ -1,14 +1,13 @@
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import {
   DragDropQuestion,
   instantiateDragDropQuestion,
   instantiateMultipleChoice,
   instantiateOpenQuestion,
   instantiateSingleChoice,
-  MultipleChoice,
   OpenQuestion,
   Question,
   SingleChoice,
@@ -335,7 +334,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
               if (feedback.type === 'multiple-choice' && question.type === feedback.type) {
                 const { selection } = answer as Extract<SimulateOptions, { type: typeof question.type }>
-                assertionChain(feedback.solution.join(',')).eq(selection.join(','))
+                assertionChain(feedback.solution.sort().join(',')).eq(selection.sort().join(','))
               }
 
               if (feedback.type === 'drag-drop' && question.type === feedback.type) {

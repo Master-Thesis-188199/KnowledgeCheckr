@@ -4092,6 +4092,11 @@ compare-func@^2.0.0:
     array-ify "^1.0.0"
     dot-prop "^5.1.0"
 
+compare-versions@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-6.1.1.tgz#7af3cc1099ba37d244b3145a9af5201b629148a9"
+  integrity sha512-4hm4VPpIecmlg59CHXnRDnqGplJFrbLG4aFEl5vl6cK1u76ws3LLvX7ikFnTDl5vo39sjWD6AaDPYodJp/NNHg==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
@@ -4280,6 +4285,15 @@ cypress-social-logins@^1.14.2:
   dependencies:
     otplib "^12.0.1"
     puppeteer "^22.15.0"
+
+cypress-terminal-report@^7.3.3:
+  version "7.3.3"
+  resolved "https://registry.yarnpkg.com/cypress-terminal-report/-/cypress-terminal-report-7.3.3.tgz#7ebc23559a7c2da0ca937402b1e0d88b6544a213"
+  integrity sha512-fj543YnOrA3B7gTQEOLvcnvxzmYDNpdO2IOgoY518o+x8Z3foknE4nnZLTa4kOHWD6aOMdOvGSls8moAUglMOA==
+  dependencies:
+    chalk "^4.0.0"
+    compare-versions "^6.1.1"
+    superstruct "0.14.2"
 
 cypress@^14.1.0:
   version "14.1.0"
@@ -9677,6 +9691,11 @@ super-regex@^1.0.0:
   dependencies:
     function-timeout "^1.0.1"
     time-span "^5.1.0"
+
+superstruct@0.14.2:
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/superstruct/-/superstruct-0.14.2.tgz#0dbcdf3d83676588828f1cf5ed35cda02f59025b"
+  integrity sha512-nPewA6m9mR3d6k7WkZ8N8zpTWfenFH3q9pA2PkuiZxINr9DKB2+40wEQf0ixn8VaGuJ78AB6iWOtStI+/4FKZQ==
 
 supports-color@^5.3.0:
   version "5.5.0"

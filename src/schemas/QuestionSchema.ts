@@ -41,7 +41,7 @@ const multipleChoiceAnswerSchema = z.object({
     .default(() => [
       { id: getUUID(), answer: 'Answer 1', correct: false },
       { id: getUUID(), answer: 'Answer 2', correct: true },
-      { id: getUUID(), answer: 'Answer 3', correct: false },
+      { id: getUUID(), answer: 'Answer 3', correct: true },
       { id: getUUID(), answer: 'Answer 4', correct: false },
     ]),
 })
