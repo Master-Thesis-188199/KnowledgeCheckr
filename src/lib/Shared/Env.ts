@@ -32,12 +32,7 @@ export const envSchema = z.object({
     .string()
     .transform((val) => val.toLowerCase().trim() === 'true')
     .optional(),
-
-  MODE: z
-    .enum(['test', 'production', 'development'])
-    .optional()
-    .transform((v) => (v === undefined ? process.env.NODE_ENV : v))
-    .default('production'),
+  MODE: z.preprocess((v) => v ?? process.env.NODE_ENV ?? 'production', z.enum(['test', 'production', 'development'])),
   //* Custom Provider
   DEX_PROVIDER_URL: z.union([
     z.string().regex(/^\S*$/, { message: 'When using the service-name as the host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
