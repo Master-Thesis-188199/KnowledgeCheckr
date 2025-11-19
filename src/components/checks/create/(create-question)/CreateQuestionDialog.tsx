@@ -1,6 +1,8 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
+import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -61,6 +63,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   }
 
   const defaultValues = initialValues ?? getDefaultValues('drag-drop')
+  const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const {
     register,
@@ -71,15 +74,23 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     watch,
     control,
     setValue,
+    getValues,
   } = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: defaultValues,
   })
 
+  useEffect(() => {
+    if (isEqual(getValues(), initialValues) || isEmpty(initialValues)) return
+
+    console.debug('initial value have changed, resetting form-fields...')
+    resetInputs(initialValues)
+  }, [initialValues])
+
   const closeDialog = ({ reset = false }: { reset?: boolean } = {}) => {
     setDialogOpenState(false)
     if (reset) {
-      resetInputs()
+      resetInputs(mode === 'edit' ? initialValues : undefined)
     }
   }
 
@@ -87,13 +98,22 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     console.log(JSON.stringify(data, null, 2))
     addQuestion(data)
     closeDialog({ reset: true })
+
+    //* needed to set new form-values (unique question-id) as default-values are only set once within the form when the useForm initializes. Thus, updating the defaultValues variable will not lead to different form-defaultValues.
+    resetInputs(initialValues ?? getDefaultValues('drag-drop'))
   }
 
   const label_classes = 'dark:text-neutral-300 font-semibold tracking-tight'
 
   return (
     <Dialog open={dialogOpenState} onOpenChange={(state) => (!state ? clearErrors() : null)}>
-      <DialogTrigger asChild onClick={() => setDialogOpenState(true)}>
+      <DialogTrigger
+        asChild
+        onClick={() => {
+          setDialogOpenState(true)
+          //* ensure that the dialog always displays data of the correct question (based on id)
+          if (mode === 'edit' && watch('id') !== initialValues?.id) resetInputs(initialValues)
+        }}>
         {children}
       </DialogTrigger>
       <DialogContent
@@ -103,7 +123,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
-          <QuestionDialogHeader type={initialValues ? 'edit' : 'create'} />
+          <QuestionDialogHeader type={mode} />
           <input {...register('id')} id='id' value={defaultValues.id} className='hidden' />
 
           <div className='grid items-center gap-2'>
@@ -138,7 +158,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
-                    resetInputs({ ...getDefaultValues(type as Any), question: watch('question'), points: watch('points'), category: watch('category') })
+                    resetInputs({ ...getDefaultValues(type as Any), id: watch('id'), question: watch('question'), points: watch('points'), category: watch('category') })
                   }
                   register('type').onChange({ target: { value: type, name: 'type' } })
                 }}
@@ -178,7 +198,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               Cancel
             </Button>
             <Button size='lg' variant='primary' type='submit'>
-              {isSubmitting ? 'Processing' : 'Add Question'}
+              {isSubmitting ? 'Processing' : mode === 'create' ? 'Add Question' : 'Update Question'}
             </Button>
             {errors.root && <div>{JSON.stringify(errors.root)}</div>}
           </DialogFooter>
