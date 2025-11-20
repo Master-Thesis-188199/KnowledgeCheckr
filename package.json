@@ -100,7 +100,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-istanbul": "^7.0.0",
-    "cypress": "^14.1.0",
+    "cypress": "15.7.0",
     "cypress-multi-reporters": "^2.0.5",
     "cypress-parallel": "^0.15.0",
     "cypress-real-events": "^1.14.0",
