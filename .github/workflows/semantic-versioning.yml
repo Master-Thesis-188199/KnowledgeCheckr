@@ -27,10 +27,10 @@ jobs:
         with:
           fetch-depth: "0"
 
-      - name: Set up Node 23.7
+      - name: Set up Node 24.11.1
         uses: actions/setup-node@v3
         with:
-          node-version: 23.7
+          node-version: 24.11.1
 
       - name: Install dependencies
         run: yarn --frozen-lockfile
@@ -100,11 +100,11 @@ jobs:
       - name: Set lowercase repository name as environment variable
         run: echo "LOWER_REPO_NAME=$(echo ${{ env.REPO_NAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: 'Get Previous tag'
+      - name: "Get Previous tag"
         id: previoustag
-        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-      - name: 'Store Version Information'
+      - name: "Store Version Information"
         run: |
           echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
 
