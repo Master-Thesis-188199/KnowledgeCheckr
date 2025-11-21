@@ -1,0 +1,28 @@
+# Rendered by gomplate in the Dex container entrypoint.
+# Values fall back to sane localhost defaults for dev.
+issuer: {{ getenv "DEX_ISSUER" "http://localhost:5556/dex" }}
+
+storage:
+  type: memory
+
+web:
+  http: {{ getenv "DEX_WEB_HTTP" "0.0.0.0:5556" }}
+
+oauth2:
+  responseTypes: ["code"]
+  skipApprovalScreen: {{ getenv "DEX_OAUTH2_SKIP_APPROVAL_SCREEN" "true" }}
+
+enablePasswordDB: true
+
+staticClients:
+  - id: {{ getenv "DEX_CLIENT_ID" "nextjs-client" }}
+    name: {{ getenv "DEX_CLIENT_NAME" "Next.js CI/Local" }}
+    secret: {{ getenv "DEX_CLIENT_SECRET" "dev-secret" }}
+    redirectURIs:
+      - {{ getenv "DEX_REDIRECT_URI" "http://localhost:3000/api/auth/oauth2/callback/dex" }}
+
+staticPasswords:
+  - email: {{ getenv "DEX_USER_EMAIL" "e2e.user@example.test" }}
+    username: {{ getenv "DEX_USER_USERNAME" "e2e" }}
+    userID: "{{ getenv "DEX_USER_ID" "1001" }}"
+    hash: {{ getenv "DEX_USER_BCRYPT_HASH" "$2y$10$bogN.exei8vyACcf0QQFzutOahNcKjU1sqxGgdRtYi2Pn/UXNH8ce%" }}

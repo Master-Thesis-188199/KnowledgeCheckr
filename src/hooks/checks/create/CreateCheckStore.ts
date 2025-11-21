@@ -1,9 +1,9 @@
+import isEqual from 'lodash/isEqual'
+import { v4 as uuid } from 'uuid'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
-import { isEqual } from 'lodash'
-import { v4 as uuid } from 'uuid'
 
 export type CheckState = KnowledgeCheck & {
   unsavedChanges?: boolean
@@ -85,7 +85,13 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
               })
             }
 
-            return { questions: [...prev.questions.filter((q) => question.id !== q.id), question], questionCategories, unsavedChanges: true }
+            //* updates questions by replacing to-update question with new version
+            const updatedQuestions = prev.questions.map((q) => (question.id !== q.id ? q : question))
+
+            //* adds a new question to the end of the array
+            if (!exists) updatedQuestions.push(question)
+
+            return { questions: [...updatedQuestions], questionCategories, unsavedChanges: true }
           }),
         removeQuestion,
       }

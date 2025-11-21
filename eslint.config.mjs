@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import unusedImports from 'eslint-plugin-unused-imports'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
@@ -18,12 +19,20 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'warn',
       'react/no-children-prop': 0,
       'react-hooks/exhaustive-deps': 0,
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      'prefer-const': [
+        'warn',
+        {
+          destructuring: 'all',
+        },
+      ],
     },
   }),
   {
     plugins: {
       'server-only-first': serverOnlyPlugin,
       'simple-import-sort': simpleImportSort,
+      'unused-imports': unusedImports,
     },
     rules: {
       'server-only-first/server-only-first': 'error',
@@ -36,6 +45,7 @@ const eslintConfig = [
       ],
 
       'import/first': 'error',
+      'unused-imports/no-unused-imports': 'warn',
     },
   },
 ]

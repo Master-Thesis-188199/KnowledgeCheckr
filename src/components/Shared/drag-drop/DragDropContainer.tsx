@@ -67,7 +67,7 @@ export default function DragDropContainer({ children, className, onSwapEnd, onSw
   }, [])
 
   return (
-    <div ref={containerRef} className={className}>
+    <div ref={containerRef} className={className} data-enabled={config.enabled}>
       {children}
     </div>
   )

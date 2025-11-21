@@ -2,6 +2,9 @@ name: Build and Test
 
 on: push
 
+permissions:
+  packages: read
+
 env:
   BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
   NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
@@ -18,6 +21,11 @@ env:
 
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+
+  MODE: ${{ secrets.MODE }}
+  DEX_PROVIDER_URL: ${{ secrets.DEX_PROVIDER_URL }}
+  DEX_CLIENT_ID: ${{ secrets.DEX_CLIENT_ID}}
+  DEX_CLIENT_SECRET: ${{secrets.DEX_CLIENT_SECRET}}
 
   NODE_VERSION: 24.11.1
 
@@ -60,6 +68,13 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+      dex:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-dex:latest
+        ports: [5556:5556]
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
 
     steps:
       - name: Checkout Code
@@ -236,6 +251,13 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+      dex:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-dex:latest
+        ports: [5556:5556]
+        options: >-
+          --health-cmd="wget -qO- http://localhost:5556/dex/.well-known/openid-configuration || exit 1"
+          --health-interval=5s --health-timeout=3s --health-retries=30
 
     name: "E2E Tests: ${{ matrix.chunk.short }}"
     runs-on: ubuntu-latest
