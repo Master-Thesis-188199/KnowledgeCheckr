@@ -339,10 +339,15 @@ jobs:
     needs: run-e2e-tests
     if: ${{ always() }}
     steps:
-      - run: |
-          if [[ "${{ needs.*.result }}" =~ failure ]]; then
-            echo "Some e2e tests failed"; exit 1
-          fi
+      - name: Fail if any matrix job failed
+        if: ${{ needs.run-e2e-tests.result != 'success' }}
+        run: |
+          echo "At least one e2e test-suite was unsuccessful!"
+          exit 1
+
+      - name: All good
+        if: ${{ needs.run-e2e-tests.result == 'success' }}
+        run: echo "All e2e tests passed 🎉"
 
   Skip-Executions:
     name: Skip Build And Test
