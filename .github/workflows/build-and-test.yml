@@ -220,12 +220,14 @@ jobs:
       - uses: actions/checkout@v3
       - id: set-test-chunks
         name: Set Chunks
+        env:
+          CHUNK_SIZE: ${{ vars.TEST_CHUNK_SIZE }}
         shell: bash
         # get all spec files from the e2e directory, group them to be at most 3 at a time and transform them to json
         run: |
           echo "test-chunks=$(
             find src/tests/e2e -type f -name '*.cy.tsx' \
-              | xargs -n3 \
+              | xargs -n"$CHUNK_SIZE" \
               | while read -r group; do
                   # full, comma-separated paths (for spec:)
                   paths=$(echo "$group" | tr ' ' ',')
