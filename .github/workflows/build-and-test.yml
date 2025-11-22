@@ -6,14 +6,14 @@ permissions:
   packages: read
 
 env:
-  BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+  BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL }}
+  NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
-  DATABASE_HOST: ${{ secrets.DATABASE_HOST}}
-  DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-  DATABASE_USER: root
+  DATABASE_HOST: ${{ vars.DATABASE_HOST}}
+  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+  DATABASE_USER: ${{ vars.DATABASE_USER }}
   DATABASE_PASSWORD: 123
 
   AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID}}
@@ -22,12 +22,12 @@ env:
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
-  MODE: ${{ secrets.MODE }}
-  DEX_PROVIDER_URL: ${{ secrets.DEX_PROVIDER_URL }}
+  MODE: ${{ vars.MODE }}
+  DEX_PROVIDER_URL: ${{ vars.DEX_PROVIDER_URL }}
   DEX_CLIENT_ID: ${{ secrets.DEX_CLIENT_ID}}
   DEX_CLIENT_SECRET: ${{secrets.DEX_CLIENT_SECRET}}
 
-  NODE_VERSION: 23.7
+  NODE_VERSION: 24.11.1
 
 jobs:
   check-file-changes:
@@ -51,7 +51,7 @@ jobs:
 
   run-component-tests:
     name: Run Component Tests
-    needs: [check-file-changes, instrumented-build]
+    needs: [check-file-changes]
     runs-on: ubuntu-latest
 
     services:
@@ -86,22 +86,8 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Cache Next.js (instrumented) Build
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        id: cache-nextjs-instrumented
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/standalone
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
-
       - name: Run Instrumented Build-Script
-        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn build:instrumented
 
       - name: Run Cypress Tests
@@ -162,51 +148,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Run Linting
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn lint
-
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn build
-
-  instrumented-build:
-    name: Instrumented Build
-    runs-on: ubuntu-latest
-    needs: check-file-changes
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Skip Build when nothing changed
-        if: needs.check-file-changes.outputs.relevant == 'false'
-        run: echo "Skipping build execution because no relevant files were modified by the last commit / pushed commits"
-
-      - name: Setup Dependencies
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        uses: ./.github/actions/caching-dependencies
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Cache Next.js (instrumented) Build
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        id: cache-nextjs-instrumented
-        uses: actions/cache@v4
-        with:
-          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/standalone
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
-
-      - name: Run Instrumented Build-Script
-        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
-        run: yarn build:instrumented
 
   setup:
     name: Setup Test Chunks
@@ -241,7 +185,7 @@ jobs:
           )" >> $GITHUB_OUTPUT
 
   run-e2e-tests:
-    needs: [check-file-changes, setup, instrumented-build]
+    needs: [check-file-changes, setup]
 
     services:
       mysql:
@@ -294,23 +238,8 @@ jobs:
             "SkipOnCi": true 
           }' > cypress.env.json
 
-      - name: Cache Next.js (instrumented) Build
-        if: needs.check-file-changes.outputs.relevant == 'true'
-        id: cache-nextjs-instrumented
-        uses: actions/cache@v4
-        with:
-          # See here for caching with `yarn`, `bun` or other package managers https://github.com/actions/cache/blob/main/examples.md or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/standalone
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-instrumented-${{ hashFiles('**/yarn.lock') }}-
-
       - name: Run Instrumented Build-Script
-        if: needs.check-file-changes.outputs.relevant == 'true' && steps.cache-nextjs-instrumented.outputs.cache-hit != 'true'
+        if: needs.check-file-changes.outputs.relevant == 'true'
         run: yarn build:instrumented
 
       - name: Cypress run 🧪

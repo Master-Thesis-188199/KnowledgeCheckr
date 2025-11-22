@@ -9,6 +9,9 @@ import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
 
 export const auth = betterAuth({
+  rateLimit: {
+    enabled: env.MODE === 'test' ? false : true,
+  },
   user: {
     modelName: 'User',
   },

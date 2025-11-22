@@ -1,6 +1,7 @@
 import ccTask from '@cypress/code-coverage/task'
 import { defineConfig } from 'cypress'
 import { GitHubSocialLogin, GoogleSocialLogin } from 'cypress-social-logins/src/Plugins'
+import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter'
 import * as dotenv from 'dotenv'
 import { rm } from 'fs'
 import mysql from 'mysql2'
@@ -43,6 +44,15 @@ export default defineConfig({
 
       // implement node event listeners here
       ccTask(on, config)
+      installLogsPrinter(on, {
+        printLogsToConsole: 'always',
+        outputRoot: config.projectRoot + '/cypress/logs/',
+        outputTarget: {
+          'out.txt': 'txt',
+          'out.json': 'json',
+          'out.html': 'html',
+        },
+      })
 
       on('task', {
         GoogleSocialLogin: GoogleSocialLogin,

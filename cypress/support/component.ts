@@ -19,7 +19,6 @@ import './commands'
 import '@/app/globals.css'
 import '@cypress/code-coverage/support'
 import 'cypress-real-events'
-
 import { mount } from 'cypress/react'
 
 // Augment the Cypress namespace to include type definitions for

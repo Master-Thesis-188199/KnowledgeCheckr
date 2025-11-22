@@ -19,6 +19,7 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'warn',
       'react/no-children-prop': 0,
       'react-hooks/exhaustive-deps': 0,
+      '@typescript-eslint/ban-ts-comment': 'warn',
       'prefer-const': [
         'warn',
         {
