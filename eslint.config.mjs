@@ -1,20 +1,14 @@
-import { FlatCompat } from '@eslint/eslintrc'
+import { defineConfig } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
 import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
-
-const eslintConfig = [
-  ...compat.config({
-    extends: ['next/core-web-vitals', 'next/typescript'],
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  {
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       'react/no-children-prop': 0,
@@ -27,7 +21,7 @@ const eslintConfig = [
         },
       ],
     },
-  }),
+  },
   {
     plugins: {
       'server-only-first': serverOnlyPlugin,
@@ -48,6 +42,6 @@ const eslintConfig = [
       'unused-imports/no-unused-imports': 'warn',
     },
   },
-]
+])
 
 export default eslintConfig
