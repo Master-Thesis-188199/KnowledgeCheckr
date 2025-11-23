@@ -73,6 +73,7 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
 
   return (
     <button
+      type='button'
       {...props}
       data-auth-provider={props.auth_type === 'anonymous' ? 'anonymous' : props.provider}
       className={cn(
