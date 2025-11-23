@@ -1,16 +1,15 @@
 /* app/account/login/SignupForm.tsx */
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useActionState, useEffect, useRef } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
-
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
-import Link from 'next/link'
-import { toast } from 'react-toastify'
 import { signup } from '../../../lib/account/login/AccountActions'
 
 type FormValues = z.infer<typeof SignupSchema>
@@ -102,6 +101,7 @@ export default function SignupForm({ callbackUrl }: { callbackUrl?: string }) {
       <div className='mt-2 flex flex-col items-center justify-center gap-3'>
         <button
           type='submit'
+          data-auth-provider='credential'
           disabled={!isValid}
           className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
           Create account

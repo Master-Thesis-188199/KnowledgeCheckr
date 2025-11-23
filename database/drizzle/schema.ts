@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm'
-import { datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
+import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 
@@ -130,7 +130,7 @@ export const db_knowledgeCheck = mysqlTable(
       foreignColumns: [db_user.id],
       name: 'fk_KnowledgeCheck_user1',
     })
-      .onDelete('no action')
+      .onDelete('cascade')
       .onUpdate('no action'),
   ],
 )
@@ -228,6 +228,7 @@ export const db_user = mysqlTable('User', {
   image: varchar({ length: 512 }),
   createdAt: datetime({ mode: 'string' }).notNull(),
   updatedAt: datetime({ mode: 'string' }).notNull(),
+  isAnonymous: boolean(),
 })
 
 export const db_userContributesToKnowledgeCheck = mysqlTable(
@@ -245,7 +246,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
       foreignColumns: [db_user.id],
       name: 'fk_user_has_KnowledgeCheck_user1',
     })
-      .onDelete('no action')
+      .onDelete('cascade')
       .onUpdate('cascade'),
     foreignKey({
       columns: [table.knowledgecheckId],

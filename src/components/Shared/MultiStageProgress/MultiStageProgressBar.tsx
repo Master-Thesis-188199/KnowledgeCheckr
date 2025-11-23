@@ -1,9 +1,9 @@
 'use client'
 
+import { Fragment, useEffect, useRef, useState } from 'react'
 import Line from '@/src/components/Shared/Line'
 import { Stage, useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
-import { Fragment, useEffect, useRef, useState } from 'react'
 
 export function MultiStageProgressBar({ className }: { className?: string }) {
   const { stages, stage } = useMultiStageStore((state) => state)
@@ -82,6 +82,7 @@ function ProgressRing({ stage, title }: Stage) {
     <li
       onClick={() => setStage(stage)}
       data-active={isFocussed(stage)}
+      data-stage-name={title?.toLowerCase()}
       className={cn(
         'flex size-5 min-w-5 items-center justify-center rounded-full text-sm text-neutral-200 ring-[1.5px] dark:ring-neutral-300',
         'hover:cursor-pointer',

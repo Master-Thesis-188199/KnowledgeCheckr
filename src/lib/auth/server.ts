@@ -1,10 +1,17 @@
+import { betterAuth } from 'better-auth'
+import { nextCookies } from 'better-auth/next-js'
+import { anonymous, genericOAuth } from 'better-auth/plugins'
+import { eq } from 'drizzle-orm'
+import { headers } from 'next/headers'
+import getDatabase from '@/database/Database'
+import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
-import { betterAuth, Session, User } from 'better-auth'
-import { nextCookies } from 'better-auth/next-js'
-import { headers } from 'next/headers'
 
 export const auth = betterAuth({
+  rateLimit: {
+    enabled: env.MODE === 'test' ? false : true,
+  },
   user: {
     modelName: 'User',
   },
@@ -39,11 +46,53 @@ export const auth = betterAuth({
       clientSecret: env.AUTH_GOOGLE_SECRET,
     },
   },
-  plugins: [nextCookies()],
-})
+  plugins: [
+    nextCookies(),
+    anonymous({
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' was linked to: '${newUser.user.email}'!`)
+        const db = await getDatabase()
 
-export async function getServerSession(): Promise<{ session?: Session; user?: User }> {
+        try {
+          const [{ affectedRows: updatedChecks }] = await db.update(db_knowledgeCheck).set({ owner_id: newUser.user.id }).where(eq(db_knowledgeCheck.owner_id, anonymousUser.user.id))
+          const [{ affectedRows: updatedResults }] = await db
+            .update(db_userHasDoneKnowledgeCheck)
+            .set({ userId: newUser.user.id })
+            .where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
+          console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+        } catch (e) {
+          console.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
+        }
+      },
+    }),
+    genericOAuth({
+      config: [
+        {
+          providerId: 'dex',
+          clientId: env.DEX_CLIENT_ID,
+          clientSecret: env.DEX_CLIENT_SECRET,
+          authentication: 'basic',
+          authorizationUrl: `${env.DEX_PROVIDER_URL}/auth`,
+          tokenUrl: `${env.DEX_PROVIDER_URL}/token`,
+          userInfoUrl: `${env.DEX_PROVIDER_URL}/userinfo`,
+          scopes: ['openid', 'email', 'profile'],
+          mapProfileToUser(profile) {
+            return {
+              id: profile.sub,
+              name: profile.name || profile.email?.split('@')[0],
+              email: profile.email,
+              image: profile.picture ?? null,
+            }
+          },
+        },
+      ],
+    }),
+  ],
+})
+export type BetterAuthUser = NonNullable<Awaited<ReturnType<typeof auth.api.getSession<boolean>>>>['user']
+
+export async function getServerSession(): Promise<NonNullable<Awaited<ReturnType<typeof auth.api.getSession<boolean>>>> | { user?: undefined; session?: undefined }> {
   const session = await auth.api.getSession({ headers: await headers() })
 
-  return session || {}
+  return session ?? { user: undefined, session: undefined }
 }

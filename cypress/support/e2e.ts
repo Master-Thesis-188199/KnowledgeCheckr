@@ -17,3 +17,7 @@
 import './commands'
 import '@cypress/code-coverage/support'
 import 'cypress-real-events'
+import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector'
+
+installLogsCollector()
+Object.assign(process.env, Cypress.env())

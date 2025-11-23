@@ -1,4 +1,4 @@
-import { FieldErrors, FieldValues } from 'react-hook-form'
+import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 function getNestedError<T extends FieldValues>(errors: FieldErrors<T>, path: string): undefined | { message: string } {
@@ -7,7 +7,15 @@ function getNestedError<T extends FieldValues>(errors: FieldErrors<T>, path: str
   return path.split('.').reduce((prev, key) => prev && prev[key], errors)
 }
 
-export default function FormFieldError<T extends FieldValues>({ field, errors, className }: { field: keyof FieldErrors<T>; errors: FieldErrors<T>; className?: string }) {
+export default function FormFieldError<FormData extends FieldValues>({
+  field,
+  errors,
+  className,
+}: {
+  field: Parameters<UseFormRegister<FormData>>['0'] | 'root'
+  errors: FieldErrors<FormData>
+  className?: string
+}) {
   const error = getNestedError(errors, String(field))
   if (!error || !error.message) return null
 

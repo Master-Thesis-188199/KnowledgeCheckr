@@ -2,9 +2,6 @@ import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  eslint: {
-    dirs: ['src', './database'],
-  },
   experimental: {
     authInterrupts: true,
   },
