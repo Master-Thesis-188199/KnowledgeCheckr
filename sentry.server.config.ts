@@ -12,6 +12,7 @@ Sentry.init({
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
+  ignoreErrors: ['NEXT_HTTP_ERROR_FALLBACK;401'],
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
