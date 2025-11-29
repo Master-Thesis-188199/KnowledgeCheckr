@@ -136,7 +136,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             <Input {...register('question')} id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
             <FieldError field='question' errors={errors} />
           </div>
-          <div className='grid grid-cols-3 items-baseline gap-x-12'>
+          <div className='flex items-baseline gap-x-12'>
             <div className='grid items-center gap-2'>
               <label htmlFor='points' className={twMerge(label_classes)}>
                 Points
@@ -204,7 +204,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               </label>
 
               <Select
-                selectTriggerClassname='-ml-0.5'
+                selectTriggerClassname='-ml-0.5 min-w-36'
                 popoverContentClassname='w-[170px]'
                 onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
                 options={[
