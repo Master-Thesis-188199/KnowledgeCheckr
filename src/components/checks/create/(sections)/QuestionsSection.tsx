@@ -23,7 +23,18 @@ export default function QuestionsSection() {
         </div>
         <div className={cn('my-4 grid grid-cols-1 gap-6')}>
           {questions.map((question, i) => (
-            <Card data-question-id={question.id} data-question={question.question} key={i + question.id} className='question flex gap-3 p-2 hover:bg-none'>
+            <Card data-question-id={question.id} data-question={question.question} key={i + question.id} className='question relative flex gap-3 p-2 hover:bg-none'>
+              <div
+                title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
+                className={cn(
+                  'question-accessibility',
+                  'absolute -top-3 -left-2 px-1.5 py-0.5 text-xs capitalize',
+                  question.accessibility === 'practice-only' && 'rounded-md dark:bg-green-800/60',
+                  question.accessibility === 'exam-only' && 'rounded-md dark:bg-cyan-700/60',
+                  question.accessibility === 'all' && 'hidden',
+                )}>
+                {question.accessibility}
+              </div>
               <div className='header flex flex-1 flex-col p-1'>
                 <div className='flex items-center justify-between'>
                   <h2 className='text-neutral-700 dark:text-neutral-300'>{question.question}</h2>
