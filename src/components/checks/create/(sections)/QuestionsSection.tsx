@@ -36,8 +36,9 @@ export default function QuestionsSection() {
                 title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
                 className={cn(
                   'question-accessibility',
-                  'absolute -top-3 left-0 rounded-md px-1.5 py-0.5 text-xs capitalize dark:bg-neutral-800',
-                  'text-neutral-300/90 italic shadow-md ring-1 shadow-neutral-800 ring-neutral-600',
+                  'absolute -top-3 left-0 rounded-md px-1.5 py-0.5 text-xs capitalize italic shadow-md ring-1',
+                  'bg-neutral-200 text-neutral-600 shadow-neutral-300 ring-neutral-400',
+                  'dark:bg-neutral-800 dark:text-neutral-300/90 dark:shadow-neutral-800 dark:ring-neutral-600',
                   question.accessibility === 'all' && 'hidden',
                 )}>
                 {question.accessibility.split('-').at(0)} Question
