@@ -67,27 +67,7 @@ describe('Anonymous User Authentication: ', () => {
 
     cy.visit('/account')
 
-    /**
-     * This function recursively clicks the 'dex' provider button until redirected.
-     * The reason for this is that for some reason, during testing, test-users are not neccessarily redirected after clicking the provider button.
-     * Thus, during testing the 'dex' provider button must be clicked multiple times until test-users are directed.
-     * Note, in production and development the 'dex' button must only be clicked once to redirect users.
-     *
-     */
-    function clickUntilRedirect() {
-      cy.url().then((currentUrl) => {
-        if (!currentUrl.startsWith(Cypress.env('DEX_PROVIDER_URL'))) {
-          cy.get("button[provider='dex']").should('exist').and('be.visible').click()
-
-          cy.wait(100)
-
-          // Recursively call the function until redirected
-          clickUntilRedirect()
-        }
-      })
-    }
-
-    clickUntilRedirect()
+    cy.get("button[provider='dex']").should('exist').and('be.visible').click()
 
     cy.window().url().should('contain', Cypress.env('DEX_PROVIDER_URL'))
 

@@ -1,3 +1,4 @@
+import { addHours } from 'date-fns'
 import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 describe('SessionStorageCache', () => {
@@ -34,7 +35,7 @@ describe('SessionStorageCache', () => {
   it('Verify that create-store-sate session storage cache is invalidated after cacheDuration', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
     const DUMMY_NAME = 'Test Check'
-    const CACHE_DURATION = 4 * 3600 * 1000
+    const CACHE_EXPIRATION_HOURS = 5
 
     cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'check-store', 'Verify that check-store is not cached at the beginning')
     cy.get("input[name='check-name']").type(DUMMY_NAME)
@@ -51,10 +52,29 @@ describe('SessionStorageCache', () => {
         expect(safeParseKnowledgeCheck(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
       })
 
-    // Simulate cache duration expiration by forwarding time by 24 hours
-    cy.clock(new Date(Date.now() + CACHE_DURATION))
+    cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS))
 
-    cy.reload()
-    cy.getAllSessionStorage().should('not.have.property', 'check-store', 'Verify that sessionStorage cache is invalidated after cacheDuration')
+    //* Overrides the implementation of `performance.timeOrigin` (caused by `cy.clock`) from () => undefined to Date.now(); see https://github.com/Master-Thesis-188199/KnowledgeCheckr/issues/186 for more details.
+    cy.visit('/checks/create', {
+      onBeforeLoad(win) {
+        // This runs before Sentry runs, thus ensuring that `createUnixTimestampInSecondsFunc` uses an actual implementation of `performance.timeOrigin` when `cy.clock` is used.
+        if (win.performance) {
+          const perf = win.performance
+          const value = typeof perf.timeOrigin === 'number' ? perf.timeOrigin : Date.now() // or 0, doesn't matter much for tests
+
+          try {
+            Object.defineProperty(perf, 'timeOrigin', {
+              configurable: true,
+              writable: true,
+              value,
+            })
+          } catch (e) {
+            console.error('Failed to override `performance.timeOrigin` to Date.now()')
+          }
+        }
+      },
+    })
+
+    cy.getAllSessionStorage().its(baseUrl).should('not.have.property', 'check-store')
   })
 })
