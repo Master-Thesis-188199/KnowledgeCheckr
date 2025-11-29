@@ -36,12 +36,11 @@ export default function QuestionsSection() {
                 title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
                 className={cn(
                   'question-accessibility',
-                  'absolute -top-3 left-0 px-1.5 py-0.5 text-xs capitalize',
-                  question.accessibility === 'practice-only' && 'rounded-md dark:bg-green-800/60',
-                  question.accessibility === 'exam-only' && 'rounded-md dark:bg-cyan-700/60',
+                  'absolute -top-3 left-0 rounded-md px-1.5 py-0.5 text-xs capitalize dark:bg-neutral-800',
+                  'text-neutral-300/90 italic shadow-md ring-1 shadow-neutral-800 ring-neutral-600',
                   question.accessibility === 'all' && 'hidden',
                 )}>
-                {question.accessibility}
+                {question.accessibility.split('-').at(0)} Question
               </div>
               <div className='header flex flex-1 flex-col p-1'>
                 <div className='flex items-center justify-between'>
