@@ -1,5 +1,5 @@
 # First Step - Install Packages in seperate step for caching purposes.
-FROM node:23.7.0-alpine AS package-installer
+FROM node:24.11.1-alpine AS package-installer
 WORKDIR /app
 
 COPY package.json .
@@ -8,7 +8,7 @@ COPY yarn.lock .
 RUN yarn install --frozen-lockfile
 
 # Second Step - Build the application
-FROM node:23.7.0-alpine AS builder
+FROM node:24.11.1-alpine AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # Final Stage: Run the Application
-FROM node:23.7.0-alpine
+FROM node:24.11.1-alpine
 
 # Set the working directory
 WORKDIR /app

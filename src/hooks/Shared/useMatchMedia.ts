@@ -9,6 +9,7 @@ export default function useMatchMedia(query: string) {
     const media = window.matchMedia(query)
 
     if (media.matches !== matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMatches(media.matches)
     }
 

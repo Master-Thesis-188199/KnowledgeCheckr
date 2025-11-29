@@ -1,13 +1,15 @@
 'use server'
 
+import differenceWith from 'lodash/differenceWith'
+import isEqual from 'lodash/isEqual'
+import toPairs from 'lodash/toPairs'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
+import { redirect } from 'next/navigation'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { updateKnowledgeCheck } from '@/database/knowledgeCheck/update'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { differenceWith, isEqual, toPairs } from 'lodash'
-import { isRedirectError } from 'next/dist/client/components/redirect-error'
-import { redirect } from 'next/navigation'
 
 export async function saveAction({ check }: { check: KnowledgeCheck }) {
   const { user } = await requireAuthentication()
