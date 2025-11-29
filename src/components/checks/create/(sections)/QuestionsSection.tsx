@@ -36,7 +36,7 @@ export default function QuestionsSection() {
                 title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
                 className={cn(
                   'question-accessibility',
-                  'absolute -top-3 -left-2 px-1.5 py-0.5 text-xs capitalize',
+                  'absolute -top-3 left-0 px-1.5 py-0.5 text-xs capitalize',
                   question.accessibility === 'practice-only' && 'rounded-md dark:bg-green-800/60',
                   question.accessibility === 'exam-only' && 'rounded-md dark:bg-cyan-700/60',
                   question.accessibility === 'all' && 'hidden',
