@@ -3,6 +3,7 @@ import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import startCase from 'lodash/startCase'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -211,7 +212,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   { label: 'Practice only', value: 'practice-only' },
                   { label: 'Exam only', value: 'exam-only' },
                 ]}
-                defaultValue={{ label: 'Both', value: 'all' }}
+                defaultValue={{
+                  label: watch('accessibility') === 'all' ? 'Both' : watch('accessibility').replace('-', ' ').split(' ').map(startCase).join(' '),
+                  value: watch('accessibility'),
+                }}
               />
 
               <FieldError field='accessibility' className='whitespace-nowrap' errors={errors} />
