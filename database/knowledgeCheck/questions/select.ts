@@ -25,6 +25,7 @@ export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledg
       question: question.question,
       category,
       points: question.points,
+      accessibility: question.accessibility,
       ...parseAnswer(question.type, answers),
     })
   }
@@ -92,6 +93,7 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
     question: dbQuestion.question,
     category,
     points: dbQuestion.points,
+    accessibility: dbQuestion.accessibility,
     ...parseAnswer(dbQuestion.type, answers),
   } as ExpectedQuestion
 
