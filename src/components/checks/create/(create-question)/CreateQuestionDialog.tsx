@@ -135,7 +135,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             <Input {...register('question')} id='question' placeholder='Formulate your question here' className='-ml-0.5 placeholder:text-[15px]' />
             <FieldError field='question' errors={errors} />
           </div>
-          <div className='grid grid-cols-2 items-baseline gap-12'>
+          <div className='grid grid-cols-3 items-baseline gap-x-12'>
             <div className='grid items-center gap-2'>
               <label htmlFor='points' className={twMerge(label_classes)}>
                 Points
@@ -147,7 +147,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 id='points'
                 type='number'
                 placeholder='How many points is this question worth?'
-                className='-ml-0.5 placeholder:text-[15px]'
+                className='-ml-0.5 min-w-0 placeholder:text-[15px]'
               />
               <FieldError field='points' className='whitespace-nowrap' errors={errors} />
             </div>
@@ -196,6 +196,25 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 ]}
               />
               <FieldError field='type' errors={errors} />
+            </div>
+            <div className='grid items-center gap-2'>
+              <label htmlFor='access' className={twMerge(label_classes)}>
+                Accessibility
+              </label>
+
+              <Select
+                selectTriggerClassname='-ml-0.5'
+                popoverContentClassname='w-[170px]'
+                onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
+                options={[
+                  { label: 'Both', value: 'all' },
+                  { label: 'Practice only', value: 'practice-only' },
+                  { label: 'Exam only', value: 'exam-only' },
+                ]}
+                defaultValue={{ label: 'Both', value: 'all' }}
+              />
+
+              <FieldError field='accessibility' className='whitespace-nowrap' errors={errors} />
             </div>
           </div>
           <div className='grid items-center gap-2'>
