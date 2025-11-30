@@ -34,12 +34,12 @@ export function initializeExaminationResults(state: ExaminationState) {
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
 export default function prepareExaminationCheck(check: KnowledgeCheck) {
-  let questions = check.settings?.questionOrder === 'create-order' ? check.questions : shuffle(check.questions)
+  let questions = check.settings.questionOrder === 'create-order' ? check.questions : shuffle(check.questions)
 
   questions = questions
     .filter((q) => q.accessibility === 'all' || q.accessibility === 'exam-only')
     .map(hideCorrectness)
-    .map(sortAnswers(check.settings?.answerOrder))
+    .map(sortAnswers(check.settings.answerOrder))
 
   return {
     ...check,
