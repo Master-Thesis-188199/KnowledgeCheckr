@@ -141,8 +141,9 @@ export const db_knowledgeCheckSettings = mysqlTable(
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous').default(1),
-    randomizeQuestions: tinyint('randomize_questions').default(1),
     allowFreeNavigation: tinyint('allow_free_navigation').default(1),
+    questionOrder: mysqlEnum(['create-order', 'random']),
+    answerOrder: mysqlEnum(['create-order', 'random']),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
