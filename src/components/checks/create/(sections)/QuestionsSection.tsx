@@ -23,7 +23,26 @@ export default function QuestionsSection() {
         </div>
         <div className={cn('my-4 grid grid-cols-1 gap-6')}>
           {questions.map((question, i) => (
-            <Card data-question-id={question.id} data-question={question.question} key={i + question.id} className='question flex gap-3 p-2 hover:bg-none'>
+            <Card
+              data-question-id={question.id}
+              data-question={question.question}
+              key={i + question.id}
+              className={cn(
+                'question relative flex gap-3 p-2 hover:bg-none',
+                // increase space to previous element / section-header when accessibility badge is displayed
+                question.accessibility !== 'all' && 'mt-2',
+              )}>
+              <div
+                title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
+                className={cn(
+                  'question-accessibility',
+                  'absolute -top-3 left-0 rounded-md px-1.5 py-0.5 text-xs capitalize italic shadow-md ring-1',
+                  'bg-neutral-200 text-neutral-600 shadow-neutral-300 ring-neutral-400',
+                  'dark:bg-neutral-800 dark:text-neutral-300/90 dark:shadow-neutral-800 dark:ring-neutral-600',
+                  question.accessibility === 'all' && 'hidden',
+                )}>
+                {question.accessibility.split('-').at(0)} Question
+              </div>
               <div className='header flex flex-1 flex-col p-1'>
                 <div className='flex items-center justify-between'>
                   <h2 className='text-neutral-700 dark:text-neutral-300'>{question.question}</h2>

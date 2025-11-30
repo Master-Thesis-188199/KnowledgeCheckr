@@ -30,6 +30,7 @@ async function insertQuestion(db: DrizzleDB, question: Question, check_id: Knowl
       points: question.points,
       categoryId: category_id,
       knowledgecheckId: check_id,
+      accessibility: question.accessibility,
     })
     .$returningId()
 

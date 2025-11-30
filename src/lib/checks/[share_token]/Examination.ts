@@ -39,7 +39,10 @@ export function initializeExaminationResults(state: ExaminationState) {
 export default function prepareExaminationCheck(check: KnowledgeCheck, { randomizeOrder = true }: PreparationOptions = {}) {
   return {
     ...check,
-    questions: check.questions.map(hideCorrectness).map(randomizeOrder ? randomizeAnswerOrder : (e) => e),
+    questions: check.questions
+      .filter((q) => q.accessibility === 'all' || q.accessibility === 'exam-only')
+      .map(hideCorrectness)
+      .map(randomizeOrder ? randomizeAnswerOrder : (e) => e),
   }
 }
 
