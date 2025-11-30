@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
