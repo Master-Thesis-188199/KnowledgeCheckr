@@ -30,7 +30,7 @@ export default function RenderExamQuestion() {
     defaultValues: state,
   })
 
-  const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [])
+  const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
 
   return (
     <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>

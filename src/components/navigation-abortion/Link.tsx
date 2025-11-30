@@ -29,7 +29,7 @@ export default function Link({ onClick, href, children, onNavigate, ...nextLinkP
         nextRouter.push(href.toString())
       }
     },
-    [isNavigationAbortSet, href, nextRouter, onClick, showNavigationAbortModal],
+    [isNavigationAbortSet, href, nextRouter, onClick, showNavigationAbortModal, onNavigate],
   )
 
   return (
