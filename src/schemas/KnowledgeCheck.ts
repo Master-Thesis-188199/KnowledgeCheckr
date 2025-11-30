@@ -55,7 +55,7 @@ export const KnowledgeCheckSchema = z
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
     owner_id: z.string().optional(),
 
-    settings: KnowledgeCheckSettingsSchema.optional(),
+    settings: KnowledgeCheckSettingsSchema,
 
     /* todo:
       - question-order: 'shuffle, static, ...'
