@@ -10,5 +10,9 @@ export default async function getKnowledgeCheckSettingsById(id: KnowledgeCheck['
 
   const settings = await db.select().from(db_knowledgeCheckSettings).where(eq(db_knowledgeCheckSettings.knowledgecheckId, id))
 
+  if (settings.length === 0 || !settings.at(0)) {
+    throw new Error(`Settings not found for knowledge check: ${id}`)
+  }
+
   return validateKnowledgeCheckSettings(settings.at(0))
 }
