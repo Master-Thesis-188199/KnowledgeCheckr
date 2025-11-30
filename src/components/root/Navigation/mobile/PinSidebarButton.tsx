@@ -1,9 +1,9 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import { Pin } from 'lucide-react'
 import { motion } from 'motion/react'
 import { twMerge as tw } from 'tailwind-merge'
-import { Pin } from 'lucide-react'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 
 export function PinSidebarButton() {
   const { isOpen, isAnimationEnabled, toggleAnimation, canDeviceHover } = useSidebarStore((state) => state)

@@ -1,10 +1,10 @@
+import { ArrowDownNarrowWide } from 'lucide-react'
 import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
 import SidebarUserBanner from '@/components/root/Navigation/elements/SidebarUserBanner'
 import { MobileCloseButton, MobileMenubar } from '@/components/root/Navigation/mobile/MobileSidebarComponents'
 import MobileSideBarDialog from '@/components/root/Navigation/mobile/MobileSidebarDialog'
 import AppVersion from '@/components/Shared/AppVersion'
 import SidebarContentPanel from '@/src/components/root/Navigation/SidebarContentPanel'
-import { ArrowDownNarrowWide } from 'lucide-react'
 
 export default function MobileSideBar({ children, visibilityBreakpoints }: { visibilityBreakpoints?: string; children?: React.ReactNode }) {
   return (

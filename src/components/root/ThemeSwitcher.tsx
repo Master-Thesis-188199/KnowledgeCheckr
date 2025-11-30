@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { parseCookies, setCookie } from 'nookies'
-import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { Transition } from '@headlessui/react'
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { parseCookies, setCookie } from 'nookies'
 import { twMerge } from 'tailwind-merge'
 import { useRootStore } from '@/components/root/RootStoreProvider'
 

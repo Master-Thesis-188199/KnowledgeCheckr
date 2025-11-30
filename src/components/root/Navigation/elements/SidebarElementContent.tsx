@@ -1,8 +1,8 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { motion } from 'motion/react'
 import { twMerge } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 
 export default function SidebarElementContent({ children }: { children: React.ReactNode }) {
   const { isOpen, isAnimationEnabled } = useSidebarStore((state) => state)

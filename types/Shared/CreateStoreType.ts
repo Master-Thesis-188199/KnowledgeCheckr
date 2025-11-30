@@ -1,5 +1,5 @@
-import { Any } from '@/types'
 import type { StoreApi } from 'zustand/vanilla'
+import { Any } from '@/types'
 
 /**
  * Defines how a `createStore` function should look like.

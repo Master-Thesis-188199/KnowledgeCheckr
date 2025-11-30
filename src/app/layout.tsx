@@ -1,11 +1,11 @@
+import '@/lib/Shared/Env'
+import './globals.css'
+import type { Metadata } from 'next'
 import SideBar from '@/components/root/Navigation/SideBar'
 import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
-import '@/lib/Shared/Env'
 import getTheme from '@/lib/Shared/getTheme'
-import ToastBox from '@/src/components/Shared/Toast/ToastBox'
 import RootProviders from '@/src/components/root/RootProviders'
-import type { Metadata } from 'next'
-import './globals.css'
+import ToastBox from '@/src/components/Shared/Toast/ToastBox'
 
 export const metadata: Metadata = {
   title: {

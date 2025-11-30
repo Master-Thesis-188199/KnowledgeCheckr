@@ -1,8 +1,8 @@
-import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
+import { twMerge } from 'tailwind-merge'
 import SidebarElementContent from '@/components/root/Navigation/elements/SidebarElementContent'
 import { PinSidebarButton } from '@/components/root/Navigation/mobile/PinSidebarButton'
+import { sideBarConfiguration } from '@/components/root/Navigation/SideBarConfiguration'
 import { CloseMobileSidebarLink } from '@/src/components/root/Navigation/mobile/MobileSidebarDialog'
-import { twMerge } from 'tailwind-merge'
 
 export default function RenderSideBarItems() {
   const { elements } = sideBarConfiguration

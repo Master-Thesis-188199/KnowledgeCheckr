@@ -1,14 +1,14 @@
 'use client'
 
+import { useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { InfoIcon } from 'lucide-react'
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import RenderExamQuestion from '@/src/components/checks/[share_token]/RenderExamQuestion'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
-import { motion } from 'framer-motion'
-import { InfoIcon } from 'lucide-react'
-import { useEffect } from 'react'
 
 export function ExamQuestionWrapper() {
   const { enableNavigationAbort } = useNavigationAbort()

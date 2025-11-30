@@ -24,6 +24,7 @@ export function DragDropItem({ children, className, name, onSwap, initialIndex, 
     return () => {
       ref.current?.removeEventListener('item-swap-event', onSwap as EventListener)
     }
+    // eslint-disable-next-line react-hooks/refs
   }, [ref.current])
 
   return (

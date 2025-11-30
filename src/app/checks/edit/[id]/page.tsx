@@ -1,7 +1,7 @@
+import { notFound } from 'next/navigation'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { ConfigureKnowledgeCheck } from '@/src/components/checks/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { notFound } from 'next/navigation'
 
 export default async function CheckPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

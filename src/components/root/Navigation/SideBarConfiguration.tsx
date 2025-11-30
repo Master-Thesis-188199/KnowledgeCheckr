@@ -1,6 +1,6 @@
+import { BadgePlus, LayoutDashboard, List } from 'lucide-react'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { cn } from '@/src/lib/Shared/utils'
-import { BadgePlus, LayoutDashboard, List } from 'lucide-react'
 
 export const iconClasses = 'text-neutral-700 dark:text-neutral-200 size-6 flex-shrink-0 ml-[9px]'
 

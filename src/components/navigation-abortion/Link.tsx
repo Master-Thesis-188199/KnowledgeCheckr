@@ -1,7 +1,7 @@
-import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import React, { type MouseEvent, useCallback } from 'react'
 import NextLink, { LinkProps } from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useCallback, type MouseEvent } from 'react'
+import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 
 /**
  * This component wraps the next/Link component and allows navigation-abortion by checking whether the navigationAbortion is enabled.
@@ -29,7 +29,7 @@ export default function Link({ onClick, href, children, onNavigate, ...nextLinkP
         nextRouter.push(href.toString())
       }
     },
-    [isNavigationAbortSet, href, nextRouter, onClick, showNavigationAbortModal],
+    [isNavigationAbortSet, href, nextRouter, onClick, showNavigationAbortModal, onNavigate],
   )
 
   return (
