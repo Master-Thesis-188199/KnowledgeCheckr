@@ -32,6 +32,7 @@ export default function GeneralSection() {
           label='Deadline'
           type='date'
           name='check-close-date'
+          // eslint-disable-next-line react-hooks/purity
           defaultValue={new Date(closeDate ?? Date.now())
             .toLocaleDateString('de')
             .split('.')
