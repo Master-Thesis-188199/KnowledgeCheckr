@@ -53,6 +53,7 @@ export function InfinityScrollFetcher({ children, getItems }: { getItems: (offse
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
+    // eslint-disable-next-line react-hooks/refs
   }, [ref.current, inView])
 
   return (
