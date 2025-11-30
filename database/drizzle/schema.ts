@@ -174,6 +174,10 @@ export const db_question = mysqlTable(
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     categoryId: varchar('category_id', { length: 36 }).notNull(),
+    accessibility: mysqlEnum(['all', 'practice-only', 'exam-only'])
+      .notNull()
+      .default('all')
+      .$default(() => 'all'),
 
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },

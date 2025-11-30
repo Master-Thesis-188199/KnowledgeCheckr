@@ -32,9 +32,16 @@
     },
     {
       "idx": 4,
-      "version": "5",
+      "version": "6",
       "when": 1762865930013,
       "tag": "0004_cascade-on-user-deletion",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1764409374454,
+      "tag": "0005_question-accessibility-field",
       "breakpoints": true
     },
     {

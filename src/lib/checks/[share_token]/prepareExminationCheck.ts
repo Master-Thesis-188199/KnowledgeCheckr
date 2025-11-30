@@ -36,7 +36,10 @@ export function initializeExaminationResults(state: ExaminationState) {
 export default function prepareExaminationCheck(check: KnowledgeCheck) {
   let questions = check.settings?.questionOrder === 'create-order' ? check.questions : shuffle(check.questions)
 
-  questions = questions.map(hideCorrectness).map(sortAnswers(check.settings?.answerOrder))
+  questions = questions
+    .filter((q) => q.accessibility === 'all' || q.accessibility === 'exam-only')
+    .map(hideCorrectness)
+    .map(sortAnswers(check.settings?.answerOrder))
 
   return {
     ...check,
