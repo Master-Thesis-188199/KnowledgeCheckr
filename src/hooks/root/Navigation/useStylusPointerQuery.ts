@@ -1,5 +1,5 @@
-import useMatchMedia from '@/hooks/Shared/useMatchMedia'
 import { Pointers } from '@/hooks/root/Navigation/usePrimaryPointerQuery'
+import useMatchMedia from '@/hooks/Shared/useMatchMedia'
 
 const enum Hovers {
   none = 'none',

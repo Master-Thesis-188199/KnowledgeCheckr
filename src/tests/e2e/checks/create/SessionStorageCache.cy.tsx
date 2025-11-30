@@ -68,7 +68,7 @@ describe('SessionStorageCache', () => {
               writable: true,
               value,
             })
-          } catch (e) {
+          } catch {
             console.error('Failed to override `performance.timeOrigin` to Date.now()')
           }
         }

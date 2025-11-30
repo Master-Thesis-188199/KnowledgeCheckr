@@ -1,5 +1,5 @@
-import env from '@/src/lib/Shared/Env'
 import { createPool as mysqlCreatePool, Pool, PoolOptions } from 'mysql2/promise'
+import env from '@/src/lib/Shared/Env'
 
 let pool: Pool
 const config: PoolOptions = {

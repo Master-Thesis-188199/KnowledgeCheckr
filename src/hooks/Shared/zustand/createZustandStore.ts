@@ -1,8 +1,8 @@
 'use client'
 
+import { createStore, StoreApi } from 'zustand/vanilla'
 import useStoreCaching from '@/src/hooks/Shared/zustand/useStoreCaching'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
-import { createStore, StoreApi } from 'zustand/vanilla'
 type SetFn<T> = StoreApi<T>['setState']
 type GetFn<T> = StoreApi<T>['getState']
 
