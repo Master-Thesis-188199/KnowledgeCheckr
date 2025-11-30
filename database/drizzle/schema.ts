@@ -140,10 +140,10 @@ export const db_knowledgeCheckSettings = mysqlTable(
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
-    allowAnonymous: tinyint('allow_anonymous').default(1),
-    allowFreeNavigation: tinyint('allow_free_navigation').default(1),
-    questionOrder: mysqlEnum(['create-order', 'random']),
-    answerOrder: mysqlEnum(['create-order', 'random']),
+    allowAnonymous: tinyint('allow_anonymous').notNull(),
+    allowFreeNavigation: tinyint('allow_free_navigation').notNull(),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull(),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull(),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),

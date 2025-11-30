@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "c8ebfc46-d9c7-4f7d-bb24-da5fb285c4ec",
+  "id": "434d049a-5b13-4784-9ea4-d82482b5aa02",
   "prevId": "f0f3715e-9c72-4698-abb3-62409de8e071",
   "tables": {
     "Account": {
@@ -413,30 +413,28 @@
           "name": "allow_anonymous",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 1
+          "notNull": true,
+          "autoincrement": false
         },
         "allow_free_navigation": {
           "name": "allow_free_navigation",
           "type": "tinyint",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 1
+          "notNull": true,
+          "autoincrement": false
         },
         "questionOrder": {
           "name": "questionOrder",
           "type": "enum('create-order','random')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "answerOrder": {
           "name": "answerOrder",
           "type": "enum('create-order','random')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
