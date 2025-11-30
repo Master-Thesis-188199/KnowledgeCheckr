@@ -1,11 +1,8 @@
+import shuffle from 'lodash/shuffle'
 import { ExaminationState } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
-
-interface PreparationOptions {
-  randomizeOrder?: boolean
-}
 
 /**
  * This functions initializes the `results` property of the ExaminationStore. This means that it will have the same structure (e.g. indicies) as the question-answers of the respective knowledgeCheck.
@@ -34,18 +31,39 @@ export function initializeExaminationResults(state: ExaminationState) {
 }
 
 /**
- * This function takes in a given knowledgeCheck and removes each answer's correctness information and randomizes their order.
+ * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
-export default function prepareExaminationCheck(check: KnowledgeCheck, { randomizeOrder = true }: PreparationOptions = {}) {
+export default function prepareExaminationCheck(check: KnowledgeCheck) {
+  let questions = check.settings?.questionOrder === 'create-order' ? check.questions : shuffle(check.questions)
+
+  questions = questions.map(hideCorrectness).map(sortAnswers(check.settings?.answerOrder))
+
   return {
     ...check,
-    questions: check.questions.map(hideCorrectness).map(randomizeOrder ? randomizeAnswerOrder : (e) => e),
+    questions,
   }
 }
 
-function randomizeAnswerOrder(question: Question): Question {
-  //todo randomize order
-  return question
+/**
+ * This wrapper function takes in the order in which the answers should be sorted by the function it returns.
+ * @param order The order in which the respective answers should be sorted
+ * @returns A function that takes in the respective question, sorts its answers and returns the modified question.
+ */
+function sortAnswers(order?: NonNullable<KnowledgeCheck['settings']>['answerOrder']) {
+  return (question: Question) => {
+    if (!order || order === 'create-order') return question
+
+    switch (question.type) {
+      case 'single-choice':
+        return { ...question, answers: shuffle(question.answers) }
+      case 'multiple-choice':
+        return { ...question, answers: shuffle(question.answers) }
+      case 'drag-drop':
+        return { ...question, answers: shuffle(question.answers).map((a, i) => ({ ...a, position: i })) }
+    }
+
+    return question
+  }
 }
 
 function hideCorrectness(question: Question): Question {
