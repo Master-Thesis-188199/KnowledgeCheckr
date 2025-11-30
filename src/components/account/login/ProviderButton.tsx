@@ -1,8 +1,8 @@
 'use client'
 
-import { auth_client } from '@/src/lib/auth/client'
-import { LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
+import { LoaderCircle } from 'lucide-react'
+import { auth_client } from '@/src/lib/auth/client'
 
 type ProviderOptions =
   | 'github'

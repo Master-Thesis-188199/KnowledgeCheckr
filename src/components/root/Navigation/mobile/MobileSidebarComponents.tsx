@@ -1,12 +1,12 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
-import ThemeSwitcher from '@/components/root/ThemeSwitcher'
-import { sideBarConfiguration } from '@/src/components/root/Navigation/SideBarConfiguration'
 import { Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion } from 'motion/react'
 import { twMerge as tw } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import ThemeSwitcher from '@/components/root/ThemeSwitcher'
+import { sideBarConfiguration } from '@/src/components/root/Navigation/SideBarConfiguration'
 
 export function MobileMenubar() {
   return (

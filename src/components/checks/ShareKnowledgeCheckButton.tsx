@@ -1,13 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+import { Tooltip } from '@heroui/tooltip'
+import { InfoIcon, Share2Icon } from 'lucide-react'
+import { toast } from 'react-toastify'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Tooltip } from '@heroui/tooltip'
-import { InfoIcon, Share2Icon } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'react-toastify'
 
 export function ShareKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
   const [shareToken, setShareToken] = useState(check.share_key)

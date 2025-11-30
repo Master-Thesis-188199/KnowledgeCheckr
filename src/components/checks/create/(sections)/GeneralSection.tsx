@@ -1,11 +1,11 @@
 'use client'
 
+import { ComponentType, InputHTMLAttributes } from 'react'
+import { Textarea } from '@headlessui/react'
+import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
-import { Textarea } from '@headlessui/react'
-import { ComponentType, InputHTMLAttributes } from 'react'
-import { twMerge } from 'tailwind-merge'
 
 export default function GeneralSection() {
   const { setName, setDescription, name, description, closeDate } = useCheckStore((state) => state)

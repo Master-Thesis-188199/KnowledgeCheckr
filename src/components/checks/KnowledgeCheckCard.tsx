@@ -1,12 +1,12 @@
 'use client'
 
+import { Tooltip } from '@heroui/tooltip'
+import { motion, Variants } from 'framer-motion'
+import { InfoIcon, PlayIcon } from 'lucide-react'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Tooltip } from '@heroui/tooltip'
-import { motion, Variants } from 'framer-motion'
-import { InfoIcon, PlayIcon } from 'lucide-react'
 
 // Parent needs empty states just to trigger its children
 const cardVariants = {

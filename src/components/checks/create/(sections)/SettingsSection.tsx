@@ -1,5 +1,7 @@
 'use client'
 
+import { UsersIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
@@ -7,8 +9,6 @@ import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
-import { UsersIcon } from '@heroicons/react/24/outline'
-import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
 
 const tabs = [
   { name: 'General', icon: EyeIcon },

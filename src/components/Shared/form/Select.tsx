@@ -1,9 +1,9 @@
+import * as React from 'react'
+import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
 import { cn } from '@/lib/Shared/utils'
 import { Button } from '@/src/components/shadcn/button'
 import { Command, CommandGroup, CommandInput, CommandItem } from '@/src/components/shadcn/command'
-import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
-import * as React from 'react'
 
 /*
   Credits: This component originates from: https://github.com/merthanmerter/shadcn-creatable-select/tree/main

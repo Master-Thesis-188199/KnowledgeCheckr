@@ -1,5 +1,5 @@
-import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 import { z } from 'zod'
+import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 const baseSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),

@@ -1,8 +1,8 @@
+import { ReactNode } from 'react'
 import { DesktopSidebar } from '@/components/root/Navigation/desktop/DesktopSideBar'
 import MobileSideBar from '@/components/root/Navigation/mobile/MobileSideBar'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
 import ConditionalBreakpointRendering from '@/src/components/Shared/ConditionalBreakpointRendering'
-import { ReactNode } from 'react'
 
 export interface SideBarProps {
   title: string

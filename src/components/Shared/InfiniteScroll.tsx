@@ -1,8 +1,8 @@
 'use client'
+import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useInView } from 'framer-motion'
 import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
-import { useInView } from 'framer-motion'
-import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
 
 interface InfiniteScrollContext<T = Any> {
   items: T[]

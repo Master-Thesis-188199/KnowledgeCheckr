@@ -1,7 +1,7 @@
 'use client'
 
-import { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
 import { HTMLProps } from 'react'
+import { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
 
 export function TabSelect({ ...props }: HTMLProps<HTMLSelectElement>) {
   const { tabs, setCurrentTab, currentTab } = useTabsContext()

@@ -1,3 +1,8 @@
+import { useMemo } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CircleIcon } from 'lucide-react'
+import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
+import TextareaAutosize from 'react-textarea-autosize'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
@@ -8,11 +13,6 @@ import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleIcon } from 'lucide-react'
-import { useMemo } from 'react'
-import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
