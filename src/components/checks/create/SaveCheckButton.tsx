@@ -20,6 +20,7 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
     openDate: store.openDate,
     questionCategories: store.questionCategories,
     questions: store.questions,
+    settings: store.settings,
   }
 
   return (

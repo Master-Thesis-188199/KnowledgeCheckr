@@ -1,6 +1,6 @@
 import isEqual from 'lodash/isEqual'
 import { v4 as uuid } from 'uuid'
-import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
@@ -19,6 +19,7 @@ export type CheckActions = {
 export type CheckStore = CheckState & CheckActions
 
 const defaultInitState: CheckState = {
+  ...instantiateKnowledgeCheck(),
   id: uuid(),
   name: '',
   questions: [],
