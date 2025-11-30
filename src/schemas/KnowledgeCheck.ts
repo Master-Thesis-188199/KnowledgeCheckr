@@ -4,6 +4,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
+import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 
 export const KnowledgeCheckSchema = z
@@ -53,6 +54,8 @@ export const KnowledgeCheckSchema = z
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
     owner_id: z.string().optional(),
+
+    settings: KnowledgeCheckSettingsSchema.optional(),
 
     /* todo:
       - question-order: 'shuffle, static, ...'
