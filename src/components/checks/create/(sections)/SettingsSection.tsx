@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/incompatible-library */
 'use client'
 
 import { UsersIcon } from '@heroicons/react/24/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
@@ -23,7 +22,7 @@ const tabs = [
 export default function SettingsSection() {
   const {} = useCheckStore((state) => state)
 
-  const { register, handleSubmit, reset, watch } = useForm<KnowledgeCheckSettings>({
+  const { control, handleSubmit, reset } = useForm<KnowledgeCheckSettings>({
     resolver: zodResolver(KnowledgeCheckSettingsSchema),
     defaultValues: instantiateKnowledgeCheckSettings(),
   })
@@ -64,19 +63,37 @@ export default function SettingsSection() {
         <TabsContentPanel tab='general'>
           <label className='flex items-center gap-3'>
             Randomize Question Order
-            <input
-              defaultChecked={watch('questionOrder') === 'random'}
-              onChange={({ target: { checked } }) => register('questionOrder').onChange({ target: { value: checked === true ? 'random' : 'create-order', name: 'questionOrder' } })}
-              type='checkbox'
+            <Controller
+              name='questionOrder'
+              control={control}
+              render={({ field }) => (
+                <input
+                  type='checkbox'
+                  defaultChecked={field.value === 'random'}
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(Object.assign(event, { target: { value: event.target.checked === true ? 'random' : 'create-order' } }))
+                  }}
+                />
+              )}
             />
           </label>
 
           <label className='flex items-center gap-3'>
             Randomize Answer Order
-            <input
-              defaultChecked={watch('answerOrder') === 'random'}
-              onChange={({ target: { checked } }) => register('answerOrder').onChange({ target: { value: checked === true ? 'random' : 'create-order', name: 'answerOrder' } })}
-              type='checkbox'
+            <Controller
+              name='answerOrder'
+              control={control}
+              render={({ field }) => (
+                <input
+                  type='checkbox'
+                  defaultChecked={field.value === 'random'}
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(Object.assign(event, { target: { value: event.target.checked === true ? 'random' : 'create-order' } }))
+                  }}
+                />
+              )}
             />
           </label>
         </TabsContentPanel>
