@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/incompatible-library */
 'use client'
 
 import { UsersIcon } from '@heroicons/react/24/outline'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
@@ -9,6 +12,7 @@ import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
+import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const tabs = [
   { name: 'General', icon: EyeIcon },
@@ -19,8 +23,18 @@ const tabs = [
 export default function SettingsSection() {
   const {} = useCheckStore((state) => state)
 
+  const { register, handleSubmit, reset, watch } = useForm<KnowledgeCheckSettings>({
+    resolver: zodResolver(KnowledgeCheckSettingsSchema),
+    defaultValues: instantiateKnowledgeCheckSettings(),
+  })
+
+  const onSubmit = (data: KnowledgeCheckSettings) => {
+    console.log(JSON.stringify(data, null, 2))
+    reset({}) //todo ...introduce default values
+  }
+
   return (
-    <Card className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
+    <Card as='form' onSubmit={handleSubmit(onSubmit)} className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
       <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>Settings</h2>
@@ -48,7 +62,23 @@ export default function SettingsSection() {
         </div>
 
         <TabsContentPanel tab='general'>
-          <TemporarySettingsOptions />
+          <label className='flex items-center gap-3'>
+            Randomize Question Order
+            <input
+              defaultChecked={watch('questionOrder') === 'random'}
+              onChange={({ target: { checked } }) => register('questionOrder').onChange({ target: { value: checked === true ? 'random' : 'create-order', name: 'questionOrder' } })}
+              type='checkbox'
+            />
+          </label>
+
+          <label className='flex items-center gap-3'>
+            Randomize Answer Order
+            <input
+              defaultChecked={watch('answerOrder') === 'random'}
+              onChange={({ target: { checked } }) => register('answerOrder').onChange({ target: { value: checked === true ? 'random' : 'create-order', name: 'answerOrder' } })}
+              type='checkbox'
+            />
+          </label>
         </TabsContentPanel>
         <TabsContentPanel tab='practice'>
           <TemporarySettingsOptions />
