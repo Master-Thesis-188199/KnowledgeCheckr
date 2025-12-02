@@ -20,20 +20,15 @@ const tabs = [
   { name: 'Sharing', icon: UsersIcon },
 ]
 export default function SettingsSection() {
-  const {} = useCheckStore((state) => state)
+  const { updateSettings } = useCheckStore((state) => state)
 
-  const { control, handleSubmit, reset } = useForm<KnowledgeCheckSettings>({
+  const { control, getValues } = useForm<KnowledgeCheckSettings>({
     resolver: zodResolver(KnowledgeCheckSettingsSchema),
     defaultValues: instantiateKnowledgeCheckSettings(),
   })
 
-  const onSubmit = (data: KnowledgeCheckSettings) => {
-    console.log(JSON.stringify(data, null, 2))
-    reset({}) //todo ...introduce default values
-  }
-
   return (
-    <Card as='form' onSubmit={handleSubmit(onSubmit)} className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
+    <Card as='form' onChange={() => updateSettings(getValues())} className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
       <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>Settings</h2>
