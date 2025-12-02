@@ -14,6 +14,7 @@ export type CheckActions = {
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
+  updateSettings: (settings: Partial<KnowledgeCheck['settings']>) => void
 }
 
 export type CheckStore = CheckState & CheckActions
@@ -95,6 +96,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
             return { questions: [...updatedQuestions], questionCategories, unsavedChanges: true }
           }),
         removeQuestion,
+        updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
       }
     },
   })
