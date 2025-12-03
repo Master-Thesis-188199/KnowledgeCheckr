@@ -11,7 +11,7 @@ import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
-import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const tabs = [
   { name: 'General', icon: EyeIcon },
@@ -20,11 +20,11 @@ const tabs = [
   { name: 'Sharing', icon: UsersIcon },
 ]
 export default function SettingsSection() {
-  const { updateSettings } = useCheckStore((state) => state)
+  const { updateSettings, settings } = useCheckStore((state) => state)
 
   const { control, getValues } = useForm<KnowledgeCheckSettings>({
     resolver: zodResolver(KnowledgeCheckSettingsSchema),
-    defaultValues: instantiateKnowledgeCheckSettings(),
+    defaultValues: settings,
   })
 
   return (
