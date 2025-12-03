@@ -61,16 +61,7 @@ export default function SettingsSection() {
             <Controller
               name='questionOrder'
               control={control}
-              render={({ field }) => (
-                <input
-                  type='checkbox'
-                  defaultChecked={field.value === 'random'}
-                  {...field}
-                  onChange={(event) => {
-                    field.onChange(Object.assign(event, { target: { value: event.target.checked === true ? 'random' : 'create-order' } }))
-                  }}
-                />
-              )}
+              render={({ field }) => <input type='checkbox' {...field} checked={field.value === 'random'} onChange={(e) => field.onChange(e.target.checked ? 'random' : 'create-order')} />}
             />
           </label>
 
@@ -79,16 +70,7 @@ export default function SettingsSection() {
             <Controller
               name='answerOrder'
               control={control}
-              render={({ field }) => (
-                <input
-                  type='checkbox'
-                  defaultChecked={field.value === 'random'}
-                  {...field}
-                  onChange={(event) => {
-                    field.onChange(Object.assign(event, { target: { value: event.target.checked === true ? 'random' : 'create-order' } }))
-                  }}
-                />
-              )}
+              render={({ field }) => <input type='checkbox' {...field} checked={field.value === 'random'} onChange={(e) => field.onChange(e.target.checked ? 'random' : 'create-order')} />}
             />
           </label>
         </TabsContentPanel>
