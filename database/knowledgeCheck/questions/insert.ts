@@ -11,12 +11,13 @@ import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/Questi
 export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Question[], check_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
+  let index = 0
   for (const question of questions) {
-    await insertQuestion(db, question, check_id)
+    await insertQuestion(db, question, check_id, index++)
   }
 }
 
-async function insertQuestion(db: DrizzleDB, question: Question, check_id: KnowledgeCheck['id']) {
+async function insertQuestion(db: DrizzleDB, question: Question, check_id: KnowledgeCheck['id'], position: number) {
   await requireAuthentication()
 
   const category_id = await findInsertCategory(db, question.category)
@@ -31,6 +32,7 @@ async function insertQuestion(db: DrizzleDB, question: Question, check_id: Knowl
       categoryId: category_id,
       knowledgecheckId: check_id,
       accessibility: question.accessibility,
+      _position: position,
     })
     .$returningId()
 
@@ -71,12 +73,14 @@ async function findInsertCategory(db: DrizzleDB, category_name: Question['catego
 async function insertChoiceAnswers(db: DrizzleDB, question_id: Question['id'], answers: ChoiceQuestion['answers']) {
   await requireAuthentication()
 
+  let index = 0
   for (const answer of answers) {
     await db.insert(db_answer).values({
       id: answer.id,
       questionId: question_id,
       answer: answer.answer,
       correct: answer.correct ? 1 : 0,
+      _position: index++,
     })
   }
 }
@@ -88,18 +92,21 @@ async function insertOpenAnswer(db: DrizzleDB, question_id: Question['id'], answ
     id: getUUID(),
     answer: answer,
     questionId: question_id,
+    _position: 0,
   })
 }
 
 async function insertDragDropAnswers(db: DrizzleDB, question_id: Question['id'], answers: DragDropQuestion['answers']) {
   await requireAuthentication()
 
+  let index = 0
   for (const answer of answers) {
     await db.insert(db_answer).values({
       id: answer.id,
       answer: answer.answer,
       questionId: question_id,
       position: answer.position,
+      _position: index++,
     })
   }
 }
