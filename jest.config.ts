@@ -11,6 +11,7 @@ const config: Config = {
   verbose: true,
   testMatch: ['<rootDir>/src/tests/unit/**/*.test.tsx', '<rootDir>/src/tests/unit/**/*.test.ts', '<rootDir>/src/tests/integration/**/*.test.tsx', '<rootDir>/src/tests/integration/**/*.test.ts'],
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['./jest.setup.ts'],
   maxWorkers: '50%',
   testPathIgnorePatterns: ['/node_modules/', '/.next/', '/dist/'],
   // Add more setup options before each test is run
