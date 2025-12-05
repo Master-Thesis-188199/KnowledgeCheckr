@@ -114,6 +114,40 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+  run-jest-tests:
+    name: Run Jest Tests
+    needs: [check-file-changes]
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: ghcr.io/master-thesis-188199/knowledgecheckr-database:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_HOST: "%"
+          MYSQL_ROOT_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Dependencies
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        uses: ./.github/actions/caching-dependencies
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run Jest Tests
+        if: needs.check-file-changes.outputs.relevant == 'true'
+        run: yarn jest
+
   build:
     name: Production Build
     runs-on: ubuntu-latest
