@@ -34,7 +34,7 @@ export default function RenderExamQuestion() {
 
   return (
     <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
-      <input readOnly disabled className='text-lg font-semibold' value={question.question} />
+      <input name='question' readOnly disabled className='text-lg font-semibold' value={question.question} />
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
         <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
       )}
@@ -85,6 +85,7 @@ function ExamOpenQuestionAnswer({ setValue }: { reset: UseFormReset<ExaminationS
   return (
     <TextareaAutosize
       maxRows={10}
+      name='answer'
       defaultValue={results.at(currentQuestionIndex)?.answer.at(0)?.text ?? ''}
       onChange={(e) => {
         setValue(`results.${currentQuestionIndex}.answer.0.text` as const, e.target.value)
