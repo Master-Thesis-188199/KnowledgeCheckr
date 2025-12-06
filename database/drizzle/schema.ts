@@ -55,6 +55,7 @@ export const db_answer = mysqlTable(
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     questionId: varchar('Question_id', { length: 36 }).notNull(),
+    _position: int().notNull(),
   },
   (table) => [
     index('fk_Answer_Question1_idx').on(table.questionId),
@@ -179,6 +180,7 @@ export const db_question = mysqlTable(
       .default('all')
       .$default(() => 'all'),
 
+    _position: int().notNull(),
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
