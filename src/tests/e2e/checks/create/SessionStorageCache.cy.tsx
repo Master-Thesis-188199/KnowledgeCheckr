@@ -75,6 +75,9 @@ describe('SessionStorageCache', () => {
       },
     })
 
-    cy.getAllSessionStorage().its(baseUrl).should('not.have.property', 'check-store')
+    cy.getAllSessionStorage().then((storage) => {
+      const sessionCache = storage[baseUrl] ?? {}
+      expect(sessionCache, "Expect session-storage to not include 'check-store' entry").not.haveOwnProperty('check-store')
+    })
   })
 })
