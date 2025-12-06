@@ -22,7 +22,7 @@ env:
   AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
   AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
-  MODE: ${{ vars.MODE }}
+  NEXT_PUBLIC_MODE: ${{ vars.NEXT_PUBLIC_MODE }}
   DEX_PROVIDER_URL: ${{ vars.DEX_PROVIDER_URL }}
   DEX_CLIENT_ID: ${{ secrets.DEX_CLIENT_ID}}
   DEX_CLIENT_SECRET: ${{secrets.DEX_CLIENT_SECRET}}
