@@ -55,6 +55,7 @@ export const db_answer = mysqlTable(
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     questionId: varchar('Question_id', { length: 36 }).notNull(),
+    _position: int().notNull(),
   },
   (table) => [
     index('fk_Answer_Question1_idx').on(table.questionId),
@@ -140,9 +141,10 @@ export const db_knowledgeCheckSettings = mysqlTable(
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
-    allowAnonymous: tinyint('allow_anonymous').default(1),
-    randomizeQuestions: tinyint('randomize_questions').default(1),
-    allowFreeNavigation: tinyint('allow_free_navigation').default(1),
+    allowAnonymous: tinyint('allow_anonymous').notNull(),
+    allowFreeNavigation: tinyint('allow_free_navigation').notNull(),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull(),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull(),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
@@ -178,6 +180,7 @@ export const db_question = mysqlTable(
       .default('all')
       .$default(() => 'all'),
 
+    _position: int().notNull(),
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [

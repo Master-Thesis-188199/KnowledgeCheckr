@@ -32,7 +32,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
-      await insertKnowledgeCheckSettings(transaction, null, id)
+      await insertKnowledgeCheckSettings(transaction, check)
       await insertKnowledgeCheckQuestions(transaction, check.questions, id)
     } catch (err) {
       console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)

@@ -13,10 +13,10 @@ export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledg
 
   const questions: Question[] = []
 
-  const raw_questions = await db.select().from(db_question).where(eq(db_question.knowledgecheckId, knowledgeCheck_id))
+  const raw_questions = await db.select().from(db_question).where(eq(db_question.knowledgecheckId, knowledgeCheck_id)).orderBy(db_question._position)
 
   for (const question of raw_questions) {
-    const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question.id))
+    const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question.id)).orderBy(db_answer._position)
     const category = await parseCategory(db, question.categoryId)
 
     questions.push({
@@ -72,7 +72,7 @@ function parseAnswer(
 async function parseCategory(db: DrizzleDB, category_id: string): Promise<Question['category']> {
   await requireAuthentication()
 
-  const categories = await db.select({ name: db_category.name }).from(db_category).where(eq(db_category.id, category_id))
+  const categories = await db.select({ name: db_category.name }).from(db_category).where(eq(db_category.id, category_id)).orderBy(db_category.createdAt)
 
   return categories.at(0)!.name
 }
@@ -83,7 +83,7 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
   const [dbQuestion] = await db.select().from(db_question).where(eq(db_question.id, question_id)).limit(1)
   if (!dbQuestion) return null
 
-  const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id))
+  const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id)).orderBy(db_answer._position)
 
   const category = await parseCategory(db, dbQuestion.categoryId)
 

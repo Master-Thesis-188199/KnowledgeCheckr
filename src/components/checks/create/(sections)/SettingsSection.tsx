@@ -1,7 +1,9 @@
 'use client'
 
 import { UsersIcon } from '@heroicons/react/24/outline'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
+import { Controller, useForm } from 'react-hook-form'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
@@ -9,6 +11,7 @@ import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
+import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const tabs = [
   { name: 'General', icon: EyeIcon },
@@ -17,10 +20,15 @@ const tabs = [
   { name: 'Sharing', icon: UsersIcon },
 ]
 export default function SettingsSection() {
-  const {} = useCheckStore((state) => state)
+  const { updateSettings, settings } = useCheckStore((state) => state)
+
+  const { control, getValues } = useForm<KnowledgeCheckSettings>({
+    resolver: zodResolver(KnowledgeCheckSettingsSchema),
+    defaultValues: settings,
+  })
 
   return (
-    <Card className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
+    <Card as='form' onChange={() => updateSettings(getValues())} className='@container flex break-inside-avoid-column flex-col gap-8 p-3' disableHoverStyles>
       <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>Settings</h2>
@@ -48,7 +56,23 @@ export default function SettingsSection() {
         </div>
 
         <TabsContentPanel tab='general'>
-          <TemporarySettingsOptions />
+          <label className='flex items-center gap-3'>
+            Randomize Question Order
+            <Controller
+              name='questionOrder'
+              control={control}
+              render={({ field }) => <input type='checkbox' {...field} checked={field.value === 'random'} onChange={(e) => field.onChange(e.target.checked ? 'random' : 'create-order')} />}
+            />
+          </label>
+
+          <label className='flex items-center gap-3'>
+            Randomize Answer Order
+            <Controller
+              name='answerOrder'
+              control={control}
+              render={({ field }) => <input type='checkbox' {...field} checked={field.value === 'random'} onChange={(e) => field.onChange(e.target.checked ? 'random' : 'create-order')} />}
+            />
+          </label>
         </TabsContentPanel>
         <TabsContentPanel tab='practice'>
           <TemporarySettingsOptions />

@@ -68,7 +68,7 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
-        {env.MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />}
+        {env.NEXT_PUBLIC_MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />}
       </div>
     </div>
   )
