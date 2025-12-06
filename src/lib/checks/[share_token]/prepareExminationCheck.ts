@@ -97,6 +97,11 @@ function hideCorrectness(question: Question): Question {
 }
 
 function shuffleArray<T extends { id: string }>(array: T[], shuffleCount = 0): T[] {
+  if (array.length <= 1) {
+    console.warn(`[shuffleArray]: Array of length ${array.length} cannot be shuffled properly. Returning original array.`)
+    return array
+  }
+
   const shuffled = shuffle(array)
 
   //* ensure that the shuffled array is actually different from the original one
