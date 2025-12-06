@@ -67,28 +67,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: 0ndt/envfile@v2
+        name: Collect repository variables
+        with:
+          secrets: ${{ toJSON(vars) }}
+          file: ".env-vars"
+
+      - uses: 0ndt/envfile@v2
+        name: Collect repository secrets
+        with:
+          secrets: ${{ toJSON(secrets)   }}
+          file: ".env-secrets"
+          exclude: GH_TOKEN, GITHUB_TOKEN
+
       - name: Create .env File
         run: |
-          echo "BETTER_AUTH_URL=${{ vars.BETTER_AUTH_URL }}" >> .env
-          echo "NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL }}" >> .env
-          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
-
-          echo "DATABASE_HOST=${{ vars.DATABASE_HOST }}" >> .env
-          echo "DATABASE_PORT=${{ vars.DATABASE_PORT }}" >> .env
-          echo "DATABASE_NAME=${{ vars.DATABASE_NAME }}" >> .env
-          echo "DATABASE_USER=${{ vars.DATABASE_USER }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-
-          echo "AUTH_GITHUB_ID=${{ secrets.AUTH_GITHUB_ID }}" >> .env
-          echo "AUTH_GITHUB_SECRET=${{ secrets.AUTH_GITHUB_SECRET }}" >> .env
-
-          echo "AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID }}" >> .env
-          echo "AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET }}" >> .env
-
-          echo "NEXT_PUBLIC_MODE=${{ vars.NEXT_PUBLIC_MODE }}" >> .env
-          echo "DEX_PROVIDER_URL=${{ vars.DEX_PROVIDER_URL }}" >> .env
-          echo "DEX_CLIENT_ID=${{ secrets.DEX_CLIENT_ID }}" >> .env
-          echo "DEX_CLIENT_SECRET=${{ secrets.DEX_CLIENT_SECRET }}" >> .env
+          cat .env-vars >> .env && cat .env-secrets >> .env
 
       - name: Create BuildKit Configuration
         run: |
