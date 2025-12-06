@@ -16,7 +16,7 @@ const config: Config = {
   testPathIgnorePatterns: ['/node_modules/', '/.next/', '/dist/'],
   // Add more setup options before each test is run
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/$1',
     '^@lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@schemas/(.*)$': '<rootDir>/src/schemas/$1',
     '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
