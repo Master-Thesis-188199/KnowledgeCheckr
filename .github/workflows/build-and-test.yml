@@ -6,30 +6,31 @@ permissions:
   packages: read
 
 env:
-  BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL }}
-  NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
-  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-
-  DATABASE_HOST: ${{ vars.DATABASE_HOST}}
-  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
-  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
-  DATABASE_USER: ${{ vars.DATABASE_USER }}
-  DATABASE_PASSWORD: 123
-
-  AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID}}
-  AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
-
-  AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
-  AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
-
-  NEXT_PUBLIC_MODE: ${{ vars.NEXT_PUBLIC_MODE }}
-  DEX_PROVIDER_URL: ${{ vars.DEX_PROVIDER_URL }}
-  DEX_CLIENT_ID: ${{ secrets.DEX_CLIENT_ID}}
-  DEX_CLIENT_SECRET: ${{secrets.DEX_CLIENT_SECRET}}
-
   NODE_VERSION: 24.11.1
 
 jobs:
+  setup-environment-variables:
+    name: Setup Environment Variables
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: 0ndt/envfile@v2
+        name: Collect repository variables
+        with:
+          secrets: ${{ toJSON(vars) }}
+          file: ".env-vars"
+
+      - uses: 0ndt/envfile@v2
+        name: Collect repository secrets
+        with:
+          secrets: ${{ toJSON(secrets)   }}
+          file: ".env-secrets"
+          exclude: GH_TOKEN, GITHUB_TOKEN
+
+      - name: Create .env File
+        run: |
+          cat .env-vars >> .env && cat .env-secrets >> $GITHUB_ENV
+
   check-file-changes:
     name: Check for Relevant File Changes
     runs-on: ubuntu-latest
@@ -51,7 +52,7 @@ jobs:
 
   run-component-tests:
     name: Run Component Tests
-    needs: [check-file-changes]
+    needs: [check-file-changes, setup-environment-variables]
     runs-on: ubuntu-latest
 
     services:
@@ -116,7 +117,7 @@ jobs:
 
   run-jest-tests:
     name: Run Jest Tests
-    needs: [check-file-changes]
+    needs: [check-file-changes, setup-environment-variables]
     runs-on: ubuntu-latest
 
     services:
@@ -151,7 +152,7 @@ jobs:
   build:
     name: Production Build
     runs-on: ubuntu-latest
-    needs: check-file-changes
+    needs: [check-file-changes, setup-environment-variables]
 
     services:
       mysql:
@@ -219,7 +220,7 @@ jobs:
           )" >> $GITHUB_OUTPUT
 
   run-e2e-tests:
-    needs: [check-file-changes, setup]
+    needs: [check-file-changes, setup, setup-environment-variables]
 
     services:
       mysql:
