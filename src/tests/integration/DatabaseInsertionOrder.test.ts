@@ -9,10 +9,14 @@ import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/Knowled
 import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
-describe('Validate the order of inserted database elements', () => {
-  it('Verify question and answer retrieval order is the same as insertion-order ', async () => {
-    const db = await getDatabase()
+let db: Awaited<ReturnType<typeof getDatabase>>
 
+describe('Validate the order of inserted database elements', () => {
+  beforeAll(async () => {
+    db = await getDatabase()
+  })
+
+  it('Verify question and answer retrieval order is the same as insertion-order ', async () => {
     const [testUser] = await db.select().from(db_user).limit(1).where(eq(db_user.email, 'test@email.com'))
     expect(testUser).toBeDefined()
 
@@ -40,8 +44,6 @@ describe('Validate the order of inserted database elements', () => {
         .flatMap((q) => q.answers.map((a) => a.id))
         .join('\n'),
     )
-
-    db.$client.end()
   })
 
   it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['questionOrder']>)(
@@ -97,4 +99,9 @@ describe('Validate the order of inserted database elements', () => {
       }
     },
   )
+
+  afterAll(async () => {
+    // Clean up test data
+    db.$client.end()
+  })
 })
