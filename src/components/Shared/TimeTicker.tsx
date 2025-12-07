@@ -42,7 +42,7 @@ export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start:
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [duration, endDate])
+  }, [duration, endDate, computeDifference, onTimeUp])
 
   return <>{remainingTime}</>
 }
