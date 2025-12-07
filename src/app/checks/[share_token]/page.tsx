@@ -14,12 +14,15 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
 
   const check = await getKnowledgeCheckByShareToken(share_token)
 
+  // eslint-disable-next-line react-hooks/purity
+  const startedAt = new Date(Date.now())
+
   if (!check) {
     notFound()
   }
 
   return (
-    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check) }}>
+    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), startedAt }}>
       <PageHeading title={check.name ?? '<check-name>'} />
 
       <div className='grid gap-12 md:grid-cols-[1fr_auto] md:gap-[7vw]'>
