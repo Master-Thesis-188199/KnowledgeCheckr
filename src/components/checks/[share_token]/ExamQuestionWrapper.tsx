@@ -12,10 +12,11 @@ import { cn } from '@/src/lib/Shared/utils'
 
 export function ExamQuestionWrapper() {
   const { enableNavigationAbort } = useNavigationAbort()
-  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion } = useExaminationStore((store) => store)
+  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion, startExamination } = useExaminationStore((store) => store)
 
   useEffect(() => {
     enableNavigationAbort({ title: 'Abort Examination Attempt?', description: 'By leaving now all your process will be lost and your attempt will be submitted.' })
+    startExamination()
   }, [])
 
   if (knowledgeCheck.questions?.length === 0)
