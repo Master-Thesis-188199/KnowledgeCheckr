@@ -27,6 +27,9 @@ export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start:
   }, [startDate, duration, setTimeleft, endDate])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    computeDifference() //* set timeLeft immediately after component is rendered, so that there is no delay (first-interval) until time is rendered.
+
     const interval = setInterval(() => {
       if (!isAfter(endDate, new Date(Date.now()))) {
         console.info('Examination time limit reached..')
