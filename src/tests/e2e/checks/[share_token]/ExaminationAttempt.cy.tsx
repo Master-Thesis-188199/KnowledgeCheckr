@@ -1,3 +1,4 @@
+import { addSeconds } from 'date-fns'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
@@ -17,6 +18,9 @@ describe('ExaminationAttempt Suite: ', () => {
     cy.get('h1').contains(check.name).should('exist').and('be.visible')
 
     cy.intercept('POST', `/checks/${check.share_key}`).as('finishAttemptAction')
+
+    cy.wait(2000)
+    cy.clock(addSeconds(new Date(Date.now()), check.settings.examTimeFrameSeconds * 2), ['Date'])
 
     cy.wait('@finishAttemptAction', { timeout: check.settings.examTimeFrameSeconds * 1000 })
       .its('response.statusCode')
