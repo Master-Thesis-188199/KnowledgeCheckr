@@ -145,6 +145,7 @@ export const db_knowledgeCheckSettings = mysqlTable(
     allowFreeNavigation: tinyint('allow_free_navigation').notNull(),
     questionOrder: mysqlEnum(['create-order', 'random']).notNull(),
     answerOrder: mysqlEnum(['create-order', 'random']).notNull(),
+    examTimeFrameSeconds: int().notNull(),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
