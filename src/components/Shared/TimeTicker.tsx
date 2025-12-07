@@ -10,7 +10,7 @@ import { addSeconds, differenceInMilliseconds, formatDuration, isAfter } from 'd
  * @returns The time left until the `duration` is reached.
  */
 export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start: Date; duration: number; onTimeUp?: () => void }) {
-  const [timeLeft, setTimeleft] = useState<string | null>(null)
+  const [remainingTime, setRemainingTime] = useState<string | null>(null)
   const [startDate] = useState(new Date(Date.parse(rawStartDate.toString()))) //* ensure date-object even if stringified
   const [endDate] = useState(addSeconds(startDate, duration))
 
@@ -18,17 +18,17 @@ export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start:
     const difference = differenceInMilliseconds(endDate, new Date(Date.now()))
     const differenceDate = new Date(difference)
 
-    setTimeleft(
+    setRemainingTime(
       formatDuration(
         { seconds: differenceDate.getSeconds(), minutes: differenceDate.getMinutes() || undefined, hours: differenceDate.getHours() - 1 || undefined },
         { zero: true, delimiter: ' and ' },
       ),
     )
-  }, [startDate, duration, setTimeleft, endDate])
+  }, [startDate, duration, setRemainingTime, endDate])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    computeDifference() //* set timeLeft immediately after component is rendered, so that there is no delay (first-interval) until time is rendered.
+    computeDifference() //* set remainingTime immediately after component is rendered, so that there is no delay (first-interval) until time is rendered.
 
     const interval = setInterval(() => {
       if (!isAfter(endDate, new Date(Date.now()))) {
@@ -44,5 +44,5 @@ export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start:
     return () => clearInterval(interval)
   }, [duration, endDate])
 
-  return <>{timeLeft}</>
+  return <>{remainingTime}</>
 }
