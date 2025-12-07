@@ -16,7 +16,7 @@ export type ExaminationActions = {
   previousQuestion: () => void
   saveAnswer: (result: ExaminationSchema['results'][number]) => void
   /**
-   * By calling this function the forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
+   * By calling this function the state is forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
    */
   startExamination: () => void
 }
@@ -63,7 +63,7 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
         },
 
         /**
-         * By calling this function the forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
+         * By calling this function the state is forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
          */
         startExamination: () => set((prev) => prev),
       }
