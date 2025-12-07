@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { differenceInMilliseconds, formatDuration, isAfter } from 'date-fns'
+import { useCallback, useEffect, useState } from 'react'
+import { addSeconds, differenceInMilliseconds, formatDuration, isAfter } from 'date-fns'
 
 /**
  * This component essentially returns / displays the time that is left until the `duration` is exceeded. When the `duration` is reached the `onTimeUp` callback will be called to e.g redirect the user.
@@ -9,15 +9,25 @@ import { differenceInMilliseconds, formatDuration, isAfter } from 'date-fns'
  * @param duration The max-time limit the user can use to finish a respective action
  * @returns The time left until the `duration` is reached.
  */
-export function TimeTicker({ start, duration, onTimeUp }: { start: Date; duration: number; onTimeUp?: () => void }) {
+export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start: Date; duration: number; onTimeUp?: () => void }) {
   const [timeLeft, setTimeleft] = useState<string | null>(null)
-  const endDate = new Date(new Date(Date.parse(start.toString())).getTime() + duration * 1000)
+  const [startDate] = useState(new Date(Date.parse(rawStartDate.toString()))) //* ensure date-object even if stringified
+  const [endDate] = useState(addSeconds(startDate, duration))
+
+  const computeDifference = useCallback(() => {
+    const difference = differenceInMilliseconds(endDate, new Date(Date.now()))
+    const differenceDate = new Date(difference)
+
+    setTimeleft(
+      formatDuration(
+        { seconds: differenceDate.getSeconds(), minutes: differenceDate.getMinutes() || undefined, hours: differenceDate.getHours() - 1 || undefined },
+        { zero: true, delimiter: ' and ' },
+      ),
+    )
+  }, [startDate, duration, setTimeleft, endDate])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const difference = differenceInMilliseconds(endDate, new Date(Date.now()))
-      const differenceDate = new Date(difference)
-
       if (!isAfter(endDate, new Date(Date.now()))) {
         console.info('Examination time limit reached..')
         clearInterval(interval)
@@ -25,16 +35,11 @@ export function TimeTicker({ start, duration, onTimeUp }: { start: Date; duratio
         return
       }
 
-      setTimeleft(
-        formatDuration(
-          { seconds: differenceDate.getSeconds(), minutes: differenceDate.getMinutes() || undefined, hours: differenceDate.getHours() - 1 || undefined },
-          { zero: true, delimiter: ' and ' },
-        ),
-      )
+      computeDifference()
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [endDate, start, duration])
+  }, [duration, endDate])
 
   return <>{timeLeft}</>
 }
