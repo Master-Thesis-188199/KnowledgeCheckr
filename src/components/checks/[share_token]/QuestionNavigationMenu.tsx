@@ -2,10 +2,11 @@
 
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { TimeTicker } from '@/src/components/Shared/TimeTicker'
 import { cn } from '@/src/lib/Shared/utils'
 
 export function QuestionNavigationMenu({ className }: { className?: string }) {
-  const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex } = useExaminationStore((store) => store)
+  const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex, startedAt } = useExaminationStore((store) => store)
 
   return (
     <>
@@ -24,6 +25,9 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
             </button>
           ))}
         </nav>
+        <span className='text-neutral-400'>
+          <TimeTicker start={startedAt} duration={knowledgeCheck.settings.examTimeFrameSeconds} />
+        </span>
         <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60'>
           <span>Finish Check</span>
         </ExamFinishDialog>
