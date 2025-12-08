@@ -1,11 +1,18 @@
 'use client'
 
+import { redirect } from 'next/navigation'
+import { toast } from 'react-toastify'
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { TimeTicker } from '@/src/components/Shared/TimeTicker'
+import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
+import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export function QuestionNavigationMenu({ className }: { className?: string }) {
-  const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex } = useExaminationStore((store) => store)
+  const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex, startedAt, ...examinationState } = useExaminationStore((store) => store)
+  const { clearNavigationAbort } = useNavigationAbort()
 
   return (
     <>
@@ -24,6 +31,24 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
             </button>
           ))}
         </nav>
+        <span className='text-neutral-400'>
+          <TimeTicker
+            onTimeUp={() =>
+              finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, startedAt, ...examinationState }))
+                .catch((e) => {
+                  toast(`Failed to submit examination results. ${e}`, { type: 'error' })
+                })
+                .then(() => {
+                  toast('Successfully submitted examination results', { type: 'success' })
+                  sessionStorage.removeItem('examination-store')
+                  clearNavigationAbort()
+                  redirect('/checks')
+                })
+            }
+            start={startedAt}
+            duration={knowledgeCheck.settings.examTimeFrameSeconds}
+          />
+        </span>
         <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60'>
           <span>Finish Check</span>
         </ExamFinishDialog>

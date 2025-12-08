@@ -20,6 +20,12 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .or(z.number())
     .transform((v) => !!v)
     .default(true),
+
+  examTimeFrameSeconds: z
+    .number()
+    .min(60, 'The examination time frame must be at least 1 minute!')
+    .max(3600 * 5 + 1, 'The examination time frame cannot exceed more than 5 hours!')
+    .default(3600),
 })
 
 export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>

@@ -190,3 +190,13 @@ Cypress.Commands.add('loginAnonymously', () => {
     .should('exist')
     .should('be.visible')
 })
+
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('NEXT_REDIRECT')) {
+    // When nextjs redirects users internally an "NEXT_REDIRECT" error is used to do so, hence these types of errors should nt cause the test to fail.
+    // Returning false here prevents Cypress from failing the test when such an error is caught.
+    return false
+  }
+
+  throw err
+})

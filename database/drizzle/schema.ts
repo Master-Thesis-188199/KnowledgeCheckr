@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
   .notNull()
@@ -141,10 +142,15 @@ export const db_knowledgeCheckSettings = mysqlTable(
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
-    allowAnonymous: tinyint('allow_anonymous').notNull(),
-    allowFreeNavigation: tinyint('allow_free_navigation').notNull(),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull(),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull(),
+    allowAnonymous: tinyint('allow_anonymous')
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+    allowFreeNavigation: tinyint('allow_free_navigation')
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.questionOrder._def.defaultValue()),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.answerOrder._def.defaultValue()),
+    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examTimeFrameSeconds._def.defaultValue()),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),

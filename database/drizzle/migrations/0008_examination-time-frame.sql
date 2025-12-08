@@ -1,0 +1,1 @@
+ALTER TABLE `KnowledgeCheck_Settings` ADD `examTimeFrameSeconds` int NOT NULL;
