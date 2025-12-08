@@ -7,6 +7,9 @@ on:
       - canary
   workflow_dispatch:
 
+#todo Check what branch is used to decide which database-image-tag to use. On a feature branch who's name matches db-image-tag, on main use stable and on canary use canary, on other feature branches use canary.
+#? as for branch-specific docker-tag images: e.g. 'ref/code-improvements' might be re-used and may have docker-images associated with it. -> check if pr has the latest branch-image-tag-commit-sha in its range.
+
 permissions:
   contents: write
   packages: write
@@ -152,25 +155,14 @@ jobs:
           fetch-depth: 0
 
       # Did init.sql change ? (all commits included in the push)
-      - name: Check if database/init.sql changed in this push
+      - name: Check for Schema Changes
         id: changed
-        shell: bash
-        run: |
-          set -euo pipefail
-          BASE="${{ github.event.before }}"
-          HEAD="${{ github.sha }}"
-          # Fallback for cases where 'before' may be empty (e.g. first push)
-          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
-            BASE="$(git rev-parse "${HEAD}^" 2>/dev/null || true)"
-          fi
-          echo "Diff range: ${BASE:-<none>}..${HEAD}"
-          if [ -n "$BASE" ] && git diff --name-only "$BASE" "$HEAD" | grep -qx 'database/init.sql'; then
-            echo "db_changed=true" >> "$GITHUB_OUTPUT"
-            echo "Database schema (init.sql) has changed."
-          else
-            echo "db_changed=false" >> "$GITHUB_OUTPUT"
-            echo "Database schema (init.sql) has **not** changed. Aborting."
-          fi
+        uses: ./.github/actions/file-change
+        with:
+          base_commit: ${{ github.event.before }}
+          newest_commit: ${{ github.sha }}
+          regex_pattern: "drizzle/*/schema.ts"
+          consider_initial_commit_relevant: false
 
   build-db-image:
     runs-on: ubuntu-latest

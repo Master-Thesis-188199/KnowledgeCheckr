@@ -1,0 +1,60 @@
+name: Check for File Change
+description: 'Checks whether a commit has modified files that match a given regex pattern.'
+
+inputs:
+  base_commit:
+    description: 'The base_commit commit to compare against. When left empty "" it will assume its a new branch or initial commit and set `changed` to true.'
+    required: true
+  newest_commit:
+    description: The newest commit that the base is compared against
+    default: ${{ github.sha }}
+    required: false
+  regex_pattern:
+    description: 'Used to determinate if a file was modified within the commit-range; when it matches the pattern'
+    required: true
+  consider_initial_commit_relevant:
+    description: 'When set to true the output will be set to true when the base_commit is empty or an initial-commit. When set to false an initial / empty commit will not be considered relevant as a change.'
+    required: false
+    default: 'false'
+  skip:
+    description: 'When set to true, the action will always return changed=true'
+    default: '0'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        set -euo pipefail
+        # For a new branch or initial commit, treat as relevant
+        if [ "${{ inputs.consider_initial_commit_relevant }}" = "true" ] && { [ "${{ inputs.base_commit }}" = "" ] || [ "${{ inputs.base_commit }}" = "0000000000000000000000000000000000000000" ]; }; then
+          echo "New branch or initial commit. Considering changes relevant."
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          CHANGED_FILES=$(git diff --name-only ${{ inputs.base_commit }} ${{ inputs.newest_commit || github.sha }})
+
+          printf "Changed files: \n%s\n\n" "$CHANGED_FILES"
+
+          MATCHED_FILES=$(printf '%s\n' "$CHANGED_FILES" | grep -E "${{ inputs.regex_pattern }}" || true)
+          if [ -n "$MATCHED_FILES" ]; then
+            echo "Files matching regex '${{ inputs.regex_pattern }}':"
+            printf '%s\n' "$MATCHED_FILES"
+            echo "File change(s) were detected. Setting output `changed` to true."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes detected."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi         
+        fi
+
+        if [ "${{ inputs.skip }}" = "1" ] || [ "${{ inputs.skip }}" = "true" ]; then
+          echo "File matching has been overridden. Setting `changed` to true."
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+      id: check
+
+outputs:
+  changed:
+    description: 'Whether relevant file changes were detected'
+    value: ${{ steps.check.outputs.changed }}
