@@ -60,7 +60,7 @@ export function RenderPracticeQuestion() {
     if (isSubmitting) return
 
     storeAnswer({ questionId: question.id, ...getValues() })
-  }, [, isSubmitSuccessful, isPending, isSubmitting])
+  }, [isSubmitSuccessful, isPending, isSubmitting])
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
   const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending
