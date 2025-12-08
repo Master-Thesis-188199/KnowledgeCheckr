@@ -48,6 +48,7 @@ jobs:
 
   # The build job builds the Docker image for each platform specified in the matrix.
   build:
+    needs: [semantic-versioning]
     strategy:
       fail-fast: false
       matrix:
