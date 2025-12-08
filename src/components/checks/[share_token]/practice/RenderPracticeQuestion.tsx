@@ -25,7 +25,7 @@ import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSc
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const { questions, currentQuestionIndex, navigateToQuestion } = usePracticeStore((store) => store)
+  const { questions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
 
   const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
 
@@ -44,6 +44,7 @@ export function RenderPracticeQuestion() {
     setValue,
     trigger,
     watch,
+    getValues,
     formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
   } = useForm({
     resolver: zodResolver<PracticeData>(PracticeSchema),
@@ -52,6 +53,14 @@ export function RenderPracticeQuestion() {
       type: state.values?.type ?? question.type,
     },
   })
+
+  useEffect(() => {
+    if (!isSubmitSuccessful) return
+    if (isPending) return
+    if (isSubmitting) return
+
+    storeAnswer({ questionId: question.id, ...getValues() })
+  }, [, isSubmitSuccessful, isPending, isSubmitting])
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
   const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending
