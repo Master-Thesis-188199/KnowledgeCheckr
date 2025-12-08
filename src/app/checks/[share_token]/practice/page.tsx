@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { PracticeProgress } from '@/src/components/checks/[share_token]/practice/PracticeProgress'
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
@@ -28,6 +29,8 @@ export default async function PracticePage({ params }: { params: Promise<{ share
             </div>
           ))}
         </div>
+
+        <PracticeProgress />
 
         <RenderPracticeQuestion />
       </div>
