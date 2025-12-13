@@ -14,7 +14,7 @@ describe('Accessibility of questions: ', () => {
       { page: 'examination', accessbilities: ['exam-only', 'all'] },
     ] as const,
     ({ page, accessbilities }) =>
-      it.only(`Verifies the accessibility of ${accessbilities.map((a) => `"${a}"`).join(' and ')} questions in ${page}`, () => {
+      it(`Verifies the accessibility of ${accessbilities.map((a) => `"${a}"`).join(' and ')} questions in ${page}`, () => {
         const questions: Array<Question> = []
 
         for (const accessibility of accessbilities) {
