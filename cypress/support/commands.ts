@@ -178,6 +178,10 @@ Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
   }
 })
 
+Cypress.Commands.add('insertKnowledgeCheck', (check) => {
+  cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+})
+
 Cypress.Commands.add('loginAnonymously', () => {
   cy.visit('/account/login')
 

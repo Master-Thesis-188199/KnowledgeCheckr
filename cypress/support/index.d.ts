@@ -34,6 +34,8 @@ declare namespace Cypress {
 
     removeDBUser(email: string, username: string): void
 
+    insertKnowledgeCheck(check: KnowledgeCheck): void
+
     dragDrop(dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>): void
 
     //? response type assertion needed because Interception<any, any> translates to any when used within tests.
