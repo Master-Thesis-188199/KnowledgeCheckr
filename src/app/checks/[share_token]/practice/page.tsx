@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { PracticeProgress } from '@/src/components/checks/[share_token]/practice/PracticeProgress'
 import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token]/practice/PracticeQuestionNavigation'
+import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
@@ -14,8 +15,14 @@ export default async function PracticePage({ params }: { params: Promise<{ share
     notFound()
   }
 
+  const unfilteredQuestions = check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')
+  const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
+
+  // When there are no categories to switch between -> set (practice-) questions to be the base-questions.
+  const practiceQuestions = categories.length > 1 ? [] : unfilteredQuestions
+
   return (
-    <>
+    <PracticeStoreProvider initialStoreProps={{ unfilteredQuestions, practiceQuestions }}>
       <PageHeading title='Practice' />
 
       <div className='mx-auto'>
@@ -25,6 +32,6 @@ export default async function PracticePage({ params }: { params: Promise<{ share
 
         <RenderPracticeQuestion />
       </div>
-    </>
+    </PracticeStoreProvider>
   )
 }
