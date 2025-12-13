@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { PracticeBreadcrumbs } from '@/src/components/checks/[share_token]/practice/PracticeBreadcrumbs'
 import { PracticeProgress } from '@/src/components/checks/[share_token]/practice/PracticeProgress'
 import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token]/practice/PracticeQuestionNavigation'
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { cn } from '@/src/lib/Shared/utils'
 
 export default async function PracticePage({ params, searchParams }: { params: Promise<{ share_token: string }>; searchParams?: Promise<{ category?: '_none_' | string }> }) {
   const { share_token } = await params
@@ -36,7 +38,9 @@ export default async function PracticePage({ params, searchParams }: { params: P
   }
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ unfilteredQuestions, practiceQuestions }}>
+    <PracticeStoreProvider initialStoreProps={{ unfilteredQuestions, practiceQuestions }} key={category}>
+      <PracticeBreadcrumbs className={cn('mb-2', categories.length === 1 && 'hidden')} share_token={share_token} categories={categories} selectedCategory={category} />
+
       <PageHeading title='Practice' />
 
       <div className='mx-auto'>
