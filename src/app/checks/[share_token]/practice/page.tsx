@@ -17,7 +17,7 @@ export default async function PracticePage({ params }: { params: Promise<{ share
   const practiceQuestions = check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ questions: practiceQuestions }}>
+    <PracticeStoreProvider initialStoreProps={{ unfilteredQuestions: practiceQuestions }}>
       <PageHeading title='Practice' />
 
       <div className='mx-auto'>
