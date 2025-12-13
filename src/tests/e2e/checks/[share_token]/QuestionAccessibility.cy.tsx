@@ -1,32 +1,47 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
+import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 
 describe('Accessibility of questions: ', () => {
   beforeEach(() => {
     cy.loginTestUser()
   })
+  ;(
+    [
+      { page: 'practice', accessbilities: ['practice-only', 'all'] },
+      { page: 'examination', accessbilities: ['exam-only', 'all'] },
+    ] as { page: 'examination' | 'practice'; accessbilities: Array<Question['accessibility']> }[]
+  ).forEach(({ accessbilities, page }) =>
+    it(`Verifies the accessibiltiy of ${accessbilities.map((a) => `"${a}"`).join(' and ')} questions in ${page}`, () => {
+      const questions: Array<Question> = []
 
-  it('Verifies the accessibiltiy of "practice-only" and "all" questions', () => {
-    const dummyCheck: KnowledgeCheck = {
-      ...instantiateKnowledgeCheck(),
-      share_key: 'question-accessibility' + generateToken(8),
-      questions: [
-        { ...instantiateSingleChoice(), question: 'First practice only question', accessibility: 'practice-only' },
-        { ...instantiateSingleChoice(), question: 'Second practice only question', accessibility: 'practice-only' },
-        { ...instantiateSingleChoice(), question: 'First globally accessible question', accessibility: 'all' },
-        { ...instantiateSingleChoice(), question: 'Second globally accessible question', accessibility: 'all' },
-      ],
-    }
+      for (const accessibility of accessbilities) {
+        questions.push(
+          { ...instantiateSingleChoice(), question: `First ${accessibility} question`, accessibility: accessibility },
+          { ...instantiateSingleChoice(), question: `Second ${accessibility} question`, accessibility: accessibility },
+        )
+      }
 
-    cy.insertKnowledgeCheck(dummyCheck)
+      const dummyCheck: KnowledgeCheck = {
+        ...instantiateKnowledgeCheck(),
+        share_key: 'question-accessibility' + generateToken(8),
+        questions,
+      }
 
-    cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+      cy.insertKnowledgeCheck(dummyCheck)
 
-    cy.get('#practice-question-steps')
-      .should('exist')
-      .and('be.visible')
-      .children()
-      .should('have.length', dummyCheck.questions.filter((q) => q.accessibility === 'practice-only' || q.accessibility === 'all').length)
-  })
+      const examUrl = `/checks/${dummyCheck.share_key}/`
+      const practiceUrl = `/checks/${dummyCheck.share_key}/practice`
+
+      const url = page === 'practice' ? practiceUrl : examUrl
+      cy.visit(url)
+
+      const navigationMenuId = page === 'examination' ? '#exam-question-navigation' : '#practice-question-steps'
+      cy.get(navigationMenuId)
+        .should('exist')
+        .and('be.visible')
+        .children()
+        .should('have.length', dummyCheck.questions.filter((q) => accessbilities.includes(q.accessibility)).length)
+    }),
+  )
 })
