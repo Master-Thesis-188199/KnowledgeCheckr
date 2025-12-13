@@ -12,7 +12,7 @@ export function PracticeCategorySelection() {
 
   const filterPracticeQuestions = (categoryName?: string) => () => {
     updatePracticeQuestions(categoryName ? questions.filter((q) => q.category === categoryName) : questions)
-    router.push(pathname.replace('category', '') + `?category=${categoryName ?? '_none_'}`)
+    router.push(pathname.replace('category', '') + `?category=${encodeURIComponent(categoryName ?? '_none_')}`)
   }
 
   const optionClasses = cn(
