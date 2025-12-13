@@ -1,19 +1,12 @@
 'use client'
 import { useMemo } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
+import Link from 'next/link'
 import { cn } from '@/src/lib/Shared/utils'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Question } from '@/src/schemas/QuestionSchema'
 
-export function PracticeCategorySelection() {
-  const { unfilteredQuestions: questions, updatePracticeQuestions } = usePracticeStore((store) => store)
+export function PracticeCategorySelection({ questions, share_token }: { questions: Question[]; share_token: KnowledgeCheck['share_key'] }) {
   const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
-  const router = useRouter()
-  const pathname = usePathname()
-
-  const filterPracticeQuestions = (categoryName?: string) => () => {
-    updatePracticeQuestions(categoryName ? questions.filter((q) => q.category === categoryName) : questions)
-    router.push(pathname.replace('category', '') + `?category=${encodeURIComponent(categoryName ?? '_none_')}`)
-  }
 
   const optionClasses = cn(
     'cursor-pointer px-3 py-1.5 hover:ring-1 hover:rounded-md dark:ring-neutral-400/70 dark:hover:bg-neutral-800 ',
@@ -27,14 +20,25 @@ export function PracticeCategorySelection() {
         <h2 className='text-lg font-semibold'>Select practice category</h2>
         <p className='text-neutral-400'>Choose the question-category you want to practice with.</p>
       </div>
-      <ul className='rounded-md ring-2 dark:text-neutral-300 dark:ring-neutral-600'>
-        <li className={cn(optionClasses, 'dark:bg-neutral-700/40')} onClick={filterPracticeQuestions()}>
+      <ul className='flex flex-col rounded-md ring-2 select-none dark:text-neutral-300 dark:ring-neutral-600'>
+        <Link
+          className={cn(optionClasses, 'dark:bg-neutral-700/40')}
+          href={{
+            pathname: `/checks/${share_token}/practice`,
+            query: { category: '_none_' },
+          }}>
           Combine all category questions
-        </li>
+        </Link>
         {categories.map((category) => (
-          <li className={optionClasses} key={category} onClick={filterPracticeQuestions(category)}>
+          <Link
+            key={category}
+            className={optionClasses}
+            href={{
+              pathname: `/checks/${share_token}/practice`,
+              query: { category },
+            }}>
             {category}
-          </li>
+          </Link>
         ))}
       </ul>
     </div>

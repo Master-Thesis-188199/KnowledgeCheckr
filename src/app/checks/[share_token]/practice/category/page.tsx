@@ -15,7 +15,7 @@ export default async function PracticeCategoryPage({ params }: { params: Promise
   return (
     <>
       <PageHeading title='Choose Category Questions' />
-      <PracticeCategorySelection />
+      <PracticeCategorySelection share_token={share_token} questions={check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')} />
     </>
   )
 }
