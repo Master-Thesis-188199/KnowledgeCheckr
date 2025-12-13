@@ -47,6 +47,10 @@ describe('Verify selection of practice questions by category', () => {
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
+
+      cy.get('#practice-question-steps')
+        .children()
+        .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
     }),
   )
 })
