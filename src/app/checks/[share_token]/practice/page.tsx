@@ -6,8 +6,9 @@ import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/pra
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
-export default async function PracticePage({ params }: { params: Promise<{ share_token: string }> }) {
+export default async function PracticePage({ params, searchParams }: { params: Promise<{ share_token: string }>; searchParams?: Promise<{ category?: '_none_' | string }> }) {
   const { share_token } = await params
+  const { category } = (await searchParams) ?? {}
 
   const check = await getKnowledgeCheckByShareToken(share_token)
 
@@ -19,7 +20,20 @@ export default async function PracticePage({ params }: { params: Promise<{ share
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
 
   // When there are no categories to switch between -> set (practice-) questions to be the base-questions.
-  const practiceQuestions = categories.length > 1 ? [] : unfilteredQuestions
+  let practiceQuestions = categories.length > 1 ? [] : unfilteredQuestions
+
+  // category already selected
+  if (category) {
+    const categoryName = decodeURIComponent(category)
+
+    if (categoryName === '_none_') {
+      console.debug('Pre-setting practice questions to be unfiltered.')
+      practiceQuestions = unfilteredQuestions
+    } else {
+      console.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
+      practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
+    }
+  }
 
   return (
     <PracticeStoreProvider initialStoreProps={{ unfilteredQuestions, practiceQuestions }}>
