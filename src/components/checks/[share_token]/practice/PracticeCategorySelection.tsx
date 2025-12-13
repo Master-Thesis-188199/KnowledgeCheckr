@@ -20,7 +20,7 @@ export function PracticeCategorySelection({ questions, share_token }: { question
         <h2 className='text-lg font-semibold'>Select practice category</h2>
         <p className='text-neutral-400'>Choose the question-category you want to practice with.</p>
       </div>
-      <ul className='flex flex-col rounded-md ring-2 select-none dark:text-neutral-300 dark:ring-neutral-600'>
+      <ul className='flex flex-col rounded-md ring-2 select-none dark:text-neutral-300 dark:ring-neutral-600' id='category-selection'>
         <Link
           className={cn(optionClasses, 'dark:bg-neutral-700/40')}
           href={{
