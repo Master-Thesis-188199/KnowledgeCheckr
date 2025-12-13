@@ -53,4 +53,37 @@ describe('Verify selection of practice questions by category', () => {
         .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
     }),
   )
+
+  it(`Verify users are not asked to select category when check has just 1 category`, () => {
+    const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
+    const dummyCheck = instantiateKnowledgeCheck()
+    const dummyCategories = ['general']
+
+    dummyCheck.share_key = 'select-category' + generateToken(8)
+
+    const questions: Question[] = []
+    const questionCategories: KnowledgeCheck['questionCategories'] = []
+
+    for (const category of dummyCategories) {
+      questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+      questionCategories.push({
+        id: getUUID(),
+        name: category,
+        skipOnMissingPrequisite: false,
+      })
+    }
+
+    dummyCheck.questions = questions
+    dummyCheck.questionCategories = questionCategories
+
+    cy.insertKnowledgeCheck(dummyCheck)
+
+    cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+
+    //* ensure users are redirected when no selection is made but > 1 categories exist
+    cy.url().should('not.eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
+    cy.url().should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice`)
+
+    cy.get('#practice-question-steps').children().should('have.length', dummyCheck.questions.length)
+  })
 })
