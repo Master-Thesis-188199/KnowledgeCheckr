@@ -160,4 +160,54 @@ describe('Verify selection of practice questions by category', () => {
         .should('have.length', breadcrumbSelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === breadcrumbSelection).length)
     }),
   )
+
+  it('Verify that category-selection is re-apply using searchParams', () => {
+    const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
+    const dummyCheck = instantiateKnowledgeCheck()
+    const dummyCategories = ['general', 'geography', 'mathematics']
+
+    dummyCheck.share_key = 'select-category' + generateToken(8)
+
+    const questions: Question[] = []
+    const questionCategories: KnowledgeCheck['questionCategories'] = []
+
+    for (const category of dummyCategories) {
+      questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+      questionCategories.push({
+        id: getUUID(),
+        name: category,
+        skipOnMissingPrequisite: false,
+      })
+    }
+
+    dummyCheck.questions = questions
+    dummyCheck.questionCategories = questionCategories
+
+    cy.insertKnowledgeCheck(dummyCheck)
+
+    cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+
+    //* ensure users are redirected when no selection is made but > 1 categories exist
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
+
+    cy.get('#category-selection')
+      .children()
+      .should('have.length', dummyCategories.length + 1)
+
+    const randomSelection = dummyCategories.at((Math.random() * dummyCategories.length) % dummyCategories.length)!
+    cy.get('#category-selection').children(`[data-category="${randomSelection}"]`).should('exist').click()
+
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+
+    cy.get('#practice-question-steps')
+      .children()
+      .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
+
+    cy.wait(500)
+    cy.reload()
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+    cy.get('#practice-question-steps')
+      .children()
+      .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
+  })
 })
