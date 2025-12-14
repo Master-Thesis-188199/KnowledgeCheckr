@@ -64,7 +64,10 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
             })
             .catch(() => toast('Failed to generate and save share-token', { type: 'error' }))
         }}
-        className={cn('group rounded-md p-1.5 enabled:hover:cursor-pointer enabled:hover:ring-1 dark:text-neutral-400 dark:ring-neutral-500 disabled:dark:text-neutral-500', className)}>
+        className={cn(
+          'group rounded-md p-1.5 enabled:hover:cursor-pointer enabled:hover:ring-1 disabled:cursor-not-allowed dark:text-neutral-400 dark:ring-neutral-500 disabled:dark:text-neutral-500',
+          className,
+        )}>
         <Share2Icon className='size-4.5 group-active:stroke-3' />
       </button>
     </Tooltip>
