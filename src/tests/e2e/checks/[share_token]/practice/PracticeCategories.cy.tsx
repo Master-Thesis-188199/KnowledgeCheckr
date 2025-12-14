@@ -80,7 +80,7 @@ describe('Verify selection of practice questions by category', () => {
 
     cy.visit(`/checks/${dummyCheck.share_key}/practice`)
 
-    //* ensure users are redirected when no selection is made but > 1 categories exist
+    //* ensure users are NOT redirected to category selection when only 1 category exists
     cy.url().should('not.eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
     cy.url().should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice`)
 
