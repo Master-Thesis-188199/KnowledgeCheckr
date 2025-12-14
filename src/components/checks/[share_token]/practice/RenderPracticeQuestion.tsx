@@ -24,14 +24,14 @@ import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSc
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const { practiceQuestions: questions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
   const pathname = usePathname()
 
   const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
 
   const question = questions.at(currentQuestionIndex)
 
-  if (questions.length === 0) {
+  if (questions.length === 0 && unfilteredQuestions.length > 0) {
     console.debug('No `practiceQuestions` set based on category, redirecting user.')
     redirect(pathname + '/category')
   } else if (!question) {
