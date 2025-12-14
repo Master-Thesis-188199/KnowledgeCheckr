@@ -80,6 +80,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: "0"
         # This step checks out the code from the repository.
         # It uses the actions/checkout action to clone the repository into the runner's workspace.
 
@@ -135,6 +137,14 @@ jobs:
       - name: Create .env File
         run: |
           cat .env-vars >> .env && cat .env-secrets >> .env
+
+      - name: Get Previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: "Store Version Information"
+        run: |
+          echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
 
       - name: Build and push by digest
         # This step builds and pushes the Docker image using Buildx.
