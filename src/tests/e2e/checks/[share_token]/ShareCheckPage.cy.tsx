@@ -49,7 +49,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
       .its('firstCall')
       .then((call) => {
         const shareLink = call.args[0] as string
-        expect(shareLink).to.match(new RegExp(`${Cypress.config().baseUrl}/checks/[A-Z0-9]{8}`))
+        expect(shareLink).to.match(new RegExp(`${Cypress.config().baseUrl}/checks/[A-Z0-9]{8}/practice`))
 
         const token = shareLink.split('/').pop() as string
         expect(token).to.have.length(8)
