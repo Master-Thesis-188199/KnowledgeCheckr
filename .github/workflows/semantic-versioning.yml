@@ -65,6 +65,11 @@ jobs:
     name: Build Docker image for ${{ matrix.platform }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
+
       - name: Transform image name to be lower-case
         run: echo "GHCR_IMAGE=$(echo ${{ env.GHCR_IMAGE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
