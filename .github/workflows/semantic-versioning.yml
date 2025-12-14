@@ -136,6 +136,14 @@ jobs:
         run: |
           cat .env-vars >> .env && cat .env-secrets >> .env
 
+      - name: Get Previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: "Store Version Information"
+        run: |
+          echo "{ \"version\": \"${{ steps.previoustag.outputs.tag }}\" }" > ./public/version.json
+
       - name: Build and push by digest
         # This step builds and pushes the Docker image using Buildx.
         # It uses the docker/build-push-action to build the image with the specified context and platforms.
