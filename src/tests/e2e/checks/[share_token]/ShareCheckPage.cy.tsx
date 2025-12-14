@@ -51,7 +51,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
         const shareLink = call.args[0] as string
         expect(shareLink).to.match(new RegExp(`${Cypress.config().baseUrl}/checks/[A-Z0-9]{8}/practice`))
 
-        const token = shareLink.split('/').pop() as string
+        const token = shareLink.split('/').at(-2) as string
         expect(token).to.have.length(8)
 
         cy.visit(`/checks/${token}`)

@@ -57,7 +57,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
           storeKnowledgeCheckShareToken(check.id, token)
             .then(() => {
               navigator.clipboard
-                .writeText(`${window.location.origin}/checks/${token}`)
+                .writeText(`${window.location.origin}/checks/${token}/practice`)
                 .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
                 .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
               setShareToken(token)
