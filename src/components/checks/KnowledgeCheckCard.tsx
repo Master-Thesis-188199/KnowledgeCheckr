@@ -1,8 +1,7 @@
 'use client'
 
-import { Tooltip } from '@heroui/tooltip'
 import { motion } from 'framer-motion'
-import { InfoIcon, PlayIcon } from 'lucide-react'
+import { PracticeKnowledgeCheckButton } from '@/src/components/checks/PracticeKnowledgeCheckButton'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { cn } from '@/src/lib/Shared/utils'
@@ -19,23 +18,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       )}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
-
-        <Tooltip
-          content={
-            <div className='flex items-center gap-1.5'>
-              <InfoIcon className='size-4' />
-              Practice Knowledge
-            </div>
-          }
-          delay={250}
-          offset={8}
-          closeDelay={0}
-          shouldFlip
-          className='rounded-md bg-neutral-100 p-2 text-sm shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700'>
-          <button className='group/play p-1.5'>
-            <PlayIcon className='size-4.5 group-hover/play:animate-pulse group-hover/play:cursor-pointer dark:text-neutral-400 dark:group-hover/play:text-green-500/90' />
-          </button>
-        </Tooltip>
+        <PracticeKnowledgeCheckButton check={check} />
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />
