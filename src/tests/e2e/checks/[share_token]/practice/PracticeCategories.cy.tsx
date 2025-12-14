@@ -43,7 +43,7 @@ describe('Verify selection of practice questions by category', () => {
         .children()
         .should('have.length', dummyCategories.length + 1)
 
-      const selection = categorySelection === 'random' ? dummyCategories.at((Math.random() * dummyCategories.length) % dummyCategories.length)! : 'all'
+      const selection = categorySelection === 'random' ? dummyCategories[Math.floor(Math.random() * dummyCategories.length)] : 'all'
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
@@ -120,7 +120,8 @@ describe('Verify selection of practice questions by category', () => {
         .children()
         .should('have.length', dummyCategories.length + 1)
 
-      const selection = categorySelection === 'random' ? dummyCategories.at((Math.random() * dummyCategories.length) % dummyCategories.length)! : 'all'
+      const selection = categorySelection === 'random' ? dummyCategories[Math.floor(Math.random() * dummyCategories.length)] : 'all'
+
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
@@ -139,7 +140,7 @@ describe('Verify selection of practice questions by category', () => {
         .should('have.attr', 'data-state', 'open')
 
       // select a _different_ category than before, by reverting selection condition (!== vs ===)
-      const breadcrumbSelection: string = categorySelection !== 'random' ? dummyCategories.at((Math.random() * dummyCategories.length) % dummyCategories.length)! : 'all'
+      const breadcrumbSelection: string = categorySelection !== 'random' ? dummyCategories[Math.floor(Math.random() * dummyCategories.length)] : 'all'
 
       // check drop-down-menu category options
       cy.get('[data-slot="dropdown-menu-content"]')
@@ -194,7 +195,7 @@ describe('Verify selection of practice questions by category', () => {
       .children()
       .should('have.length', dummyCategories.length + 1)
 
-    const randomSelection = dummyCategories.at((Math.random() * dummyCategories.length) % dummyCategories.length)!
+    const randomSelection = dummyCategories[Math.floor(Math.random() * dummyCategories.length)]
     cy.get('#category-selection').children(`[data-category="${randomSelection}"]`).should('exist').click()
 
     cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
