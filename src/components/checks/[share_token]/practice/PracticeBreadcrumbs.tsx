@@ -23,12 +23,13 @@ export function PracticeBreadcrumbs({
 
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger className='flex items-center gap-1'>
+            <DropdownMenuTrigger className='flex items-center gap-1' id='category-switcher'>
               <BreadcrumbPage>{category === '_none_' || category === undefined ? 'combined-questions' : category}</BreadcrumbPage>
               <span className='sr-only'>Toggle menu</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='start'>
               <Link
+                data-category={'all'}
                 href={{
                   pathname: `/checks/${share_token}/practice`,
                   query: { category: '_none_' },
@@ -37,6 +38,7 @@ export function PracticeBreadcrumbs({
               </Link>
               {categories.map((categoryName) => (
                 <Link
+                  data-category={categoryName}
                   key={categoryName}
                   href={{
                     pathname: `/checks/${share_token}/practice`,
