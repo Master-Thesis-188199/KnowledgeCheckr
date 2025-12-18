@@ -1,0 +1,1 @@
+ALTER TABLE `Question` ADD `accessibility` enum('all','practice-only','exam-only') DEFAULT 'all' NOT NULL;

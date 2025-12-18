@@ -22,6 +22,9 @@ const baseQuestion = z.object({
         .split('\n')
         .join(''),
     ),
+
+  //* specifies how / in which environments the question should be displayed to users.
+  accessibility: z.enum(['all', 'practice-only', 'exam-only']).default('all').catch('all'),
 })
 
 const multipleChoiceAnswerSchema = z.object({

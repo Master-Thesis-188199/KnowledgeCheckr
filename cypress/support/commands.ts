@@ -178,6 +178,10 @@ Cypress.Commands.add('simulatePracticeSelection', (question, options = {}) => {
   }
 })
 
+Cypress.Commands.add('insertKnowledgeCheck', (check) => {
+  cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+})
+
 Cypress.Commands.add('loginAnonymously', () => {
   cy.visit('/account/login')
 
@@ -189,4 +193,14 @@ Cypress.Commands.add('loginAnonymously', () => {
   cy.get("img[aria-label='user avatar']", { timeout: 10 * 1000 })
     .should('exist')
     .should('be.visible')
+})
+
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('NEXT_REDIRECT')) {
+    // When nextjs redirects users internally an "NEXT_REDIRECT" error is used to do so, hence these types of errors should nt cause the test to fail.
+    // Returning false here prevents Cypress from failing the test when such an error is caught.
+    return false
+  }
+
+  throw err
 })

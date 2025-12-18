@@ -1,11 +1,11 @@
 'use client'
 
-import { saveAction } from '@/src/lib/checks/create/SaveAction'
-import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
-import { Button } from '@/src/components/shadcn/button'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
+import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { Button } from '@/src/components/shadcn/button'
+import { saveAction } from '@/src/lib/checks/create/SaveAction'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
   const store = useCheckStore((store) => store)
@@ -20,6 +20,7 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
     openDate: store.openDate,
     questionCategories: store.questionCategories,
     questions: store.questions,
+    settings: store.settings,
   }
 
   return (

@@ -1,5 +1,5 @@
-import PageHeading from '@/src/components/Shared/PageHeading'
 import Link from 'next/link'
+import PageHeading from '@/src/components/Shared/PageHeading'
 
 export default function Home() {
   return (

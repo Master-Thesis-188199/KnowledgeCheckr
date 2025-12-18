@@ -1,7 +1,7 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { useEffect } from 'react'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { usePrimaryPointerQuery } from '@/hooks/root/Navigation/usePrimaryPointerQuery'
 import useStylusPointerQuery from '@/hooks/root/Navigation/useStylusPointerQuery'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'

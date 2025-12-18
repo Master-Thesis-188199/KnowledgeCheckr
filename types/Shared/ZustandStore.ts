@@ -1,5 +1,5 @@
-import { Any } from '@/types'
 import type { StoreApi } from 'zustand/vanilla'
+import { Any } from '@/types'
 
 export type StoreCachingOptions = { disableCache?: boolean; cacheKey: string; debounceTime?: number }
 

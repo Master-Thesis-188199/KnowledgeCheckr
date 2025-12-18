@@ -1,10 +1,10 @@
 'use client'
 
+import { createContext, type ReactNode, useContext } from 'react'
+import { useStore } from 'zustand'
 import { createSidebarStore, SidebarState, type SidebarStore } from '@/hooks/root/SidebarStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
-import { createContext, type ReactNode, useContext } from 'react'
-import { useStore } from 'zustand'
 
 export type SidebarStoreApi = ReturnType<typeof createSidebarStore>
 

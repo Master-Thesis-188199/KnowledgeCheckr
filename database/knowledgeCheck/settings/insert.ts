@@ -3,22 +3,20 @@
 import { DrizzleDB } from '@/database/Database'
 import { db_knowledgeCheckSettings } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { getUUID } from '@/src/lib/Shared/getUUID'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Any } from '@/types'
 
-export default async function insertKnowledgeCheckSettings(db: DrizzleDB, settings: Any, check_id: KnowledgeCheck['id']) {
+export default async function insertKnowledgeCheckSettings(db: DrizzleDB, { id, settings }: Pick<KnowledgeCheck, 'id' | 'settings'>) {
   await requireAuthentication()
 
-  const [{ id }] = await db
+  const [{ id: insertId }] = await db
     .insert(db_knowledgeCheckSettings)
     .values({
-      id: getUUID(),
-      knowledgecheckId: check_id,
-      allowAnonymous: 1,
-      randomizeQuestions: 1,
+      knowledgecheckId: id,
+      ...settings,
+      allowAnonymous: settings.allowAnonymous ? 1 : 0,
+      allowFreeNavigation: settings.allowFreeNavigation ? 1 : 0,
     })
     .$returningId()
 
-  return id
+  return insertId
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 import { Connection, Pool } from 'mysql2/promise'
 
 declare global {

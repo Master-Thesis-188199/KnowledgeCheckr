@@ -1,6 +1,5 @@
 'use client'
 
-import { is } from 'drizzle-orm'
 import { FormState } from 'react-hook-form'
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'

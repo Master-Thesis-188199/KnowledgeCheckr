@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
   .notNull()
@@ -55,6 +56,7 @@ export const db_answer = mysqlTable(
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     questionId: varchar('Question_id', { length: 36 }).notNull(),
+    _position: int().notNull(),
   },
   (table) => [
     index('fk_Answer_Question1_idx').on(table.questionId),
@@ -140,9 +142,15 @@ export const db_knowledgeCheckSettings = mysqlTable(
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
-    allowAnonymous: tinyint('allow_anonymous').default(1),
-    randomizeQuestions: tinyint('randomize_questions').default(1),
-    allowFreeNavigation: tinyint('allow_free_navigation').default(1),
+    allowAnonymous: tinyint('allow_anonymous')
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+    allowFreeNavigation: tinyint('allow_free_navigation')
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.questionOrder._def.defaultValue()),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.answerOrder._def.defaultValue()),
+    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examTimeFrameSeconds._def.defaultValue()),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
@@ -173,7 +181,12 @@ export const db_question = mysqlTable(
       .$default(() => formatDatetime(new Date(Date.now())))
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     categoryId: varchar('category_id', { length: 36 }).notNull(),
+    accessibility: mysqlEnum(['all', 'practice-only', 'exam-only'])
+      .notNull()
+      .default('all')
+      .$default(() => 'all'),
 
+    _position: int().notNull(),
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [

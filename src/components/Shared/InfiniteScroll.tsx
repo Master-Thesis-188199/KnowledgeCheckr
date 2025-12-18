@@ -1,8 +1,8 @@
 'use client'
+import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useInView } from 'framer-motion'
 import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
-import { useInView } from 'framer-motion'
-import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
 
 interface InfiniteScrollContext<T = Any> {
   items: T[]
@@ -53,6 +53,7 @@ export function InfinityScrollFetcher({ children, getItems }: { getItems: (offse
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
+    // eslint-disable-next-line react-hooks/refs
   }, [ref.current, inView])
 
   return (

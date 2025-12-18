@@ -1,7 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   let body: unknown

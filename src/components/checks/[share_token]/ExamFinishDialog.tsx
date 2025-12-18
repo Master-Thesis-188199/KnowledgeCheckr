@@ -1,5 +1,9 @@
 'use client'
 
+import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
+import { CheckCheckIcon } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { toast } from 'react-toastify'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
@@ -8,10 +12,6 @@ import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExami
 import { cn } from '@/src/lib/Shared/utils'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
-import { CheckCheckIcon } from 'lucide-react'
-import { redirect } from 'next/navigation'
-import { toast } from 'react-toastify'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
   const { knowledgeCheck, ...examinationState } = useExaminationStore((state) => state)

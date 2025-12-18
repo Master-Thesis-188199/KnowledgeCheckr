@@ -1,3 +1,5 @@
+import Image from 'next/image'
+import { twMerge as tw } from 'tailwind-merge'
 import DesktopSidebarDialog from '@/components/root/Navigation/desktop/DesktopSidebarDialog'
 import SidebarHoverabilityDetection from '@/components/root/Navigation/desktop/SidebarHoverabilityDetection'
 import RenderSideBarItems from '@/components/root/Navigation/elements/RenderSideBarItems'
@@ -6,8 +8,6 @@ import SidebarContentPanel from '@/components/root/Navigation/SidebarContentPane
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import AppVersion from '@/components/Shared/AppVersion'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
-import Image from 'next/image'
-import { twMerge as tw } from 'tailwind-merge'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (

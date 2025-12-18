@@ -52,7 +52,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
             <SocialButton icon={GoogleIcon} callbackURL={callbackUrl ?? undefined} provider='google' aria-label='SignIn using Google' />
             <SocialButton icon={GithubSvg} callbackURL={callbackUrl ?? undefined} provider='github' aria-label='SignIn using GitHub' />
-            {env.MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={callbackUrl ?? undefined} />}
+            {env.NEXT_PUBLIC_MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={callbackUrl ?? undefined} />}
           </div>
 
           <div className='relative'>

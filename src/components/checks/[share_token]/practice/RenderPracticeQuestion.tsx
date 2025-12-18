@@ -7,7 +7,7 @@ import { motion, Variants } from 'framer-motion'
 import isEmpty from 'lodash/isEmpty'
 import { LoaderCircleIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
-import { notFound } from 'next/navigation'
+import { notFound, redirect, usePathname } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
@@ -24,13 +24,19 @@ import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSc
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const { questions, currentQuestionIndex, navigateToQuestion } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const pathname = usePathname()
 
   const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
 
   const question = questions.at(currentQuestionIndex)
 
-  if (!question) notFound()
+  if (questions.length === 0 && unfilteredQuestions.length > 0) {
+    console.debug('No `practiceQuestions` set based on category, redirecting user.')
+    redirect(pathname + '/category')
+  } else if (!question) {
+    notFound()
+  }
 
   const [state, formAction] = useActionState(EvaluateAnswer, { success: false })
   const [isPending, start] = useTransition()
@@ -43,6 +49,7 @@ export function RenderPracticeQuestion() {
     setValue,
     trigger,
     watch,
+    getValues,
     formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
   } = useForm({
     resolver: zodResolver<PracticeData>(PracticeSchema),
@@ -51,6 +58,14 @@ export function RenderPracticeQuestion() {
       type: state.values?.type ?? question.type,
     },
   })
+
+  useEffect(() => {
+    if (!isSubmitSuccessful) return
+    if (isPending) return
+    if (isSubmitting) return
+
+    storeAnswer({ questionId: question.id, ...getValues() })
+  }, [isSubmitSuccessful, isPending, isSubmitting])
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
   const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending

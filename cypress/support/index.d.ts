@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare namespace Cypress {
   type SingleChoice = import('../../src/schemas/QuestionSchema').SingleChoice
   type MultipleChoice = import('../../src/schemas/QuestionSchema').MultipleChoice
@@ -25,7 +24,7 @@ declare namespace Cypress {
           ? 'correct' | 'partly-correct' | 'incorrect'
           : never
 
-  interface Chainable<Subject = any> {
+  interface Chainable {
     skip(message?: string, skipCondition?: boolean): void
     login(email: string, password: string): void
     loginTestUser(): void
@@ -34,6 +33,8 @@ declare namespace Cypress {
     signOut(): void
 
     removeDBUser(email: string, username: string): void
+
+    insertKnowledgeCheck(check: KnowledgeCheck): void
 
     dragDrop(dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>): void
 

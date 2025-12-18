@@ -4,37 +4,72 @@
   "entries": [
     {
       "idx": 0,
-      "version": "5",
+      "version": "6",
       "when": 1761463778221,
       "tag": "0000_initialization",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "5",
+      "version": "6",
       "when": 1761473649520,
       "tag": "0001_share_key_uniqueness",
       "breakpoints": true
     },
     {
       "idx": 2,
-      "version": "5",
+      "version": "6",
       "when": 1761924684252,
       "tag": "0002_seed-test-data",
       "breakpoints": true
     },
     {
       "idx": 3,
-      "version": "5",
+      "version": "6",
       "when": 1762854473364,
       "tag": "0003_allow_anonymous_signin",
       "breakpoints": true
     },
     {
       "idx": 4,
-      "version": "5",
+      "version": "6",
       "when": 1762865930013,
       "tag": "0004_cascade-on-user-deletion",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1764409374454,
+      "tag": "0005_question-accessibility-field",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1764516546335,
+      "tag": "0006_knowledgeCheck-settings-properties",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1764939687568,
+      "tag": "0007_question-answer-retrieval-order",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1765049474299,
+      "tag": "0008_examination-time-frame",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1765175741678,
+      "tag": "0009_zod-schema-settings-default-values",
       "breakpoints": true
     }
   ]

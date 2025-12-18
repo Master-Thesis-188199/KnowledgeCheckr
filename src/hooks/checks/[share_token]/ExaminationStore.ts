@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
-import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/Examination'
+import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/prepareExminationCheck'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
@@ -15,6 +15,10 @@ export type ExaminationActions = {
   nextQuestion: () => void
   previousQuestion: () => void
   saveAnswer: (result: ExaminationSchema['results'][number]) => void
+  /**
+   * By calling this function the state is forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
+   */
+  startExamination: () => void
 }
 
 export type ExaminationStore = ExaminationState & ExaminationActions
@@ -57,6 +61,11 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
             results: prev.results.find((r) => r.question_id === result.question_id) ? prev.results.map((r) => (r.question_id === result.question_id ? result : r)) : [...prev.results, result],
           }))
         },
+
+        /**
+         * By calling this function the state is forcefully updated, to trigger a caching of the state (including the `startedAt` timestamp)
+         */
+        startExamination: () => set((prev) => prev),
       }
     },
   })

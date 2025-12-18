@@ -109,6 +109,7 @@ function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
   useEffect(() => {
     if (prevShownStage.current !== null && prevShownStage?.current < stageState) {
       //? we moved to the next stage
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAnimation(isCompleted(stage) && stage === prevShownStage.current ? 'left' : 'none')
     } else if (prevShownStage.current !== null && prevShownStage.current > stageState) {
       //? we moved to the prev stage

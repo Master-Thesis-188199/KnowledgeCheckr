@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import getVersion from '@/lib/Shared/getVersion'
 import { twMerge } from 'tailwind-merge'
+import getVersion from '@/lib/Shared/getVersion'
 import env from '@/src/lib/Shared/Env'
 
 export default async function AppVersion() {

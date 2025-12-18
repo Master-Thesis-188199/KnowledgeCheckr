@@ -1,13 +1,13 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
-import Link from '@/src/components/navigation-abortion/Link'
+import React, { Fragment, useEffect } from 'react'
 import { Transition } from '@headlessui/react'
 import { motion, useAnimate } from 'motion/react'
 import { LinkProps } from 'next/link'
-import React, { Fragment, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 import useBreakpoint from 'use-breakpoint'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
+import Link from '@/src/components/navigation-abortion/Link'
 
 const BREAKPOINTS = { 'xs': 0, 'sm': 640, 'md': 768, 'lg': 1024, 'xl': 1280, '2xl': 1536 }
 

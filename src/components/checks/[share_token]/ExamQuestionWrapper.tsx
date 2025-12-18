@@ -1,21 +1,22 @@
 'use client'
 
+import { useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { InfoIcon } from 'lucide-react'
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import RenderExamQuestion from '@/src/components/checks/[share_token]/RenderExamQuestion'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
-import { motion } from 'framer-motion'
-import { InfoIcon } from 'lucide-react'
-import { useEffect } from 'react'
 
 export function ExamQuestionWrapper() {
   const { enableNavigationAbort } = useNavigationAbort()
-  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion } = useExaminationStore((store) => store)
+  const { currentQuestionIndex, knowledgeCheck, nextQuestion, previousQuestion, isLastQuestion, startExamination } = useExaminationStore((store) => store)
 
   useEffect(() => {
     enableNavigationAbort({ title: 'Abort Examination Attempt?', description: 'By leaving now all your process will be lost and your attempt will be submitted.' })
+    startExamination()
   }, [])
 
   if (knowledgeCheck.questions?.length === 0)

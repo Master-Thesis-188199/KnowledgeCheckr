@@ -68,13 +68,16 @@ describe('SessionStorageCache', () => {
               writable: true,
               value,
             })
-          } catch (e) {
+          } catch {
             console.error('Failed to override `performance.timeOrigin` to Date.now()')
           }
         }
       },
     })
 
-    cy.getAllSessionStorage().its(baseUrl).should('not.have.property', 'check-store')
+    cy.getAllSessionStorage().then((storage) => {
+      const sessionCache = storage[baseUrl] ?? {}
+      expect(sessionCache, "Expect session-storage to not include 'check-store' entry").not.haveOwnProperty('check-store')
+    })
   })
 })

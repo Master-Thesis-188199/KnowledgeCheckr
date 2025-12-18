@@ -1,8 +1,8 @@
 'use client'
 
-import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import { motion } from 'framer-motion'
 import { twMerge as tw } from 'tailwind-merge'
+import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 
 export default function DesktopSidebarDialog({ children, visibilityBreakpoints }: { children: React.ReactNode; visibilityBreakpoints?: string }) {
   const { isOpen, isAnimationEnabled, debounceClosure } = useSidebarStore((state) => state)

@@ -1,11 +1,11 @@
+import { LoaderCircleIcon } from 'lucide-react'
+import Link from 'next/link'
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
 import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { LoaderCircleIcon } from 'lucide-react'
-import Link from 'next/link'
 
 export default async function ChecksPage() {
   const { user } = await requireAuthentication()

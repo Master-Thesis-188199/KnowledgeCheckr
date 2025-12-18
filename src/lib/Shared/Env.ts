@@ -33,7 +33,7 @@ export const envSchema = z
       .string()
       .transform((val) => val.toLowerCase().trim() === 'true')
       .optional(),
-    MODE: z.preprocess((v) => v ?? process.env.NODE_ENV ?? 'production', z.enum(['test', 'production', 'development'])),
+    NEXT_PUBLIC_MODE: z.preprocess((v) => v ?? process.env.NODE_ENV ?? 'production', z.enum(['test', 'production', 'development'])),
     //* Custom Provider
     DEX_PROVIDER_URL: z
       .union([
@@ -46,7 +46,7 @@ export const envSchema = z
     DEX_CLIENT_SECRET: z.string().optional().default('dev-secret').catch('dev-secret'),
   })
   .superRefine((env, ctx) => {
-    if (env.MODE === 'test') {
+    if (env.NEXT_PUBLIC_MODE === 'test') {
       // DEX_PROVIDER_URL required in test
       if (!env.DEX_PROVIDER_URL) {
         ctx.addIssue({

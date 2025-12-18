@@ -1,9 +1,9 @@
 'use client'
 
+import { ButtonHTMLAttributes } from 'react'
+import { VariantProps } from 'class-variance-authority'
 import { Button, buttonVariants } from '@/src/components/shadcn/button'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
-import { VariantProps } from 'class-variance-authority'
-import { ButtonHTMLAttributes } from 'react'
 
 export function MultiStageNextButton({
   ...props
