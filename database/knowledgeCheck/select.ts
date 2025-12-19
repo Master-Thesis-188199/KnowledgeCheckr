@@ -3,7 +3,8 @@
 import { User } from 'better-auth'
 import { desc, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_category, db_knowledgeCheck } from '@/database/drizzle/schema'
+import { getCategoriesByCheckId } from '@/database/knowledgeCheck/catagories/select'
 import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
 import getKnowledgeCheckSettingsById from '@/database/knowledgeCheck/settings/select'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -26,9 +27,10 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
     .orderBy(desc(db_knowledgeCheck.updatedAt))
 
   for (const knowledgeCheck of knowledgeChecks) {
+    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
     const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
-    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
-    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings)
+    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
+    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
 
     checks.push(parsedKnowledgeCheck)
   }
@@ -45,9 +47,10 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
   const knowledgeChecks = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, id))
 
   for (const knowledgeCheck of knowledgeChecks) {
+    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
     const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
-    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id)
-    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings)
+    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
+    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
 
     checks.push(parsedKnowledgeCheck)
   }
@@ -61,14 +64,20 @@ export async function getKnowledgeCheckByShareToken(token: string) {
   const [rawCheck] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.share_key, token)).limit(1)
   if (!rawCheck) return null
 
+  const categories = await getCategoriesByCheckId(rawCheck.id)
   const settings = await getKnowledgeCheckSettingsById(rawCheck.id)
-  const questions = await getKnowledgeCheckQuestions(db, rawCheck.id)
-  const check = parseKnowledgeCheck(rawCheck, questions, settings)
+  const questions = await getKnowledgeCheckQuestions(db, rawCheck.id, categories)
+  const check = parseKnowledgeCheck(rawCheck, questions, settings, categories)
 
   return check
 }
 
-function parseKnowledgeCheck(knowledgeCheck: typeof db_knowledgeCheck.$inferSelect, questions: Question[], settings: KnowledgeCheckSettings): KnowledgeCheck {
+function parseKnowledgeCheck(
+  knowledgeCheck: typeof db_knowledgeCheck.$inferSelect,
+  questions: Question[],
+  settings: KnowledgeCheckSettings,
+  categories: (typeof db_category.$inferSelect)[],
+): KnowledgeCheck {
   return {
     id: knowledgeCheck.id,
     name: knowledgeCheck.name,
@@ -78,7 +87,12 @@ function parseKnowledgeCheck(knowledgeCheck: typeof db_knowledgeCheck.$inferSele
     difficulty: knowledgeCheck.difficulty,
     closeDate: knowledgeCheck.closeDate ? new Date(Date.parse(knowledgeCheck.closeDate)) : null,
     openDate: new Date(Date.parse(knowledgeCheck.openDate)),
-    questionCategories: [],
+    questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
+      id: c.id,
+      name: c.name,
+      skipOnMissingPrequisite: false,
+      prequisiteCategoryId: c.prequisiteCategoryId ?? undefined,
+    })),
 
     createdAt: new Date(Date.parse(knowledgeCheck.createdAt)),
     updatedAt: new Date(Date.parse(knowledgeCheck.updatedAt)),
