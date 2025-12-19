@@ -1,7 +1,21 @@
 import 'server-only'
 import { and, eq } from 'drizzle-orm'
-import { DrizzleDB } from '@/database/Database'
+import getDatabase, { DrizzleDB } from '@/database/Database'
 import { db_category } from '@/database/drizzle/schema'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+
+export async function insertQuestionCategories(db: DrizzleDB | undefined, checkId: KnowledgeCheck['id'], categories: KnowledgeCheck['questionCategories']) {
+  if (!db) db = await getDatabase()
+
+  const insertedCategories: Awaited<ReturnType<typeof insertCategory>>[] = []
+
+  for (const category of categories) {
+    const insertion = await insertCategory(db, { ...category, knowledgecheckId: checkId })
+    insertedCategories.push(insertion)
+  }
+
+  return insertedCategories
+}
 
 /**
  * This function inserts a new category that is associated to a given check. In case it tries to insert a duplicate category-name and knowledgeCheckId pair an error will be thrown.
