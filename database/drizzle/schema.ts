@@ -89,8 +89,17 @@ export const db_category = mysqlTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     prequisiteCategoryId: varchar('prequisite_category_id', { length: 36 }),
+    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
+    index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
+    foreignKey({
+      columns: [table.knowledgecheckId],
+      foreignColumns: [db_knowledgeCheck.id],
+      name: 'fk_Category_KnowledgeCheck1',
+    })
+      .onDelete('cascade')
+      .onUpdate('no action'),
     index('fk_Category_Category1_idx').on(table.prequisiteCategoryId),
     foreignKey({
       columns: [table.prequisiteCategoryId],
