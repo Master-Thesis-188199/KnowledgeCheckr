@@ -2,23 +2,21 @@
 
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_question } from '@/database/drizzle/schema'
-import { insertCategory } from '@/database/knowledgeCheck/catagories/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 
-export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Question[], check_id: KnowledgeCheck['id']) {
+export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Array<Question & { categoryId: string }>, check_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
   let index = 0
   for (const question of questions) {
-    const categoryId = await insertCategory(db, { knowledgecheckId: check_id, name: question.category })
-    await insertQuestion(db, question, check_id, index++, categoryId)
+    await insertQuestion(db, question, check_id, index++)
   }
 }
 
-async function insertQuestion(db: DrizzleDB, question: Question, check_id: KnowledgeCheck['id'], position: number, categoryId: string) {
+async function insertQuestion(db: DrizzleDB, question: Question & { categoryId: string }, check_id: KnowledgeCheck['id'], position: number) {
   await requireAuthentication()
 
   const [{ id }] = await db
@@ -28,7 +26,7 @@ async function insertQuestion(db: DrizzleDB, question: Question, check_id: Knowl
       type: question.type,
       question: question.question,
       points: question.points,
-      categoryId: categoryId,
+      categoryId: question.categoryId,
       knowledgecheckId: check_id,
       accessibility: question.accessibility,
       _position: position,
