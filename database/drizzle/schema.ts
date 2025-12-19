@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm'
-import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
+import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -78,7 +78,7 @@ export const db_category = mysqlTable(
       .primaryKey()
       //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
       .$defaultFn(() => getUUID()),
-    name: tinytext().notNull(),
+    name: varchar({ length: 255 }).notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -92,6 +92,7 @@ export const db_category = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
+    unique().on(table.knowledgecheckId, table.name), //* ensure a check can not have duplicate categories
     index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],
