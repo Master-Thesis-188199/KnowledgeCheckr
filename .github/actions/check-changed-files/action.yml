@@ -15,6 +15,13 @@ runs:
     - run: |
         EXTENSIONS_REGEX="\.((js)|(jsx)|(ts)|(tsx)|(json)|(css)|(scss)|(mjs))$"
 
+        if [ "$DISABLE_WORKFLOW_SKIPS" = "1" ]; then
+          echo "Repository secret disable-workflow-skips is true. Overriding relevant flag to true."
+          echo "relevant=true" >> $GITHUB_OUTPUT
+          echo "relevant=true" >> $GITHUB_ENV
+          exit 0
+        fi
+
         # For a new branch or initial commit, treat as relevant
         if [ "${{ inputs.base }}" = "" ] || [ "${{ inputs.base }}" = "0000000000000000000000000000000000000000" ]; then
           echo "New branch or initial commit. Considering changes relevant."
@@ -34,11 +41,6 @@ runs:
           fi
         fi
 
-        if [ "$DISABLE_WORKFLOW_SKIPS" = "1" ]; then
-          echo "Repository secret disable-workflow-skips is true. Overriding relevant flag to true."
-          echo "relevant=true" >> $GITHUB_OUTPUT
-          echo "relevant=true" >> $GITHUB_ENV
-        fi
       shell: bash
       env:
         DISABLE_WORKFLOW_SKIPS: ${{ inputs.disable-workflow-skips }}
