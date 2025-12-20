@@ -35,11 +35,15 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       await insertKnowledgeCheckSettings(transaction, check)
       const categories = await insertQuestionCategories(transaction, id, check.questionCategories)
-      await insertKnowledgeCheckQuestions(
-        transaction,
-        check.questions.map((q) => ({ ...q, categoryId: categories.find((c) => c.name === q.category)!.id })),
-        id,
-      )
+      const questionsWithCategoryIds = check.questions.map((q) => {
+        const category = categories.find((c) => c.name === q.category)
+
+        if (!category) throw new Error(`Category "${q.category}" not found for question "${q.id}"`)
+
+        return { ...q, categoryId: category.id }
+      })
+
+      await insertKnowledgeCheckQuestions(transaction, questionsWithCategoryIds, id)
     } catch (err) {
       console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
       transaction.rollback()
