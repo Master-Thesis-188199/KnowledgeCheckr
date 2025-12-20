@@ -71,6 +71,20 @@
       "when": 1765175741678,
       "tag": "0009_zod-schema-settings-default-values",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1766132768228,
+      "tag": "0010_category-foreign-knowledgeCheckId",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1766159178463,
+      "tag": "0011_category-name-per-check-uniqueness",
+      "breakpoints": true
     }
   ]
 }
