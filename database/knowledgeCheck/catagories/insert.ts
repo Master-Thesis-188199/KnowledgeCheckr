@@ -20,10 +20,10 @@ export async function insertQuestionCategories(db: DrizzleDB | undefined, checkI
 }
 
 /**
- * This function inserts a new category that is associated to a given check. In case it tries to insert a duplicate category-name and knowledgeCheckId pair an error will be thrown.
+ * This function inserts a new category that is associated to a given check. When a category that already exists is inserted again the duplicate-entry-error is caught and the respective category is selected instead.
  * @param db The database / db-transaction to use
  * @param props The category-props that are to be inserted
- * @returns The inserted data
+ * @returns The inserted data / retrieved category that was already inserted
  */
 export async function insertCategory(db: DrizzleDB, props: typeof db_category.$inferInsert) {
   try {
