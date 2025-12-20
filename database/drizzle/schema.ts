@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm'
-import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
+import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -78,7 +78,7 @@ export const db_category = mysqlTable(
       .primaryKey()
       //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
       .$defaultFn(() => getUUID()),
-    name: varchar({ length: 255 }).notNull(),
+    name: tinytext().notNull(),
     createdAt: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -89,18 +89,8 @@ export const db_category = mysqlTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => formatDatetime(new Date(Date.now()))),
     prequisiteCategoryId: varchar('prequisite_category_id', { length: 36 }),
-    knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
-    unique().on(table.knowledgecheckId, table.name), //* ensure a check can not have duplicate categories
-    index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
-    foreignKey({
-      columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
-      name: 'fk_Category_KnowledgeCheck1',
-    })
-      .onDelete('cascade')
-      .onUpdate('no action'),
     index('fk_Category_Category1_idx').on(table.prequisiteCategoryId),
     foreignKey({
       columns: [table.prequisiteCategoryId],

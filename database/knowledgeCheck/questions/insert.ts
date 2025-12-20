@@ -1,13 +1,14 @@
 'use server'
 
+import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
-import { db_answer, db_question } from '@/database/drizzle/schema'
+import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 
-export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Array<Question & { categoryId: string }>, check_id: KnowledgeCheck['id']) {
+export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Question[], check_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
   let index = 0
@@ -16,8 +17,10 @@ export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, quest
   }
 }
 
-async function insertQuestion(db: DrizzleDB, question: Question & { categoryId: string }, check_id: KnowledgeCheck['id'], position: number) {
+async function insertQuestion(db: DrizzleDB, question: Question, check_id: KnowledgeCheck['id'], position: number) {
   await requireAuthentication()
+
+  const category_id = await findInsertCategory(db, question.category)
 
   const [{ id }] = await db
     .insert(db_question)
@@ -26,7 +29,7 @@ async function insertQuestion(db: DrizzleDB, question: Question & { categoryId: 
       type: question.type,
       question: question.question,
       points: question.points,
-      categoryId: question.categoryId,
+      categoryId: category_id,
       knowledgecheckId: check_id,
       accessibility: question.accessibility,
       _position: position,
@@ -47,6 +50,24 @@ async function insertQuestion(db: DrizzleDB, question: Question & { categoryId: 
       await insertDragDropAnswers(db, id, question.answers as DragDropQuestion['answers'])
       break
   }
+}
+
+async function findInsertCategory(db: DrizzleDB, category_name: Question['category']) {
+  await requireAuthentication()
+
+  const categories = await db.select({ id: db_category.id }).from(db_category).where(eq(db_category.name, category_name))
+
+  if (categories.length === 0) {
+    const [{ id }] = await db
+      .insert(db_category)
+      .values({
+        name: category_name,
+      })
+      .$returningId()
+    return id
+  }
+
+  return categories.at(0)!.id
 }
 
 async function insertChoiceAnswers(db: DrizzleDB, question_id: Question['id'], answers: ChoiceQuestion['answers']) {

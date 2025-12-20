@@ -8,7 +8,7 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
-export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledgeCheck_id: KnowledgeCheck['id'], categories: (typeof db_category.$inferSelect)[]) {
+export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledgeCheck_id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
   const questions: Question[] = []
@@ -17,7 +17,7 @@ export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledg
 
   for (const question of raw_questions) {
     const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question.id)).orderBy(db_answer._position)
-    const category = categories.find((c) => c.id === question.categoryId)!.name
+    const category = await parseCategory(db, question.categoryId)
 
     questions.push({
       id: question.id,
@@ -85,14 +85,13 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
 
   const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id)).orderBy(db_answer._position)
 
-  const [category] = await db.select({ name: db_category.name }).from(db_category).where(eq(db_category.id, dbQuestion.categoryId)).limit(1)
-  if (category === undefined) console.warn('Category was not found in question retrieval (getKnowledgeCheckQuestionById)')
+  const category = await parseCategory(db, dbQuestion.categoryId)
 
   const question = {
     id: dbQuestion.id,
     type: dbQuestion.type as Any,
     question: dbQuestion.question,
-    category: category.name,
+    category,
     points: dbQuestion.points,
     accessibility: dbQuestion.accessibility,
     ...parseAnswer(dbQuestion.type, answers),

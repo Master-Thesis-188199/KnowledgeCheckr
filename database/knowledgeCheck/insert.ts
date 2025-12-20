@@ -4,7 +4,6 @@ import { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
-import { insertQuestionCategories } from '@/database/knowledgeCheck/catagories/insert'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
@@ -34,16 +33,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
       await insertKnowledgeCheckSettings(transaction, check)
-      const categories = await insertQuestionCategories(transaction, id, check.questionCategories)
-      const questionsWithCategoryIds = check.questions.map((q) => {
-        const category = categories.find((c) => c.name === q.category)
-
-        if (!category) throw new Error(`Category "${q.category}" not found for question "${q.id}"`)
-
-        return { ...q, categoryId: category.id }
-      })
-
-      await insertKnowledgeCheckQuestions(transaction, questionsWithCategoryIds, id)
+      await insertKnowledgeCheckQuestions(transaction, check.questions, id)
     } catch (err) {
       console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
       transaction.rollback()
