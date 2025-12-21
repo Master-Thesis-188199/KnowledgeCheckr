@@ -55,7 +55,14 @@ export const createPracticeStore: ZustandStore<PracticeStore, Partial<PracticeSt
           }),
 
         previousQuestion: (looping) =>
-          set((prev) => ({ currentQuestionIndex: prev.currentQuestionIndex > 0 ? prev.currentQuestionIndex - 1 : looping ? prev.practiceQuestions.length - 1 : prev.currentQuestionIndex })),
+          set((prev) => {
+            let newIndex = prev.currentQuestionIndex
+
+            if (prev.currentQuestionIndex > 0) newIndex -= 1
+            else if (prev.currentQuestionIndex === 0 && looping === true) newIndex = prev.practiceQuestions.length - 1
+
+            return { currentQuestionIndex: newIndex }
+          }),
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
