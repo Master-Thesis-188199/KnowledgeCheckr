@@ -1,4 +1,6 @@
 import 'winston-daily-rotate-file'
+import 'node-json-color-stringify'
+import isEmpty from 'lodash/isEmpty'
 import winston, { Logger as WinstonLogger } from 'winston'
 
 /**
@@ -40,7 +42,8 @@ const logger = winston.createLogger({
         winston.format.colorize({ level: true }),
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         winston.format.printf(({ level, message, timestamp, ...rest }) => {
-          return `${loggerContext ? `${loggerContext}` : ''} [${level}]: ${message} ${JSON.stringify(rest, null, 2)}`.trim()
+          //@ts-expect-error Expect colorStringify to not be found
+          return `${loggerContext ? `(${loggerContext})` : ''} [${level}]: ${message} ${!isEmpty(rest) ? '\n' + JSON.colorStringify(rest, null, 2) : ''}`.trim()
         }),
       ),
     }),
