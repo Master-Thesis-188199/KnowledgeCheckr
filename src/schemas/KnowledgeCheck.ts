@@ -32,7 +32,7 @@ export const KnowledgeCheckSchema = z
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default(() => [{ id: 'default', name: 'general', skipOnMissingPrequisite: false }]),
+      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false }]),
 
     share_key: z.string().nullable().default(null),
 

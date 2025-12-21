@@ -1,0 +1,2 @@
+ALTER TABLE `Category` MODIFY COLUMN `name` varchar(255) NOT NULL;--> statement-breakpoint
+ALTER TABLE `Category` ADD CONSTRAINT `Category_knowledgecheck_id_name_unique` UNIQUE(`knowledgecheck_id`,`name`);
