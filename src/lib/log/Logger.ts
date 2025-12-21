@@ -19,8 +19,8 @@ export interface ContextLogger extends WinstonLogger {
 
 let loggerContext: string | null = null
 
-const logFormat = winston.format.printf(({ level, message, timestamp }) => {
-  return `${timestamp} [${level}]: ${message}`
+const logFormat = winston.format.printf(({ level, message, timestamp, ...rest }) => {
+  return `${timestamp} [${level}]: ${message} ${JSON.stringify(rest, null, 2)}`.trim()
 })
 
 const logger = winston.createLogger({
@@ -38,8 +38,9 @@ const logger = winston.createLogger({
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize({ level: true }),
-        winston.format.printf(({ level, message }) => {
-          return `${loggerContext ? `${loggerContext}` : ''} [${level}]: ${message}`.trim()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        winston.format.printf(({ level, message, timestamp, ...rest }) => {
+          return `${loggerContext ? `${loggerContext}` : ''} [${level}]: ${message} ${JSON.stringify(rest, null, 2)}`.trim()
         }),
       ),
     }),
