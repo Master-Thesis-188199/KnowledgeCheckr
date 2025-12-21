@@ -33,6 +33,7 @@ const logger = winston.createLogger({
       info.level = info.level.toUpperCase()
       return info
     })(),
+    winston.format.errors({ stack: true }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat,
   ),
