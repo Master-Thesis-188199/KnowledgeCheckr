@@ -7,7 +7,15 @@ const logFormat = winston.format.printf(({ level, message, timestamp }) => {
 
 const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(winston.format.timestamp(), logFormat),
+  format: winston.format.combine(
+    //* upper-case level
+    winston.format((info) => {
+      info.level = info.level.toUpperCase()
+      return info
+    })(),
+    winston.format.timestamp(),
+    logFormat,
+  ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
