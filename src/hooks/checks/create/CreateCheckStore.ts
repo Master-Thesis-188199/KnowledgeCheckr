@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { generateToken } from '@/src/lib/Shared/generateToken'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type CheckState = KnowledgeCheck & {
@@ -36,7 +37,7 @@ const defaultInitState: CheckState = {
   closeDate: null,
   difficulty: 4,
   openDate: new Date(Date.now()),
-  share_key: null,
+  share_key: generateToken(8),
 
   unsavedChanges: false,
 }

@@ -5,23 +5,12 @@ import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvide
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { saveAction } from '@/src/lib/checks/create/SaveAction'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
   const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
-  const check: KnowledgeCheck = {
-    id: store.id,
-    name: store.name,
-    description: store.description,
-    share_key: store.share_key,
-    closeDate: store.closeDate,
-    difficulty: store.difficulty,
-    openDate: store.openDate,
-    questionCategories: store.questionCategories,
-    questions: store.questions,
-    settings: store.settings,
-  }
+  const check: KnowledgeCheck = validateKnowledgeCheck(store)
 
   return (
     <Button
