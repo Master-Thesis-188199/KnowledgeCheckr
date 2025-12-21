@@ -125,7 +125,8 @@ export default {
         let loggerImportInserted = false // to avoid multiple inserted imports per file
 
         const LOGGER_IMPORT_PATH = '@/src/lib/log/Logger'
-        const LOGGER_LOCAL_NAME = 'logger'
+        const LOGGER_IMPORT_NAME = '_logger'
+        const LOGGER_CONTEXT_AWARE_NAME = 'logger'
 
         function ensureImportFix(fixer) {
           // If the import already exists in original code or was already added in a previous fix,
@@ -133,7 +134,7 @@ export default {
           if (hasLoggerImport || loggerImportInserted) return null
 
           loggerImportInserted = true
-          const importText = `import ${LOGGER_LOCAL_NAME} from '${LOGGER_IMPORT_PATH}'\n`
+          const importText = `import ${LOGGER_IMPORT_NAME} from '${LOGGER_IMPORT_PATH}'\n\n const ${LOGGER_CONTEXT_AWARE_NAME} = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)\n`
 
           if (firstImport) {
             // Put logger import before the first import
@@ -173,7 +174,7 @@ export default {
 
               if (stmt.source && stmt.source.value === LOGGER_IMPORT_PATH) {
                 const defaultSpecifier = stmt.specifiers.find((s) => s.type === 'ImportDefaultSpecifier')
-                if (defaultSpecifier && defaultSpecifier.local.name === LOGGER_LOCAL_NAME) {
+                if (defaultSpecifier && defaultSpecifier.local.name === LOGGER_IMPORT_NAME) {
                   hasLoggerImport = true
                 }
               }
@@ -217,7 +218,7 @@ export default {
                   const callee = node.callee
 
                   // Replace console.* -> logger.<mapped>
-                  fixes.push(fixer.replaceText(callee.object, LOGGER_LOCAL_NAME))
+                  fixes.push(fixer.replaceText(callee.object, LOGGER_CONTEXT_AWARE_NAME))
                   fixes.push(fixer.replaceText(callee.property, loggerMethod))
 
                   // Ensure logger import is present
