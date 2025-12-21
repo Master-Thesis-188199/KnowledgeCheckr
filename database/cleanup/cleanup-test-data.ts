@@ -1,3 +1,4 @@
+/* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
 import * as dotenv from 'dotenv'
 import { eq } from 'drizzle-orm'
 import deleteUser from '@/database/cleanup/deleteUser'

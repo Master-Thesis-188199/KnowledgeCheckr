@@ -9,7 +9,10 @@ import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/i
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
   await requireAuthentication()
@@ -45,7 +48,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       await insertKnowledgeCheckQuestions(transaction, questionsWithCategoryIds, id)
     } catch (err) {
-      console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
+      logger.info('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
       transaction.rollback()
     }
   })

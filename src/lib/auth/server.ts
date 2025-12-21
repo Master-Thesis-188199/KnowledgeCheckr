@@ -7,6 +7,9 @@ import getDatabase from '@/database/Database'
 import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
+import _logger from '@/src/lib/log/Logger'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export const auth = betterAuth({
   rateLimit: {
@@ -50,7 +53,7 @@ export const auth = betterAuth({
     nextCookies(),
     anonymous({
       onLinkAccount: async ({ anonymousUser, newUser }) => {
-        console.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' was linked to: '${newUser.user.email}'!`)
+        logger.info(`[Better-Auth]: Anonymous user '${anonymousUser.user.email}' was linked to: '${newUser.user.email}'!`)
         const db = await getDatabase()
 
         try {
@@ -59,9 +62,9 @@ export const auth = betterAuth({
             .update(db_userHasDoneKnowledgeCheck)
             .set({ userId: newUser.user.id })
             .where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
-          console.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+          logger.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
         } catch (e) {
-          console.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
+          logger.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
         }
       },
     }),
