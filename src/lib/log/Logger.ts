@@ -13,7 +13,7 @@ const logger = winston.createLogger({
       info.level = info.level.toUpperCase()
       return info
     })(),
-    winston.format.timestamp(),
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat,
   ),
   transports: [
