@@ -8,7 +8,7 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function PracticeKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
   const router = useRouter()
-  const isEmpty = check.questions.length === 0
+  const isEmpty = check.questions.length === 0 || check.share_key === null
 
   return (
     <Tooltip
