@@ -1,3 +1,4 @@
+import 'server-only'
 import 'winston-daily-rotate-file'
 import 'node-json-color-stringify'
 import isEmpty from 'lodash/isEmpty'
