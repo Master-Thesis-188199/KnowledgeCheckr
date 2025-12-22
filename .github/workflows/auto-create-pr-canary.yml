@@ -184,7 +184,7 @@ jobs:
 
           # Expose multi-line body as step output
           {
-            echo "pr_body<<'EOF'"
+            echo "pr_body<<EOF"
             echo "$combinedDescription"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
