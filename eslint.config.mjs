@@ -32,6 +32,8 @@ const eslintConfig = defineConfig([
     },
     rules: {
       'enforce-logger-usage/no-console-in-server-or-async': 'warn',
+      'enforce-logger-usage/no-logger-in-client-modules': 'error',
+
       'server-only-first/server-only-first': 'error',
 
       'simple-import-sort/imports': [

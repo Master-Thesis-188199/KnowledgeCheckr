@@ -98,6 +98,24 @@ function getLoggerMethod(consoleMethod) {
   }
 }
 
+/**
+ * Determines whether a given statement node represents a `"use client"` directive.
+ *
+ * A `"use client"` directive is modeled in ESTree as an `ExpressionStatement`
+ * whose expression is a `Literal` node with the exact value `"use client"`.
+ *
+ * @param stmt - The AST node to check.
+ * @returns `true` if the statement is a `"use client"` directive, otherwise `false`.
+ *
+ * @remarks
+ * This mirrors {@link isUseServerDirective} but for client components. Only
+ * true directive prologue statements are recognized; arbitrary expressions that
+ * merely contain the string `"use client"` are ignored.
+ */
+function isUseClientDirective(stmt) {
+  return stmt && stmt.type === 'ExpressionStatement' && stmt.expression.type === 'Literal' && stmt.expression.value === 'use client'
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   rules: {
@@ -236,6 +254,55 @@ export default {
               reportCommon('noConsoleInServer')
             } else if (inAsync) {
               reportCommon('noConsoleInAsync')
+            }
+          },
+        }
+      },
+    },
+    /**
+     * Forbid importing the server-side logger into client components/modules.
+     * Any file whose directive prologue contains `"use client"` is treated as
+     * a client module, and importing the shared logger from
+     * "@/src/lib/log/Logger" is disallowed.
+     */
+    'no-logger-in-client-modules': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description: 'Disallow importing the server logger module in files marked with "use client".',
+        },
+        schema: [],
+        messages: {
+          noLoggerInClientImport: 'Do not import the server logger in client components. Use browser-safe logging instead.',
+        },
+      },
+
+      create(context) {
+        const LOGGER_IMPORT_PATH = '@/src/lib/log/Logger'
+        let isClientModule = false
+
+        return {
+          Program(node) {
+            // Detect module-level "use client" directive in the directive prologue
+            for (const stmt of node.body) {
+              if (isUseClientDirective(stmt)) {
+                isClientModule = true
+                break
+              }
+              if (stmt.type !== 'ExpressionStatement' || stmt.expression.type !== 'Literal') {
+                // we reached the end of the directive prologue
+                break
+              }
+            }
+          },
+
+          ImportDeclaration(node) {
+            if (!isClientModule) return
+            if (node.source && node.source.value === LOGGER_IMPORT_PATH) {
+              context.report({
+                node,
+                messageId: 'noLoggerInClientImport',
+              })
             }
           },
         }
