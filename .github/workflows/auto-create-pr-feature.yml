@@ -57,10 +57,17 @@ jobs:
           TYPE_RAW="${BRANCH_NAME%%/*}"     # e.g. "feat"
           FEATURE_PART="${BRANCH_NAME#*/}"  # e.g. "introduce-sidebar"
 
-          # Capitalize type: "feat" -> "Feat"
-          TYPE_FIRST_CHAR="$(printf '%s' "${TYPE_RAW:0:1}" | tr '[:lower:]' '[:upper:]')"
-          TYPE_REST="${TYPE_RAW:1}"
-          TYPE="${TYPE_FIRST_CHAR}${TYPE_REST}"
+          # Custom capitalization rules:
+          #   - "ci" -> "CI"
+          #   - all others -> Capitalize first letter only
+          if [ "$TYPE_RAW" = "ci" ] || [ "$TYPE_RAW" = "CI" ]; then
+            TYPE="CI"
+          else
+            # Capitalize type: "feat" -> "Feat"
+            TYPE_FIRST_CHAR="$(printf '%s' "${TYPE_RAW:0:1}" | tr '[:lower:]' '[:upper:]')"
+            TYPE_REST="${TYPE_RAW:1}"
+            TYPE="${TYPE_FIRST_CHAR}${TYPE_REST}"
+          fi
 
           # Replace dashes/underscores with spaces: "introduce-sidebar" -> "introduce sidebar"
           FEATURE_WORDS="${FEATURE_PART//-/ }"
