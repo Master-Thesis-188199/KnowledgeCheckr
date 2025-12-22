@@ -7,7 +7,7 @@ import { Fragment } from 'react/jsx-runtime'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/src/components/shadcn/breadcrumb'
 import { cn } from '@/src/lib/Shared/utils'
 
-export function GenericBreadcrumb() {
+export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
   const [breadcrumbExists, setBreadcrumbExists] = useState(false)
   const pathname = usePathname()
   const pages = pathname.split('?').at(0)?.split('/')
@@ -18,6 +18,8 @@ export function GenericBreadcrumb() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (breadcrumbs.length > 1) setBreadcrumbExists(true)
   }, [])
+
+  if (!show) return null
 
   return (
     <Breadcrumb className={cn('mb-2', breadcrumbExists && 'hidden')}>
