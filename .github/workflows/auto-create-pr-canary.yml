@@ -30,7 +30,7 @@ jobs:
           # 2. Filter out those with a '-' (which typically indicates pre-release or metadata)
           # 3. Sort them semver descending
           # 4. Pick the first one
-          
+
           TAGS=$(git tag --list "v*" | grep -v "-")
           if [ -z "$TAGS" ]; then
             echo "No non-prerelease tags found."
@@ -38,7 +38,7 @@ jobs:
           else
             # Sort tags in version order descending, then grab the first
             LATEST_TAG=$(echo "$TAGS" | sort -V | tail -n1)
-          
+
             echo "Found the following release tags:"
             echo "$TAGS"
             echo "Latest release tag is: $LATEST_TAG"
@@ -62,7 +62,195 @@ jobs:
           echo "Latest release tag (ignoring pre-releases): ${{ steps.latest_release_tag.outputs.tag }}"
           echo "Latest commit hash on main:               ${{ steps.commit_main.outputs.commit_hash }}"
 
+      - name: Build pull request description
+        if: ${{ vars.CANARY_PR_DESCRIPTION != 'old' }}
+        id: build_description
+        env:
+          LAST_TAG: ${{ steps.latest_release_tag.outputs.tag }}
+          LAST_COMMIT_HASH: ${{ steps.commit_main.outputs.commit_hash }}
+        run: |
+          # Base description (always present)
+          lastTag="$LAST_TAG"
+          lastCommitHash="$LAST_COMMIT_HASH"
+
+          baseDescription="This PR was automatically created by the Auto-Create-PR-Canary workflow to merge changes from the canary branch into main. These changes are based on $lastTag and the latest commit on main ($lastCommitHash)."
+
+          # --- Collect merged PRs between origin/main and canary ---
+
+          # CI/CD PRs (subjects containing 'CI')
+          CiCdPullrequests=$(
+            git log --format="%s" --merges origin/main...canary --reverse \
+              | grep 'CI' \
+              | grep -o '#[0-9]*' \
+              | sed 's/#/- #/'
+          )
+
+          # Non-CI PRs
+          nonCiMergedRaw=$(
+            git log --format="%s" --merges origin/main...canary --reverse \
+              | grep -v 'CI' \
+              | grep -o '#[0-9]*'
+          )
+
+          # One-liner for CI/CD PRs: "#123, #456"
+          oneLinerCdPullrequests=$(
+            if [ -n "$CiCdPullrequests" ]; then
+              echo "$CiCdPullrequests" \
+                | tr "-" " " \
+                | sed 's/^ *//;s/ *$//' \
+                | paste -sd, - \
+                | sed 's/,/, /g'
+            fi
+          )
+
+          # One-liner for non-CI PRs: "#123, #456"
+          nonCiOneLiner=$(
+            if [ -n "$nonCiMergedRaw" ]; then
+              echo "$nonCiMergedRaw" \
+                | sort \
+                | paste -sd, - \
+                | sed 's/,/, /g'
+            fi
+          )
+
+          # Block for "### Merged Pull requests:" (only if non-CI PRs exist)
+          PULL_REQUESTS_BLOCK=$(
+            if [ -n "$nonCiMergedRaw" ]; then
+              echo "### Merged Pull requests:"
+              echo "$nonCiMergedRaw" | sed 's/#/- #/'
+            fi
+          )
+
+          # Determine if there are ANY merged PRs at all
+          has_any_pr=false
+          if [ -n "$nonCiOneLiner" ] || [ -n "$oneLinerCdPullrequests" ]; then
+            has_any_pr=true
+          fi
+
+          mergeOneliner=""
+          separators=""
+          if [ "$has_any_pr" = "true" ]; then
+            # Build the one-line summary only when there is something to mention
+            mergeOneliner=$(
+              (
+                echo -n "It merges the changes made in"
+                if [ -n "$nonCiOneLiner" ]; then
+                  echo -n " $nonCiOneLiner"
+                fi
+                if [ -n "$oneLinerCdPullrequests" ]; then
+                  # If there were non-CI PRs, CI ones go in parentheses; otherwise list them directly
+                  if [ -n "$nonCiOneLiner" ]; then
+                    echo -n " ($oneLinerCdPullrequests)"
+                  else
+                    echo -n " $oneLinerCdPullrequests"
+                  fi
+                fi
+                echo " into the main branch."
+              ) | paste -sd " " -
+            )
+
+            separators=$(
+              echo ""
+              echo "---"
+            )
+          fi
+
+          # Build the final description
+          combinedDescription=$(
+            echo "$baseDescription"
+
+            if [ "$has_any_pr" = "true" ]; then
+              echo ""
+              echo "$mergeOneliner"
+              echo "$separators"
+
+              # Only show the non-CI section if we have non-CI PRs
+              if [ -n "$PULL_REQUESTS_BLOCK" ]; then
+                echo "$PULL_REQUESTS_BLOCK"
+              fi
+
+              # Only show CI/CD section if we have CI/CD PRs
+              if [ -n "$CiCdPullrequests" ]; then
+                echo ""
+                echo "#### CI/CD Pull requests:"
+                echo "$CiCdPullrequests"
+              fi
+            fi
+          )
+
+          echo "------- Generated PR body -------"
+          echo "$combinedDescription"
+          echo "---------------------------------"
+
+          # Expose multi-line body as step output
+          {
+            echo "pr_body<<'EOF'"
+            echo "$combinedDescription"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update pull request via GitHub API
+        if: ${{ vars.CANARY_PR_DESCRIPTION != 'old' }}
+        uses: actions/github-script@v7
+        env:
+          PR_TITLE: "Merge Changes into Main from Canary (${{ steps.latest_release_tag.outputs.tag }}-${{ steps.commit_main.outputs.commit_hash }})"
+          PR_BODY: ${{ steps.build_description.outputs.pr_body }}
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const head = 'canary';
+            const base = 'main';
+            const title = process.env.PR_TITLE;
+            const body = process.env.PR_BODY;
+
+            // Find existing open PR from canary -> main
+            const { data: prs } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              head: `${owner}:${head}`,
+              base,
+            });
+
+            if (prs.length > 0) {
+              const pr = prs[0];
+              core.info(`Found existing PR #${pr.number} from ${head} to ${base}.`);
+
+              // Skip update if nothing actually changed
+              const currentTitle = pr.title || '';
+              const currentBody = pr.body || '';
+
+              if (currentTitle === title && currentBody === body) {
+                core.info('PR title/body unchanged, skipping update.');
+                return;
+              }
+
+              core.info('Updating existing PR with new title/body...');
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: pr.number,
+                title,
+                body,
+              });
+              core.info('PR updated successfully.');
+            } else {
+              core.info(`No open PR from ${head} to ${base} found. Creating a new one...`);
+              const { data: newPr } = await github.rest.pulls.create({
+                owner,
+                repo,
+                title,
+                head,
+                base,
+                body,
+                draft: false,
+              });
+              core.info(`Created PR #${newPr.number}.`);
+            }
+
       - name: Create pull request
+        if: ${{ vars.CANARY_PR_DESCRIPTION == 'old' }}
         id: open-pr
         uses: repo-sync/pull-request@v2
         with:
