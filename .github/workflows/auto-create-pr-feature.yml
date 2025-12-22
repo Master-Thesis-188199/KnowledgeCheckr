@@ -46,12 +46,43 @@ jobs:
           echo "A pull request already exists for this branch. Exiting."
           exit 0
 
+      - name: Build PR title from branch name
+        id: build-title
+        run: |
+          # Get branch name without refs/heads/
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "Branch name: $BRANCH_NAME"
+
+          # Extract type and feature part (type/feature-keywords)
+          TYPE_RAW="${BRANCH_NAME%%/*}"     # e.g. "feat"
+          FEATURE_PART="${BRANCH_NAME#*/}"  # e.g. "introduce-sidebar"
+
+          # Capitalize type: "feat" -> "Feat"
+          TYPE_FIRST_CHAR="$(printf '%s' "${TYPE_RAW:0:1}" | tr '[:lower:]' '[:upper:]')"
+          TYPE_REST="${TYPE_RAW:1}"
+          TYPE="${TYPE_FIRST_CHAR}${TYPE_REST}"
+
+          # Replace dashes/underscores with spaces: "introduce-sidebar" -> "introduce sidebar"
+          FEATURE_WORDS="${FEATURE_PART//-/ }"
+          FEATURE_WORDS="${FEATURE_WORDS//_/ }"
+
+          # Sentence-case the keywords: "introduce sidebar" -> "Introduce sidebar"
+          FEATURE_TITLE="$(echo "$FEATURE_WORDS" | sed -E 's/^(.)/\U\1/')"
+
+          # Final PR title: "Feat: Introduce sidebar"
+          PR_TITLE="${TYPE}: ${FEATURE_TITLE}"
+
+          echo "Computed PR title: $PR_TITLE"
+
+          # Expose as output for later steps
+          echo "pr_title=$PR_TITLE" >> "$GITHUB_OUTPUT"
+
       - name: Create pull request
         if: steps.pr-check.outputs.result == 'false'
         id: open-pr
         uses: repo-sync/pull-request@v2
         with:
           destination_branch: ${{ env.BASE_BRANCH }}
-          pr_title: ${{ env.PR_TITLE }}
+          pr_title: ${{ steps.build-title.outputs.pr_title }}
           pr_body: ${{ env.PR_DESCRIPTION }}
           pr_draft: false
