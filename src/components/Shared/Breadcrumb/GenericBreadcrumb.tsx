@@ -10,8 +10,9 @@ import { cn } from '@/src/lib/Shared/utils'
 export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
   const [breadcrumbExists, setBreadcrumbExists] = useState(false)
   const pathname = usePathname()
-  const pages = pathname.split('?').at(0)?.split('/')
+  const pages = pathname.split('?').at(0)!.split('/')!
   pages?.shift()
+  const isCurrentPage = (index: number) => pages.length - 1 === index
 
   useEffect(() => {
     const breadcrumbs = document.querySelectorAll('nav[aria-label="breadcrumb"]')
@@ -36,7 +37,7 @@ export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
           <Fragment key={p + i}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className='capitalize'>
-              {p === pages.at(-1) ? (
+              {isCurrentPage(i) ? (
                 <BreadcrumbPage>{p}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
