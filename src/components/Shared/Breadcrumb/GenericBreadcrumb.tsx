@@ -33,7 +33,7 @@ export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
         </BreadcrumbItem>
 
         {pages?.map((p, i) => (
-          <Fragment key={p}>
+          <Fragment key={p + i}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className='capitalize'>
               {p === pages.at(-1) ? (
