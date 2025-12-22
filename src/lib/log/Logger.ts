@@ -28,7 +28,7 @@ const logFormat = winston.format.printf(({ level, message, timestamp, identifier
 
 const productionTransports = []
 
-if (env.NEXT_PUBLIC_MODE !== 'development') {
+if (env.ENABLE_FILE_LOGGING) {
   productionTransports.push(
     new winston.transports.DailyRotateFile({
       filename: 'logs/app-%DATE%.log',
