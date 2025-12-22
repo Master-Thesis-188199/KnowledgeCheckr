@@ -21,9 +21,10 @@ export interface ModuleLoggerLogger extends WinstonLogger {
   createModuleLogger(identifier: string): ModuleLoggerLogger
 }
 
-const logFormat = winston.format.printf(({ level, message, timestamp, identifier, ...rest }) => {
+const fileLogFormat = winston.format.printf(({ level, message, timestamp, identifier, ...rest }) => {
   const prefix = identifier ? `(${identifier}) ` : ''
-  return `${timestamp} ${prefix}[${level}]: ${message} ${JSON.stringify(rest, null, 2)}`.trim()
+  const restStr = !isEmpty(rest) ? '\n' + JSON.stringify(rest, null, 2) : ''
+  return `${timestamp} ${prefix}[${level}]: ${message} ${restStr}`.trim()
 })
 
 const productionTransports = []
@@ -58,7 +59,7 @@ const baseLogger = winston.createLogger({
     })(),
     winston.format.errors({ stack: true }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    logFormat,
+    fileLogFormat,
   ),
   transports: [
     new winston.transports.Console({
