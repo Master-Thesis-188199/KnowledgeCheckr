@@ -4,7 +4,7 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 export default function Home() {
   return (
     <div className=''>
-      <PageHeading title='KnowledgeCheckr' />
+      <PageHeading title='KnowledgeCheckr' showBreadcrumbs={false} />
       <div className='flex flex-col gap-3 tracking-wide'>
         <p className='dark:text-neutral-300'>Create your own KnowledgeChecks to boost your knowledge to the next level. </p>
         <p className='dark:text-neutral-300'>
