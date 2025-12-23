@@ -55,6 +55,21 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log('Console-spy: ', capturedConsoleOutput)
     expect(capturedLoggerOutput).toEqual('[INFO]:' + capturedConsoleOutput)
   })
+
+  it('Verify logging multiple strings mimics console.log output', () => {
+    const message = 'Created new object'
+    const args = ['first argument', 'second argument']
+
+    console.log(message, ...args)
+    logger.info(message, ...args)
+
+    const capturedConsoleOutput = writeSpy.mock.calls[0][0].trim()
+    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0])).trim()
+
+    console.log('Logger-spy: ', capturedLoggerOutput)
+    console.log('Console-spy: ', capturedConsoleOutput)
+    expect(capturedLoggerOutput).toEqual('[INFO]: ' + capturedConsoleOutput)
+  })
 })
 
 function removeWhitespaces(input: string) {
