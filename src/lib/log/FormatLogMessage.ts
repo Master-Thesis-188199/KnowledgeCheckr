@@ -81,6 +81,7 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
 
   //* compute template string composed of included properties in the desired order
   for (const templateKey of templateOrder) {
+    // theoretically not needed, but safety-first
     if (!fields.has(templateKey)) continue
 
     if (templateKey === 'context')
@@ -97,6 +98,9 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
 
   //* insert values into template string
   for (const messageElementKey of templateOrder) {
+    // theoretically not needed, but safety-first
+    if (!fields.has(messageElementKey)) continue
+
     let value = fields.get(messageElementKey)
 
     if (messageElementKey === 'args') {
