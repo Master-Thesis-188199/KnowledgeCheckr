@@ -73,7 +73,9 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
     }
   })
 
-  const templateOrder: Array<keyof (Omit<ShowOptions, 'colorizeArgs'> & Pick<FormatValues, 'level' | 'message'>)> = ['timestamp', 'context', 'level', 'message', 'args']
+  let templateOrder: Array<keyof (Omit<ShowOptions, 'colorizeArgs'> & Pick<FormatValues, 'level' | 'message'>)> = ['timestamp', 'context', 'level', 'message', 'args']
+  // strip fields that shall not be included in the log-messages from the template-order
+  templateOrder = templateOrder.filter((key) => !!fields.has(key))
 
   const templateArgs = []
 
