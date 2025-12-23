@@ -24,4 +24,14 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     logger.info(message)
     expect(loggerSpy.mock.calls[0][0]).toBe(message)
   })
+
+  it('Verify logging objects mimics console.log output', () => {
+    const message = { type: 'Some dummy object' }
+
+    console.log(message)
+    expect(consoleSpy.mock.calls[0][0]).toBe(message)
+
+    logger.info(message)
+    expect(loggerSpy.mock.calls[0][0]).toBe(message)
+  })
 })
