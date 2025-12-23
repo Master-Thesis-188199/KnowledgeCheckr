@@ -20,10 +20,10 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log(message)
     logger.info(message)
 
-    const consoleOutput = removeWhitespaces(writeSpy.mock.calls[0][0])
-    const loggerOutput = clearJestAnnotatdLogs(removeColors(removeWhitespaces(writeSpy.mock.calls[1][0])))
+    const consoleOutput = writeSpy.mock.calls[0][0].trim()
+    const loggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0])).trim()
 
-    expect(loggerOutput).toEqual('[INFO]:' + consoleOutput)
+    expect(loggerOutput).toEqual('[INFO]: ' + consoleOutput)
   })
 
   it('Verify logging objects mimics console.log output', () => {
