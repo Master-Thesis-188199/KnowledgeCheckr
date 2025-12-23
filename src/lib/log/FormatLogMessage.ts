@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty'
 import { stringifyObject } from '@/src/lib/log/StringifyObject'
 
 type FormatValues = {
@@ -67,6 +68,8 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
     if (!included) return
 
     if (key === 'args') {
+      if (getObjectBySymbol(args, 'splat') === undefined) return
+      if (isEmpty(getObjectBySymbol(args, 'splat'))) return
       fields.set(key, getObjectBySymbol(args, 'splat'))
     } else if (!!values[key]) {
       fields.set(key, values[key])
