@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
+import { stringifyColored } from '@/src/lib/log/coloredStringify'
 
 type FormatValues = {
   timestamp: unknown
@@ -53,8 +54,8 @@ export function formatLogMessage({ show, values: { timestamp, context, level, me
           fields.set(key, context)
           break
         case 'args':
-          if (isEmpty(args)) break
-          fields.set(key, args)
+          if (isEmpty(getObjectBySymbol(args, 'splat'))) break
+          fields.set(key, getObjectBySymbol(args, 'splat'))
           break
       }
     }
@@ -66,14 +67,29 @@ export function formatLogMessage({ show, values: { timestamp, context, level, me
   if (fields.has('context')) templateArgs.push('(<context>)')
   templateArgs.push('[<level>]:')
   templateArgs.push('<message>')
-  if (fields.has('args')) templateArgs.push('\n<args>')
+  if (fields.has('args')) templateArgs.push('<args>')
 
   let template = templateArgs.join(' ')
 
   fields.forEach((value, key) => {
-    if (typeof value === 'object') {
-      // @ts-expect-error Expect colorStringify to not be found
-      if (show.colorizeArgs) value = JSON.colorStringify(value, null, 2)
+    //* the args argument is provided as an array of individual arguments by winston, thus each element is parsed respectively.
+    if (key === 'args') {
+      value = value
+        .map((v: unknown): string => {
+          let value = String(v)
+
+          if (typeof v === 'object') {
+            if (show.colorizeArgs) value = stringifyColored(v)
+            else value = JSON.stringify(v, null, 2)
+
+            value = '\n' + value
+          }
+
+          return value.trim()
+        })
+        .join(' ')
+    } else if (typeof value === 'object') {
+      if (show.colorizeArgs) value = stringifyColored(value)
       else value = JSON.stringify(value, null, 2)
     }
 
