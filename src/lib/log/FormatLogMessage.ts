@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
-import { stringifyColored } from '@/src/lib/log/coloredStringify'
+import { stringifyObject } from '@/src/lib/log/StringifyObject'
 
 type FormatValues = {
   timestamp: unknown
@@ -74,27 +74,23 @@ export function formatLogMessage({ show, values: { timestamp, context, level, me
   fields.forEach((value, key) => {
     //* the args argument is provided as an array of individual arguments by winston, thus each element is parsed respectively.
     if (key === 'args') {
-      value = value
-        .map((v: unknown): string => {
-          let value = String(v)
-
-          if (typeof v === 'object') {
-            if (show.colorizeArgs) value = stringifyColored(v)
-            else value = JSON.stringify(v, null, 2)
-
-            value = '\n' + value
-          }
-
-          return value.trim()
-        })
-        .join(' ')
+      value = parseExtraArguments(value as unknown[], show.colorizeArgs ?? false).join(' ')
     } else if (typeof value === 'object') {
-      if (show.colorizeArgs) value = stringifyColored(value)
-      else value = JSON.stringify(value, null, 2)
+      value = stringifyObject(value, { colored: show.colorizeArgs ?? false, pretified: true })
     }
 
     template = template.replace(`<${key}>`, value)
   })
 
   return template
+}
+
+function parseExtraArguments(args: Array<unknown>, colored: boolean) {
+  return args.map((arg) => {
+    if (typeof arg === 'object') {
+      return '\n' + stringifyObject(arg, { colored, pretified: true })
+    }
+
+    return String(arg)
+  })
 }
