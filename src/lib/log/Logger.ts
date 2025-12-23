@@ -1,8 +1,8 @@
 import 'server-only'
 import 'winston-daily-rotate-file'
 import 'node-json-color-stringify'
-import isEmpty from 'lodash/isEmpty'
 import winston, { Logger as WinstonLogger } from 'winston'
+import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
 import env from '@/src/lib/Shared/Env'
 
 /**
@@ -21,12 +21,6 @@ export interface ModuleLoggerLogger extends WinstonLogger {
    */
   createModuleLogger(identifier: string): ModuleLoggerLogger
 }
-
-const fileLogFormat = winston.format.printf(({ level, message, timestamp, identifier, ...rest }) => {
-  const prefix = identifier ? `(${identifier}) ` : ''
-  const restStr = !isEmpty(rest) ? '\n' + JSON.stringify(rest, null, 2) : ''
-  return `${timestamp} ${prefix}[${level}]: ${message} ${restStr}`.trim()
-})
 
 const productionTransports = []
 
@@ -60,19 +54,17 @@ const baseLogger = winston.createLogger({
     })(),
     winston.format.errors({ stack: true }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    fileLogFormat,
+    winston.format.printf(({ level, message, timestamp, identifier, ...rest }) =>
+      formatLogMessage({ show: { identifier: true, args: true, timestamp: true }, values: { level, message, timestamp, identifier, ...rest } }),
+    ),
   ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize({ level: true }),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        winston.format.printf(({ level, message, timestamp, identifier, ...rest }) => {
-          const prefix = identifier ? `(${identifier}) ` : ''
-          // @ts-expect-error Expect colorStringify to not be found
-          const restStr = !isEmpty(rest) ? '\n' + JSON.colorStringify(rest, null, 2) : ''
-          return `${prefix}[${level}]: ${message} ${restStr}`.trim()
-        }),
+        winston.format.printf(({ level, message, timestamp, identifier, ...rest }) =>
+          formatLogMessage({ show: { identifier: true, args: true, colorizeArgs: true }, values: { level, message, timestamp, identifier, ...rest } }),
+        ),
       ),
     }),
     ...productionTransports,
