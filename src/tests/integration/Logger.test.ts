@@ -21,9 +21,9 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     logger.info(message)
 
     const consoleOutput = removeWhitespaces(writeSpy.mock.calls[0][0])
-    const loggerOutput = removeColors(removeWhitespaces(writeSpy.mock.calls[1][0]))
+    const loggerOutput = clearJestAnnotatdLogs(removeColors(removeWhitespaces(writeSpy.mock.calls[1][0])))
 
-    expect(loggerOutput).toContain(consoleOutput)
+    expect(loggerOutput).toEqual('[INFO]:' + consoleOutput)
   })
 
   it('Verify logging objects mimics console.log output', () => {
@@ -38,7 +38,7 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log('ConsoleOuptut', consoleOutput)
     console.log('LoggerOuptut', loggerOutput)
 
-    expect(loggerOutput).toContain(consoleOutput)
+    expect(loggerOutput).toEqual('[INFO]:' + consoleOutput)
   })
 
   it('Verify logging objects mimics console.log output', () => {
@@ -49,11 +49,11 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     logger.info(message, arg)
 
     const capturedConsoleOutput = removeWhitespaces(writeSpy.mock.calls[0][0])
-    const capturedLoggerOutput = removeColors(removeWhitespaces(writeSpy.mock.calls[1][0]))
+    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(removeWhitespaces(writeSpy.mock.calls[1][0])))
 
     console.log('Logger-spy: ', capturedLoggerOutput)
     console.log('Console-spy: ', capturedConsoleOutput)
-    expect(capturedLoggerOutput).toContain(capturedConsoleOutput)
+    expect(capturedLoggerOutput).toEqual('[INFO]:' + capturedConsoleOutput)
   })
 })
 
@@ -72,12 +72,8 @@ function removeColors(input: string) {
  * @returns The actual output without the Jest log annotations.
  */
 function clearJestAnnotatdLogs(stdOutput: string) {
-  if (!stdOutput.includes('console.log') && !stdOutput.includes('at Console.log')) return stdOutput
+  if (!stdOutput.includes('console.log') && !stdOutput.includes('atConsole.log')) return stdOutput
 
-  const cleaned = stdOutput
-    .split('\n')
-    .slice(1, -2)
-    // .map((el) => el.trim())
-    .join('\n')
+  const cleaned = stdOutput.split('\n').slice(1, -3).join('\n')
   return cleaned
 }
