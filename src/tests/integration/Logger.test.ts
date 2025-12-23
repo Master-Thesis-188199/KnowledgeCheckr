@@ -1,13 +1,17 @@
 import { describe, expect, it } from '@jest/globals'
+import * as console from 'console'
 import logger from '@/src/lib/log/Logger'
 
 describe('Ensure logger input / output mimics console.log: ', () => {
   let consoleSpy: jest.SpyInstance
   let loggerSpy: jest.SpyInstance
+  let writeSpy: jest.SpyInstance
 
   beforeEach(() => {
+    global.console = console
     consoleSpy = jest.spyOn(console, 'log')
     loggerSpy = jest.spyOn(logger, 'info')
+    writeSpy = jest.spyOn(process.stdout, 'write')
   })
 
   afterEach(() => {
@@ -26,12 +30,34 @@ describe('Ensure logger input / output mimics console.log: ', () => {
   })
 
   it('Verify logging objects mimics console.log output', () => {
-    const message = { type: 'Some dummy object' }
+    const message = JSON.stringify({ type: 'Some dummy object' }, null, 2)
 
     console.log(message)
-    expect(consoleSpy.mock.calls[0][0]).toBe(message)
-
     logger.info(message)
-    expect(loggerSpy.mock.calls[0][0]).toBe(message)
+
+    console.log('Intercepted log: ', decodeURIComponent(writeSpy.mock.calls[0][0]))
+    console.log('Expected', message)
+    expect(decodeURIComponent(writeSpy.mock.calls[0][0]).trim()).toEqual(message.trim())
+
+    console.log('Intercepted logger log: ', clearJestAnnotatdLogs(decodeURIComponent(writeSpy.mock.calls[1][0]).trim()).replace(/ /g, ''))
+    console.log('Expected', message)
+    expect(clearJestAnnotatdLogs(decodeURIComponent(writeSpy.mock.calls[1][0]).trim()).replace(/ /g, '')).toContain(message.replace(/ /g, ''))
   })
 })
+
+/**
+ * This function is needed to remove the annotation from logs printed to `process.stdout` by Jest. While logs from with test-cases can be de-annotated by re-assigning the `console` property through (`global.console = require("console")`), this can not be done very easily in other modules.
+ * Hence, the jest log annotation has to be removed manually by stripping the first and last lines from the (to the `process.stdout`) printed output
+ * @param stdOutput The collected output to `process.stdOut`
+ * @returns The actual output without the Jest log annotations.
+ */
+function clearJestAnnotatdLogs(stdOutput: string) {
+  if (!stdOutput.includes('console.log') && !stdOutput.includes('at Console.log')) return stdOutput
+
+  const cleaned = stdOutput
+    .split('\n')
+    .slice(1, -2)
+    // .map((el) => el.trim())
+    .join('\n')
+  return cleaned
+}
