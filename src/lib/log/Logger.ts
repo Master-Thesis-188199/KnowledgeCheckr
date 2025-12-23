@@ -3,6 +3,7 @@ import 'winston-daily-rotate-file'
 import 'node-json-color-stringify'
 import winston, { Logger as WinstonLogger } from 'winston'
 import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
+import { createProductionFileTransports } from '@/src/lib/log/ProductionTransports'
 import env from '@/src/lib/Shared/Env'
 
 /**
@@ -20,28 +21,6 @@ export interface ModuleLoggerLogger extends WinstonLogger {
    * ```
    */
   createModuleLogger(context: string): ModuleLoggerLogger
-}
-
-const productionTransports = []
-
-if (env.ENABLE_FILE_LOGGING || 1 === 1) {
-  productionTransports.push(
-    new winston.transports.DailyRotateFile({
-      filename: 'logs/app-%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-    }),
-    new winston.transports.DailyRotateFile({
-      filename: 'logs/error-%DATE%.log',
-      level: 'error',
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '30d',
-    }),
-  )
 }
 
 const baseLogger = winston.createLogger({
@@ -63,7 +42,7 @@ const baseLogger = winston.createLogger({
         ),
       ),
     }),
-    ...productionTransports,
+    ...createProductionFileTransports({ create: env.ENABLE_FILE_LOGGING }),
   ],
 }) as ModuleLoggerLogger
 
