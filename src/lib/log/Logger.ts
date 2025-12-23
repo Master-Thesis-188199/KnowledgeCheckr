@@ -10,7 +10,7 @@ import env from '@/src/lib/Shared/Env'
  * Logger type extended with a convenience method to set a module-context.
  * The `context` can be any string that helps identify the origin of a log entry.
  */
-export interface ModuleLoggerLogger extends WinstonLogger {
+export interface ModuleLogger extends WinstonLogger {
   /**
    * Returns a child logger whose logs are tagged with the given context.
    *
@@ -20,10 +20,10 @@ export interface ModuleLoggerLogger extends WinstonLogger {
    * log.info("Fetch checks...")
    * ```
    */
-  createModuleLogger(context: string): ModuleLoggerLogger
+  createModuleLogger(context: string): ModuleLogger
 }
 
-const baseLogger = winston.createLogger({
+const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format((log) => ({ ...log, level: log.level.toUpperCase() }))(), //* upper-case level
@@ -44,15 +44,14 @@ const baseLogger = winston.createLogger({
     }),
     ...createProductionFileTransports({ create: env.ENABLE_FILE_LOGGING }),
   ],
-}) as ModuleLoggerLogger
+}) as ModuleLogger
 
 // Implement createModuleLogger so it returns a child logger with that context.
-baseLogger.createModuleLogger = function (this: ModuleLoggerLogger, context: string): ModuleLoggerLogger {
-  const child = this.child({ context }) as ModuleLoggerLogger
+logger.createModuleLogger = function (this: ModuleLogger, context: string): ModuleLogger {
+  const child = this.child({ context }) as ModuleLogger
   // Ensure child also has createModuleLogger, so you can re-scope further if desired.
-  child.createModuleLogger = baseLogger.createModuleLogger
+  child.createModuleLogger = logger.createModuleLogger
   return child
 }
 
-const logger: ModuleLoggerLogger = baseLogger
 export default logger
