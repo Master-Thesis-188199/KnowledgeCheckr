@@ -40,7 +40,26 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log('Expected', message)
     expect(clearJestAnnotatdLogs(decodeURIComponent(writeSpy.mock.calls[1][0]).trim()).replace(/ /g, '')).toContain(message.replace(/ /g, ''))
   })
+
+  it('Verify logging objects mimics console.log output', () => {
+    const message = 'Created new object'
+    const arg = { some: 'object' }
+
+    console.log(message, JSON.stringify(arg, null, 2))
+    logger.info(message, arg)
+
+    const capturedConsoleOutput = writeSpy.mock.calls[0][0].replace(/ /g, '')
+    const capturedLoggerOutput = removeColors(writeSpy.mock.calls[1][0].replace(/ /g, ''))
+
+    console.log('Logger-spy: ', capturedLoggerOutput)
+    console.log('Console-spy: ', capturedConsoleOutput)
+    expect(capturedLoggerOutput).toContain(capturedConsoleOutput)
+  })
 })
+
+function removeColors(input: string) {
+  return input.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
+}
 
 /**
  * This function is needed to remove the annotation from logs printed to `process.stdout` by Jest. While logs from with test-cases can be de-annotated by re-assigning the `console` property through (`global.console = require("console")`), this can not be done very easily in other modules.
