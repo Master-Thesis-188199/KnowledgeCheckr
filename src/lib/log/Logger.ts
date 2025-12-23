@@ -47,11 +47,7 @@ if (env.ENABLE_FILE_LOGGING || 1 === 1) {
 const baseLogger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
-    //* upper-case level
-    winston.format((info) => {
-      info.level = info.level.toUpperCase()
-      return info
-    })(),
+    winston.format((log) => ({ ...log, level: log.level.toUpperCase() }))(), //* upper-case level
     winston.format.errors({ stack: true }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.printf(({ level, message, timestamp, context, ...rest }) =>
