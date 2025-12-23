@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty'
+
 type FormatValues = {
   timestamp: unknown
   context: unknown
@@ -35,6 +37,7 @@ export function formatLogMessage({ show, values: { timestamp, context, level, me
           fields.set(key, context)
           break
         case 'args':
+          if (isEmpty(args)) break
           fields.set(key, args)
           break
       }
