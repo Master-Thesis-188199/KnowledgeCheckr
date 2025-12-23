@@ -16,6 +16,22 @@ type ShowOptions = {
 }
 
 /**
+ * This function is used to access an object property through a matching symbol.
+ * @param obj The object that contains symbols.
+ * @param _symbol The symbol that should match to retrieve the respective property from the given object.
+ * @returns The given object-property associated with the given symbol.
+ */
+function getObjectBySymbol(obj: object, _symbol: string) {
+  const symbols = Object.getOwnPropertySymbols(obj)
+  const symbol = symbols.find((s) => s.toString().toLowerCase().includes(_symbol))
+
+  if (!symbol) return undefined
+
+  //@ts-expect-error Accessing object-symbol is not a common practice.
+  return obj[symbol]
+}
+
+/**
  * This function allows unified log message formats across all logger-transports by specifying which optional properties to print via the `show` property.
  * @param show Allows for customization of which optional arguments to include in log messages
  * @param values The values provided by the `winston.format.printf` function.
