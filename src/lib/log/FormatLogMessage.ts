@@ -1,4 +1,3 @@
-import isEmpty from 'lodash/isEmpty'
 import { stringifyObject } from '@/src/lib/log/StringifyObject'
 
 type FormatValues = {
@@ -38,51 +37,8 @@ function getObjectBySymbol(obj: object, _symbol: string) {
  * @param values The values provided by the `winston.format.printf` function.
  * @returns The formatted log message
  */
-export function formatLogMessage({ show, values: { timestamp, context, level, message, ...args } }: { show: ShowOptions; values: FormatValues }) {
-  const fields = new Map()
-  fields.set('level', level)
-  fields.set('message', message)
-
-  Object.keys(show).forEach((_key) => {
-    const key = _key as keyof typeof show
-    if (!!show[key]) {
-      switch (key) {
-        case 'timestamp':
-          fields.set(key, timestamp)
-          break
-        case 'context':
-          fields.set(key, context)
-          break
-        case 'args':
-          if (isEmpty(getObjectBySymbol(args, 'splat'))) break
-          fields.set(key, getObjectBySymbol(args, 'splat'))
-          break
-      }
-    }
-  })
-
-  const templateArgs = []
-
-  if (fields.has('timestamp')) templateArgs.push('<timestamp>')
-  if (fields.has('context')) templateArgs.push('(<context>)')
-  templateArgs.push('[<level>]:')
-  templateArgs.push('<message>')
-  if (fields.has('args')) templateArgs.push('<args>')
-
-  let template = templateArgs.join(' ')
-
-  fields.forEach((value, key) => {
-    //* the args argument is provided as an array of individual arguments by winston, thus each element is parsed respectively.
-    if (key === 'args') {
-      value = parseExtraArguments(value as unknown[], show.colorizeArgs ?? false).join(' ')
-    } else if (typeof value === 'object') {
-      value = stringifyObject(value, { colored: show.colorizeArgs ?? false, pretified: true })
-    }
-
-    template = template.replace(`<${key}>`, value)
-  })
-
-  return template
+export function formatLogMessage({ show, values }: { show: ShowOptions; values: FormatValues }) {
+  return computeAndApplyTemplate(show, values)
 }
 
 function parseExtraArguments(args: Array<unknown>, colored: boolean) {
@@ -93,4 +49,62 @@ function parseExtraArguments(args: Array<unknown>, colored: boolean) {
 
     return String(arg)
   })
+}
+
+function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: FormatValues) {
+  const fields = new Map([
+    ['level', values.level],
+    ['message', values.message],
+  ])
+
+  //* destructure known values to prevent identifying them as additional arguments
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { timestamp, context, level, message, ...args } = values
+
+  //* gather included log properties and their values
+  Object.keys(propertyVisibilities).map((key) => {
+    const included = propertyVisibilities[key as keyof typeof propertyVisibilities]
+    if (!included) return
+
+    if (key === 'args') {
+      fields.set(key, getObjectBySymbol(args, 'splat'))
+    } else if (!!values[key]) {
+      fields.set(key, values[key])
+    }
+  })
+
+  const templateOrder: Array<keyof (Omit<ShowOptions, 'colorizeArgs'> & Pick<FormatValues, 'level' | 'message'>)> = ['timestamp', 'context', 'level', 'message', 'args']
+
+  const templateArgs = []
+
+  //* compute template string composed of included properties in the desired order
+  for (const templateKey of templateOrder) {
+    if (!fields.has(templateKey)) continue
+
+    if (templateKey === 'context')
+      // override styling for context property
+      templateArgs.push(`(<${templateKey}>)`)
+    else if (templateKey === 'level')
+      // override styling for level property
+      templateArgs.push(`[<${templateKey}>]:`)
+    else templateArgs.push(`<${templateKey}>`)
+  }
+
+  //* build template string
+  let logMessage = Array.from(templateArgs).join(' ')
+
+  //* insert values into template string
+  for (const messageElementKey of templateOrder) {
+    let value = fields.get(messageElementKey)
+
+    if (messageElementKey === 'args') {
+      value = parseExtraArguments(value as unknown[], propertyVisibilities.colorizeArgs ?? false).join(' ')
+    } else if (typeof value === 'object') {
+      value = stringifyObject(value, { colored: propertyVisibilities.colorizeArgs ?? false, pretified: true })
+    }
+
+    logMessage = logMessage.replace(`<${messageElementKey}>`, String(value).trim())
+  }
+
+  return logMessage
 }
