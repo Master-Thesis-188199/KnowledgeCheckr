@@ -1,6 +1,6 @@
 type FormatValues = {
   timestamp: unknown
-  identifier: unknown
+  context: unknown
   level: string
   message: unknown
   [key: string | symbol]: unknown
@@ -8,7 +8,7 @@ type FormatValues = {
 
 type ShowOptions = {
   timestamp?: boolean
-  identifier?: boolean
+  context?: boolean
   args?: boolean
   colorizeArgs?: boolean
 }
@@ -19,7 +19,7 @@ type ShowOptions = {
  * @param values The values provided by the `winston.format.printf` function.
  * @returns The formatted log message
  */
-export function formatLogMessage({ show, values: { timestamp, identifier, level, message, ...args } }: { show: ShowOptions; values: FormatValues }) {
+export function formatLogMessage({ show, values: { timestamp, context, level, message, ...args } }: { show: ShowOptions; values: FormatValues }) {
   const fields = new Map()
   fields.set('level', level)
   fields.set('message', message)
@@ -31,8 +31,8 @@ export function formatLogMessage({ show, values: { timestamp, identifier, level,
         case 'timestamp':
           fields.set(key, timestamp)
           break
-        case 'identifier':
-          fields.set(key, identifier)
+        case 'context':
+          fields.set(key, context)
           break
         case 'args':
           fields.set(key, args)
@@ -44,7 +44,7 @@ export function formatLogMessage({ show, values: { timestamp, identifier, level,
   const templateArgs = []
 
   if (fields.has('timestamp')) templateArgs.push('<timestamp>')
-  if (fields.has('identifier')) templateArgs.push('(<identifier>)')
+  if (fields.has('context')) templateArgs.push('(<context>)')
   templateArgs.push('[<level>]:')
   templateArgs.push('<message>')
   if (fields.has('args')) templateArgs.push('\n<args>')

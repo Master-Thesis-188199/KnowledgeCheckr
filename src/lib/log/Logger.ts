@@ -6,12 +6,12 @@ import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
 import env from '@/src/lib/Shared/Env'
 
 /**
- * Logger type extended with a convenience method to set a module-identifier.
- * The `identifier` can be any string that helps identify the origin of a log entry.
+ * Logger type extended with a convenience method to set a module-context.
+ * The `context` can be any string that helps identify the origin of a log entry.
  */
 export interface ModuleLoggerLogger extends WinstonLogger {
   /**
-   * Returns a child logger whose logs are tagged with the given identifier.
+   * Returns a child logger whose logs are tagged with the given context.
    *
    * @example
    * ```ts
@@ -19,12 +19,12 @@ export interface ModuleLoggerLogger extends WinstonLogger {
    * log.info("Fetch checks...")
    * ```
    */
-  createModuleLogger(identifier: string): ModuleLoggerLogger
+  createModuleLogger(context: string): ModuleLoggerLogger
 }
 
 const productionTransports = []
 
-if (env.ENABLE_FILE_LOGGING) {
+if (env.ENABLE_FILE_LOGGING || 1 === 1) {
   productionTransports.push(
     new winston.transports.DailyRotateFile({
       filename: 'logs/app-%DATE%.log',
@@ -54,16 +54,16 @@ const baseLogger = winston.createLogger({
     })(),
     winston.format.errors({ stack: true }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    winston.format.printf(({ level, message, timestamp, identifier, ...rest }) =>
-      formatLogMessage({ show: { identifier: true, args: true, timestamp: true }, values: { level, message, timestamp, identifier, ...rest } }),
+    winston.format.printf(({ level, message, timestamp, context, ...rest }) =>
+      formatLogMessage({ show: { context: true, args: true, timestamp: true }, values: { level, message, timestamp, context, ...rest } }),
     ),
   ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize({ level: true }),
-        winston.format.printf(({ level, message, timestamp, identifier, ...rest }) =>
-          formatLogMessage({ show: { identifier: true, args: true, colorizeArgs: true }, values: { level, message, timestamp, identifier, ...rest } }),
+        winston.format.printf(({ level, message, timestamp, context, ...rest }) =>
+          formatLogMessage({ show: { context: true, args: true, colorizeArgs: true }, values: { level, message, timestamp, context, ...rest } }),
         ),
       ),
     }),
@@ -71,9 +71,9 @@ const baseLogger = winston.createLogger({
   ],
 }) as ModuleLoggerLogger
 
-// Implement createModuleLogger so it returns a child logger with that identifier.
-baseLogger.createModuleLogger = function (this: ModuleLoggerLogger, identifier: string): ModuleLoggerLogger {
-  const child = this.child({ identifier }) as ModuleLoggerLogger
+// Implement createModuleLogger so it returns a child logger with that context.
+baseLogger.createModuleLogger = function (this: ModuleLoggerLogger, context: string): ModuleLoggerLogger {
+  const child = this.child({ context }) as ModuleLoggerLogger
   // Ensure child also has createModuleLogger, so you can re-scope further if desired.
   child.createModuleLogger = baseLogger.createModuleLogger
   return child
