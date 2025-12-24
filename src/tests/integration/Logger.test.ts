@@ -3,6 +3,7 @@ import logger from '@/src/lib/log/Logger'
 
 describe('Ensure logger input / output mimics console.log: ', () => {
   let writeSpy: jest.SpyInstance
+  const InfoTag = '[INFO]: '
 
   beforeEach(() => {
     writeSpy = jest.spyOn(process.stdout, 'write')
@@ -30,13 +31,13 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log(message)
     logger.info(message)
 
-    const consoleOutput = removeWhitespaces(writeSpy.mock.calls[0][0])
-    const loggerOutput = clearJestAnnotatdLogs(removeColors(removeWhitespaces(writeSpy.mock.calls[1][0])))
+    const consoleOutput = writeSpy.mock.calls[0][0]
+    const loggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
     console.log('ConsoleOuptut', consoleOutput)
     console.log('LoggerOuptut', loggerOutput)
 
-    expect(loggerOutput).toEqual('[INFO]:' + consoleOutput)
+    expect(loggerOutput).toEqual(InfoTag + consoleOutput)
   })
 
   it('Verify logging objects mimics console.log output', () => {
@@ -46,12 +47,12 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log(message, JSON.stringify(arg, null, 2))
     logger.info(message, arg)
 
-    const capturedConsoleOutput = removeWhitespaces(writeSpy.mock.calls[0][0])
-    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(removeWhitespaces(writeSpy.mock.calls[1][0])))
+    const capturedConsoleOutput = writeSpy.mock.calls[0][0]
+    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
     console.log('Logger-spy: ', capturedLoggerOutput)
     console.log('Console-spy: ', capturedConsoleOutput)
-    expect(capturedLoggerOutput).toEqual('[INFO]:' + capturedConsoleOutput)
+    expect(capturedLoggerOutput).toEqual(InfoTag + capturedConsoleOutput)
   })
 
   it('Verify logging multiple strings mimics console.log output', () => {
@@ -61,18 +62,14 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     console.log(message, ...args)
     logger.info(message, ...args)
 
-    const capturedConsoleOutput = writeSpy.mock.calls[0][0].trim()
-    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0])).trim()
+    const capturedConsoleOutput = writeSpy.mock.calls[0][0]
+    const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
     console.log('Logger-spy: ', capturedLoggerOutput)
     console.log('Console-spy: ', capturedConsoleOutput)
-    expect(capturedLoggerOutput).toEqual('[INFO]: ' + capturedConsoleOutput)
+    expect(capturedLoggerOutput).toEqual(InfoTag + capturedConsoleOutput)
   })
 })
-
-function removeWhitespaces(input: string) {
-  return input.replace(/ /g, '')
-}
 
 function removeColors(input: string) {
   return input.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
