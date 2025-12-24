@@ -16,11 +16,12 @@ label:has(+ input:required):after {
 
 /* Override variables when data-theme is explicitly set to dark */
 html[data-theme='dark'] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #1d1d1d;
+  --foreground: var(--color-neutral-200);
 
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background-z-1: var(--color-neutral-800);
+  --ring-z-1: var(--color-neutral-700);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -65,6 +66,11 @@ html[data-theme='dark'] {
 }
 
 :root {
+  --background: var(--color-neutral-100);
+  --foreground: var(--neutral-700);
+  --background-z-1: var(--color-neutral-200);
+  --ring-z-1: var(--color-neutral-700);
+
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -95,8 +101,6 @@ html[data-theme='dark'] {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
 }
 
 @theme inline {
@@ -138,6 +142,9 @@ html[data-theme='dark'] {
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
+  --color-background-z-1: var(--background-z-1);
+  --color-ring-z-1: var(--ring-z-1);
+
   @keyframes accordion-down {
     from {
       height: 0;
@@ -146,7 +153,6 @@ html[data-theme='dark'] {
       height: var(--radix-accordion-content-height);
     }
   }
-
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);

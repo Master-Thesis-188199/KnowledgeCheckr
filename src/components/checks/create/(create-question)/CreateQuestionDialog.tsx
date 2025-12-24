@@ -124,7 +124,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         onClose={() => closeDialog()}
         onPointerDownOutside={() => closeDialog()}
         onEscapeKeyDown={() => closeDialog({ reset: true })}
-        className='max-w-md dark:border-neutral-600 dark:bg-neutral-800'
+        className='max-w-md dark:border-neutral-600'
         id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <QuestionDialogHeader type={mode} />
