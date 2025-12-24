@@ -1,11 +1,16 @@
+'use server'
+
 import shuffle from 'lodash/shuffle'
+import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 /**
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
-export default function prepareExaminationCheck(check: KnowledgeCheck) {
+export default async function prepareExaminationCheck(check: KnowledgeCheck) {
   let questions = check.settings.questionOrder === 'create-order' ? check.questions : shuffleArray(check.questions)
 
   questions = questions
@@ -70,7 +75,7 @@ function hideCorrectness(question: Question): Question {
 
 function shuffleArray<T extends { id: string }>(array: T[], shuffleCount = 0): T[] {
   if (array.length <= 1) {
-    console.warn(`[shuffleArray]: Array of length ${array.length} cannot be shuffled properly. Returning original array.`)
+    logger.warn(`[shuffleArray]: Array of length ${array.length} cannot be shuffled properly. Returning original array.`)
     return array
   }
 
@@ -82,7 +87,7 @@ function shuffleArray<T extends { id: string }>(array: T[], shuffleCount = 0): T
       throw new Error("Shuffling array didn't produce a different order after 5 attempts!")
     }
 
-    console.log('Reshuffling array to avoid same order...')
+    logger.info('Reshuffling array to avoid same order...')
     return shuffleArray(array, shuffleCount + 1)
   }
 
