@@ -24,7 +24,7 @@ export interface ModuleLogger extends WinstonLogger {
 }
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'verbose',
   format: winston.format.combine(
     winston.format((log) => ({ ...log, level: log.level.toUpperCase() }))(), //* upper-case level
     winston.format.errors({ stack: true }),
