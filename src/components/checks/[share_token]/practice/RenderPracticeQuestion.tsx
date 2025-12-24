@@ -17,6 +17,7 @@ import { usePracticeStore } from '@/src/components/checks/[share_token]/practice
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
+import { useLogger } from '@/src/hooks/log/useLogger'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
@@ -26,6 +27,7 @@ import { Any } from '@/types'
 export function RenderPracticeQuestion() {
   const { practiceQuestions: questions, unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
   const pathname = usePathname()
+  const logger = useLogger('RenderPracticeQuestion')
 
   const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
 
@@ -96,7 +98,7 @@ export function RenderPracticeQuestion() {
   }, [question.id, question.type])
 
   const onSubmit = (_data: z.infer<typeof PracticeSchema>, e?: React.BaseSyntheticEvent) => {
-    console.log('Submitting practice answer...', _data, e)
+    logger.verbose('Submitting practice answer...', _data)
     start(() => {
       formAction(_data)
     })
