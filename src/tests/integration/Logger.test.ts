@@ -1,12 +1,10 @@
 import { describe, expect, it } from '@jest/globals'
-import * as console from 'console'
 import logger from '@/src/lib/log/Logger'
 
 describe('Ensure logger input / output mimics console.log: ', () => {
   let writeSpy: jest.SpyInstance
 
   beforeEach(() => {
-    global.console = console
     writeSpy = jest.spyOn(process.stdout, 'write')
   })
 
