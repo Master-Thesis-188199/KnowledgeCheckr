@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty'
+import { initializeExaminationResults } from '@/src/hooks/checks/[share_token]/initializeExaminationResults'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
-import { initializeExaminationResults } from '@/src/lib/checks/[share_token]/prepareExminationCheck'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
