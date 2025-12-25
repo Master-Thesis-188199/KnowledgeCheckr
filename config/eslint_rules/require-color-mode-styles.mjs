@@ -30,6 +30,7 @@ const requireColorModeStylesRule = {
       description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
       recommended: false,
     },
+    hasSuggestions: true,
     schema: [
       {
         type: 'object',
@@ -66,6 +67,7 @@ const requireColorModeStylesRule = {
   },
 
   create(context) {
+    const sourceCode = context.getSourceCode()
     const options = (context.options && context.options[0]) || {}
 
     const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
@@ -280,18 +282,88 @@ const requireColorModeStylesRule = {
           continue
         }
 
-        const missingClassType = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
+        const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
+
+        const missingClassesSuggestions = []
+        // choose the color-mode class array that has the most classes, thus that is not missing any classes.
+        for (const colorModeClass of lightClasses.length > darkClasses.length ? lightClasses : darkClasses) {
+          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+
+          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifieds ? 'dark:' : ''}${modifiers}${colorModeClass.relevantClass}`)
+        }
 
         context.report({
           node: attrNode,
-          messageId: `missing${missingClassType}`,
+          messageId: `missing${missingColorMode}`,
           data: {
             key,
             lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
             darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
+          suggest: missingClassesSuggestions.map((suggestedClass) => ({
+            desc: `Add missing ${missingColorMode}-mode class ${suggestedClass}`,
+            fix: function (fixer) {
+              return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
+            },
+          })),
         })
       }
+    }
+
+    function buildAddClassFix(attrNode, classString, suggestedClass, fixer) {
+      const value = attrNode.value
+      if (!value) return null
+
+      const existingClasses = (classString || '').trim()
+      const newClassString = (existingClasses + ' ' + suggestedClass).trim()
+
+      // <div className="foo bar" />
+      if (value.type === 'Literal' && typeof value.value === 'string') {
+        // Rebuild as a normal double-quoted string literal
+        return fixer.replaceText(value, `"${newClassString}"`)
+      }
+
+      if (value.type === 'JSXExpressionContainer') {
+        const expr = value.expression
+
+        // className={'foo bar'}
+        if (expr.type === 'Literal' && typeof expr.value === 'string') {
+          return fixer.replaceText(expr, `"${newClassString}"`)
+        }
+
+        // className={`foo bar`}
+        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+          return fixer.replaceText(expr, '`' + newClassString + '`')
+        }
+
+        // className={cn(...)} or className={tw(...)}
+        if (expr.type === 'CallExpression' && expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+          const exprText = sourceCode.getText(expr)
+
+          // Naive but effective: insert `, "suggestedClass"` before the last ')'
+          const lastParenIndex = exprText.lastIndexOf(')')
+
+          if (lastParenIndex === -1) {
+            return null
+          }
+
+          const before = exprText.slice(0, lastParenIndex)
+          const after = exprText.slice(lastParenIndex)
+          // Trim end to check for existing comma
+          const trimmedBefore = before.replace(/\s+$/, '')
+
+          // Does before already end with a comma?
+          const hasTrailingComma = trimmedBefore.endsWith(',')
+
+          const insertion = (hasTrailingComma ? ' ' : expr.arguments.length > 0 ? ', ' : '') + `"${suggestedClass}"`
+
+          const newExprText = before + insertion + after
+
+          return fixer.replaceText(expr, newExprText)
+        }
+      }
+
+      return null
     }
 
     return {
