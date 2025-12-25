@@ -1,0 +1,309 @@
+/**
+ * ESLint rule: require-color-mode-styles
+ *
+ * This rule goes over every JSX element and when an element's attributes matches one of the specified attributes (default: 'class' and 'className') the rule will verify its value.
+ *
+ * Case 1: An JSX element ** has no ** attribute(s) that is specified in the 'attributes' array (by default: 'class' and 'className'): Will essentially terminate / finish the rule without issusing problems.
+ * Case 2: An JSX element ** has ** attribute(s) that are specified in the 'attributes' array (by default: 'class' and 'className'):
+ *      | The rule will now evaluate the classes that are assigned to the respective attributes using the `getClassNames` function.
+ *      | Then it goes through each classname and evaluates it by callling the `evaluateClassname` function.
+ *         The function takes in each individual className and determines the color-mode it targets and whether it modifies / uses any colors, thus determines whether it is relevenat in the context of color-modes.
+ *         This means that it first checks the color-mode that is being targetted and essentially checks whether the class uses a matchin utility class ('bg', 'text', ...) that is specified in `utilityClasses`.
+ *         Then it checks if these utility classes also use colors to eliminate classes like ("ring-2", "border-b-2") that do not change / use any colors.
+ *         In case the class in question satisfied all these conditions an object of type:
+ *           {
+ *              mode: 'light' | 'dark',
+ *              utility: typeof utilityClasses[number],    // ('text', 'bg', 'ring', ...)
+ *              className: string,                        // the original class that was passed to the function, e.g. "dark:hover:bg-neutral-200"
+ *              relevantClass: string                     // the essential part of the class, e.g. "bg-neutral-200", "ring-neutral-200"
+ *           }
+ *      | After going over all matchin attributes (e.g. 'className') and evaluating each class, to filter out irrelevant classes, the remaining color related classes are compared.
+ *      | Case 1: When the amount of color related light- and dark- mode classes match then there are both light- mode values and dark-mode values defined for the given attribute.
+ *      | Case 2: When the amount of color related light- and dark- mode classes differ then an issue will be created for the given attribute.
+ *
+ */
+
+const requireColorModeStylesRule = {
+  meta: {
+    type: 'suggestion',
+    docs: {
+      description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
+      recommended: false,
+    },
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          // Which utility prefixes count as 'color' utilities.
+          utilityClasses: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Which JSX attribute names to inspect (e.g. className, class)
+          attributes: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Helper function names like `cn` and `tw`
+          helpers: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Allowed color names (first token after the prefix).
+          // Example: "neutral" in "bg-neutral-200".
+          colorNames: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
+    messages: {
+      missingDark: "Element is missing dark-mode style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
+      missingLight: "Element is missing light-mode color style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
+    },
+  },
+
+  create(context) {
+    const options = (context.options && context.options[0]) || {}
+
+    const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
+
+    const attributesToCheck = options.attributes || ['className', 'class']
+
+    const helperNames = options.helpers || ['cn', 'tw']
+
+    const defaultColorNames = [
+      'slate',
+      'gray',
+      'zinc',
+      'neutral',
+      'stone',
+      'red',
+      'orange',
+      'amber',
+      'yellow',
+      'lime',
+      'green',
+      'emerald',
+      'teal',
+      'cyan',
+      'sky',
+      'blue',
+      'indigo',
+      'violet',
+      'purple',
+      'fuchsia',
+      'pink',
+      'rose',
+      'black',
+      'white',
+      'inherit',
+      'current',
+      'transparent',
+      // Common custom palette names:
+    ]
+
+    const colorNames = options.colorNames || defaultColorNames
+
+    /**
+     * Retrieve classnames as an array from all element-nodes.
+     * Supports:
+     *  - className="..."
+     *  - className={'...'}
+     *  - className={`...`} (no interpolations)
+     *  - className={cn("...", "...")}
+     *  - className={tw("...", "...")}
+     */
+    function getClassNames(attrValue) {
+      if (!attrValue) return null
+
+      // className="foo bar"
+      if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+        return attrValue.value
+      }
+
+      if (attrValue.type === 'JSXExpressionContainer') {
+        const expr = attrValue.expression
+
+        // className={'foo bar'}
+        if (expr.type === 'Literal' && typeof expr.value === 'string') {
+          return expr.value
+        }
+
+        // className={`foo bar`} (no interpolations)
+        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+          return expr.quasis.map((q) => q.value.cooked || '').join('')
+        }
+
+        // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
+        if (expr.type === 'CallExpression') {
+          if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+            const pieces = []
+
+            for (const arg of expr.arguments) {
+              if (arg.type === 'Literal' && typeof arg.value === 'string') {
+                pieces.push(arg.value)
+              } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+                pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
+              } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
+                pieces.push(arg.right.value)
+              } else {
+                // Dynamic argument – we can't safely know full class list.
+                // return null
+              }
+            }
+
+            // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
+
+            if (pieces.length > 0) {
+              return pieces.join(' ')
+            }
+          }
+        }
+      }
+
+      return null
+    }
+
+    /**
+     * Parse a token and see if it's a color-related utility.
+     *
+     * Returns:
+     *   null if not color-related.
+     *   { key, mode, utility } otherwise.
+     *
+     * - key: "<variants...>:<prefix>" (without `dark:`)
+     *   e.g. "bg", "hover:bg", "md:hover:bg"
+     * - mode: "light" | "dark"
+     * - utility: the full tailwind utility, e.g. "bg-neutral-200"
+     */
+    function evaluateClassname(className) {
+      if (!className || typeof className !== 'string') return null
+
+      const colorMode = className.includes('dark:') ? 'dark' : 'light'
+
+      // Ignore arbitrary values like "[color:red]".
+      // if (token.startsWith('[')) return null
+
+      //* splits classes like "dark:hover:bg-neutral-200" into ['dark', 'hover', 'bg-neutral-200]
+      const classNameArguments = className
+        .split(':')
+        .filter(Boolean)
+        .filter((arg) => arg.includes('-')) // strip "non-modifying" arguments like "dark", "hover", "active", "border"
+
+      if (classNameArguments.length === 0) return null
+
+      //* `classNameArguments` array should now only have a length of 1, with the actual class like "border-b-2", "ring-2", "ring-neutral-200", "text-neutral-200"
+      //   --> now strip the non-modifying styles
+
+      //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
+      const modifyingStyles = classNameArguments.filter((arg) => {
+        const parts = arg.split('-')
+        const modifier = parts.at(0) // e.g. bg, ring, shadow, text, flex, ...
+
+        const isColorModifyingClass = utilityClasses.includes(modifier) // does class start with e.g. "bg-", "ring-", "text-", ...
+
+        const color = parts.at(1) // e.g. "black", "white", "neutral", "2" [ring-2], ...
+
+        const hasColor = colorNames.includes(color)
+
+        return isColorModifyingClass && hasColor
+      })
+
+      //* classname does not modify colors, like ring-2, p-2, border-b-2 --> irreleavnt
+      if (modifyingStyles.length === 0) {
+        return null
+      }
+
+      if (modifyingStyles.length > 1) {
+        console.error(`While parsing a classname an unexpected output occured. Class: '${modifyingStyles.join(':')}' was categorized as relevant but has an invalid structure! \nDiscarding class`)
+        return null
+      }
+
+      //* is the relevant part of the class like bg-neutral-200, ring-neutral-200 and so on based on the pre-defined types of
+      const relevantClass = modifyingStyles.join('')
+      const utility = relevantClass.split('-').at(0)
+
+      // console.log(`Considering '${relevantClass}'`)
+
+      return {
+        mode: colorMode,
+        utility,
+        className,
+        relevantClass,
+      }
+    }
+
+    function checkClassName(attrNode) {
+      const attrName = attrNode.name && attrNode.name.name
+      if (!attributesToCheck.includes(attrName)) return
+
+      const classString = getClassNames(attrNode.value)
+      if (!classString) return
+
+      const classNames = classString
+        .split(/\s+/)
+        .map((t) => t.trim())
+        .filter(Boolean)
+
+      // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
+
+      /**
+       * key -> { lightUtilities: string[], darkUtilities: string[] }
+       */
+      const keyMap = new Map() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
+
+      for (const class_name of classNames) {
+        const parsed = evaluateClassname(class_name)
+        if (!parsed) continue
+
+        if (keyMap.has(parsed.utility)) {
+          const val = keyMap.get(parsed.utility)
+          const prop = parsed.mode === 'light' ? 'lightClasses' : 'darkClasses'
+
+          val[prop].push(parsed)
+          keyMap.set(parsed.utility, val)
+        } else {
+          keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] })
+        }
+
+        // console.log('Parsed Result: ', parsed)
+      }
+
+      for (const key of keyMap.keys()) {
+        const { lightClasses, darkClasses } = keyMap.get(key)
+
+        if (lightClasses.length === darkClasses.length) {
+          // console.log(`${key} utility classes match light- and dark- mode styles.`)
+          continue
+        }
+
+        const missingClassType = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
+
+        context.report({
+          node: attrNode,
+          messageId: `missing${missingClassType}`,
+          data: {
+            key,
+            lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
+            darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+          },
+        })
+      }
+    }
+
+    return {
+      JSXAttribute: checkClassName,
+    }
+  },
+}
+
+const plugin = {
+  rules: {
+    'require-color-mode-styles': requireColorModeStylesRule,
+  },
+}
+
+export default plugin
