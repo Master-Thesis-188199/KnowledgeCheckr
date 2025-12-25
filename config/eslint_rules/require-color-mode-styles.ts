@@ -238,11 +238,12 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
     const sourceCode = context.getSourceCode()
     const options = (context.options && context.options[0]) || ({} as Options)
 
-    const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-    const attributesToCheck = options.attributes || ['className', 'class']
-    const helperNames = options.helpers || ['cn', 'tw']
+    if (!options.utilityClasses) options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow']
+    if (!options.attributes) options.attributes = ['className', 'class']
+    if (!options.helpers) options.helpers = ['cn', 'tw']
+    if (!options.colorNames) options.colorNames = defaultColorNames
 
-    const colorNames = options.colorNames || defaultColorNames
+    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
 
     /**
      * Parse a token and see if it's a color-related utility.
