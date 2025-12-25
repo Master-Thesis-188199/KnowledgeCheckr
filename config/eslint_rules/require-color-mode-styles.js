@@ -51,6 +51,13 @@ const defaultColorNames = [
   'current',
   'transparent',
 ]
+/**
+ * This function evaluate a given className by first checking which type of class it is (dark-, light- mode) and whether it is relevant in the context of color-modes. Thus, whether it uses any `utilityClasses` modifiers and any `colorNames`.
+ * @param className The classname to inspect / analyze
+ * @param options.utilityClasses The utilityClasses to consider as relevant in the context of color-mode
+ * @param options.colorNames The colorNames to consider as relevant in the context of color-mode
+ * @returns Either null when the class was irrelevant or an object containing relevant information when the class is 'important.'
+ */
 function evaluateClassname(className, { utilityClasses, colorNames }) {
   if (!className || typeof className !== 'string') return null
   const colorMode = className.includes('dark:') ? 'dark' : 'light'
@@ -83,7 +90,7 @@ function evaluateClassname(className, { utilityClasses, colorNames }) {
   }
   //* is the relevant part of the class like bg-neutral-200, ring-neutral-200 and so on based on the pre-defined types of
   const relevantClass = modifyingStyles.join('')
-  const utility = relevantClass.split('-').at(0)
+  const utility = relevantClass.split('-')[0]
   // console.log(`Considering '${relevantClass}'`)
   return {
     mode: colorMode,
@@ -91,6 +98,56 @@ function evaluateClassname(className, { utilityClasses, colorNames }) {
     className,
     relevantClass,
   }
+}
+/**
+ * Retrieve classnames as an array from all element-nodes.
+ * Supports:
+ *  - className="..."
+ *  - className={'...'}
+ *  - className={`...`} (no interpolations)
+ *  - className={cn("...", "...")}
+ *  - className={tw("...", "...")}
+ */
+function getClassNames(attrValue, { helpers: helperNames }) {
+  if (!attrValue) return null
+  // className="foo bar"
+  if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+    return attrValue.value
+  }
+  if (attrValue.type === 'JSXExpressionContainer') {
+    const expr = attrValue.expression
+    // className={'foo bar'}
+    if (expr.type === 'Literal' && typeof expr.value === 'string') {
+      return expr.value
+    }
+    // className={`foo bar`} (no interpolations)
+    if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+      return expr.quasis.map((q) => q.value.cooked || '').join('')
+    }
+    // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
+    if (expr.type === 'CallExpression') {
+      if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+        const pieces = []
+        for (const arg of expr.arguments) {
+          if (arg.type === 'Literal' && typeof arg.value === 'string') {
+            pieces.push(arg.value)
+          } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+            pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
+          } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
+            pieces.push(arg.right.value)
+          } else {
+            // Dynamic argument – we can't safely know full class list.
+            // return null
+          }
+        }
+        // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
+        if (pieces.length > 0) {
+          return pieces.join(' ')
+        }
+      }
+    }
+  }
+  return null
 }
 const requireColorModeStylesRule = {
   defaultOptions: [],
@@ -138,62 +195,11 @@ const requireColorModeStylesRule = {
   create(context) {
     const sourceCode = context.getSourceCode()
     const options = (context.options && context.options[0]) || {}
-    const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-    const attributesToCheck = options.attributes || ['className', 'class']
-    const helperNames = options.helpers || ['cn', 'tw']
-    const colorNames = options.colorNames || defaultColorNames
-    /**
-     * Retrieve classnames as an array from all element-nodes.
-     * Supports:
-     *  - className="..."
-     *  - className={'...'}
-     *  - className={`...`} (no interpolations)
-     *  - className={cn("...", "...")}
-     *  - className={tw("...", "...")}
-     */
-    function getClassNames(attrValue) {
-      if (!attrValue) return null
-      // className="foo bar"
-      if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
-        return attrValue.value
-      }
-      if (attrValue.type === 'JSXExpressionContainer') {
-        const expr = attrValue.expression
-        // className={'foo bar'}
-        if (expr.type === 'Literal' && typeof expr.value === 'string') {
-          return expr.value
-        }
-        // className={`foo bar`} (no interpolations)
-        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-          //@ts-ignore
-          return expr.quasis.map((q) => q.value.cooked || '').join('')
-        }
-        // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
-        if (expr.type === 'CallExpression') {
-          if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
-            const pieces = []
-            for (const arg of expr.arguments) {
-              if (arg.type === 'Literal' && typeof arg.value === 'string') {
-                pieces.push(arg.value)
-              } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
-                //@ts-ignore
-                pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
-              } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
-                pieces.push(arg.right.value)
-              } else {
-                // Dynamic argument – we can't safely know full class list.
-                // return null
-              }
-            }
-            // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
-            if (pieces.length > 0) {
-              return pieces.join(' ')
-            }
-          }
-        }
-      }
-      return null
-    }
+    if (!options.utilityClasses) options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow']
+    if (!options.attributes) options.attributes = ['className', 'class']
+    if (!options.helpers) options.helpers = ['cn', 'tw']
+    if (!options.colorNames) options.colorNames = defaultColorNames
+    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
     /**
      * Parse a token and see if it's a color-related utility.
      *
@@ -207,21 +213,20 @@ const requireColorModeStylesRule = {
      * - utility: the full tailwind utility, e.g. "bg-neutral-200"
      */
     function checkClassName(attrNode) {
-      const attrName = attrNode.name && attrNode.name.name
+      const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
-      const classString = getClassNames(attrNode.value)
+      const classString = getClassNames(attrNode.value, { helpers: helperNames })
       if (!classString) return
       const classNames = classString
         .split(/\s+/)
         .map((t) => t.trim())
         .filter(Boolean)
-      // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
       const keyMap = new Map() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
       for (const class_name of classNames) {
-        const parsed = evaluateClassname(class_name)
+        const parsed = evaluateClassname(class_name, { utilityClasses, colorNames })
         if (!parsed) continue
         if (keyMap.has(parsed.utility)) {
           const val = keyMap.get(parsed.utility)
@@ -250,8 +255,7 @@ const requireColorModeStylesRule = {
           if (currentColor.includes('-')) {
             const intensity = Number(
               currentColor
-                .split('-')
-                .at(1) // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
                 .split('/')
                 .at(0),
             )
@@ -275,14 +279,14 @@ const requireColorModeStylesRule = {
           },
           suggest: [
             {
-              //@ts-ignore
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: `Add missing ${missingColorMode.toLowerCase()}-mode classes`,
               fix: function (fixer) {
                 return buildAddClassFix(attrNode, classString, missingClassesSuggestions.join(' '), fixer)
               },
             },
-            //@ts-ignore
             ...missingClassesSuggestions.map((suggestedClass) => ({
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
               fix: function (fixer) {
                 return buildAddClassFix(attrNode, classString, suggestedClass, fixer)

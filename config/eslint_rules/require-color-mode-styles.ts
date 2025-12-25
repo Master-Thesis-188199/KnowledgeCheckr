@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { TSESLint } from '@typescript-eslint/utils'
+import { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import { SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
+
 type MessageIds = 'missingLight' | 'missingDark'
 
 /**
@@ -116,7 +117,7 @@ function evaluateClassname(className: string, { utilityClasses, colorNames }: Pi
 
   //* is the relevant part of the class like bg-neutral-200, ring-neutral-200 and so on based on the pre-defined types of
   const relevantClass = modifyingStyles.join('')
-  const utility = relevantClass.split('-').at(0)
+  const utility = relevantClass.split('-')[0]
 
   // console.log(`Considering '${relevantClass}'`)
 
@@ -137,7 +138,7 @@ function evaluateClassname(className: string, { utilityClasses, colorNames }: Pi
  *  - className={cn("...", "...")}
  *  - className={tw("...", "...")}
  */
-function getClassNames(attrValue: any, { helpers: helperNames }: Pick<Options, 'helpers'>) {
+function getClassNames(attrValue: TSESTree.JSXAttribute['value'], { helpers: helperNames }: Pick<Options, 'helpers'>) {
   if (!attrValue) return null
 
   // className="foo bar"
@@ -155,7 +156,6 @@ function getClassNames(attrValue: any, { helpers: helperNames }: Pick<Options, '
 
     // className={`foo bar`} (no interpolations)
     if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-      //@ts-ignore
       return expr.quasis.map((q) => q.value.cooked || '').join('')
     }
 
@@ -168,7 +168,6 @@ function getClassNames(attrValue: any, { helpers: helperNames }: Pick<Options, '
           if (arg.type === 'Literal' && typeof arg.value === 'string') {
             pieces.push(arg.value)
           } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
-            //@ts-ignore
             pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
           } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
             pieces.push(arg.right.value)
@@ -258,8 +257,8 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
      * - utility: the full tailwind utility, e.g. "bg-neutral-200"
      */
 
-    function checkClassName(attrNode: any) {
-      const attrName = attrNode.name && attrNode.name.name
+    function checkClassName(attrNode: TSESTree.JSXAttribute) {
+      const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
 
       const classString = getClassNames(attrNode.value, { helpers: helperNames })
@@ -272,17 +271,18 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
       // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
 
+      type KeyValue = Array<NonNullable<ReturnType<typeof evaluateClassname>>>
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
-      const keyMap = new Map() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
+      const keyMap = new Map<string, { lightClasses: KeyValue; darkClasses: KeyValue }>() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
 
       for (const class_name of classNames) {
         const parsed = evaluateClassname(class_name, { utilityClasses, colorNames })
         if (!parsed) continue
 
         if (keyMap.has(parsed.utility)) {
-          const val = keyMap.get(parsed.utility)
+          const val = keyMap.get(parsed.utility)!
           const prop = parsed.mode === 'light' ? 'lightClasses' : 'darkClasses'
 
           val[prop].push(parsed)
@@ -295,7 +295,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       }
 
       for (const key of keyMap.keys()) {
-        const { lightClasses, darkClasses } = keyMap.get(key)
+        const { lightClasses, darkClasses } = keyMap.get(key)!
 
         if (lightClasses.length === darkClasses.length) {
           // console.log(`${key} utility classes match light- and dark- mode styles.`)
@@ -304,7 +304,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
         const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
 
-        const missingClassesSuggestions: any[] = []
+        const missingClassesSuggestions: string[] = []
         // choose the color-mode class array that has the most classes, thus that is not missing any classes.
         for (const colorModeClass of lightClasses.length > darkClasses.length ? lightClasses : darkClasses) {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
@@ -316,8 +316,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           if (currentColor.includes('-')) {
             const intensity = Number(
               currentColor
-                .split('-')
-                .at(1) // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
                 .split('/')
                 .at(0), // [50, 100, 200, 300, 400, 500, ..., 900]
             )
@@ -340,30 +339,32 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           messageId: `missing${missingColorMode}`,
           data: {
             key,
-            lightStyles: lightClasses.map((l: any) => `'${l.className}'`).join(', '),
-            darkStyles: darkClasses.map((d: any) => `'${d.className}'`).join(', '),
+            lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
+            darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
           suggest: [
             {
-              //@ts-ignore
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: `Add missing ${missingColorMode.toLowerCase()}-mode classes`,
-              fix: function (fixer: any) {
+              fix: function (fixer: TSESLint.RuleFixer) {
                 return buildAddClassFix(attrNode, classString, missingClassesSuggestions.join(' '), fixer)
               },
             },
-            //@ts-ignore
-            ...missingClassesSuggestions.map((suggestedClass) => ({
-              desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
-              fix: function (fixer: any) {
-                return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
-              },
-            })),
+            ...missingClassesSuggestions.map(
+              (suggestedClass): SuggestionReportDescriptor<MessageIds> => ({
+                //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+                desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
+                fix: function (fixer: TSESLint.RuleFixer) {
+                  return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
+                },
+              }),
+            ),
           ],
         })
       }
     }
 
-    function buildAddClassFix(attrNode: any, classString: string, suggestedClass: any, fixer: any) {
+    function buildAddClassFix(attrNode: TSESTree.JSXAttribute, classString: string, suggestedClass: string, fixer: TSESLint.RuleFixer) {
       const value = attrNode.value
       if (!value) return null
 
