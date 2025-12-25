@@ -323,12 +323,20 @@ const requireColorModeStylesRule = {
             lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
             darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
-          suggest: missingClassesSuggestions.map((suggestedClass) => ({
-            desc: `Add missing ${missingColorMode}-mode class ${suggestedClass}`,
-            fix: function (fixer) {
-              return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
+          suggest: [
+            {
+              desc: `Add missing ${missingColorMode.toLowerCase()}-mode classes`,
+              fix: function (fixer) {
+                return buildAddClassFix(attrNode, classString, missingClassesSuggestions.join(' '), fixer)
+              },
             },
-          })),
+            ...missingClassesSuggestions.map((suggestedClass) => ({
+              desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
+              fix: function (fixer) {
+                return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
+              },
+            })),
+          ],
         })
       }
     }
