@@ -27,10 +27,41 @@ type MessageIds = 'missingLight' | 'missingDark'
  *
  */
 
+const defaultColorNames = [
+  'slate',
+  'gray',
+  'zinc',
+  'neutral',
+  'stone',
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose',
+  'black',
+  'white',
+  'inherit',
+  'current',
+  'transparent',
+]
+
 type Options = {
   utilityClasses: Array<string>
   attributes: Array<string>
   helpers: Array<string>
+  colorNames: Array<string>
 }
 
 const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
@@ -85,38 +116,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
     const attributesToCheck = options.attributes || ['className', 'class']
     const helperNames = options.helpers || ['cn', 'tw']
 
-    const defaultColorNames = [
-      'slate',
-      'gray',
-      'zinc',
-      'neutral',
-      'stone',
-      'red',
-      'orange',
-      'amber',
-      'yellow',
-      'lime',
-      'green',
-      'emerald',
-      'teal',
-      'cyan',
-      'sky',
-      'blue',
-      'indigo',
-      'violet',
-      'purple',
-      'fuchsia',
-      'pink',
-      'rose',
-      'black',
-      'white',
-      'inherit',
-      'current',
-      'transparent',
-      // Common custom palette names:
-    ]
-
-    //@ts-ignore
     const colorNames = options.colorNames || defaultColorNames
 
     /**

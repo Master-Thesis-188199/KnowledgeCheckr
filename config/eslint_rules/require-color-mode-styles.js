@@ -1,3 +1,56 @@
+/**
+ * ESLint rule: require-color-mode-styles
+ *
+ * This rule goes over every JSX element and when an element's attributes matches one of the specified attributes (default: 'class' and 'className') the rule will verify its value.
+ *
+ * Case 1: An JSX element ** has no ** attribute(s) that is specified in the 'attributes' array (by default: 'class' and 'className'): Will essentially terminate / finish the rule without issusing problems.
+ * Case 2: An JSX element ** has ** attribute(s) that are specified in the 'attributes' array (by default: 'class' and 'className'):
+ *      | The rule will now evaluate the classes that are assigned to the respective attributes using the `getClassNames` function.
+ *      | Then it goes through each classname and evaluates it by callling the `evaluateClassname` function.
+ *         The function takes in each individual className and determines the color-mode it targets and whether it modifies / uses any colors, thus determines whether it is relevenat in the context of color-modes.
+ *         This means that it first checks the color-mode that is being targetted and essentially checks whether the class uses a matchin utility class ('bg', 'text', ...) that is specified in `utilityClasses`.
+ *         Then it checks if these utility classes also use colors to eliminate classes like ("ring-2", "border-b-2") that do not change / use any colors.
+ *         In case the class in question satisfied all these conditions an object of type:
+ *           {
+ *              mode: 'light' | 'dark',
+ *              utility: typeof utilityClasses[number],    // ('text', 'bg', 'ring', ...)
+ *              className: string,                        // the original class that was passed to the function, e.g. "dark:hover:bg-neutral-200"
+ *              relevantClass: string                     // the essential part of the class, e.g. "bg-neutral-200", "ring-neutral-200"
+ *           }
+ *      | After going over all matchin attributes (e.g. 'className') and evaluating each class, to filter out irrelevant classes, the remaining color related classes are compared.
+ *      | Case 1: When the amount of color related light- and dark- mode classes match then there are both light- mode values and dark-mode values defined for the given attribute.
+ *      | Case 2: When the amount of color related light- and dark- mode classes differ then an issue will be created for the given attribute.
+ *
+ */
+const defaultColorNames = [
+  'slate',
+  'gray',
+  'zinc',
+  'neutral',
+  'stone',
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose',
+  'black',
+  'white',
+  'inherit',
+  'current',
+  'transparent',
+]
 const requireColorModeStylesRule = {
   defaultOptions: [],
   meta: {
@@ -47,37 +100,6 @@ const requireColorModeStylesRule = {
     const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
     const attributesToCheck = options.attributes || ['className', 'class']
     const helperNames = options.helpers || ['cn', 'tw']
-    const defaultColorNames = [
-      'slate',
-      'gray',
-      'zinc',
-      'neutral',
-      'stone',
-      'red',
-      'orange',
-      'amber',
-      'yellow',
-      'lime',
-      'green',
-      'emerald',
-      'teal',
-      'cyan',
-      'sky',
-      'blue',
-      'indigo',
-      'violet',
-      'purple',
-      'fuchsia',
-      'pink',
-      'rose',
-      'black',
-      'white',
-      'inherit',
-      'current',
-      'transparent',
-      // Common custom palette names:
-    ]
-    //@ts-ignore
     const colorNames = options.colorNames || defaultColorNames
     /**
      * Retrieve classnames as an array from all element-nodes.
