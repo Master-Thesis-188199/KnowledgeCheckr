@@ -36,7 +36,8 @@
     "cy:open": "yarn instrument-code && next dev & cypress open",
     "production": "yarn build-start",
     "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build-color-mode-eslint-plugin": "tsc ./config/eslint_rules/require-color-mode-styles.ts --target 'es2017' --moduleResolution 'bundler' "
   },
   "dependencies": {
     "@babel/runtime": "^7.27.0",
