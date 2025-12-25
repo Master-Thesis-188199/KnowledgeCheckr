@@ -128,6 +128,68 @@ function evaluateClassname(className: string, { utilityClasses, colorNames }: Pi
   }
 }
 
+/**
+ * Retrieve classnames as an array from all element-nodes.
+ * Supports:
+ *  - className="..."
+ *  - className={'...'}
+ *  - className={`...`} (no interpolations)
+ *  - className={cn("...", "...")}
+ *  - className={tw("...", "...")}
+ */
+function getClassNames(attrValue: any, { helpers: helperNames }: Pick<Options, 'helpers'>) {
+  if (!attrValue) return null
+
+  // className="foo bar"
+  if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+    return attrValue.value
+  }
+
+  if (attrValue.type === 'JSXExpressionContainer') {
+    const expr = attrValue.expression
+
+    // className={'foo bar'}
+    if (expr.type === 'Literal' && typeof expr.value === 'string') {
+      return expr.value
+    }
+
+    // className={`foo bar`} (no interpolations)
+    if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+      //@ts-ignore
+      return expr.quasis.map((q) => q.value.cooked || '').join('')
+    }
+
+    // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
+    if (expr.type === 'CallExpression') {
+      if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+        const pieces = []
+
+        for (const arg of expr.arguments) {
+          if (arg.type === 'Literal' && typeof arg.value === 'string') {
+            pieces.push(arg.value)
+          } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+            //@ts-ignore
+            pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
+          } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
+            pieces.push(arg.right.value)
+          } else {
+            // Dynamic argument – we can't safely know full class list.
+            // return null
+          }
+        }
+
+        // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
+
+        if (pieces.length > 0) {
+          return pieces.join(' ')
+        }
+      }
+    }
+  }
+
+  return null
+}
+
 const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
   defaultOptions: [],
   meta: {
@@ -183,68 +245,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
     const colorNames = options.colorNames || defaultColorNames
 
     /**
-     * Retrieve classnames as an array from all element-nodes.
-     * Supports:
-     *  - className="..."
-     *  - className={'...'}
-     *  - className={`...`} (no interpolations)
-     *  - className={cn("...", "...")}
-     *  - className={tw("...", "...")}
-     */
-    function getClassNames(attrValue: any) {
-      if (!attrValue) return null
-
-      // className="foo bar"
-      if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
-        return attrValue.value
-      }
-
-      if (attrValue.type === 'JSXExpressionContainer') {
-        const expr = attrValue.expression
-
-        // className={'foo bar'}
-        if (expr.type === 'Literal' && typeof expr.value === 'string') {
-          return expr.value
-        }
-
-        // className={`foo bar`} (no interpolations)
-        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-          //@ts-ignore
-          return expr.quasis.map((q) => q.value.cooked || '').join('')
-        }
-
-        // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
-        if (expr.type === 'CallExpression') {
-          if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
-            const pieces = []
-
-            for (const arg of expr.arguments) {
-              if (arg.type === 'Literal' && typeof arg.value === 'string') {
-                pieces.push(arg.value)
-              } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
-                //@ts-ignore
-                pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
-              } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
-                pieces.push(arg.right.value)
-              } else {
-                // Dynamic argument – we can't safely know full class list.
-                // return null
-              }
-            }
-
-            // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
-
-            if (pieces.length > 0) {
-              return pieces.join(' ')
-            }
-          }
-        }
-      }
-
-      return null
-    }
-
-    /**
      * Parse a token and see if it's a color-related utility.
      *
      * Returns:
@@ -261,7 +261,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       const attrName = attrNode.name && attrNode.name.name
       if (!attributesToCheck.includes(attrName)) return
 
-      const classString = getClassNames(attrNode.value)
+      const classString = getClassNames(attrNode.value, { helpers: helperNames })
       if (!classString) return
 
       const classNames = classString
