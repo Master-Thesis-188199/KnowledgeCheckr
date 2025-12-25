@@ -289,7 +289,30 @@ const requireColorModeStylesRule = {
         for (const colorModeClass of lightClasses.length > darkClasses.length ? lightClasses : darkClasses) {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
 
-          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifieds ? 'dark:' : ''}${modifiers}${colorModeClass.relevantClass}`)
+          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+          console.log(`creating suggestion for ${currentColor}`)
+          let contraryColor
+
+          if (currentColor.includes('-')) {
+            const intensity = Number(
+              currentColor
+                .split('-')
+                .at(1) // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+                .split('/')
+                .at(0), // [50, 100, 200, 300, 400, 500, ..., 900]
+            )
+
+            let opacity = ''
+            if (currentColor.includes('/')) {
+              opacity = '/' + currentColor.split('/').at(1)
+            }
+
+            contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
+          } else {
+            contraryColor = currentColor === 'white' ? 'black' : 'white'
+          }
+
+          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifieds ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
         }
 
         context.report({
