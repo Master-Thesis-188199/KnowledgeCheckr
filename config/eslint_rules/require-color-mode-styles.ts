@@ -27,19 +27,14 @@ type MessageIds = 'missingLight' | 'missingDark'
  *
  */
 
-type Options = [
-  {
-    utilityClasses: Array<string>
-    // utilityClasses: Array<'cn' | 'tw' | 'clsx'> | Array<string>
-  },
-  {
-    // attributes: Array<'bg' | 'ring' | 'shadow' | 'border' | 'text'> | Array<string>
-    attributes: Array<string>
-  },
-]
+type Options = {
+  utilityClasses: Array<string>
+  attributes: Array<string>
+  helpers: Array<string>
+}
 
-const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options> = {
-  defaultOptions: [{ utilityClasses: ['cn', 'tw', 'clsx'] }, { attributes: ['bg', 'border', 'ring', 'shadow', 'text'] }],
+const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
+  defaultOptions: [],
   meta: {
     type: 'suggestion',
     docs: {
@@ -84,19 +79,10 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options> = {
 
   create(context) {
     const sourceCode = context.getSourceCode()
-    //@ts-ignore
-    const options = (context.options && context.options[0]) || {}
+    const options = (context.options && context.options[0]) || ({} as Options)
 
-    // const utilityClasses = options[0].utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-    // const attributesToCheck = options[1].attributes || ['className', 'class']
-
-    //@ts-ignore
     const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-
-    //@ts-ignore
     const attributesToCheck = options.attributes || ['className', 'class']
-
-    //@ts-ignore
     const helperNames = options.helpers || ['cn', 'tw']
 
     const defaultColorNames = [

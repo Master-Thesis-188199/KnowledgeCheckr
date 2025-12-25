@@ -1,5 +1,5 @@
 const requireColorModeStylesRule = {
-  defaultOptions: [{ utilityClasses: ['cn', 'tw', 'clsx'] }, { attributes: ['bg', 'border', 'ring', 'shadow', 'text'] }],
+  defaultOptions: [],
   meta: {
     type: 'suggestion',
     docs: {
@@ -43,15 +43,9 @@ const requireColorModeStylesRule = {
   },
   create(context) {
     const sourceCode = context.getSourceCode()
-    //@ts-ignore
     const options = (context.options && context.options[0]) || {}
-    // const utilityClasses = options[0].utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-    // const attributesToCheck = options[1].attributes || ['className', 'class']
-    //@ts-ignore
     const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
-    //@ts-ignore
     const attributesToCheck = options.attributes || ['className', 'class']
-    //@ts-ignore
     const helperNames = options.helpers || ['cn', 'tw']
     const defaultColorNames = [
       'slate',
