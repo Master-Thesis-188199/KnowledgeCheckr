@@ -3,7 +3,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
-import requireColorModeStyles from './config/eslint_rules/require-color-mode-styles.mjs'
+import requireColorModeStyles from './config/eslint_rules/require-color-mode-styles.js'
 import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
 
 const eslintConfig = defineConfig([

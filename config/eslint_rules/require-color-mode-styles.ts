@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { TSESLint } from '@typescript-eslint/utils'
+type MessageIds = 'missingLight' | 'missingDark'
+
 /**
  * ESLint rule: require-color-mode-styles
  *
@@ -23,12 +27,24 @@
  *
  */
 
-const requireColorModeStylesRule = {
+type Options = [
+  {
+    utilityClasses: Array<string>
+    // utilityClasses: Array<'cn' | 'tw' | 'clsx'> | Array<string>
+  },
+  {
+    // attributes: Array<'bg' | 'ring' | 'shadow' | 'border' | 'text'> | Array<string>
+    attributes: Array<string>
+  },
+]
+
+const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options> = {
+  defaultOptions: [{ utilityClasses: ['cn', 'tw', 'clsx'] }, { attributes: ['bg', 'border', 'ring', 'shadow', 'text'] }],
   meta: {
     type: 'suggestion',
     docs: {
       description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
-      recommended: false,
+      // recommended: false,
     },
     hasSuggestions: true,
     schema: [
@@ -68,12 +84,19 @@ const requireColorModeStylesRule = {
 
   create(context) {
     const sourceCode = context.getSourceCode()
+    //@ts-ignore
     const options = (context.options && context.options[0]) || {}
 
+    // const utilityClasses = options[0].utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
+    // const attributesToCheck = options[1].attributes || ['className', 'class']
+
+    //@ts-ignore
     const utilityClasses = options.utilityClasses || ['bg', 'text', 'border', 'ring', 'shadow']
 
+    //@ts-ignore
     const attributesToCheck = options.attributes || ['className', 'class']
 
+    //@ts-ignore
     const helperNames = options.helpers || ['cn', 'tw']
 
     const defaultColorNames = [
@@ -107,6 +130,7 @@ const requireColorModeStylesRule = {
       // Common custom palette names:
     ]
 
+    //@ts-ignore
     const colorNames = options.colorNames || defaultColorNames
 
     /**
@@ -118,7 +142,7 @@ const requireColorModeStylesRule = {
      *  - className={cn("...", "...")}
      *  - className={tw("...", "...")}
      */
-    function getClassNames(attrValue) {
+    function getClassNames(attrValue: any) {
       if (!attrValue) return null
 
       // className="foo bar"
@@ -136,6 +160,7 @@ const requireColorModeStylesRule = {
 
         // className={`foo bar`} (no interpolations)
         if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+          //@ts-ignore
           return expr.quasis.map((q) => q.value.cooked || '').join('')
         }
 
@@ -148,6 +173,7 @@ const requireColorModeStylesRule = {
               if (arg.type === 'Literal' && typeof arg.value === 'string') {
                 pieces.push(arg.value)
               } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+                //@ts-ignore
                 pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
               } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
                 pieces.push(arg.right.value)
@@ -181,7 +207,7 @@ const requireColorModeStylesRule = {
      * - mode: "light" | "dark"
      * - utility: the full tailwind utility, e.g. "bg-neutral-200"
      */
-    function evaluateClassname(className) {
+    function evaluateClassname(className: string) {
       if (!className || typeof className !== 'string') return null
 
       const colorMode = className.includes('dark:') ? 'dark' : 'light'
@@ -203,7 +229,7 @@ const requireColorModeStylesRule = {
       //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
       const modifyingStyles = classNameArguments.filter((arg) => {
         const parts = arg.split('-')
-        const modifier = parts.at(0) // e.g. bg, ring, shadow, text, flex, ...
+        const modifier = parts.at(0)! // e.g. bg, ring, shadow, text, flex, ...
 
         const isColorModifyingClass = utilityClasses.includes(modifier) // does class start with e.g. "bg-", "ring-", "text-", ...
 
@@ -238,7 +264,7 @@ const requireColorModeStylesRule = {
       }
     }
 
-    function checkClassName(attrNode) {
+    function checkClassName(attrNode: any) {
       const attrName = attrNode.name && attrNode.name.name
       if (!attributesToCheck.includes(attrName)) return
 
@@ -247,7 +273,7 @@ const requireColorModeStylesRule = {
 
       const classNames = classString
         .split(/\s+/)
-        .map((t) => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean)
 
       // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
@@ -284,7 +310,7 @@ const requireColorModeStylesRule = {
 
         const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
 
-        const missingClassesSuggestions = []
+        const missingClassesSuggestions: any[] = []
         // choose the color-mode class array that has the most classes, thus that is not missing any classes.
         for (const colorModeClass of lightClasses.length > darkClasses.length ? lightClasses : darkClasses) {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
@@ -312,7 +338,7 @@ const requireColorModeStylesRule = {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
 
-          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifieds ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
+          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
         }
 
         context.report({
@@ -320,19 +346,21 @@ const requireColorModeStylesRule = {
           messageId: `missing${missingColorMode}`,
           data: {
             key,
-            lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-            darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+            lightStyles: lightClasses.map((l: any) => `'${l.className}'`).join(', '),
+            darkStyles: darkClasses.map((d: any) => `'${d.className}'`).join(', '),
           },
           suggest: [
             {
+              //@ts-ignore
               desc: `Add missing ${missingColorMode.toLowerCase()}-mode classes`,
-              fix: function (fixer) {
+              fix: function (fixer: any) {
                 return buildAddClassFix(attrNode, classString, missingClassesSuggestions.join(' '), fixer)
               },
             },
+            //@ts-ignore
             ...missingClassesSuggestions.map((suggestedClass) => ({
               desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
-              fix: function (fixer) {
+              fix: function (fixer: any) {
                 return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
               },
             })),
@@ -341,7 +369,7 @@ const requireColorModeStylesRule = {
       }
     }
 
-    function buildAddClassFix(attrNode, classString, suggestedClass, fixer) {
+    function buildAddClassFix(attrNode: any, classString: string, suggestedClass: any, fixer: any) {
       const value = attrNode.value
       if (!value) return null
 
