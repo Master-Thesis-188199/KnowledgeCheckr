@@ -1,4 +1,6 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import createEslintSuggestionFixer from './createEslintSuggestionFixer.js'
+import { OwnerHelperSegment, OwnerInfo, OwnerSimple } from './types.js'
 
 const DEBUG_LOGS = false
 
@@ -190,20 +192,6 @@ function getClassNames(attrValue: TSESTree.JSXAttribute['value'], { helpers: hel
   return null
 }
 
-type OwnerSimple = {
-  kind: 'simple'
-  attrValue: TSESTree.JSXAttribute['value']
-  classString: string
-}
-
-type OwnerHelperSegment = {
-  kind: 'helper-segment'
-  callExpression: TSESTree.CallExpression
-  argNode: TSESTree.Expression // Literal or TemplateLiteral (no expressions)
-  classString: string
-}
-
-type OwnerInfo = OwnerSimple | OwnerHelperSegment
 /**
  * Collect *per-class* entries with ownership information.
  *
@@ -362,66 +350,6 @@ function getClassEntries(attrValue: TSESTree.JSXAttribute['value'], helperNames:
   }
 
   return entries
-}
-
-function buildAddClassFix(attrNode: TSESTree.JSXAttribute, owner: OwnerInfo, suggestedClasses: string, fixer: TSESLint.RuleFixer, sourceCode: TSESLint.SourceCode) {
-  const value = attrNode.value
-  if (!value) return null
-
-  const appendTo = (existing: string) => (existing.trim() + ' ' + suggestedClasses).trim()
-
-  // SIMPLE: className="..." / {'...'} / `...`
-  if (owner.kind === 'simple') {
-    const target = owner.attrValue!
-    const newClassString = appendTo(owner.classString)
-
-    if (target.type === 'Literal' && typeof target.value === 'string') {
-      // preserve quote style
-      const raw = sourceCode.getText(target) // e.g. "..." or '...'
-      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-      const newText = `${quote}${newClassString}${quote}`
-      return fixer.replaceText(target, newText)
-    }
-
-    if (target.type === 'JSXExpressionContainer') {
-      const expr = target.expression
-
-      if (expr.type === 'Literal' && typeof expr.value === 'string') {
-        const raw = sourceCode.getText(expr)
-        const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-        const newText = `${quote}${newClassString}${quote}`
-        return fixer.replaceText(expr, newText)
-      }
-
-      if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-        return fixer.replaceText(expr, '`' + newClassString + '`')
-      }
-    }
-
-    return null
-  }
-
-  // HELPER SEGMENT: a specific cn/tw argument literal/template
-  if (owner.kind === 'helper-segment') {
-    const argNode = owner.argNode
-
-    // Literal argument (including logical-expression right side we stored)
-    if (argNode.type === 'Literal' && typeof argNode.value === 'string') {
-      const newClassString = appendTo(owner.classString)
-      const raw = sourceCode.getText(argNode) // e.g. "..." or '...'
-      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-      const newText = `${quote}${newClassString}${quote}`
-      return fixer.replaceText(argNode, newText)
-    }
-
-    // Template literal argument with no expressions
-    if (argNode.type === 'TemplateLiteral' && argNode.expressions.length === 0) {
-      const newClassString = appendTo(owner.classString)
-      return fixer.replaceText(argNode, '`' + newClassString + '`')
-    }
-  }
-
-  return null
 }
 
 const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
@@ -648,7 +576,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
                 .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
               fix: (fixer) => {
                 const classes = items.map((i) => i.className).join(' ')
-                return buildAddClassFix(attrNode, owner, classes, fixer, sourceCode)
+                return createEslintSuggestionFixer(attrNode, owner, classes, fixer, sourceCode)
               },
             },
             // One suggestion per missing class
@@ -656,7 +584,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
               (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
                 //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
                 desc: `Add ${missing.mode}-mode ${missing.className}`,
-                fix: (fixer) => buildAddClassFix(attrNode, owner, missing.className, fixer, sourceCode),
+                fix: (fixer) => createEslintSuggestionFixer(attrNode, owner, missing.className, fixer, sourceCode),
               }),
             ),
           ],

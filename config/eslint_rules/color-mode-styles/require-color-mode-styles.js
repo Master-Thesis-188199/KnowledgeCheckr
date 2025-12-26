@@ -1,4 +1,5 @@
-const DEBUG_LOGS = false
+import createEslintSuggestionFixer from './createEslintSuggestionFixer.js';
+const DEBUG_LOGS = false;
 /**
  * ESLint rule: require-color-mode-styles
  *
@@ -24,34 +25,34 @@ const DEBUG_LOGS = false
  *
  */
 const defaultColorNames = [
-  'slate',
-  'gray',
-  'zinc',
-  'neutral',
-  'stone',
-  'red',
-  'orange',
-  'amber',
-  'yellow',
-  'lime',
-  'green',
-  'emerald',
-  'teal',
-  'cyan',
-  'sky',
-  'blue',
-  'indigo',
-  'violet',
-  'purple',
-  'fuchsia',
-  'pink',
-  'rose',
-  'black',
-  'white',
-  'inherit',
-  'current',
-  'transparent',
-]
+    'slate',
+    'gray',
+    'zinc',
+    'neutral',
+    'stone',
+    'red',
+    'orange',
+    'amber',
+    'yellow',
+    'lime',
+    'green',
+    'emerald',
+    'teal',
+    'cyan',
+    'sky',
+    'blue',
+    'indigo',
+    'violet',
+    'purple',
+    'fuchsia',
+    'pink',
+    'rose',
+    'black',
+    'white',
+    'inherit',
+    'current',
+    'transparent',
+];
 /**
  * This function evaluate a given className by first checking which type of class it is (dark-, light- mode) and whether it is relevant in the context of color-modes. Thus, whether it uses any `utilityClasses` modifiers and any `colorNames`.
  * @param className The classname to inspect / analyze
@@ -60,45 +61,47 @@ const defaultColorNames = [
  * @returns Either null when the class was irrelevant or an object containing relevant information when the class is 'important.'
  */
 function evaluateClassname(className, { utilityClasses, colorNames }) {
-  if (!className || typeof className !== 'string') return null
-  const colorMode = className.includes('dark:') ? 'dark' : 'light'
-  // Ignore arbitrary values like "[color:red]".
-  // if (token.startsWith('[')) return null
-  //* splits classes like "dark:hover:bg-neutral-200" into ['dark', 'hover', 'bg-neutral-200]
-  const classNameArguments = className
-    .split(':')
-    .filter(Boolean)
-    .filter((arg) => arg.includes('-')) // strip "non-modifying" arguments like "dark", "hover", "active", "border"
-  if (classNameArguments.length === 0) return null
-  //* `classNameArguments` array should now only have a length of 1, with the actual class like "border-b-2", "ring-2", "ring-neutral-200", "text-neutral-200"
-  //   --> now strip the non-modifying styles
-  //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
-  const modifyingStyles = classNameArguments.filter((arg) => {
-    const parts = arg.split('-')
-    const modifier = parts[0] // e.g. bg, ring, shadow, text, flex, ...
-    const isColorModifyingClass = utilityClasses.includes(modifier) // does class start with e.g. "bg-", "ring-", "text-", ...
-    const color = parts[1] // e.g. "black", "white", "neutral", "2" [ring-2], ...
-    const hasColor = colorNames.includes(color)
-    return isColorModifyingClass && hasColor
-  })
-  //* classname does not modify colors, like ring-2, p-2, border-b-2 --> irreleavnt
-  if (modifyingStyles.length === 0) {
-    return null
-  }
-  if (modifyingStyles.length > 1) {
-    console.error(`While parsing a classname an unexpected output occured. Class: '${modifyingStyles.join(':')}' was categorized as relevant but has an invalid structure! \nDiscarding class`)
-    return null
-  }
-  //* is the relevant part of the class like bg-neutral-200, ring-neutral-200 and so on based on the pre-defined types of
-  const relevantClass = modifyingStyles.join('')
-  const utility = relevantClass.split('-')[0]
-  // console.log(`Considering '${relevantClass}'`)
-  return {
-    mode: colorMode,
-    utility,
-    className,
-    relevantClass,
-  }
+    if (!className || typeof className !== 'string')
+        return null;
+    const colorMode = className.includes('dark:') ? 'dark' : 'light';
+    // Ignore arbitrary values like "[color:red]".
+    // if (token.startsWith('[')) return null
+    //* splits classes like "dark:hover:bg-neutral-200" into ['dark', 'hover', 'bg-neutral-200]
+    const classNameArguments = className
+        .split(':')
+        .filter(Boolean)
+        .filter((arg) => arg.includes('-')); // strip "non-modifying" arguments like "dark", "hover", "active", "border"
+    if (classNameArguments.length === 0)
+        return null;
+    //* `classNameArguments` array should now only have a length of 1, with the actual class like "border-b-2", "ring-2", "ring-neutral-200", "text-neutral-200"
+    //   --> now strip the non-modifying styles
+    //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
+    const modifyingStyles = classNameArguments.filter((arg) => {
+        const parts = arg.split('-');
+        const modifier = parts[0]; // e.g. bg, ring, shadow, text, flex, ...
+        const isColorModifyingClass = utilityClasses.includes(modifier); // does class start with e.g. "bg-", "ring-", "text-", ...
+        const color = parts[1]; // e.g. "black", "white", "neutral", "2" [ring-2], ...
+        const hasColor = colorNames.includes(color);
+        return isColorModifyingClass && hasColor;
+    });
+    //* classname does not modify colors, like ring-2, p-2, border-b-2 --> irreleavnt
+    if (modifyingStyles.length === 0) {
+        return null;
+    }
+    if (modifyingStyles.length > 1) {
+        console.error(`While parsing a classname an unexpected output occured. Class: '${modifyingStyles.join(':')}' was categorized as relevant but has an invalid structure! \nDiscarding class`);
+        return null;
+    }
+    //* is the relevant part of the class like bg-neutral-200, ring-neutral-200 and so on based on the pre-defined types of
+    const relevantClass = modifyingStyles.join('');
+    const utility = relevantClass.split('-')[0];
+    // console.log(`Considering '${relevantClass}'`)
+    return {
+        mode: colorMode,
+        utility,
+        className,
+        relevantClass,
+    };
 }
 /**
  * Retrieve classnames as an array from all element-nodes.
@@ -110,45 +113,49 @@ function evaluateClassname(className, { utilityClasses, colorNames }) {
  *  - className={tw("...", "...")}
  */
 function getClassNames(attrValue, { helpers: helperNames }) {
-  if (!attrValue) return null
-  // className="foo bar"
-  if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
-    return attrValue.value
-  }
-  if (attrValue.type === 'JSXExpressionContainer') {
-    const expr = attrValue.expression
-    // className={'foo bar'}
-    if (expr.type === 'Literal' && typeof expr.value === 'string') {
-      return expr.value
+    if (!attrValue)
+        return null;
+    // className="foo bar"
+    if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+        return attrValue.value;
     }
-    // className={`foo bar`} (no interpolations)
-    if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-      return expr.quasis.map((q) => q.value.cooked || '').join('')
-    }
-    // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
-    if (expr.type === 'CallExpression') {
-      if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
-        const pieces = []
-        for (const arg of expr.arguments) {
-          if (arg.type === 'Literal' && typeof arg.value === 'string') {
-            pieces.push(arg.value)
-          } else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
-            pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''))
-          } else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
-            pieces.push(arg.right.value)
-          } else {
-            // Dynamic argument – we can't safely know full class list.
-            // return null
-          }
+    if (attrValue.type === 'JSXExpressionContainer') {
+        const expr = attrValue.expression;
+        // className={'foo bar'}
+        if (expr.type === 'Literal' && typeof expr.value === 'string') {
+            return expr.value;
         }
-        // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
-        if (pieces.length > 0) {
-          return pieces.join(' ')
+        // className={`foo bar`} (no interpolations)
+        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+            return expr.quasis.map((q) => q.value.cooked || '').join('');
         }
-      }
+        // className={cn("foo bar", "baz")} or className={tw("foo", "bar")}
+        if (expr.type === 'CallExpression') {
+            if (expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+                const pieces = [];
+                for (const arg of expr.arguments) {
+                    if (arg.type === 'Literal' && typeof arg.value === 'string') {
+                        pieces.push(arg.value);
+                    }
+                    else if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+                        pieces.push(arg.quasis.map((q) => q.value.cooked || '').join(''));
+                    }
+                    else if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal') {
+                        pieces.push(arg.right.value);
+                    }
+                    else {
+                        // Dynamic argument – we can't safely know full class list.
+                        // return null
+                    }
+                }
+                // console.log(`collected ${expr.callee.name} classes: \n${pieces.map((c) => `'${c}'`).join(' ')}`)
+                if (pieces.length > 0) {
+                    return pieces.join(' ');
+                }
+            }
+        }
     }
-  }
-  return null
+    return null;
 }
 /**
  * Collect *per-class* entries with ownership information.
@@ -161,392 +168,348 @@ function getClassNames(attrValue, { helpers: helperNames }) {
  *   - each segment has its own classString, which we split into classNames.
  */
 function getClassEntries(attrValue, helperNames) {
-  const entries = []
-  if (!attrValue) return entries
-  // className="foo bar"
-  if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
-    const classString = attrValue.value
-    const classNames = classString
-      .split(/\s+/)
-      .map((t) => t.trim())
-      .filter(Boolean)
-    const owner = {
-      kind: 'simple',
-      attrValue,
-      classString,
-    }
-    for (const cls of classNames) {
-      entries.push({ className: cls, owner })
-    }
-    return entries
-  }
-  if (attrValue.type === 'JSXExpressionContainer') {
-    const expr = attrValue.expression
-    // className={'foo bar'}
-    if (expr.type === 'Literal' && typeof expr.value === 'string') {
-      const classString = expr.value
-      const classNames = classString
-        .split(/\s+/)
-        .map((t) => t.trim())
-        .filter(Boolean)
-      const owner = {
-        kind: 'simple',
-        attrValue,
-        classString,
-      }
-      for (const cls of classNames) {
-        entries.push({ className: cls, owner })
-      }
-      return entries
-    }
-    // className={`foo bar`} (no interpolations)
-    if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-      const classString = expr.quasis.map((q) => q.value.cooked || '').join('')
-      const classNames = classString
-        .split(/\s+/)
-        .map((t) => t.trim())
-        .filter(Boolean)
-      const owner = {
-        kind: 'simple',
-        attrValue,
-        classString,
-      }
-      for (const cls of classNames) {
-        entries.push({ className: cls, owner })
-      }
-      return entries
-    }
-    // className={cn("...", "...")} or className={tw("...", "...")}
-    if (expr.type === 'CallExpression' && expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
-      const callExpression = expr
-      callExpression.arguments.forEach((arg, index) => {
-        // argument: "foo bar"
-        if (arg.type === 'Literal' && typeof arg.value === 'string') {
-          const classString = arg.value
-          const classNames = classString
+    const entries = [];
+    if (!attrValue)
+        return entries;
+    // className="foo bar"
+    if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+        const classString = attrValue.value;
+        const classNames = classString
             .split(/\s+/)
             .map((t) => t.trim())
-            .filter(Boolean)
-          const owner = {
-            kind: 'helper-segment',
-            callExpression,
-            argNode: arg,
+            .filter(Boolean);
+        const owner = {
+            kind: 'simple',
+            attrValue,
             classString,
-          }
-          for (const cls of classNames) {
-            entries.push({ className: cls, owner })
-          }
-          return
+        };
+        for (const cls of classNames) {
+            entries.push({ className: cls, owner });
         }
-        // argument: `foo bar`
-        if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
-          const classString = arg.quasis.map((q) => q.value.cooked || '').join('')
-          const classNames = classString
-            .split(/\s+/)
-            .map((t) => t.trim())
-            .filter(Boolean)
-          const owner = {
-            kind: 'helper-segment',
-            callExpression,
-            argNode: arg,
-            classString,
-          }
-          for (const cls of classNames) {
-            entries.push({ className: cls, owner })
-          }
-          return
+        return entries;
+    }
+    if (attrValue.type === 'JSXExpressionContainer') {
+        const expr = attrValue.expression;
+        // className={'foo bar'}
+        if (expr.type === 'Literal' && typeof expr.value === 'string') {
+            const classString = expr.value;
+            const classNames = classString
+                .split(/\s+/)
+                .map((t) => t.trim())
+                .filter(Boolean);
+            const owner = {
+                kind: 'simple',
+                attrValue,
+                classString,
+            };
+            for (const cls of classNames) {
+                entries.push({ className: cls, owner });
+            }
+            return entries;
         }
-        // argument: cond && "foo bar"
-        if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal' && typeof arg.right.value === 'string') {
-          const literal = arg.right
-          const classString = literal.value
-          const classNames = classString
-            .split(/\s+/)
-            .map((t) => t.trim())
-            .filter(Boolean)
-          const owner = {
-            kind: 'helper-segment',
-            callExpression,
-            argNode: literal,
-            classString,
-          }
-          for (const cls of classNames) {
-            entries.push({ className: cls, owner })
-          }
-          return
+        // className={`foo bar`} (no interpolations)
+        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+            const classString = expr.quasis.map((q) => q.value.cooked || '').join('');
+            const classNames = classString
+                .split(/\s+/)
+                .map((t) => t.trim())
+                .filter(Boolean);
+            const owner = {
+                kind: 'simple',
+                attrValue,
+                classString,
+            };
+            for (const cls of classNames) {
+                entries.push({ className: cls, owner });
+            }
+            return entries;
         }
-        // other arg shapes are ignored
-      })
-      return entries
+        // className={cn("...", "...")} or className={tw("...", "...")}
+        if (expr.type === 'CallExpression' && expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+            const callExpression = expr;
+            callExpression.arguments.forEach((arg, index) => {
+                // argument: "foo bar"
+                if (arg.type === 'Literal' && typeof arg.value === 'string') {
+                    const classString = arg.value;
+                    const classNames = classString
+                        .split(/\s+/)
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                    const owner = {
+                        kind: 'helper-segment',
+                        callExpression,
+                        argNode: arg,
+                        classString,
+                    };
+                    for (const cls of classNames) {
+                        entries.push({ className: cls, owner });
+                    }
+                    return;
+                }
+                // argument: `foo bar`
+                if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+                    const classString = arg.quasis.map((q) => q.value.cooked || '').join('');
+                    const classNames = classString
+                        .split(/\s+/)
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                    const owner = {
+                        kind: 'helper-segment',
+                        callExpression,
+                        argNode: arg,
+                        classString,
+                    };
+                    for (const cls of classNames) {
+                        entries.push({ className: cls, owner });
+                    }
+                    return;
+                }
+                // argument: cond && "foo bar"
+                if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal' && typeof arg.right.value === 'string') {
+                    const literal = arg.right;
+                    const classString = literal.value;
+                    const classNames = classString
+                        .split(/\s+/)
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                    const owner = {
+                        kind: 'helper-segment',
+                        callExpression,
+                        argNode: literal,
+                        classString,
+                    };
+                    for (const cls of classNames) {
+                        entries.push({ className: cls, owner });
+                    }
+                    return;
+                }
+                // other arg shapes are ignored
+            });
+            return entries;
+        }
     }
-  }
-  return entries
-}
-function buildAddClassFix(attrNode, owner, suggestedClasses, fixer, sourceCode) {
-  const value = attrNode.value
-  if (!value) return null
-  const appendTo = (existing) => (existing.trim() + ' ' + suggestedClasses).trim()
-  // SIMPLE: className="..." / {'...'} / `...`
-  if (owner.kind === 'simple') {
-    const target = owner.attrValue
-    const newClassString = appendTo(owner.classString)
-    if (target.type === 'Literal' && typeof target.value === 'string') {
-      // preserve quote style
-      const raw = sourceCode.getText(target) // e.g. "..." or '...'
-      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-      const newText = `${quote}${newClassString}${quote}`
-      return fixer.replaceText(target, newText)
-    }
-    if (target.type === 'JSXExpressionContainer') {
-      const expr = target.expression
-      if (expr.type === 'Literal' && typeof expr.value === 'string') {
-        const raw = sourceCode.getText(expr)
-        const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-        const newText = `${quote}${newClassString}${quote}`
-        return fixer.replaceText(expr, newText)
-      }
-      if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-        return fixer.replaceText(expr, '`' + newClassString + '`')
-      }
-    }
-    return null
-  }
-  // HELPER SEGMENT: a specific cn/tw argument literal/template
-  if (owner.kind === 'helper-segment') {
-    const argNode = owner.argNode
-    // Literal argument (including logical-expression right side we stored)
-    if (argNode.type === 'Literal' && typeof argNode.value === 'string') {
-      const newClassString = appendTo(owner.classString)
-      const raw = sourceCode.getText(argNode) // e.g. "..." or '...'
-      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
-      const newText = `${quote}${newClassString}${quote}`
-      return fixer.replaceText(argNode, newText)
-    }
-    // Template literal argument with no expressions
-    if (argNode.type === 'TemplateLiteral' && argNode.expressions.length === 0) {
-      const newClassString = appendTo(owner.classString)
-      return fixer.replaceText(argNode, '`' + newClassString + '`')
-    }
-  }
-  return null
+    return entries;
 }
 const requireColorModeStylesRule = {
-  defaultOptions: [],
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
-      // recommended: false,
-    },
-    hasSuggestions: true,
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          // Which utility prefixes count as 'color' utilities.
-          utilityClasses: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          // Which JSX attribute names to inspect (e.g. className, class)
-          attributes: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          // Helper function names like `cn` and `tw`
-          helpers: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          // Allowed color names (first token after the prefix).
-          // Example: "neutral" in "bg-neutral-200".
-          colorNames: {
-            type: 'array',
-            items: { type: 'string' },
-          },
+    defaultOptions: [],
+    meta: {
+        type: 'suggestion',
+        docs: {
+            description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
+            // recommended: false,
         },
-        additionalProperties: false,
-      },
-    ],
-    messages: {
-      missingDark: "Element is missing dark-mode style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
-      missingLight: "Element is missing light-mode color style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
-    },
-  },
-  create(context) {
-    const sourceCode = context.getSourceCode()
-    const options = (context.options && context.options[0]) || {}
-    if (!options.utilityClasses) options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow']
-    if (!options.attributes) options.attributes = ['className', 'class']
-    if (!options.helpers) options.helpers = ['cn', 'tw']
-    if (!options.colorNames) options.colorNames = defaultColorNames
-    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
-    function checkClassName(attrNode) {
-      var _a
-      const attrName = attrNode.name && attrNode.name.name.toString()
-      if (!attributesToCheck.includes(attrName)) return
-      const entries = getClassEntries(attrNode.value, helperNames)
-      if (entries.length === 0) return
-      const keyMap = new Map() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
-      for (const { className, owner } of entries) {
-        const _parsed = evaluateClassname(className, { utilityClasses, colorNames })
-        if (!_parsed) continue
-        const parsed = Object.assign(Object.assign({}, _parsed), { owner })
-        if (keyMap.has(_parsed.utility)) {
-          const val = keyMap.get(_parsed.utility)
-          const prop = _parsed.mode === 'light' ? 'lightClasses' : 'darkClasses'
-          val[prop].push(parsed)
-          keyMap.set(parsed.utility, val)
-        } else {
-          keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] })
-        }
-      }
-      const nodeMissingClasses = []
-      for (const key of keyMap.keys()) {
-        const { lightClasses, darkClasses } = keyMap.get(key)
-        if (lightClasses.length === darkClasses.length) {
-          // console.log(`${key} utility classes match light- and dark- mode styles.`)
-          continue
-        }
-        if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
-          // console.log(lightClasses, darkClasses, '-----\n\n')
-        }
-        const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
-        //* Find matching classes
-        const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
-        const inferiorMode = lightClasses.length > darkClasses.length ? darkClasses : lightClasses
-        const missingClasses = []
-        // choose the color-mode class array that has the most classes, thus that is not missing any classes.
-        // This loop iterates over the superior-class array and would create contrary suggestions for each of the superiorClasses, because there is no check yet to consider existing inferior-classes
-        for (const superior of superiorMode) {
-          // -- start: check for eliminating matchin opposite classes from creating suggestions
-          //* Filter out those color-mode classes that match (that exist for both modes)
-          // eliminate classes from both the superiorMode and inferiorMode that are indeed matching, to only keep considering truly missing classes with no opposites.
-          const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString)
-          const removeDarkModifier = (input) => (input === null || input === void 0 ? void 0 : input.replace('dark:', ''))
-          const haveSameModifiers =
-            removeDarkModifier(
-              (_a = inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.className) === null || _a === void 0
-                ? void 0
-                : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, ''),
-            ) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
-          if (haveSameModifiers && inSameClassString) continue
-          if (DEBUG_LOGS) console.log(`'${superior.className}' has no matching opposite.`)
-          // -- end: check for eliminating matchin opposite classes from creating suggestions
-          const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
-          const currentColor = superior.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
-          let contraryColor
-          if (currentColor.includes('-')) {
-            const intensity = Number(
-              currentColor
-                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
-                .split('/')
-                .at(0),
-            )
-            let opacity = ''
-            if (currentColor.includes('/')) {
-              opacity = '/' + currentColor.split('/').at(1)
-            }
-            contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
-          } else {
-            contraryColor = currentColor === 'white' ? 'black' : 'white'
-          }
-          if (DEBUG_LOGS) console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
-          missingClasses.push({
-            utility: superior.utility,
-            mode: missingColorMode.toLowerCase(),
-            className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
-            owner: superior.owner,
-            relevantClass: `${superior.utility}-${contraryColor}`,
-          })
-        }
-        nodeMissingClasses.push(...missingClasses)
-      }
-      if (nodeMissingClasses.length === 0) return
-      // Group missing suggestions by the node they should edit
-      const missingByOwner = new Map()
-      const ownerKey = (owner) => {
-        var _a, _b, _c, _d
-        // Prefer range; fall back to loc if needed
-        if (owner.kind === 'helper-segment') {
-          return owner.argNode.range
-            ? `helper:${owner.argNode.range[0]}-${owner.argNode.range[1]}`
-            : `helper:${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}`
-        }
-        // simple: attach to the attribute value (or the attribute itself)
-        const val = owner.attrValue
-
-        if (val && 'range' in val && Array.isArray(val.range)) {
-          const r = val.range
-          return `simple:${r[0]}-${r[1]}`
-        }
-        return attrNode.range
-          ? `simple:${attrNode.range[0]}-${attrNode.range[1]}`
-          : `simple:${(_c = attrNode.loc) === null || _c === void 0 ? void 0 : _c.start.line}:${(_d = attrNode.loc) === null || _d === void 0 ? void 0 : _d.start.column}`
-      }
-      for (const m of nodeMissingClasses) {
-        const k = ownerKey(m.owner)
-        const existing = missingByOwner.get(k)
-        if (existing) existing.items.push(m)
-        else missingByOwner.set(k, { owner: m.owner, items: [m] })
-      }
-      //* Emit one report per owner
-      for (const { owner, items } of missingByOwner.values()) {
-        // Decide where to anchor the diagnostic:
-        // - helper: anchor to the specific literal in cn(...) arg (the line/segment)
-        // - simple: anchor to the attribute itself
-        const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode
-        // Optional: nicer message content – summarize utilities & modes
-        const utilities = [...new Set(items.map((i) => i.utility))].join(', ')
-        const modes = [...new Set(items.map((i) => i.mode))].join(', ')
-        context.report({
-          node: reportNode,
-          messageId: modes.includes('dark') ? 'missingDark' : 'missingLight',
-          data: {
-            key: utilities,
-            // These two fields are required by your message template; we can fill them with something meaningful:
-            lightStyles:
-              items
-                .filter((i) => i.mode === 'light')
-                .map((i) => `'${i.className}'`)
-                .join(', ') || '—',
-            darkStyles:
-              items
-                .filter((i) => i.mode === 'dark')
-                .map((i) => `'${i.className}'`)
-                .join(', ') || '—',
-          },
-          suggest: [
-            // Add all missing for this owner (single click)
+        hasSuggestions: true,
+        schema: [
             {
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: `Add ${utilities} classes ${items
-                .slice(0, 3)
-                .map((i) => `'${i.className}'`)
-                .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
-              fix: (fixer) => {
-                const classes = items.map((i) => i.className).join(' ')
-                return buildAddClassFix(attrNode, owner, classes, fixer, sourceCode)
-              },
+                type: 'object',
+                properties: {
+                    // Which utility prefixes count as 'color' utilities.
+                    utilityClasses: {
+                        type: 'array',
+                        items: { type: 'string' },
+                    },
+                    // Which JSX attribute names to inspect (e.g. className, class)
+                    attributes: {
+                        type: 'array',
+                        items: { type: 'string' },
+                    },
+                    // Helper function names like `cn` and `tw`
+                    helpers: {
+                        type: 'array',
+                        items: { type: 'string' },
+                    },
+                    // Allowed color names (first token after the prefix).
+                    // Example: "neutral" in "bg-neutral-200".
+                    colorNames: {
+                        type: 'array',
+                        items: { type: 'string' },
+                    },
+                },
+                additionalProperties: false,
             },
-            // One suggestion per missing class
-            ...items.map((missing) => ({
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: `Add ${missing.mode}-mode ${missing.className}`,
-              fix: (fixer) => buildAddClassFix(attrNode, owner, missing.className, fixer, sourceCode),
-            })),
-          ],
-        })
-      }
-    }
-    return {
-      JSXAttribute: checkClassName,
-    }
-  },
-}
+        ],
+        messages: {
+            missingDark: "Element is missing dark-mode style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
+            missingLight: "Element is missing light-mode color style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
+        },
+    },
+    create(context) {
+        const sourceCode = context.getSourceCode();
+        const options = (context.options && context.options[0]) || {};
+        if (!options.utilityClasses)
+            options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow'];
+        if (!options.attributes)
+            options.attributes = ['className', 'class'];
+        if (!options.helpers)
+            options.helpers = ['cn', 'tw'];
+        if (!options.colorNames)
+            options.colorNames = defaultColorNames;
+        const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options;
+        function checkClassName(attrNode) {
+            var _a;
+            const attrName = attrNode.name && attrNode.name.name.toString();
+            if (!attributesToCheck.includes(attrName))
+                return;
+            const entries = getClassEntries(attrNode.value, helperNames);
+            if (entries.length === 0)
+                return;
+            const keyMap = new Map(); // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
+            for (const { className, owner } of entries) {
+                const _parsed = evaluateClassname(className, { utilityClasses, colorNames });
+                if (!_parsed)
+                    continue;
+                const parsed = Object.assign(Object.assign({}, _parsed), { owner });
+                if (keyMap.has(_parsed.utility)) {
+                    const val = keyMap.get(_parsed.utility);
+                    const prop = _parsed.mode === 'light' ? 'lightClasses' : 'darkClasses';
+                    val[prop].push(parsed);
+                    keyMap.set(parsed.utility, val);
+                }
+                else {
+                    keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] });
+                }
+            }
+            const nodeMissingClasses = [];
+            for (const key of keyMap.keys()) {
+                const { lightClasses, darkClasses } = keyMap.get(key);
+                if (lightClasses.length === darkClasses.length) {
+                    // console.log(`${key} utility classes match light- and dark- mode styles.`)
+                    continue;
+                }
+                if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
+                    // console.log(lightClasses, darkClasses, '-----\n\n')
+                }
+                const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light';
+                //* Find matching classes
+                const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses;
+                const inferiorMode = lightClasses.length > darkClasses.length ? darkClasses : lightClasses;
+                const missingClasses = [];
+                // choose the color-mode class array that has the most classes, thus that is not missing any classes.
+                // This loop iterates over the superior-class array and would create contrary suggestions for each of the superiorClasses, because there is no check yet to consider existing inferior-classes
+                for (const superior of superiorMode) {
+                    // -- start: check for eliminating matchin opposite classes from creating suggestions
+                    //* Filter out those color-mode classes that match (that exist for both modes)
+                    // eliminate classes from both the superiorMode and inferiorMode that are indeed matching, to only keep considering truly missing classes with no opposites.
+                    const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString);
+                    const removeDarkModifier = (input) => input === null || input === void 0 ? void 0 : input.replace('dark:', '');
+                    const haveSameModifiers = removeDarkModifier((_a = inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.className) === null || _a === void 0 ? void 0 : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''));
+                    if (haveSameModifiers && inSameClassString)
+                        continue;
+                    if (DEBUG_LOGS)
+                        console.log(`'${superior.className}' has no matching opposite.`);
+                    // -- end: check for eliminating matchin opposite classes from creating suggestions
+                    const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, ''); // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+                    const currentColor = superior.relevantClass.split('-').slice(1).join('-'); // "red-200", "neutral-200", "white"
+                    let contraryColor;
+                    if (currentColor.includes('-')) {
+                        const intensity = Number(currentColor
+                            .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+                            .split('/')
+                            .at(0));
+                        let opacity = '';
+                        if (currentColor.includes('/')) {
+                            opacity = '/' + currentColor.split('/').at(1);
+                        }
+                        contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`;
+                    }
+                    else {
+                        contraryColor = currentColor === 'white' ? 'black' : 'white';
+                    }
+                    if (DEBUG_LOGS)
+                        console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`);
+                    missingClasses.push({
+                        utility: superior.utility,
+                        mode: missingColorMode.toLowerCase(),
+                        className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
+                        owner: superior.owner,
+                        relevantClass: `${superior.utility}-${contraryColor}`,
+                    });
+                }
+                nodeMissingClasses.push(...missingClasses);
+            }
+            if (nodeMissingClasses.length === 0)
+                return;
+            // Group missing suggestions by the node they should edit
+            const missingByOwner = new Map();
+            const ownerKey = (owner) => {
+                var _a, _b, _c, _d;
+                // Prefer range; fall back to loc if needed
+                if (owner.kind === 'helper-segment') {
+                    return owner.argNode.range ? `helper:${owner.argNode.range[0]}-${owner.argNode.range[1]}` : `helper:${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}`;
+                }
+                // simple: attach to the attribute value (or the attribute itself)
+                const val = owner.attrValue;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                if (val && 'range' in val && Array.isArray(val.range)) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const r = val.range;
+                    return `simple:${r[0]}-${r[1]}`;
+                }
+                return attrNode.range ? `simple:${attrNode.range[0]}-${attrNode.range[1]}` : `simple:${(_c = attrNode.loc) === null || _c === void 0 ? void 0 : _c.start.line}:${(_d = attrNode.loc) === null || _d === void 0 ? void 0 : _d.start.column}`;
+            };
+            for (const m of nodeMissingClasses) {
+                const k = ownerKey(m.owner);
+                const existing = missingByOwner.get(k);
+                if (existing)
+                    existing.items.push(m);
+                else
+                    missingByOwner.set(k, { owner: m.owner, items: [m] });
+            }
+            //* Emit one report per owner
+            for (const { owner, items } of missingByOwner.values()) {
+                // Decide where to anchor the diagnostic:
+                // - helper: anchor to the specific literal in cn(...) arg (the line/segment)
+                // - simple: anchor to the attribute itself
+                const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode;
+                // Optional: nicer message content – summarize utilities & modes
+                const utilities = [...new Set(items.map((i) => i.utility))].join(', ');
+                const modes = [...new Set(items.map((i) => i.mode))].join(', ');
+                context.report({
+                    node: reportNode,
+                    messageId: (modes.includes('dark') ? 'missingDark' : 'missingLight'),
+                    data: {
+                        key: utilities,
+                        // These two fields are required by your message template; we can fill them with something meaningful:
+                        lightStyles: items
+                            .filter((i) => i.mode === 'light')
+                            .map((i) => `'${i.className}'`)
+                            .join(', ') || '—',
+                        darkStyles: items
+                            .filter((i) => i.mode === 'dark')
+                            .map((i) => `'${i.className}'`)
+                            .join(', ') || '—',
+                    },
+                    suggest: [
+                        // Add all missing for this owner (single click)
+                        {
+                            //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+                            desc: `Add ${utilities} classes ${items
+                                .slice(0, 3)
+                                .map((i) => `'${i.className}'`)
+                                .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
+                            fix: (fixer) => {
+                                const classes = items.map((i) => i.className).join(' ');
+                                return createEslintSuggestionFixer(attrNode, owner, classes, fixer, sourceCode);
+                            },
+                        },
+                        // One suggestion per missing class
+                        ...items.map((missing) => ({
+                            //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+                            desc: `Add ${missing.mode}-mode ${missing.className}`,
+                            fix: (fixer) => createEslintSuggestionFixer(attrNode, owner, missing.className, fixer, sourceCode),
+                        })),
+                    ],
+                });
+            }
+        }
+        return {
+            JSXAttribute: checkClassName,
+        };
+    },
+};
 const plugin = {
-  rules: {
-    'require-color-mode-styles': requireColorModeStylesRule,
-  },
-}
-export default plugin
+    rules: {
+        'require-color-mode-styles': requireColorModeStylesRule,
+    },
+};
+export default plugin;
