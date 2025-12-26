@@ -2,6 +2,7 @@
   "name": "knowledgecheckr",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "semantic-release": "semantic-release",
     "dev": "next dev --turbopack",
@@ -36,7 +37,8 @@
     "cy:open": "yarn instrument-code && next dev & cypress open",
     "production": "yarn build-start",
     "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build-color-mode-eslint-plugin": "tsc ./config/eslint_rules/color-mode-styles/require-color-mode-styles.ts --target 'es2017' --moduleResolution 'bundler' "
   },
   "dependencies": {
     "@babel/runtime": "^7.27.0",
@@ -61,6 +63,7 @@
     "@semantic-release/github": "^11.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
     "@sentry/nextjs": "^10.26.0",
+    "@typescript-eslint/utils": "^8.50.1",
     "better-auth": "^1.2.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
