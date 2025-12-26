@@ -1,3 +1,4 @@
+const DEBUG_LOGS = false
 /**
  * ESLint rule: require-color-mode-styles
  *
@@ -437,27 +438,12 @@ const requireColorModeStylesRule = {
     if (!options.helpers) options.helpers = ['cn', 'tw']
     if (!options.colorNames) options.colorNames = defaultColorNames
     const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
-    /**
-     * Parse a token and see if it's a color-related utility.
-     *
-     * Returns:
-     *   null if not color-related.
-     *   { key, mode, utility } otherwise.
-     *
-     * - key: "<variants...>:<prefix>" (without `dark:`)
-     *   e.g. "bg", "hover:bg", "md:hover:bg"
-     * - mode: "light" | "dark"
-     * - utility: the full tailwind utility, e.g. "bg-neutral-200"
-     */
     function checkClassName(attrNode) {
       var _a
       const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
-      /**
-       * key -> { lightUtilities: string[], darkUtilities: string[] }
-       */
       const keyMap = new Map() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
       for (const { className, owner } of entries) {
         const _parsed = evaluateClassname(className, { utilityClasses, colorNames })
@@ -471,7 +457,6 @@ const requireColorModeStylesRule = {
         } else {
           keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] })
         }
-        // console.log('Parsed Result: ', parsed)
       }
       const nodeMissingClasses = []
       for (const key of keyMap.keys()) {
@@ -503,7 +488,7 @@ const requireColorModeStylesRule = {
                 : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, ''),
             ) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
           if (haveSameModifiers && inSameClassString) continue
-          console.log(`'${superior.className}' has no matching opposite.`)
+          if (DEBUG_LOGS) console.log(`'${superior.className}' has no matching opposite.`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
           const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
           const currentColor = superior.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
@@ -523,7 +508,7 @@ const requireColorModeStylesRule = {
           } else {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
-          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
+          if (DEBUG_LOGS) console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
           missingClasses.push({
             utility: superior.utility,
             mode: missingColorMode.toLowerCase(),
@@ -533,27 +518,6 @@ const requireColorModeStylesRule = {
           })
         }
         nodeMissingClasses.push(...missingClasses)
-        console.log('Missing: \n', missingClasses)
-        // context.report({
-        //   node: attrNode,
-        //   messageId: `missing${missingColorMode}`,
-        //   data: {
-        //     key,
-        //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-        //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
-        //   },
-        //   suggest: [
-        //     missingClasses.map(
-        //       (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
-        //         //@ts-expect-error
-        //         desc: `Add ${missing.mode}-mode ${missing.className}`,
-        //         fix: (fixer): ReturnType<ReportFixFunction> => {
-        //           return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
-        //         },
-        //       }),
-        //     )[0],
-        //   ],
-        // })
       }
       if (nodeMissingClasses.length === 0) return
       // Group missing suggestions by the node they should edit

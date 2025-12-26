@@ -1,6 +1,8 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
 
+const DEBUG_LOGS = false
+
 type MessageIds = 'missingLight' | 'missingDark'
 type MissingClassType = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
 /**
@@ -552,19 +554,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
     const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
 
-    /**
-     * Parse a token and see if it's a color-related utility.
-     *
-     * Returns:
-     *   null if not color-related.
-     *   { key, mode, utility } otherwise.
-     *
-     * - key: "<variants...>:<prefix>" (without `dark:`)
-     *   e.g. "bg", "hover:bg", "md:hover:bg"
-     * - mode: "light" | "dark"
-     * - utility: the full tailwind utility, e.g. "bg-neutral-200"
-     */
-
     function checkClassName(attrNode: TSESTree.JSXAttribute) {
       const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
@@ -572,9 +561,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
 
-      /**
-       * key -> { lightUtilities: string[], darkUtilities: string[] }
-       */
       const keyMap = new Map<string, { lightClasses: MissingClassType; darkClasses: MissingClassType }>() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
 
       for (const { className, owner } of entries) {
@@ -592,8 +578,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
         } else {
           keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] })
         }
-
-        // console.log('Parsed Result: ', parsed)
       }
 
       const nodeMissingClasses: MissingClassType = []
@@ -632,7 +616,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             removeDarkModifier(inSameClassString?.className?.replace(inSameClassString?.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
           if (haveSameModifiers && inSameClassString) continue
 
-          console.log(`'${superior.className}' has no matching opposite.`)
+          if (DEBUG_LOGS) console.log(`'${superior.className}' has no matching opposite.`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
 
           const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
@@ -659,7 +643,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
 
-          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
+          if (DEBUG_LOGS) console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
           missingClasses.push({
             utility: superior.utility,
             mode: missingColorMode.toLowerCase(),
@@ -670,28 +654,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
         }
 
         nodeMissingClasses.push(...missingClasses)
-        console.log('Missing: \n', missingClasses)
-
-        // context.report({
-        //   node: attrNode,
-        //   messageId: `missing${missingColorMode}`,
-        //   data: {
-        //     key,
-        //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-        //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
-        //   },
-        //   suggest: [
-        //     missingClasses.map(
-        //       (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
-        //         //@ts-expect-error
-        //         desc: `Add ${missing.mode}-mode ${missing.className}`,
-        //         fix: (fixer): ReturnType<ReportFixFunction> => {
-        //           return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
-        //         },
-        //       }),
-        //     )[0],
-        //   ],
-        // })
       }
 
       if (nodeMissingClasses.length === 0) return
