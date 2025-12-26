@@ -7,7 +7,15 @@ import { Options } from './require-color-mode-styles'
  * @param options.colorNames The colorNames to consider as relevant in the context of color-mode
  * @returns Either null when the class was irrelevant or an object containing relevant information when the class is 'important.'
  */
-export default function evaluateClassname(className: string, { utilityClasses, colorNames }: Pick<Options, 'utilityClasses' | 'colorNames'>) {
+export default function evaluateClassname(
+  className: string,
+  { utilityClasses, colorNames }: Pick<Options, 'utilityClasses' | 'colorNames'>,
+): {
+  mode: 'dark' | 'light'
+  utility: string
+  className: string
+  relevantClass: string
+} | null {
   if (!className || typeof className !== 'string') return null
 
   const colorMode = className.includes('dark:') ? 'dark' : 'light'
