@@ -287,7 +287,7 @@ function makeSuggestions(args) {
   // Deep-ish copy so we don't accidentally share references (owners are objects)
   const localMissing = args.thisUtilityMissing.map((x) => ({
     utility: x.utility,
-    suggestedClass: x.suggestedClass,
+    suggestedClass: x.className,
     owner: x.owner,
   }))
   const modeLower = missingColorMode.toLowerCase()
@@ -455,6 +455,11 @@ const requireColorModeStylesRule = {
       if (!attributesToCheck.includes(attrName)) return
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
+      // const classNames = classString
+      //   .split(/\s+/)
+      //   .map((t: string) => t.trim())
+      //   .filter(Boolean)
+      // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
@@ -474,39 +479,38 @@ const requireColorModeStylesRule = {
         // console.log('Parsed Result: ', parsed)
       }
       for (const key of keyMap.keys()) {
-        console.log(`Iterating over keys, current-ky: ${key}`)
         const { lightClasses, darkClasses } = keyMap.get(key)
         if (lightClasses.length === darkClasses.length) {
           // console.log(`${key} utility classes match light- and dark- mode styles.`)
           continue
         }
         if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
-          console.log(lightClasses, darkClasses, '-----\n\n')
+          // console.log(lightClasses, darkClasses, '-----\n\n')
         }
         const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
         //* Find matching classes
         const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
         const inferiorMode = lightClasses.length > darkClasses.length ? darkClasses : lightClasses
-        const missingClassesSuggestions = []
+        const missingClasses = []
         // choose the color-mode class array that has the most classes, thus that is not missing any classes.
         // This loop iterates over the superior-class array and would create contrary suggestions for each of the superiorClasses, because there is no check yet to consider existing inferior-classes
-        for (const colorModeClass of superiorMode) {
+        for (const superior of superiorMode) {
           // -- start: check for eliminating matchin opposite classes from creating suggestions
           //* Filter out those color-mode classes that match (that exist for both modes)
           // eliminate classes from both the superiorMode and inferiorMode that are indeed matching, to only keep considering truly missing classes with no opposites.
-          const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === colorModeClass.owner.classString)
+          const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString)
           const removeDarkModifier = (input) => (input === null || input === void 0 ? void 0 : input.replace('dark:', ''))
           const haveSameModifiers =
             removeDarkModifier(
               (_a = inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.className) === null || _a === void 0
                 ? void 0
                 : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, ''),
-            ) === removeDarkModifier(colorModeClass.className.replace(colorModeClass.relevantClass, ''))
+            ) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
           if (haveSameModifiers && inSameClassString) continue
-          console.log(`'${colorModeClass.className}' has no matching opposite.`)
+          console.log(`'${superior.className}' has no matching opposite.`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
-          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
-          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+          const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+          const currentColor = superior.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
           let contraryColor
           if (currentColor.includes('-')) {
             const intensity = Number(
@@ -523,61 +527,16 @@ const requireColorModeStylesRule = {
           } else {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
-          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor} as missing`)
-          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
+          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
+          missingClasses.push({
+            utility: superior.utility,
+            mode: missingColorMode.toLowerCase(),
+            className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
+            owner: superior.owner,
+            relevantClass: `${superior.utility}-${contraryColor}`,
+          })
         }
-        const sourceArray = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
-        const missingClasses = []
-        for (const colorModeClass of sourceArray) {
-          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // leaves "hover:", etc.
-          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
-          let contraryColor
-          if (currentColor.includes('-')) {
-            const intensity = Number(
-              currentColor
-                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90]
-                .split('/')
-                .at(0),
-            )
-            let opacity = ''
-            if (currentColor.includes('/')) {
-              opacity = '/' + currentColor.split('/').at(1)
-            }
-            contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
-          } else {
-            contraryColor = currentColor === 'white' ? 'black' : 'white'
-          }
-          const suggestedClass = `${missingColorMode.toLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`
-          const missing = {
-            utility: colorModeClass.utility,
-            suggestedClass,
-            owner: colorModeClass.owner,
-          }
-          missingClasses.push(missing)
-          // const nodeLoc = colorModeClass.owner.kind === 'simple' ? undefined : colorModeClass.owner.callExpression.loc
-          // context.report({
-          //   node: attrNode,
-          //   loc: nodeLoc,
-          //   messageId: `missing${missingColorMode}`,
-          //   data: {
-          //     key,
-          //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-          //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
-          //   },
-          //   suggest: [
-          //     {
-          //       //@ts-expect-error
-          //       desc: `Add missing ${missingColorMode.toLocaleLowerCase()}-mode class ${missing.suggestedClass}`,
-          //       fix(fixer) {
-          //         // console.log('FIX RUN utility=', key, 'missing=', missing.suggestedClass)
-          //         return buildAddClassFix(attrNode, colorModeClass.owner, missing.suggestedClass, fixer, sourceCode)
-          //       },
-          //     },
-          //   ],
-          // })
-        }
-        console.log(missingClasses.map((mc) => Object.assign(Object.assign({}, mc), { owner: {} })))
-        // Build per-class suggestions with owner info
+        console.log('Missing: \n', missingClasses)
         context.report({
           node: attrNode,
           messageId: `missing${missingColorMode}`,
@@ -586,14 +545,15 @@ const requireColorModeStylesRule = {
             lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
             darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
-          suggest: makeSuggestions({
-            attrNode,
-            key,
-            missingColorMode: missingColorMode,
-            thisUtilityMissing: missingClasses,
-            sourceCode,
-            fixerBuilder: buildAddClassFix,
-          }),
+          suggest: [
+            missingClasses.map((missing) => ({
+              //@ts-expect-error
+              desc: `Add ${missing.mode}-mode ${missing.className}`,
+              fix: (fixer) => {
+                return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
+              },
+            }))[0],
+          ],
         })
       }
     }

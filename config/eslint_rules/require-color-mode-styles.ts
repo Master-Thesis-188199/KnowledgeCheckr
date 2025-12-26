@@ -1,8 +1,8 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import { SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
+import { ReportFixFunction, SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
 
 type MessageIds = 'missingLight' | 'missingDark'
-
+type MissingClassType = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
 /**
  * ESLint rule: require-color-mode-styles
  *
@@ -367,7 +367,7 @@ function makeSuggestions(args: {
   attrNode: TSESTree.JSXAttribute
   key: string
   missingColorMode: 'Dark' | 'Light'
-  thisUtilityMissing: Array<{ utility: string; suggestedClass: string; owner: OwnerInfo }>
+  thisUtilityMissing: MissingClassType
   sourceCode: TSESLint.SourceCode
   fixerBuilder: typeof buildAddClassFix
 }): SuggestionReportDescriptor<MessageIds>[] {
@@ -377,7 +377,7 @@ function makeSuggestions(args: {
   // Deep-ish copy so we don't accidentally share references (owners are objects)
   const localMissing = args.thisUtilityMissing.map((x) => ({
     utility: x.utility,
-    suggestedClass: x.suggestedClass,
+    suggestedClass: x.className,
     owner: x.owner,
   }))
 
@@ -579,11 +579,10 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
       // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
 
-      type KeyValue = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
-      const keyMap = new Map<string, { lightClasses: KeyValue; darkClasses: KeyValue }>() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
+      const keyMap = new Map<string, { lightClasses: MissingClassType; darkClasses: MissingClassType }>() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
 
       for (const { className, owner } of entries) {
         const _parsed = evaluateClassname(className, { utilityClasses, colorNames })
@@ -605,7 +604,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       }
 
       for (const key of keyMap.keys()) {
-        console.log(`Iterating over keys, current-ky: ${key}`)
         const { lightClasses, darkClasses } = keyMap.get(key)!
 
         if (lightClasses.length === darkClasses.length) {
@@ -614,7 +612,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
         }
 
         if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
-          console.log(lightClasses, darkClasses, '-----\n\n')
+          // console.log(lightClasses, darkClasses, '-----\n\n')
         }
 
         const missingColorMode = lightClasses.length > darkClasses.length ? 'Dark' : 'Light'
@@ -624,27 +622,27 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
         const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
         const inferiorMode = lightClasses.length > darkClasses.length ? darkClasses : lightClasses
 
-        const missingClassesSuggestions: string[] = []
+        const missingClasses: typeof superiorMode = []
         // choose the color-mode class array that has the most classes, thus that is not missing any classes.
         // This loop iterates over the superior-class array and would create contrary suggestions for each of the superiorClasses, because there is no check yet to consider existing inferior-classes
-        for (const colorModeClass of superiorMode) {
+        for (const superior of superiorMode) {
           // -- start: check for eliminating matchin opposite classes from creating suggestions
           //* Filter out those color-mode classes that match (that exist for both modes)
           // eliminate classes from both the superiorMode and inferiorMode that are indeed matching, to only keep considering truly missing classes with no opposites.
 
-          const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === colorModeClass.owner.classString)
+          const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString)
 
           const removeDarkModifier = (input?: string) => input?.replace('dark:', '')
           const haveSameModifiers =
-            removeDarkModifier(inSameClassString?.className?.replace(inSameClassString?.relevantClass, '')) === removeDarkModifier(colorModeClass.className.replace(colorModeClass.relevantClass, ''))
+            removeDarkModifier(inSameClassString?.className?.replace(inSameClassString?.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
           if (haveSameModifiers && inSameClassString) continue
 
-          console.log(`'${colorModeClass.className}' has no matching opposite.`)
+          console.log(`'${superior.className}' has no matching opposite.`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
 
-          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+          const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
 
-          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+          const currentColor = superior.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
 
           let contraryColor
 
@@ -666,75 +664,17 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
 
-          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor} as missing`)
-          missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
+          console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
+          missingClasses.push({
+            utility: superior.utility,
+            mode: missingColorMode.toLowerCase(),
+            className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
+            owner: superior.owner,
+            relevantClass: `${superior.utility}-${contraryColor}`,
+          })
         }
 
-        const sourceArray = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
-        const missingClasses = []
-
-        for (const colorModeClass of sourceArray) {
-          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // leaves "hover:", etc.
-
-          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
-          let contraryColor: string
-
-          if (currentColor.includes('-')) {
-            const intensity = Number(
-              currentColor
-                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90]
-                .split('/')
-                .at(0), // "50" | "100" | ... | "900"
-            )
-
-            let opacity = ''
-            if (currentColor.includes('/')) {
-              opacity = '/' + currentColor.split('/').at(1)
-            }
-
-            contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
-          } else {
-            contraryColor = currentColor === 'white' ? 'black' : 'white'
-          }
-
-          const suggestedClass = `${missingColorMode.toLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`
-
-          const missing = {
-            utility: colorModeClass.utility,
-            suggestedClass,
-            owner: colorModeClass.owner as OwnerInfo,
-          }
-
-          missingClasses.push(missing)
-
-          // const nodeLoc = colorModeClass.owner.kind === 'simple' ? undefined : colorModeClass.owner.callExpression.loc
-          // context.report({
-          //   node: attrNode,
-          //   loc: nodeLoc,
-          //   messageId: `missing${missingColorMode}`,
-
-          //   data: {
-          //     key,
-          //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-          //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
-          //   },
-          //   suggest: [
-          //     {
-          //       //@ts-expect-error
-          //       desc: `Add missing ${missingColorMode.toLocaleLowerCase()}-mode class ${missing.suggestedClass}`,
-          //       fix(fixer) {
-          //         // console.log('FIX RUN utility=', key, 'missing=', missing.suggestedClass)
-
-          //         return buildAddClassFix(attrNode, colorModeClass.owner, missing.suggestedClass, fixer, sourceCode)
-          //       },
-          //     },
-          //   ],
-          // })
-        }
-
-        console.log(missingClasses.map((mc) => ({ ...mc, owner: {} })))
-
-        // Build per-class suggestions with owner info
+        console.log('Missing: \n', missingClasses)
 
         context.report({
           node: attrNode,
@@ -744,14 +684,17 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
             darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
-          suggest: makeSuggestions({
-            attrNode,
-            key,
-            missingColorMode: missingColorMode as 'Dark' | 'Light',
-            thisUtilityMissing: missingClasses,
-            sourceCode,
-            fixerBuilder: buildAddClassFix,
-          }),
+          suggest: [
+            missingClasses.map(
+              (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
+                //@ts-expect-error
+                desc: `Add ${missing.mode}-mode ${missing.className}`,
+                fix: (fixer): ReturnType<ReportFixFunction> => {
+                  return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
+                },
+              }),
+            )[0],
+          ],
         })
       }
     }
