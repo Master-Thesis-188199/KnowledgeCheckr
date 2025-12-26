@@ -109,7 +109,7 @@ const requireColorModeStylesRule = {
         const sourceCode = context.getSourceCode();
         const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions((_a = context.options) === null || _a === void 0 ? void 0 : _a[0]);
         function checkClassName(attrNode) {
-            var _a;
+            var _a, _b, _c;
             const attrName = attrNode.name && attrNode.name.name.toString();
             if (!attributesToCheck.includes(attrName))
                 return;
@@ -156,8 +156,16 @@ const requireColorModeStylesRule = {
                     const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString);
                     const removeDarkModifier = (input) => input === null || input === void 0 ? void 0 : input.replace('dark:', '');
                     const haveSameModifiers = removeDarkModifier((_a = inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.className) === null || _a === void 0 ? void 0 : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''));
-                    if (haveSameModifiers && inSameClassString)
+                    if (haveSameModifiers && inSameClassString) {
+                        if (DEBUG_LOGS) {
+                            const ownerInformation = superior.owner.kind === 'helper-segment'
+                                ? `at ${context.filename.split('/').at(-1)} ${(_b = superior.owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.line}:${(_c = superior.owner.argNode.loc) === null || _c === void 0 ? void 0 : _c.start.column}`
+                                : `'${superior.owner.attrValue}'`;
+                            console.log(`[matching-opposites-found]: '${superior.className}' and '${inSameClassString.className}' are opposite classes ${ownerInformation}`);
+                            console.log();
+                        }
                         continue;
+                    }
                     if (DEBUG_LOGS)
                         console.log(`'${superior.className}' has no matching opposite.`);
                     // -- end: check for eliminating matchin opposite classes from creating suggestions

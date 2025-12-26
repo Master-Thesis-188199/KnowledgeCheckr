@@ -185,7 +185,17 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           const removeDarkModifier = (input?: string) => input?.replace('dark:', '')
           const haveSameModifiers =
             removeDarkModifier(inSameClassString?.className?.replace(inSameClassString?.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''))
-          if (haveSameModifiers && inSameClassString) continue
+          if (haveSameModifiers && inSameClassString) {
+            if (DEBUG_LOGS) {
+              const ownerInformation =
+                superior.owner.kind === 'helper-segment'
+                  ? `at ${context.filename.split('/').at(-1)} ${superior.owner.argNode.loc?.start.line}:${superior.owner.argNode.loc?.start.column}`
+                  : `'${superior.owner.attrValue}'`
+              console.log(`[matching-opposites-found]: '${superior.className}' and '${inSameClassString.className}' are opposite classes ${ownerInformation}`)
+              console.log()
+            }
+            continue
+          }
 
           if (DEBUG_LOGS) console.log(`'${superior.className}' has no matching opposite.`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
