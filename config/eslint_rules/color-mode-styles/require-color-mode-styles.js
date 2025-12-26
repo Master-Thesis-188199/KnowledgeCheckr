@@ -475,9 +475,8 @@ const requireColorModeStylesRule = {
         }
         // simple: attach to the attribute value (or the attribute itself)
         const val = owner.attrValue
-         
+
         if (val && 'range' in val && Array.isArray(val.range)) {
-           
           const r = val.range
           return `simple:${r[0]}-${r[1]}`
         }
