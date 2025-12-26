@@ -125,6 +125,12 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
     const sourceCode = context.getSourceCode()
     const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions(context.options?.[0])
 
+    /**
+     * Returns either the filename and the position of the partial classname for utility functions like `cn` or the full classname for static className properties.
+     */
+    const getClassOrigin = (owner: OwnerInfo) =>
+      owner.kind === 'helper-segment' ? `at ${context.filename.split('/').at(-1)} ${owner.argNode.loc?.start.line}:${owner.argNode.loc?.start.column}` : `'${owner.classString}'`
+
     function checkClassName(attrNode: TSESTree.JSXAttribute) {
       const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
@@ -155,15 +161,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
       for (const key of keyMap.keys()) {
         const { lightClasses, darkClasses } = keyMap.get(key)!
-
-        if (lightClasses.length === darkClasses.length) {
-          // console.log(`${key} utility classes match light- and dark- mode styles.`)
-          continue
-        }
-
-        if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
-          // console.log(lightClasses, darkClasses, '-----\n\n')
-        }
 
         const missingColorMode = lightClasses.length > darkClasses.length ? 'dark' : 'light'
 
@@ -197,7 +194,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             continue
           }
 
-          if (DEBUG_LOGS) console.log(`'${superior.className}' has no matching opposite.`)
+          if (DEBUG_LOGS) console.log(`[Missing]: '${superior.className}' has no matching opposite. (${getClassOrigin(superior.owner)})`)
           // -- end: check for eliminating matchin opposite classes from creating suggestions
 
           const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
@@ -224,11 +221,15 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
 
-          if (DEBUG_LOGS) console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`)
+          const colorModePrefix = missingColorMode === 'dark' ? 'dark:' : ''
+          const suggestedClass = `${colorModePrefix}${modifiers}${superior.utility}-${contraryColor}`
+
+          if (DEBUG_LOGS) console.log(`Determined ${suggestedClass} as missing`)
+
           missingClasses.push({
             utility: superior.utility,
             mode: missingColorMode,
-            className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
+            className: suggestedClass,
             owner: superior.owner,
             relevantClass: `${superior.utility}-${contraryColor}`,
           })

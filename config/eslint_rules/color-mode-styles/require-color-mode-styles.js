@@ -108,6 +108,10 @@ const requireColorModeStylesRule = {
         var _a;
         const sourceCode = context.getSourceCode();
         const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions((_a = context.options) === null || _a === void 0 ? void 0 : _a[0]);
+        /**
+         * Returns either the filename and the position of the partial classname for utility functions like `cn` or the full classname for static className properties.
+         */
+        const getClassOrigin = (owner) => { var _a, _b; return owner.kind === 'helper-segment' ? `at ${context.filename.split('/').at(-1)} ${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}` : `'${owner.classString}'`; };
         function checkClassName(attrNode) {
             var _a, _b, _c;
             const attrName = attrNode.name && attrNode.name.name.toString();
@@ -135,13 +139,6 @@ const requireColorModeStylesRule = {
             const nodeMissingClasses = [];
             for (const key of keyMap.keys()) {
                 const { lightClasses, darkClasses } = keyMap.get(key);
-                if (lightClasses.length === darkClasses.length) {
-                    // console.log(`${key} utility classes match light- and dark- mode styles.`)
-                    continue;
-                }
-                if (darkClasses.find((d) => d.className.includes('dark:shadow-neutral-700'))) {
-                    // console.log(lightClasses, darkClasses, '-----\n\n')
-                }
                 const missingColorMode = lightClasses.length > darkClasses.length ? 'dark' : 'light';
                 //* Find matching classes
                 const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses;
@@ -167,7 +164,7 @@ const requireColorModeStylesRule = {
                         continue;
                     }
                     if (DEBUG_LOGS)
-                        console.log(`'${superior.className}' has no matching opposite.`);
+                        console.log(`[Missing]: '${superior.className}' has no matching opposite. (${getClassOrigin(superior.owner)})`);
                     // -- end: check for eliminating matchin opposite classes from creating suggestions
                     const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, ''); // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
                     const currentColor = superior.relevantClass.split('-').slice(1).join('-'); // "red-200", "neutral-200", "white"
@@ -186,12 +183,14 @@ const requireColorModeStylesRule = {
                     else {
                         contraryColor = currentColor === 'white' ? 'black' : 'white';
                     }
+                    const colorModePrefix = missingColorMode === 'dark' ? 'dark:' : '';
+                    const suggestedClass = `${colorModePrefix}${modifiers}${superior.utility}-${contraryColor}`;
                     if (DEBUG_LOGS)
-                        console.log(`Determined ${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor} as missing`);
+                        console.log(`Determined ${suggestedClass} as missing`);
                     missingClasses.push({
                         utility: superior.utility,
                         mode: missingColorMode,
-                        className: `${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${superior.utility}-${contraryColor}`,
+                        className: suggestedClass,
                         owner: superior.owner,
                         relevantClass: `${superior.utility}-${contraryColor}`,
                     });
