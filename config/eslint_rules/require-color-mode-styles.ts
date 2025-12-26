@@ -1,5 +1,5 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import { ReportFixFunction, SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
+import { SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
 
 type MessageIds = 'missingLight' | 'missingDark'
 type MissingClassType = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
@@ -572,13 +572,6 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
 
-      // const classNames = classString
-      //   .split(/\s+/)
-      //   .map((t: string) => t.trim())
-      //   .filter(Boolean)
-
-      // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
-
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
@@ -602,6 +595,8 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
         // console.log('Parsed Result: ', parsed)
       }
+
+      const nodeMissingClasses: MissingClassType = []
 
       for (const key of keyMap.keys()) {
         const { lightClasses, darkClasses } = keyMap.get(key)!
@@ -674,26 +669,109 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           })
         }
 
+        nodeMissingClasses.push(...missingClasses)
         console.log('Missing: \n', missingClasses)
 
+        // context.report({
+        //   node: attrNode,
+        //   messageId: `missing${missingColorMode}`,
+        //   data: {
+        //     key,
+        //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
+        //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+        //   },
+        //   suggest: [
+        //     missingClasses.map(
+        //       (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
+        //         //@ts-expect-error
+        //         desc: `Add ${missing.mode}-mode ${missing.className}`,
+        //         fix: (fixer): ReturnType<ReportFixFunction> => {
+        //           return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
+        //         },
+        //       }),
+        //     )[0],
+        //   ],
+        // })
+      }
+
+      if (nodeMissingClasses.length === 0) return
+
+      // Group missing suggestions by the node they should edit
+      const missingByOwner = new Map<string, { owner: OwnerInfo; items: MissingClassType }>()
+
+      const ownerKey = (owner: OwnerInfo) => {
+        // Prefer range; fall back to loc if needed
+        if (owner.kind === 'helper-segment') {
+          return owner.argNode.range ? `helper:${owner.argNode.range[0]}-${owner.argNode.range[1]}` : `helper:${owner.argNode.loc?.start.line}:${owner.argNode.loc?.start.column}`
+        }
+
+        // simple: attach to the attribute value (or the attribute itself)
+        const val = owner.attrValue
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (val && 'range' in val && Array.isArray((val as any).range)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const r = (val as any).range as [number, number]
+          return `simple:${r[0]}-${r[1]}`
+        }
+        return attrNode.range ? `simple:${attrNode.range[0]}-${attrNode.range[1]}` : `simple:${attrNode.loc?.start.line}:${attrNode.loc?.start.column}`
+      }
+
+      for (const m of nodeMissingClasses) {
+        const k = ownerKey(m.owner)
+        const existing = missingByOwner.get(k)
+        if (existing) existing.items.push(m)
+        else missingByOwner.set(k, { owner: m.owner, items: [m] })
+      }
+
+      //* Emit one report per owner
+      for (const { owner, items } of missingByOwner.values()) {
+        // Decide where to anchor the diagnostic:
+        // - helper: anchor to the specific literal in cn(...) arg (the line/segment)
+        // - simple: anchor to the attribute itself
+        const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode
+
+        // Optional: nicer message content – summarize utilities & modes
+        const utilities = [...new Set(items.map((i) => i.utility))].join(', ')
+        const modes = [...new Set(items.map((i) => i.mode))].join(', ')
+
         context.report({
-          node: attrNode,
-          messageId: `missing${missingColorMode}`,
+          node: reportNode,
+          messageId: (modes.includes('dark') ? 'missingDark' : 'missingLight') as MessageIds,
           data: {
-            key,
-            lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-            darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+            key: utilities,
+            // These two fields are required by your message template; we can fill them with something meaningful:
+            lightStyles:
+              items
+                .filter((i) => i.mode === 'light')
+                .map((i) => `'${i.className}'`)
+                .join(', ') || '—',
+            darkStyles:
+              items
+                .filter((i) => i.mode === 'dark')
+                .map((i) => `'${i.className}'`)
+                .join(', ') || '—',
           },
           suggest: [
-            missingClasses.map(
+            // Add all missing for this owner (single click)
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: `Add ${utilities} classes ${items
+                .slice(0, 3)
+                .map((i) => `'${i.className}'`)
+                .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
+              fix: (fixer) => {
+                const classes = items.map((i) => i.className).join(' ')
+                return buildAddClassFix(attrNode, owner, classes, fixer, sourceCode)
+              },
+            },
+            // One suggestion per missing class
+            ...items.map(
               (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
-                //@ts-expect-error
+                //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
                 desc: `Add ${missing.mode}-mode ${missing.className}`,
-                fix: (fixer): ReturnType<ReportFixFunction> => {
-                  return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
-                },
+                fix: (fixer) => buildAddClassFix(attrNode, owner, missing.className, fixer, sourceCode),
               }),
-            )[0],
+            ),
           ],
         })
       }

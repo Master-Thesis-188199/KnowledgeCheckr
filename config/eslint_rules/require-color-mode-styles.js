@@ -455,11 +455,6 @@ const requireColorModeStylesRule = {
       if (!attributesToCheck.includes(attrName)) return
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
-      // const classNames = classString
-      //   .split(/\s+/)
-      //   .map((t: string) => t.trim())
-      //   .filter(Boolean)
-      // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
@@ -478,6 +473,7 @@ const requireColorModeStylesRule = {
         }
         // console.log('Parsed Result: ', parsed)
       }
+      const nodeMissingClasses = []
       for (const key of keyMap.keys()) {
         const { lightClasses, darkClasses } = keyMap.get(key)
         if (lightClasses.length === darkClasses.length) {
@@ -536,23 +532,103 @@ const requireColorModeStylesRule = {
             relevantClass: `${superior.utility}-${contraryColor}`,
           })
         }
+        nodeMissingClasses.push(...missingClasses)
         console.log('Missing: \n', missingClasses)
+        // context.report({
+        //   node: attrNode,
+        //   messageId: `missing${missingColorMode}`,
+        //   data: {
+        //     key,
+        //     lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
+        //     darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+        //   },
+        //   suggest: [
+        //     missingClasses.map(
+        //       (missing): TSESLint.SuggestionReportDescriptor<MessageIds> => ({
+        //         //@ts-expect-error
+        //         desc: `Add ${missing.mode}-mode ${missing.className}`,
+        //         fix: (fixer): ReturnType<ReportFixFunction> => {
+        //           return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
+        //         },
+        //       }),
+        //     )[0],
+        //   ],
+        // })
+      }
+      if (nodeMissingClasses.length === 0) return
+      // Group missing suggestions by the node they should edit
+      const missingByOwner = new Map()
+      const ownerKey = (owner) => {
+        var _a, _b, _c, _d
+        // Prefer range; fall back to loc if needed
+        if (owner.kind === 'helper-segment') {
+          return owner.argNode.range
+            ? `helper:${owner.argNode.range[0]}-${owner.argNode.range[1]}`
+            : `helper:${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}`
+        }
+        // simple: attach to the attribute value (or the attribute itself)
+        const val = owner.attrValue
+         
+        if (val && 'range' in val && Array.isArray(val.range)) {
+           
+          const r = val.range
+          return `simple:${r[0]}-${r[1]}`
+        }
+        return attrNode.range
+          ? `simple:${attrNode.range[0]}-${attrNode.range[1]}`
+          : `simple:${(_c = attrNode.loc) === null || _c === void 0 ? void 0 : _c.start.line}:${(_d = attrNode.loc) === null || _d === void 0 ? void 0 : _d.start.column}`
+      }
+      for (const m of nodeMissingClasses) {
+        const k = ownerKey(m.owner)
+        const existing = missingByOwner.get(k)
+        if (existing) existing.items.push(m)
+        else missingByOwner.set(k, { owner: m.owner, items: [m] })
+      }
+      //* Emit one report per owner
+      for (const { owner, items } of missingByOwner.values()) {
+        // Decide where to anchor the diagnostic:
+        // - helper: anchor to the specific literal in cn(...) arg (the line/segment)
+        // - simple: anchor to the attribute itself
+        const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode
+        // Optional: nicer message content – summarize utilities & modes
+        const utilities = [...new Set(items.map((i) => i.utility))].join(', ')
+        const modes = [...new Set(items.map((i) => i.mode))].join(', ')
         context.report({
-          node: attrNode,
-          messageId: `missing${missingColorMode}`,
+          node: reportNode,
+          messageId: modes.includes('dark') ? 'missingDark' : 'missingLight',
           data: {
-            key,
-            lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
-            darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
+            key: utilities,
+            // These two fields are required by your message template; we can fill them with something meaningful:
+            lightStyles:
+              items
+                .filter((i) => i.mode === 'light')
+                .map((i) => `'${i.className}'`)
+                .join(', ') || '—',
+            darkStyles:
+              items
+                .filter((i) => i.mode === 'dark')
+                .map((i) => `'${i.className}'`)
+                .join(', ') || '—',
           },
           suggest: [
-            missingClasses.map((missing) => ({
-              //@ts-expect-error
-              desc: `Add ${missing.mode}-mode ${missing.className}`,
+            // Add all missing for this owner (single click)
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: `Add ${utilities} classes ${items
+                .slice(0, 3)
+                .map((i) => `'${i.className}'`)
+                .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
               fix: (fixer) => {
-                return buildAddClassFix(attrNode, missing.owner, missing.className, fixer, sourceCode)
+                const classes = items.map((i) => i.className).join(' ')
+                return buildAddClassFix(attrNode, owner, classes, fixer, sourceCode)
               },
-            }))[0],
+            },
+            // One suggestion per missing class
+            ...items.map((missing) => ({
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: `Add ${missing.mode}-mode ${missing.className}`,
+              fix: (fixer) => buildAddClassFix(attrNode, owner, missing.className, fixer, sourceCode),
+            })),
           ],
         })
       }
