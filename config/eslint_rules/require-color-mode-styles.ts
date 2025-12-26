@@ -1,5 +1,4 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import { SuggestionReportDescriptor } from '@typescript-eslint/utils/ts-eslint'
 
 const DEBUG_LOGS = false
 
@@ -363,80 +362,6 @@ function getClassEntries(attrValue: TSESTree.JSXAttribute['value'], helperNames:
   }
 
   return entries
-}
-
-function makeSuggestions(args: {
-  attrNode: TSESTree.JSXAttribute
-  key: string
-  missingColorMode: 'Dark' | 'Light'
-  thisUtilityMissing: MissingClassType
-  sourceCode: TSESLint.SourceCode
-  fixerBuilder: typeof buildAddClassFix
-}): SuggestionReportDescriptor<MessageIds>[] {
-  // IMPORTANT: copy into locals that are scoped to THIS function call
-  const { attrNode, key, missingColorMode, sourceCode, fixerBuilder } = args
-
-  // Deep-ish copy so we don't accidentally share references (owners are objects)
-  const localMissing = args.thisUtilityMissing.map((x) => ({
-    utility: x.utility,
-    suggestedClass: x.className,
-    owner: x.owner,
-  }))
-
-  const modeLower = missingColorMode.toLowerCase()
-
-  const utilities = [...new Set(localMissing.map((s) => s.utility))]
-  const utilityPart = utilities.length === 1 ? `'${utilities[0]}'` : utilities.map((u) => `'${u}'`).join(', ')
-
-  const addAll: SuggestionReportDescriptor<MessageIds> = {
-    // @ts-expect-error `desc` is supported by ESLint suggestions
-    desc: `Add all missing ${modeLower}-mode ${utilities.length === 1 ? 'class' : 'classes'} for ${utilityPart}`,
-    fix(fixer) {
-      const ownerGroups = new Map<string, { owner: OwnerInfo; suggestedClasses: string[] }>()
-
-      for (const { suggestedClass, owner } of localMissing) {
-        const keyForOwner = owner.kind === 'simple' ? `simple:${attrNode.range?.join('-') ?? 'no-range'}` : `helper:${owner.argNode.range?.join('-') ?? 'no-range'}`
-
-        const existing = ownerGroups.get(keyForOwner)
-        if (existing) existing.suggestedClasses.push(suggestedClass)
-        else ownerGroups.set(keyForOwner, { owner, suggestedClasses: [suggestedClass] })
-      }
-
-      const fixes: TSESLint.RuleFix[] = []
-
-      for (const { owner, suggestedClasses } of ownerGroups.values()) {
-        const fix = fixerBuilder(attrNode, owner, suggestedClasses.join(' '), fixer, sourceCode)
-        if (Array.isArray(fix)) fixes.push(...fix)
-        else if (fix) fixes.push(fix)
-      }
-
-      return fixes
-    },
-  }
-
-  const perClass = localMissing.map(({ suggestedClass, owner }) => {
-    // capture each item in its own local binding
-    const sc = suggestedClass
-    const ow = owner
-
-    const s: SuggestionReportDescriptor<MessageIds> = {
-      // @ts-expect-error `desc` is supported by ESLint suggestions
-      desc: `Add missing ${modeLower}-mode class ${sc}`,
-      fix(fixer) {
-        // console.log(
-        //   'FIX RUN utility=',
-        //   key,
-        //   'missing=',
-        //   localMissing.map((x) => x.suggestedClass),
-        // )
-
-        return fixerBuilder(attrNode, ow, sc, fixer, sourceCode)
-      },
-    }
-    return s
-  })
-
-  return [addAll, ...perClass]
 }
 
 function buildAddClassFix(attrNode: TSESTree.JSXAttribute, owner: OwnerInfo, suggestedClasses: string, fixer: TSESLint.RuleFixer, sourceCode: TSESLint.SourceCode) {

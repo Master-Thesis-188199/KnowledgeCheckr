@@ -282,63 +282,6 @@ function getClassEntries(attrValue, helperNames) {
   }
   return entries
 }
-function makeSuggestions(args) {
-  // IMPORTANT: copy into locals that are scoped to THIS function call
-  const { attrNode, key, missingColorMode, sourceCode, fixerBuilder } = args
-  // Deep-ish copy so we don't accidentally share references (owners are objects)
-  const localMissing = args.thisUtilityMissing.map((x) => ({
-    utility: x.utility,
-    suggestedClass: x.className,
-    owner: x.owner,
-  }))
-  const modeLower = missingColorMode.toLowerCase()
-  const utilities = [...new Set(localMissing.map((s) => s.utility))]
-  const utilityPart = utilities.length === 1 ? `'${utilities[0]}'` : utilities.map((u) => `'${u}'`).join(', ')
-  const addAll = {
-    // @ts-expect-error `desc` is supported by ESLint suggestions
-    desc: `Add all missing ${modeLower}-mode ${utilities.length === 1 ? 'class' : 'classes'} for ${utilityPart}`,
-    fix(fixer) {
-      var _a, _b, _c, _d
-      const ownerGroups = new Map()
-      for (const { suggestedClass, owner } of localMissing) {
-        const keyForOwner =
-          owner.kind === 'simple'
-            ? `simple:${(_b = (_a = attrNode.range) === null || _a === void 0 ? void 0 : _a.join('-')) !== null && _b !== void 0 ? _b : 'no-range'}`
-            : `helper:${(_d = (_c = owner.argNode.range) === null || _c === void 0 ? void 0 : _c.join('-')) !== null && _d !== void 0 ? _d : 'no-range'}`
-        const existing = ownerGroups.get(keyForOwner)
-        if (existing) existing.suggestedClasses.push(suggestedClass)
-        else ownerGroups.set(keyForOwner, { owner, suggestedClasses: [suggestedClass] })
-      }
-      const fixes = []
-      for (const { owner, suggestedClasses } of ownerGroups.values()) {
-        const fix = fixerBuilder(attrNode, owner, suggestedClasses.join(' '), fixer, sourceCode)
-        if (Array.isArray(fix)) fixes.push(...fix)
-        else if (fix) fixes.push(fix)
-      }
-      return fixes
-    },
-  }
-  const perClass = localMissing.map(({ suggestedClass, owner }) => {
-    // capture each item in its own local binding
-    const sc = suggestedClass
-    const ow = owner
-    const s = {
-      // @ts-expect-error `desc` is supported by ESLint suggestions
-      desc: `Add missing ${modeLower}-mode class ${sc}`,
-      fix(fixer) {
-        // console.log(
-        //   'FIX RUN utility=',
-        //   key,
-        //   'missing=',
-        //   localMissing.map((x) => x.suggestedClass),
-        // )
-        return fixerBuilder(attrNode, ow, sc, fixer, sourceCode)
-      },
-    }
-    return s
-  })
-  return [addAll, ...perClass]
-}
 function buildAddClassFix(attrNode, owner, suggestedClasses, fixer, sourceCode) {
   const value = attrNode.value
   if (!value) return null
