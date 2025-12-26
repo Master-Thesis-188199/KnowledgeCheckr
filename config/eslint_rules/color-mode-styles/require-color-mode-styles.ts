@@ -70,6 +70,13 @@ export type Options = {
   colorNames: Array<string>
 }
 
+const DEFAULT_OPTIONS: Options = {
+  utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow'],
+  attributes: ['className', 'class'],
+  helpers: ['cn', 'tw'],
+  colorNames: defaultColorNames,
+}
+
 const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
   defaultOptions: [],
   meta: {
@@ -116,14 +123,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
 
   create(context) {
     const sourceCode = context.getSourceCode()
-    const options = (context.options && context.options[0]) || ({} as Options)
-
-    if (!options.utilityClasses) options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow']
-    if (!options.attributes) options.attributes = ['className', 'class']
-    if (!options.helpers) options.helpers = ['cn', 'tw']
-    if (!options.colorNames) options.colorNames = defaultColorNames
-
-    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options
+    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions(context.options?.[0])
 
     function checkClassName(attrNode: TSESTree.JSXAttribute) {
       const attrName = attrNode.name && attrNode.name.name.toString()
@@ -323,3 +323,13 @@ const plugin = {
 }
 
 export default plugin
+
+/** Takes in the user-options that were passed to the rule from within the eslint.config and adds default values for missing options */
+function resolveOptions(user?: Partial<Options>): Options {
+  return {
+    utilityClasses: user?.utilityClasses ?? DEFAULT_OPTIONS.utilityClasses,
+    attributes: user?.attributes ?? DEFAULT_OPTIONS.attributes,
+    helpers: user?.helpers ?? DEFAULT_OPTIONS.helpers,
+    colorNames: user?.colorNames ?? DEFAULT_OPTIONS.colorNames,
+  }
+}

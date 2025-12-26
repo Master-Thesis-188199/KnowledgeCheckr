@@ -1,6 +1,6 @@
+import collectClassnames from './collectClassnames.js';
 import createEslintSuggestionFixer from './createEslintSuggestionFixer.js';
 import evaluateClassname from './evaluateClassname.js';
-import collectClassnames from './collectClassnames.js';
 const DEBUG_LOGS = false;
 /**
  * ESLint rule: require-color-mode-styles
@@ -55,6 +55,12 @@ const defaultColorNames = [
     'current',
     'transparent',
 ];
+const DEFAULT_OPTIONS = {
+    utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow'],
+    attributes: ['className', 'class'],
+    helpers: ['cn', 'tw'],
+    colorNames: defaultColorNames,
+};
 const requireColorModeStylesRule = {
     defaultOptions: [],
     meta: {
@@ -99,17 +105,9 @@ const requireColorModeStylesRule = {
         },
     },
     create(context) {
+        var _a;
         const sourceCode = context.getSourceCode();
-        const options = (context.options && context.options[0]) || {};
-        if (!options.utilityClasses)
-            options.utilityClasses = ['bg', 'text', 'border', 'ring', 'shadow'];
-        if (!options.attributes)
-            options.attributes = ['className', 'class'];
-        if (!options.helpers)
-            options.helpers = ['cn', 'tw'];
-        if (!options.colorNames)
-            options.colorNames = defaultColorNames;
-        const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = options;
+        const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions((_a = context.options) === null || _a === void 0 ? void 0 : _a[0]);
         function checkClassName(attrNode) {
             var _a;
             const attrName = attrNode.name && attrNode.name.name.toString();
@@ -278,3 +276,13 @@ const plugin = {
     },
 };
 export default plugin;
+/** Takes in the user-options that were passed to the rule from within the eslint.config and adds default values for missing options */
+function resolveOptions(user) {
+    var _a, _b, _c, _d;
+    return {
+        utilityClasses: (_a = user === null || user === void 0 ? void 0 : user.utilityClasses) !== null && _a !== void 0 ? _a : DEFAULT_OPTIONS.utilityClasses,
+        attributes: (_b = user === null || user === void 0 ? void 0 : user.attributes) !== null && _b !== void 0 ? _b : DEFAULT_OPTIONS.attributes,
+        helpers: (_c = user === null || user === void 0 ? void 0 : user.helpers) !== null && _c !== void 0 ? _c : DEFAULT_OPTIONS.helpers,
+        colorNames: (_d = user === null || user === void 0 ? void 0 : user.colorNames) !== null && _d !== void 0 ? _d : DEFAULT_OPTIONS.colorNames,
+    };
+}
