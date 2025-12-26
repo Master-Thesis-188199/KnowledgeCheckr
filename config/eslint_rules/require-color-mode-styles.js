@@ -454,7 +454,6 @@ const requireColorModeStylesRule = {
       if (!attributesToCheck.includes(attrName)) return
       const entries = getClassEntries(attrNode.value, helperNames)
       if (entries.length === 0) return
-      console.log(entries)
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
@@ -504,8 +503,8 @@ const requireColorModeStylesRule = {
           missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
         }
         const sourceArray = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
-        // Build per-class suggestions with owner info
-        const thisUtilityMissing = sourceArray.map((colorModeClass) => {
+        const missingClasses = []
+        for (const colorModeClass of sourceArray) {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // leaves "hover:", etc.
           const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
           let contraryColor
@@ -525,12 +524,19 @@ const requireColorModeStylesRule = {
             contraryColor = currentColor === 'white' ? 'black' : 'white'
           }
           const suggestedClass = `${missingColorMode.toLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`
-          return {
+          console.log(`Suggesting new utility class ${colorModeClass.utility} for ${missingColorMode.toLocaleLowerCase()}: ${suggestedClass}  (owner: )`)
+          if (colorModeClass.owner.kind === 'simple') {
+            console.log(colorModeClass.owner.attrValue)
+          } else {
+            console.log(colorModeClass.owner.callExpression)
+          }
+          missingClasses.push({
             utility: colorModeClass.utility,
             suggestedClass,
             owner: colorModeClass.owner,
-          }
-        })
+          })
+        }
+        // Build per-class suggestions with owner info
         context.report({
           node: attrNode,
           messageId: `missing${missingColorMode}`,
@@ -543,7 +549,7 @@ const requireColorModeStylesRule = {
             attrNode,
             key,
             missingColorMode: missingColorMode,
-            thisUtilityMissing,
+            thisUtilityMissing: missingClasses,
             sourceCode,
             fixerBuilder: buildAddClassFix,
           }),

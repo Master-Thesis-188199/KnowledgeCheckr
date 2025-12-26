@@ -645,9 +645,9 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
         }
 
         const sourceArray = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
+        const missingClasses = []
 
-        // Build per-class suggestions with owner info
-        const thisUtilityMissing = sourceArray.map((colorModeClass) => {
+        for (const colorModeClass of sourceArray) {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // leaves "hover:", etc.
 
           const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
@@ -672,13 +672,21 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           }
 
           const suggestedClass = `${missingColorMode.toLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`
+          console.log(`Suggesting new utility class ${colorModeClass.utility} for ${missingColorMode.toLocaleLowerCase()}: ${suggestedClass}  (owner: )`)
+          if (colorModeClass.owner.kind === 'simple') {
+            console.log(colorModeClass.owner.attrValue)
+          } else {
+            console.log(colorModeClass.owner.callExpression)
+          }
 
-          return {
+          missingClasses.push({
             utility: colorModeClass.utility,
             suggestedClass,
             owner: colorModeClass.owner as OwnerInfo,
-          }
-        })
+          })
+        }
+
+        // Build per-class suggestions with owner info
 
         context.report({
           node: attrNode,
@@ -692,7 +700,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             attrNode,
             key,
             missingColorMode: missingColorMode as 'Dark' | 'Light',
-            thisUtilityMissing,
+            thisUtilityMissing: missingClasses,
             sourceCode,
             fixerBuilder: buildAddClassFix,
           }),
