@@ -189,6 +189,314 @@ function getClassNames(attrValue: TSESTree.JSXAttribute['value'], { helpers: hel
   return null
 }
 
+type OwnerSimple = {
+  kind: 'simple'
+  attrValue: TSESTree.JSXAttribute['value']
+  classString: string
+}
+
+type OwnerHelperSegment = {
+  kind: 'helper-segment'
+  callExpression: TSESTree.CallExpression
+  argNode: TSESTree.Expression // Literal or TemplateLiteral (no expressions)
+  classString: string
+}
+
+type OwnerInfo = OwnerSimple | OwnerHelperSegment
+/**
+ * Collect *per-class* entries with ownership information.
+ *
+ * For static className:
+ *   - returns one OwnerSimple with all classes split.
+ *
+ * For helper calls (cn/tw):
+ *   - returns one OwnerHelperSegment per literal/template/logical-right-literal argument
+ *   - each segment has its own classString, which we split into classNames.
+ */
+function getClassEntries(attrValue: TSESTree.JSXAttribute['value'], helperNames: Options['helpers']): Array<{ className: string; owner: OwnerInfo }> {
+  const entries: Array<{ className: string; owner: OwnerInfo }> = []
+
+  if (!attrValue) return entries
+
+  // className="foo bar"
+  if (attrValue.type === 'Literal' && typeof attrValue.value === 'string') {
+    const classString = attrValue.value
+    const classNames = classString
+      .split(/\s+/)
+      .map((t) => t.trim())
+      .filter(Boolean)
+
+    const owner: OwnerSimple = {
+      kind: 'simple',
+      attrValue,
+      classString,
+    }
+
+    for (const cls of classNames) {
+      entries.push({ className: cls, owner })
+    }
+
+    return entries
+  }
+
+  if (attrValue.type === 'JSXExpressionContainer') {
+    const expr = attrValue.expression
+
+    // className={'foo bar'}
+    if (expr.type === 'Literal' && typeof expr.value === 'string') {
+      const classString = expr.value
+      const classNames = classString
+        .split(/\s+/)
+        .map((t) => t.trim())
+        .filter(Boolean)
+
+      const owner: OwnerSimple = {
+        kind: 'simple',
+        attrValue,
+        classString,
+      }
+
+      for (const cls of classNames) {
+        entries.push({ className: cls, owner })
+      }
+
+      return entries
+    }
+
+    // className={`foo bar`} (no interpolations)
+    if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+      const classString = expr.quasis.map((q) => q.value.cooked || '').join('')
+      const classNames = classString
+        .split(/\s+/)
+        .map((t) => t.trim())
+        .filter(Boolean)
+
+      const owner: OwnerSimple = {
+        kind: 'simple',
+        attrValue,
+        classString,
+      }
+
+      for (const cls of classNames) {
+        entries.push({ className: cls, owner })
+      }
+
+      return entries
+    }
+
+    // className={cn("...", "...")} or className={tw("...", "...")}
+    if (expr.type === 'CallExpression' && expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
+      const callExpression = expr
+
+      callExpression.arguments.forEach((arg, index) => {
+        // argument: "foo bar"
+        if (arg.type === 'Literal' && typeof arg.value === 'string') {
+          const classString = arg.value
+          const classNames = classString
+            .split(/\s+/)
+            .map((t) => t.trim())
+            .filter(Boolean)
+
+          const owner: OwnerHelperSegment = {
+            kind: 'helper-segment',
+            callExpression,
+            argNode: arg,
+            classString,
+          }
+
+          for (const cls of classNames) {
+            entries.push({ className: cls, owner })
+          }
+          return
+        }
+
+        // argument: `foo bar`
+        if (arg.type === 'TemplateLiteral' && arg.expressions.length === 0) {
+          const classString = arg.quasis.map((q) => q.value.cooked || '').join('')
+          const classNames = classString
+            .split(/\s+/)
+            .map((t) => t.trim())
+            .filter(Boolean)
+
+          const owner: OwnerHelperSegment = {
+            kind: 'helper-segment',
+            callExpression,
+            argNode: arg,
+            classString,
+          }
+
+          for (const cls of classNames) {
+            entries.push({ className: cls, owner })
+          }
+          return
+        }
+
+        // argument: cond && "foo bar"
+        if (arg.type === 'LogicalExpression' && arg.right.type === 'Literal' && typeof arg.right.value === 'string') {
+          const literal = arg.right
+          const classString = literal.value
+          const classNames = classString
+            .split(/\s+/)
+            .map((t) => t.trim())
+            .filter(Boolean)
+
+          const owner: OwnerHelperSegment = {
+            kind: 'helper-segment',
+            callExpression,
+            argNode: literal,
+            classString,
+          }
+
+          for (const cls of classNames) {
+            entries.push({ className: cls, owner })
+          }
+          return
+        }
+
+        // other arg shapes are ignored
+      })
+
+      return entries
+    }
+  }
+
+  return entries
+}
+
+function makeSuggestions(args: {
+  attrNode: TSESTree.JSXAttribute
+  key: string
+  missingColorMode: 'Dark' | 'Light'
+  thisUtilityMissing: Array<{ utility: string; suggestedClass: string; owner: OwnerInfo }>
+  sourceCode: TSESLint.SourceCode
+  fixerBuilder: typeof buildAddClassFix
+}): SuggestionReportDescriptor<MessageIds>[] {
+  // IMPORTANT: copy into locals that are scoped to THIS function call
+  const { attrNode, key, missingColorMode, sourceCode, fixerBuilder } = args
+
+  // Deep-ish copy so we don't accidentally share references (owners are objects)
+  const localMissing = args.thisUtilityMissing.map((x) => ({
+    utility: x.utility,
+    suggestedClass: x.suggestedClass,
+    owner: x.owner,
+  }))
+
+  const modeLower = missingColorMode.toLowerCase()
+
+  const utilities = [...new Set(localMissing.map((s) => s.utility))]
+  const utilityPart = utilities.length === 1 ? `'${utilities[0]}'` : utilities.map((u) => `'${u}'`).join(', ')
+
+  const addAll: SuggestionReportDescriptor<MessageIds> = {
+    // @ts-expect-error `desc` is supported by ESLint suggestions
+    desc: `Add all missing ${modeLower}-mode ${utilities.length === 1 ? 'class' : 'classes'} for ${utilityPart}`,
+    fix(fixer) {
+      const ownerGroups = new Map<string, { owner: OwnerInfo; suggestedClasses: string[] }>()
+
+      for (const { suggestedClass, owner } of localMissing) {
+        const keyForOwner = owner.kind === 'simple' ? `simple:${attrNode.range?.join('-') ?? 'no-range'}` : `helper:${owner.argNode.range?.join('-') ?? 'no-range'}`
+
+        const existing = ownerGroups.get(keyForOwner)
+        if (existing) existing.suggestedClasses.push(suggestedClass)
+        else ownerGroups.set(keyForOwner, { owner, suggestedClasses: [suggestedClass] })
+      }
+
+      const fixes: TSESLint.RuleFix[] = []
+
+      for (const { owner, suggestedClasses } of ownerGroups.values()) {
+        const fix = fixerBuilder(attrNode, owner, suggestedClasses.join(' '), fixer, sourceCode)
+        if (Array.isArray(fix)) fixes.push(...fix)
+        else if (fix) fixes.push(fix)
+      }
+
+      return fixes
+    },
+  }
+
+  const perClass = localMissing.map(({ suggestedClass, owner }) => {
+    // capture each item in its own local binding
+    const sc = suggestedClass
+    const ow = owner
+
+    const s: SuggestionReportDescriptor<MessageIds> = {
+      // @ts-expect-error `desc` is supported by ESLint suggestions
+      desc: `Add missing ${modeLower}-mode class ${sc}`,
+      fix(fixer) {
+        console.log(
+          'FIX RUN utility=',
+          key,
+          'missing=',
+          localMissing.map((x) => x.suggestedClass),
+        )
+
+        return fixerBuilder(attrNode, ow, sc, fixer, sourceCode)
+      },
+    }
+    return s
+  })
+
+  return [addAll, ...perClass]
+}
+
+function buildAddClassFix(attrNode: TSESTree.JSXAttribute, owner: OwnerInfo, suggestedClasses: string, fixer: TSESLint.RuleFixer, sourceCode: TSESLint.SourceCode) {
+  const value = attrNode.value
+  if (!value) return null
+
+  const appendTo = (existing: string) => (existing.trim() + ' ' + suggestedClasses).trim()
+
+  // SIMPLE: className="..." / {'...'} / `...`
+  if (owner.kind === 'simple') {
+    const target = owner.attrValue!
+    const newClassString = appendTo(owner.classString)
+
+    if (target.type === 'Literal' && typeof target.value === 'string') {
+      // preserve quote style
+      const raw = sourceCode.getText(target) // e.g. "..." or '...'
+      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
+      const newText = `${quote}${newClassString}${quote}`
+      return fixer.replaceText(target, newText)
+    }
+
+    if (target.type === 'JSXExpressionContainer') {
+      const expr = target.expression
+
+      if (expr.type === 'Literal' && typeof expr.value === 'string') {
+        const raw = sourceCode.getText(expr)
+        const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
+        const newText = `${quote}${newClassString}${quote}`
+        return fixer.replaceText(expr, newText)
+      }
+
+      if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
+        return fixer.replaceText(expr, '`' + newClassString + '`')
+      }
+    }
+
+    return null
+  }
+
+  // HELPER SEGMENT: a specific cn/tw argument literal/template
+  if (owner.kind === 'helper-segment') {
+    const argNode = owner.argNode
+
+    // Literal argument (including logical-expression right side we stored)
+    if (argNode.type === 'Literal' && typeof argNode.value === 'string') {
+      const newClassString = appendTo(owner.classString)
+      const raw = sourceCode.getText(argNode) // e.g. "..." or '...'
+      const quote = raw[0] === "'" || raw[0] === '"' ? raw[0] : '"'
+      const newText = `${quote}${newClassString}${quote}`
+      return fixer.replaceText(argNode, newText)
+    }
+
+    // Template literal argument with no expressions
+    if (argNode.type === 'TemplateLiteral' && argNode.expressions.length === 0) {
+      const newClassString = appendTo(owner.classString)
+      return fixer.replaceText(argNode, '`' + newClassString + '`')
+    }
+  }
+
+  return null
+}
+
 const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
   defaultOptions: [],
   meta: {
@@ -261,29 +569,31 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
       const attrName = attrNode.name && attrNode.name.name.toString()
       if (!attributesToCheck.includes(attrName)) return
 
-      const classString = getClassNames(attrNode.value, { helpers: helperNames })
-      if (!classString) return
+      const entries = getClassEntries(attrNode.value, helperNames)
+      if (entries.length === 0) return
 
-      const classNames = classString
-        .split(/\s+/)
-        .map((t: string) => t.trim())
-        .filter(Boolean)
+      // const classNames = classString
+      //   .split(/\s+/)
+      //   .map((t: string) => t.trim())
+      //   .filter(Boolean)
 
       // console.log('considering classes: \n', tokens.map((t) => `'${t}'`).join(', '))
 
-      type KeyValue = Array<NonNullable<ReturnType<typeof evaluateClassname>>>
+      type KeyValue = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
       /**
        * key -> { lightUtilities: string[], darkUtilities: string[] }
        */
       const keyMap = new Map<string, { lightClasses: KeyValue; darkClasses: KeyValue }>() // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
 
-      for (const class_name of classNames) {
-        const parsed = evaluateClassname(class_name, { utilityClasses, colorNames })
-        if (!parsed) continue
+      for (const { className, owner } of entries) {
+        const _parsed = evaluateClassname(className, { utilityClasses, colorNames })
+        if (!_parsed) continue
 
-        if (keyMap.has(parsed.utility)) {
-          const val = keyMap.get(parsed.utility)!
-          const prop = parsed.mode === 'light' ? 'lightClasses' : 'darkClasses'
+        const parsed = { ..._parsed, owner }
+
+        if (keyMap.has(_parsed.utility)) {
+          const val = keyMap.get(_parsed.utility)!
+          const prop = _parsed.mode === 'light' ? 'lightClasses' : 'darkClasses'
 
           val[prop].push(parsed)
           keyMap.set(parsed.utility, val)
@@ -310,7 +620,7 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
 
           const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
-          console.log(`creating suggestion for ${currentColor}`)
+
           let contraryColor
 
           if (currentColor.includes('-')) {
@@ -334,6 +644,42 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
           missingClassesSuggestions.push(`${missingColorMode.toLocaleLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`)
         }
 
+        const sourceArray = lightClasses.length > darkClasses.length ? lightClasses : darkClasses
+
+        // Build per-class suggestions with owner info
+        const thisUtilityMissing = sourceArray.map((colorModeClass) => {
+          const modifiers = colorModeClass.className.replace('dark:', '').replace(colorModeClass.relevantClass, '') // leaves "hover:", etc.
+
+          const currentColor = colorModeClass.relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+          let contraryColor: string
+
+          if (currentColor.includes('-')) {
+            const intensity = Number(
+              currentColor
+                .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90]
+                .split('/')
+                .at(0), // "50" | "100" | ... | "900"
+            )
+
+            let opacity = ''
+            if (currentColor.includes('/')) {
+              opacity = '/' + currentColor.split('/').at(1)
+            }
+
+            contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
+          } else {
+            contraryColor = currentColor === 'white' ? 'black' : 'white'
+          }
+
+          const suggestedClass = `${missingColorMode.toLowerCase() === 'dark' && modifiers ? 'dark:' : ''}${modifiers}${colorModeClass.utility}-${contraryColor}`
+
+          return {
+            utility: colorModeClass.utility,
+            suggestedClass,
+            owner: colorModeClass.owner as OwnerInfo,
+          }
+        })
+
         context.report({
           node: attrNode,
           messageId: `missing${missingColorMode}`,
@@ -342,82 +688,16 @@ const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
             lightStyles: lightClasses.map((l) => `'${l.className}'`).join(', '),
             darkStyles: darkClasses.map((d) => `'${d.className}'`).join(', '),
           },
-          suggest: [
-            {
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: `Add missing ${missingColorMode.toLowerCase()}-mode classes`,
-              fix: function (fixer: TSESLint.RuleFixer) {
-                return buildAddClassFix(attrNode, classString, missingClassesSuggestions.join(' '), fixer)
-              },
-            },
-            ...missingClassesSuggestions.map(
-              (suggestedClass): SuggestionReportDescriptor<MessageIds> => ({
-                //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-                desc: `Add missing ${missingColorMode.toLowerCase()}-mode class ${suggestedClass}`,
-                fix: function (fixer: TSESLint.RuleFixer) {
-                  return buildAddClassFix(attrNode, classString, suggestedClass, fixer)
-                },
-              }),
-            ),
-          ],
+          suggest: makeSuggestions({
+            attrNode,
+            key,
+            missingColorMode: missingColorMode as 'Dark' | 'Light',
+            thisUtilityMissing,
+            sourceCode,
+            fixerBuilder: buildAddClassFix,
+          }),
         })
       }
-    }
-
-    function buildAddClassFix(attrNode: TSESTree.JSXAttribute, classString: string, suggestedClass: string, fixer: TSESLint.RuleFixer) {
-      const value = attrNode.value
-      if (!value) return null
-
-      const existingClasses = (classString || '').trim()
-      const newClassString = (existingClasses + ' ' + suggestedClass).trim()
-
-      // <div className="foo bar" />
-      if (value.type === 'Literal' && typeof value.value === 'string') {
-        // Rebuild as a normal double-quoted string literal
-        return fixer.replaceText(value, `"${newClassString}"`)
-      }
-
-      if (value.type === 'JSXExpressionContainer') {
-        const expr = value.expression
-
-        // className={'foo bar'}
-        if (expr.type === 'Literal' && typeof expr.value === 'string') {
-          return fixer.replaceText(expr, `"${newClassString}"`)
-        }
-
-        // className={`foo bar`}
-        if (expr.type === 'TemplateLiteral' && expr.expressions.length === 0) {
-          return fixer.replaceText(expr, '`' + newClassString + '`')
-        }
-
-        // className={cn(...)} or className={tw(...)}
-        if (expr.type === 'CallExpression' && expr.callee.type === 'Identifier' && helperNames.includes(expr.callee.name)) {
-          const exprText = sourceCode.getText(expr)
-
-          // Naive but effective: insert `, "suggestedClass"` before the last ')'
-          const lastParenIndex = exprText.lastIndexOf(')')
-
-          if (lastParenIndex === -1) {
-            return null
-          }
-
-          const before = exprText.slice(0, lastParenIndex)
-          const after = exprText.slice(lastParenIndex)
-          // Trim end to check for existing comma
-          const trimmedBefore = before.replace(/\s+$/, '')
-
-          // Does before already end with a comma?
-          const hasTrailingComma = trimmedBefore.endsWith(',')
-
-          const insertion = (hasTrailingComma ? ' ' : expr.arguments.length > 0 ? ', ' : '') + `"${suggestedClass}"`
-
-          const newExprText = before + insertion + after
-
-          return fixer.replaceText(expr, newExprText)
-        }
-      }
-
-      return null
     }
 
     return {
