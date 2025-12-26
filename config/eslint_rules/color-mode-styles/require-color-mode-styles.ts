@@ -523,8 +523,8 @@ function buildSuggestions(args: { attrNode: TSESTree.JSXAttribute; owner: OwnerI
   const suffix = items.length > 4 ? ', ...' : ''
 
   const addAllSuggestion: TSESLint.SuggestionReportDescriptor<MessageIds> = {
-    // @ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-    desc: `Add ${utilities} classes ${sample}${suffix} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
+    // @ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.  && utility-function name like "cn" on `owner.callExpression`
+    desc: `Add-All ${items.length} classes (utility-types: ${utilities}) within ${owner.kind === 'helper-segment' ? owner.callExpression.callee.name + '-argument' : 'className'}`,
     fix: (fixer) => {
       const classesToAdd = items.map((i) => i.className).join(' ')
       return createEslintSuggestionFixer(attrNode, owner, classesToAdd, fixer, sourceCode)
