@@ -44,40 +44,40 @@ type MissingClassType = Array<NonNullable<ReturnType<typeof evaluateClassname>> 
  */
 
 const defaultColorNames = [
-  'slate',
-  'gray',
-  'zinc',
-  'neutral',
-  'stone',
-  'red',
-  'orange',
-  'amber',
-  'yellow',
-  'lime',
-  'green',
-  'emerald',
-  'teal',
-  'cyan',
-  'sky',
-  'blue',
-  'indigo',
-  'violet',
-  'purple',
-  'fuchsia',
-  'pink',
-  'rose',
-  'black',
-  'white',
-  'inherit',
-  'current',
-  'transparent',
+  'slate' as const,
+  'gray' as const,
+  'zinc' as const,
+  'neutral' as const,
+  'stone' as const,
+  'red' as const,
+  'orange' as const,
+  'amber' as const,
+  'yellow' as const,
+  'lime' as const,
+  'green' as const,
+  'emerald' as const,
+  'teal' as const,
+  'cyan' as const,
+  'sky' as const,
+  'blue' as const,
+  'indigo' as const,
+  'violet' as const,
+  'purple' as const,
+  'fuchsia' as const,
+  'pink' as const,
+  'rose' as const,
+  'black' as const,
+  'white' as const,
+  'inherit' as const,
+  'current' as const,
+  'transparent' as const,
 ]
 
 export type Options = {
   utilityClasses: Array<string>
   attributes: Array<string>
   helpers: Array<string>
-  colorNames: Array<string>
+  colorNames: Array<(typeof defaultColorNames)[number] | (string & {})>
 }
 
 const DEFAULT_OPTIONS: Options = {
