@@ -1,6 +1,17 @@
 import collectClassnames from './collectClassnames.js';
 import createEslintSuggestionFixer from './createEslintSuggestionFixer.js';
-import evaluateClassname from './evaluateClassname.js';
+import { evaluateClassnameRelevance } from './evaluateClassname.js';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 const DEBUG_LOGS = false;
 /**
  * ESLint rule: require-color-mode-styles
@@ -55,6 +66,11 @@ const defaultColorNames = [
     'current',
     'transparent',
 ];
+ 
+function log(...message) {
+    if (DEBUG_LOGS)
+        console.log(...message);
+}
 const DEFAULT_OPTIONS = {
     utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow'],
     attributes: ['className', 'class'],
@@ -100,179 +116,73 @@ export const requireColorModeStylesRule = {
             },
         ],
         messages: {
-            missingDark: "Element is missing dark-mode style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
-            missingLight: "Element is missing light-mode color style(s) for '{{key}}' ([{{lightStyles}}] vs. [{{darkStyles}}]).",
+            missing_dark: "Element is missing dark-mode style(s) for '{{key}}' ([{{missing}}]).",
+            missing_light: "Element is missing light-mode color style(s) for '{{key}}' ([{{missing}}]).",
+            missing_both: "Element is missing color style(s) for '{{key}}' ([{{missing}}]).",
         },
     },
     create(context) {
         var _a;
-        const sourceCode = context.getSourceCode();
         const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions((_a = context.options) === null || _a === void 0 ? void 0 : _a[0]);
         /**
          * Returns either the filename and the position of the partial classname for utility functions like `cn` or the full classname for static className properties.
          */
         const getClassOrigin = (owner) => { var _a, _b; return owner.kind === 'helper-segment' ? `at ${context.filename.split('/').at(-1)} ${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}` : `'${owner.classString}'`; };
         function checkClassName(attrNode) {
-            var _a, _b, _c;
             const attrName = attrNode.name && attrNode.name.name.toString();
             if (!attributesToCheck.includes(attrName))
                 return;
-            const entries = collectClassnames(attrNode.value, helperNames);
-            if (entries.length === 0)
+            const colorClassEntries = collectClassnames(attrNode.value, helperNames);
+            if (colorClassEntries.length === 0)
                 return;
-            const keyMap = new Map(); // key: the utilty type like "text", "bg", "ring"; the value { lightClasses: [], darkClasses: [] }
-            for (const { className, owner } of entries) {
-                const _parsed = evaluateClassname(className, { utilityClasses, colorNames });
-                if (!_parsed)
+            // holds only color-mode related classes
+            const classEntries = [];
+            // evaluate class -> strip / remove the ones that are irrelevant for this rule
+            for (const entry of colorClassEntries) {
+                const result = evaluateClassnameRelevance(entry, { utilityClasses, colorNames });
+                // irrelevant class
+                if (result === null)
                     continue;
-                const parsed = Object.assign(Object.assign({}, _parsed), { owner });
-                if (keyMap.has(_parsed.utility)) {
-                    const val = keyMap.get(_parsed.utility);
-                    const prop = _parsed.mode === 'light' ? 'lightClasses' : 'darkClasses';
-                    val[prop].push(parsed);
-                    keyMap.set(parsed.utility, val);
-                }
-                else {
-                    keyMap.set(parsed.utility, { lightClasses: parsed.mode === 'light' ? [parsed] : [], darkClasses: parsed.mode === 'dark' ? [parsed] : [] });
-                }
+                classEntries.push(result);
             }
-            const nodeMissingClasses = [];
-            for (const key of keyMap.keys()) {
-                const { lightClasses, darkClasses } = keyMap.get(key);
-                const missingColorMode = lightClasses.length > darkClasses.length ? 'dark' : 'light';
-                //* Find matching classes
-                const superiorMode = lightClasses.length > darkClasses.length ? lightClasses : darkClasses;
-                const inferiorMode = lightClasses.length > darkClasses.length ? darkClasses : lightClasses;
-                const missingClasses = [];
-                // choose the color-mode class array that has the most classes, thus that is not missing any classes.
-                // This loop iterates over the superior-class array and would create contrary suggestions for each of the superiorClasses, because there is no check yet to consider existing inferior-classes
-                for (const superior of superiorMode) {
-                    // -- start: check for eliminating matchin opposite classes from creating suggestions
-                    //* Filter out those color-mode classes that match (that exist for both modes)
-                    // eliminate classes from both the superiorMode and inferiorMode that are indeed matching, to only keep considering truly missing classes with no opposites.
-                    const inSameClassString = inferiorMode.find((inf) => inf.owner.classString === superior.owner.classString);
-                    const removeDarkModifier = (input) => input === null || input === void 0 ? void 0 : input.replace('dark:', '');
-                    const haveSameModifiers = removeDarkModifier((_a = inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.className) === null || _a === void 0 ? void 0 : _a.replace(inSameClassString === null || inSameClassString === void 0 ? void 0 : inSameClassString.relevantClass, '')) === removeDarkModifier(superior.className.replace(superior.relevantClass, ''));
-                    if (haveSameModifiers && inSameClassString) {
-                        if (DEBUG_LOGS) {
-                            const ownerInformation = superior.owner.kind === 'helper-segment'
-                                ? `at ${context.filename.split('/').at(-1)} ${(_b = superior.owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.line}:${(_c = superior.owner.argNode.loc) === null || _c === void 0 ? void 0 : _c.start.column}`
-                                : `'${superior.owner.attrValue}'`;
-                            console.log(`[matching-opposites-found]: '${superior.className}' and '${inSameClassString.className}' are opposite classes ${ownerInformation}`);
-                            console.log();
-                        }
-                        continue;
-                    }
-                    if (DEBUG_LOGS)
-                        console.log(`[Missing]: '${superior.className}' has no matching opposite. (${getClassOrigin(superior.owner)})`);
-                    // -- end: check for eliminating matchin opposite classes from creating suggestions
-                    const modifiers = superior.className.replace('dark:', '').replace(superior.relevantClass, ''); // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
-                    const currentColor = superior.relevantClass.split('-').slice(1).join('-'); // "red-200", "neutral-200", "white"
-                    let contraryColor;
-                    if (currentColor.includes('-')) {
-                        const intensity = Number(currentColor
-                            .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
-                            .split('/')
-                            .at(0));
-                        let opacity = '';
-                        if (currentColor.includes('/')) {
-                            opacity = '/' + currentColor.split('/').at(1);
-                        }
-                        contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`;
-                    }
-                    else {
-                        contraryColor = currentColor === 'white' ? 'black' : 'white';
-                    }
-                    const colorModePrefix = missingColorMode === 'dark' ? 'dark:' : '';
-                    const suggestedClass = `${colorModePrefix}${modifiers}${superior.utility}-${contraryColor}`;
-                    if (DEBUG_LOGS)
-                        console.log(`[Suggesting]: '${suggestedClass}' as an opposite class to '${superior.className}'`);
-                    missingClasses.push({
-                        utility: superior.utility,
-                        mode: missingColorMode,
-                        className: suggestedClass,
-                        owner: superior.owner,
-                        relevantClass: `${superior.utility}-${contraryColor}`,
-                    });
-                    if (DEBUG_LOGS)
-                        console.log();
+            // todo map missing classes by owner first, then by utility to prevent finding matching classes in different arguments of utility functions like cn
+            // -----
+            const classEntriesByOwner = groupClassesByOwner(classEntries, getClassOrigin);
+            Array.from(classEntriesByOwner.keys()).forEach((origin) => {
+                if (DEBUG_LOGS) {
+                    // log(
+                    //   'Found classes',
+                    //   origin,
+                    //   classEntriesByOwner.get(origin)!.map((entry) => entry.className),
+                    // )
                 }
-                nodeMissingClasses.push(...missingClasses);
-            }
-            if (nodeMissingClasses.length === 0)
-                return;
-            // Group missing suggestions by the node they should edit
-            const missingByOwner = new Map();
-            const ownerKey = (owner) => {
-                var _a, _b, _c, _d;
-                // Prefer range; fall back to loc if needed
-                if (owner.kind === 'helper-segment') {
-                    return owner.argNode.range ? `helper:${owner.argNode.range[0]}-${owner.argNode.range[1]}` : `helper:${(_a = owner.argNode.loc) === null || _a === void 0 ? void 0 : _a.start.line}:${(_b = owner.argNode.loc) === null || _b === void 0 ? void 0 : _b.start.column}`;
-                }
-                // simple: attach to the attribute value (or the attribute itself)
-                const val = owner.attrValue;
-                 
-                if (val && 'range' in val && Array.isArray(val.range)) {
-                     
-                    const r = val.range;
-                    return `simple:${r[0]}-${r[1]}`;
-                }
-                return attrNode.range ? `simple:${attrNode.range[0]}-${attrNode.range[1]}` : `simple:${(_c = attrNode.loc) === null || _c === void 0 ? void 0 : _c.start.line}:${(_d = attrNode.loc) === null || _d === void 0 ? void 0 : _d.start.column}`;
-            };
-            for (const m of nodeMissingClasses) {
-                const k = ownerKey(m.owner);
-                const existing = missingByOwner.get(k);
-                if (existing)
-                    existing.items.push(m);
-                else
-                    missingByOwner.set(k, { owner: m.owner, items: [m] });
-            }
-            //* Emit one report per owner
-            for (const { owner, items } of missingByOwner.values()) {
-                // Decide where to anchor the diagnostic:
-                // - helper: anchor to the specific literal in cn(...) arg (the line/segment)
-                // - simple: anchor to the attribute itself
+            });
+            const missingClassesByOwner = new Map();
+            // Iterate over each class per-owner, identify missing classes and create report
+            for (const [position, classes] of classEntriesByOwner.entries()) {
+                log(`Scanning for missing classes ${position.trim()}`);
+                const unmatchedClasses = eliminateMatchingClasses(classes);
+                const missingClasses = generateSuggestedClasses(unmatchedClasses);
+                const { dark, light } = seperateColorModeClasses(missingClasses);
+                // prettier-ignore
+                if (dark.length > 0)
+                    log(position.replace('at', '').trim(), ' is missing these dark-mode classes', dark.map((d) => d.className));
+                // prettier-ignore
+                if (light.length > 0)
+                    log(position.replace('at', '').trim(), ' is missing these light-mode classes', light.map((d) => d.className));
+                log(`Done checking ${position.replace('at', '').trim()}\n\n`);
+                missingClassesByOwner.set(position, missingClasses);
+                if (missingClasses.length === 0)
+                    continue;
+                log(`Generating report for ${missingClasses.length} missing classes.`);
+                // all the classes in the loop have the same owner
+                const owner = classes[0].owner;
                 const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode;
-                // Optional: nicer message content – summarize utilities & modes
-                const utilities = [...new Set(items.map((i) => i.utility))].join(', ');
-                const modes = [...new Set(items.map((i) => i.mode))].join(', ');
-                context.report({
-                    node: reportNode,
-                    messageId: (modes.includes('dark') ? 'missingDark' : 'missingLight'),
-                    data: {
-                        key: utilities,
-                        // These two fields are required by your message template; we can fill them with something meaningful:
-                        lightStyles: items
-                            .filter((i) => i.mode === 'light')
-                            .map((i) => `'${i.className}'`)
-                            .join(', ') || '—',
-                        darkStyles: items
-                            .filter((i) => i.mode === 'dark')
-                            .map((i) => `'${i.className}'`)
-                            .join(', ') || '—',
-                    },
-                    suggest: [
-                        // Add all missing for this owner (single click)
-                        {
-                            //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-                            desc: `Add ${utilities} classes ${items
-                                .slice(0, 3)
-                                .map((i) => `'${i.className}'`)
-                                .join(', ')}${items.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
-                            fix: (fixer) => {
-                                const classes = items.map((i) => i.className).join(' ');
-                                return createEslintSuggestionFixer(attrNode, owner, classes, fixer, sourceCode);
-                            },
-                        },
-                        // One suggestion per missing class
-                        ...items.map((missing) => ({
-                            //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-                            desc: `Add ${missing.mode}-mode ${missing.className}`,
-                            fix: (fixer) => createEslintSuggestionFixer(attrNode, owner, missing.className, fixer, sourceCode),
-                        })),
-                    ],
-                });
+                createReport(context, attrNode, reportNode, owner, missingClasses);
             }
+            if (1 === 1)
+                return;
+            //------
         }
         return {
             JSXAttribute: checkClassName,
@@ -294,4 +204,134 @@ function resolveOptions(user) {
         helpers: (_c = user === null || user === void 0 ? void 0 : user.helpers) !== null && _c !== void 0 ? _c : DEFAULT_OPTIONS.helpers,
         colorNames: (_d = user === null || user === void 0 ? void 0 : user.colorNames) !== null && _d !== void 0 ? _d : DEFAULT_OPTIONS.colorNames,
     };
+}
+/**
+ * This function takes in the collected classnames from a JSX.attribute (like className, class) and groups them by their owner.
+ * This means that className arguments of utility functions like `cn` are separated by their 'argument-position' (owner).
+ *
+ * By grouping the gathered classNames by their owner resolves the issue of comparing classes from different (cn) arguments with each other.
+ *
+ * @param classEntries The collected classnames for a given attribute
+ * @param getClassOrigin The function that determines the unique position / location of classNames
+ * @returns
+ */
+function groupClassesByOwner(classEntries, getClassOrigin) {
+    const classEntriesByOwner = new Map();
+    classEntries.forEach((e) => {
+        if (classEntriesByOwner.has(getClassOrigin(e.owner))) {
+            const entries = classEntriesByOwner.get(getClassOrigin(e.owner));
+            entries.push(e);
+            classEntriesByOwner.set(getClassOrigin(e.owner), entries);
+        }
+        else {
+            classEntriesByOwner.set(getClassOrigin(e.owner), [e]);
+        }
+    });
+    return classEntriesByOwner;
+}
+/**
+ * This utility funtion takes in an existing class that has been parsed and generates a class suggestion for the opposite color-mode.
+ * @param targetMode The opposite color-mode for which the contrary class should be generated.
+ * @param class The existing (evaluated) class.
+ * @returns The suggested / missing class based on the existing one from the other color-mode.
+ */
+function generateMissingClass(_a) {
+    var { className, relevantClass, utility, colorMode } = _a, rest = __rest(_a, ["className", "relevantClass", "utility", "colorMode"]);
+    const targetMode = colorMode === 'dark' ? 'light' : 'dark';
+    const modifiers = className.replace('dark:', '').replace(relevantClass, ''); // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+    const currentColor = relevantClass.split('-').slice(1).join('-'); // "red-200", "neutral-200", "white"
+    let contraryColor;
+    if (currentColor.includes('-')) {
+        const intensity = Number(currentColor
+            .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+            .split('/')
+            .at(0));
+        let opacity = '';
+        if (currentColor.includes('/')) {
+            opacity = '/' + currentColor.split('/').at(1);
+        }
+        contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`;
+    }
+    else {
+        contraryColor = currentColor === 'white' ? 'black' : 'white';
+    }
+    const colorModePrefix = targetMode === 'dark' ? 'dark:' : '';
+    const suggestedClass = `${colorModePrefix}${modifiers}${utility}-${contraryColor}`;
+    const relevantSuggestedClass = `${utility}-${contraryColor}`;
+    return Object.assign({ colorMode: targetMode, className: suggestedClass, relevantClass: relevantSuggestedClass, utility }, rest);
+}
+/**
+ * This function takes in all the classes for from a given owner (e.g. argument of cn) and determines which classes do not have opposite classes.
+ * This leaves the classes for which opposite / contrary classes for the other color-mode are to be generated / suggested.
+ *
+ * (identify classes that have no opposite matches, by eliminating those with opposite classes (same modifiers and same utility))
+ * @param classes The classes within a given `cn` argument of simply the attribute it self when the classess originate from a static className attribute.
+ * @returns An array of the classes that have no opposite-class for which suggestions should be made.
+ */
+function eliminateMatchingClasses(classes) {
+    // note just comaring lengths could cause problems (dark:text-neutral-200 dark:hover:text-neutral-200 text-neutral-300 active:text-neutral-200)
+    const missing = [];
+    for (const _class of classes) {
+        if (missing.includes(_class))
+            continue;
+        const otherClasses = classes.filter((other) => other.className !== _class.className);
+        const match = otherClasses.find((other) => {
+            if (_class.utility !== other.utility)
+                return false;
+            const modifiersA = _class.className.replace('dark:', '').replace(_class.relevantClass, '');
+            const modifiersB = other.className.replace('dark:', '').replace(other.relevantClass, '');
+            if (modifiersA !== modifiersB)
+                return false;
+            return true;
+        });
+        if (match) {
+            // log(`[Verose]: Found opposite class for ${_class.className} --> ${match.className}`)
+            continue;
+        }
+        missing.push(_class);
+    }
+    return missing;
+}
+function seperateColorModeClasses(classes) {
+    const dark = [];
+    const light = [];
+    classes.forEach((cl) => (cl.className.includes('dark:') ? dark.push(cl) : light.push(cl)));
+    return { dark, light };
+}
+function generateSuggestedClasses(classes) {
+    return classes.map((_class) => generateMissingClass(_class));
+}
+function createReport(context, originNode, reportNode, owner, suggestedClasses) {
+    const sourceCode = context.getSourceCode();
+    const missingModes = [...new Set(suggestedClasses.map((s) => s.colorMode))];
+    const messageId = missingModes.length > 1 ? 'missing_both' : `missing_${missingModes[0]}`;
+    const missingUtilityTypes = [...new Set(suggestedClasses.map((i) => i.utility))].join(', ');
+    const addAllSuggestion = {
+        desc: `Add ${missingUtilityTypes} classes ${suggestedClasses
+            .slice(0, 3)
+            .map((i) => `'${i.className}'`)
+            .join(', ')}${suggestedClasses.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
+        fix: (fixer) => {
+            const classes = suggestedClasses.map((i) => i.className).join(' ');
+            return createEslintSuggestionFixer(originNode, owner, classes, fixer, sourceCode);
+        },
+    };
+    context.report({
+        node: reportNode,
+        messageId,
+        data: {
+            key: missingUtilityTypes,
+            missing: suggestedClasses.map((suggested) => `'${suggested.className}'`).join(', '),
+        },
+        //@ts-expect-error suggest-type requires `messageId`s, but `messageId` and `desc` cannot be used at the same time; and `desc` is more flexible.
+        suggest: [
+            // Add all missing for this owner when there are multiple missing classes
+            ...(suggestedClasses.length > 1 ? [addAllSuggestion] : []),
+            // One suggestion per missing class
+            ...suggestedClasses.map((missing) => ({
+                desc: `Add ${missing.colorMode}-mode ${missing.className}`,
+                fix: (fixer) => createEslintSuggestionFixer(originNode, owner, missing.className, fixer, sourceCode),
+            })),
+        ],
+    });
 }
