@@ -307,10 +307,7 @@ function createReport(context, originNode, reportNode, owner, suggestedClasses) 
     const messageId = missingModes.length > 1 ? 'missing_both' : `missing_${missingModes[0]}`;
     const missingUtilityTypes = [...new Set(suggestedClasses.map((i) => i.utility))].join(', ');
     const addAllSuggestion = {
-        desc: `Add ${missingUtilityTypes} classes ${suggestedClasses
-            .slice(0, 3)
-            .map((i) => `'${i.className}'`)
-            .join(', ')}${suggestedClasses.length > 4 ? ', ...' : ''} in ${owner.kind === 'helper-segment' ? 'argument' : 'className'}`,
+        desc: `Add all missing classes for ${missingUtilityTypes}`,
         fix: (fixer) => {
             const classes = suggestedClasses.map((i) => i.className).join(' ');
             return createEslintSuggestionFixer(originNode, owner, classes, fixer, sourceCode);
