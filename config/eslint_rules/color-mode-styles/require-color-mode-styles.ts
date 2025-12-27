@@ -74,9 +74,9 @@ const defaultColorNames = [
 ]
 
 export type Options = {
-  utilityClasses: Array<string>
+  utilityClasses: Array<'bg' | 'text' | 'border' | 'ring' | 'shadow' | (string & {})>
   attributes: Array<string>
-  helpers: Array<string>
+  helpers: Array<'cn' | 'tw' | (string & {})>
   colorNames: Array<(typeof defaultColorNames)[number] | (string & {})>
 }
 
