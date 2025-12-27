@@ -61,7 +61,7 @@ const DEFAULT_OPTIONS = {
     helpers: ['cn', 'tw'],
     colorNames: defaultColorNames,
 };
-const requireColorModeStylesRule = {
+export const requireColorModeStylesRule = {
     defaultOptions: [],
     meta: {
         type: 'suggestion',

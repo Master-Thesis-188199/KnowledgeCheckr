@@ -77,7 +77,7 @@ const DEFAULT_OPTIONS: Options = {
   colorNames: defaultColorNames,
 }
 
-const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
+export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
   defaultOptions: [],
   meta: {
     type: 'suggestion',
