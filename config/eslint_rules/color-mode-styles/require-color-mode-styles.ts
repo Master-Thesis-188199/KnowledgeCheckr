@@ -7,6 +7,16 @@ import { OwnerInfo } from './types.js'
 const DEBUG_LOGS = false
 
 type MessageIds = 'missingLight' | 'missingDark'
+export type Mode = 'dark' | 'light'
+type Class = {
+  mode: Mode
+  owner: OwnerInfo
+  utility: string
+  className: string
+  relevantClass: string
+}
+export type ClassWithOwner = Class & { owner: OwnerInfo }
+
 type MissingClassType = Array<NonNullable<ReturnType<typeof evaluateClassname>> & { owner: OwnerInfo }>
 /**
  * ESLint rule: require-color-mode-styles
