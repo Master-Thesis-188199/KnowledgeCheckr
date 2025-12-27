@@ -2,6 +2,10 @@ import tsParser from '@typescript-eslint/parser'
 import { RuleTester } from '@typescript-eslint/utils/ts-eslint'
 import { requireColorModeStylesRule } from '../require-color-mode-styles.js'
 
+const quoteString = (input: string) => `'${input}'`
+const quoteJoinArray = (options: string[], seperator = ', ') => options.map(quoteString).join(seperator)
+const joinArray = (options: string[], seperator = ', ') => options.join(seperator)
+
 const ruleTester = new RuleTester({
   //@ts-expect-error The `languageOptions` is not defined in the `RuleTester` types even though it exists.
   languageOptions: {
@@ -52,16 +56,15 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       code: `const A = () => (<div className="bg-neutral-200 text-neutral-700" />)`,
       errors: [
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg, text',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-700', 'dark:text-neutral-200'",
+            key: joinArray(['bg', 'text']),
+            missing: quoteJoinArray(['dark:bg-neutral-700', 'dark:text-neutral-200']),
           },
           suggestions: [
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg, text classes 'dark:bg-neutral-700', 'dark:text-neutral-200' in className",
+              desc: `Add all missing classes for ${joinArray(['bg', 'text'])}`,
               output: `const A = () => (<div className="bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200" />)`,
             },
             {
@@ -84,18 +87,17 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       code: `const A = () => (<div className="bg-neutral-200 text-neutral-700 dark:text-neutral-200" />)`,
       errors: [
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-700'",
+            key: joinArray(['bg']),
+            missing: quoteJoinArray(['dark:bg-neutral-700']),
           },
           suggestions: [
-            {
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg classes 'dark:bg-neutral-700' in className",
-              output: `const A = () => (<div className="bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700" />)`,
-            },
+            // {
+            //   //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+            //   desc: "Add bg classes 'dark:bg-neutral-700' in className",
+            //   output: `const A = () => (<div className="bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700" />)`,
+            // },
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: 'Add dark-mode dark:bg-neutral-700',
@@ -111,18 +113,17 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       code: `const A = () => (<div className="bg-neutral-200 dark:text-neutral-200 dark:bg-neutral-200" />)`,
       errors: [
         {
-          messageId: 'missingLight',
+          messageId: 'missing_light',
           data: {
-            key: 'text',
-            lightStyles: "'text-neutral-700'",
-            darkStyles: '—',
+            key: joinArray(['text']),
+            missing: quoteJoinArray(['text-neutral-700']),
           },
           suggestions: [
-            {
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add text classes 'text-neutral-700' in className",
-              output: `const A = () => (<div className="bg-neutral-200 dark:text-neutral-200 dark:bg-neutral-200 text-neutral-700" />)`,
-            },
+            // {
+            //   //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+            //   desc: "Add text classes 'text-neutral-700' in className",
+            //   output: `const A = () => (<div className="bg-neutral-200 dark:text-neutral-200 dark:bg-neutral-200 text-neutral-700" />)`,
+            // },
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: 'Add light-mode text-neutral-700',
@@ -141,16 +142,15 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       errors: [
         // first cn-argument
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg, text',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-700', 'dark:text-neutral-200'",
+            key: joinArray(['bg', 'text']),
+            missing: quoteJoinArray(['dark:bg-neutral-700', 'dark:text-neutral-200']),
           },
           suggestions: [
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg, text classes 'dark:bg-neutral-700', 'dark:text-neutral-200' in argument",
+              desc: `Add all missing classes for ${joinArray(['bg', 'text'])}`,
               output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
             },
             {
@@ -168,16 +168,15 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
         // second cn argument
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg, text',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-600', 'dark:text-blue-300'",
+            key: joinArray(['bg', 'text']),
+            missing: quoteJoinArray(['dark:bg-neutral-600', 'dark:text-blue-300']),
           },
           suggestions: [
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg, text classes 'dark:bg-neutral-600', 'dark:text-blue-300' in argument",
+              desc: `Add all missing classes for ${joinArray(['bg', 'text'])}`,
               output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600 dark:text-blue-300')}/>)`,
             },
             {
@@ -201,18 +200,17 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       errors: [
         // first cn-argument
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-700'",
+            key: joinArray(['bg']),
+            missing: quoteJoinArray(['dark:bg-neutral-700']),
           },
           suggestions: [
-            {
-              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg classes 'dark:bg-neutral-700' in argument",
-              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
-            },
+            // {
+            //   //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+            //   desc: "Add bg classes 'dark:bg-neutral-700' in argument",
+            //   output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            // },
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
               desc: 'Add dark-mode dark:bg-neutral-700',
@@ -223,16 +221,15 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
         // second cn argument
         {
-          messageId: 'missingDark',
+          messageId: 'missing_dark',
           data: {
-            key: 'bg, text',
-            lightStyles: '—',
-            darkStyles: "'dark:bg-neutral-600', 'dark:text-blue-300'",
+            key: joinArray(['bg', 'text']),
+            missing: quoteJoinArray(['dark:bg-neutral-600', 'dark:text-blue-300']),
           },
           suggestions: [
             {
               //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
-              desc: "Add bg, text classes 'dark:bg-neutral-600', 'dark:text-blue-300' in argument",
+              desc: `Add all missing classes for ${joinArray(['bg', 'text'])}`,
               output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600 dark:text-blue-300')}/>)`,
             },
             {
