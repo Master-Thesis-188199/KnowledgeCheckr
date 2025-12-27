@@ -116,9 +116,9 @@ export const requireColorModeStylesRule = {
             },
         ],
         messages: {
-            missing_dark: "Element is missing dark-mode style(s) for '{{key}}' ([{{missing}}]).",
-            missing_light: "Element is missing light-mode color style(s) for '{{key}}' ([{{missing}}]).",
-            missing_both: "Element is missing light and dark color style(s) for '{{key}}' ([{{missing}}]).",
+            missing_dark: 'Element is missing dark-mode style(s) for {{key}} ([{{missing}}]).',
+            missing_light: 'Element is missing light-mode color style(s) for {{key}} ([{{missing}}]).',
+            missing_both: 'Element is missing light and dark color style(s) for {{key}} ([{{missing}}]).',
         },
     },
     create(context) {
