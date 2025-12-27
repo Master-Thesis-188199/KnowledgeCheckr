@@ -132,5 +132,122 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
         },
       ],
     },
+
+    //. Dynamic classes -> utility functions like `cn`
+
+    {
+      //* test missing dark-mode styles without existing opposite-class matches in dynamic className properties (`cn`)
+      code: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+      errors: [
+        // first cn-argument
+        {
+          messageId: 'missingDark',
+          data: {
+            key: 'bg, text',
+            lightStyles: '—',
+            darkStyles: "'dark:bg-neutral-700', 'dark:text-neutral-200'",
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: "Add bg, text classes 'dark:bg-neutral-700', 'dark:text-neutral-200' in argument",
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-700',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:text-neutral-200',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            },
+          ],
+        },
+
+        // second cn argument
+        {
+          messageId: 'missingDark',
+          data: {
+            key: 'bg, text',
+            lightStyles: '—',
+            darkStyles: "'dark:bg-neutral-600', 'dark:text-blue-300'",
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: "Add bg, text classes 'dark:bg-neutral-600', 'dark:text-blue-300' in argument",
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600 dark:text-blue-300')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-600',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:text-blue-300',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:text-blue-300')}/>)`,
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      //* test missing dark-mode styles ** with ** existing opposite-class matches in dynamic className properties (`cn`)
+      code: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+      errors: [
+        // first cn-argument
+        {
+          messageId: 'missingDark',
+          data: {
+            key: 'bg',
+            lightStyles: '—',
+            darkStyles: "'dark:bg-neutral-700'",
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: "Add bg classes 'dark:bg-neutral-700' in argument",
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-700',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
+            },
+          ],
+        },
+
+        // second cn argument
+        {
+          messageId: 'missingDark',
+          data: {
+            key: 'bg, text',
+            lightStyles: '—',
+            darkStyles: "'dark:bg-neutral-600', 'dark:text-blue-300'",
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: "Add bg, text classes 'dark:bg-neutral-600', 'dark:text-blue-300' in argument",
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600 dark:text-blue-300')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-600',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:bg-neutral-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:text-blue-300',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:text-blue-300')}/>)`,
+            },
+          ],
+        },
+      ],
+    },
   ],
 })
