@@ -53,6 +53,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
   invalid: [
     {
       //* test missing dark-mode styles with NO existing opposite-class matches in static className properties
+      name: 'Verify missing dark-mode classes for text and bg utility types are recognized and suggested',
       code: `const A = () => (<div className="bg-neutral-200 text-neutral-700" />)`,
       errors: [
         {
@@ -84,6 +85,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
     {
       //* test missing dark-mode styles with existing opposite-class matches in static className properties
+      name: 'Verify missing dark-mode classes for bg utility types are recognized and suggested (with existing color-mode styles)',
       code: `const A = () => (<div className="bg-neutral-200 text-neutral-700 dark:text-neutral-200" />)`,
       errors: [
         {
@@ -110,6 +112,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
     {
       //* test missing light-mode styles with existing opposite-class matches in static className properties
+      name: 'Verify missing light-mode classes for text utility type is recognized and suggested (with existing color-mode styles)',
       code: `const A = () => (<div className="bg-neutral-200 dark:text-neutral-200 dark:bg-neutral-200" />)`,
       errors: [
         {
@@ -138,6 +141,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
     {
       //* test missing dark-mode styles without existing opposite-class matches in dynamic className properties (`cn`)
+      name: 'Verify missing dark-mode classes for bg, text utility types are recognized and suggested in utility function `cn` (without existing color-mode styles)',
       code: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
       errors: [
         // first cn-argument
@@ -196,6 +200,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
 
     {
       //* test missing dark-mode styles ** with ** existing opposite-class matches in dynamic className properties (`cn`)
+      name: 'Verify missing dark-mode classes for bg, text utility types are recognized and suggested in utility function `cn` (with existing color-mode styles)',
       code: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200', isEmpty && 'bg-neutral-300 text-blue-600')}/>)`,
       errors: [
         // first cn-argument
