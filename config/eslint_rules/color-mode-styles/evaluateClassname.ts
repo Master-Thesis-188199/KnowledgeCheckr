@@ -133,7 +133,7 @@ export function evaluateClassnameRelevance(
   // console.log(`Considering '${relevantClass}'`)
 
   return {
-    mode: colorMode,
+    colorMode,
     utility,
     className,
     relevantClass,

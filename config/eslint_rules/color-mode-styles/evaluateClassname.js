@@ -92,7 +92,7 @@ export function evaluateClassnameRelevance({ className, owner }, { utilityClasse
     const utility = relevantClass.split('-')[0];
     // console.log(`Considering '${relevantClass}'`)
     return {
-        mode: colorMode,
+        colorMode,
         utility,
         className,
         relevantClass,

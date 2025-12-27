@@ -9,7 +9,7 @@ const DEBUG_LOGS = false
 type MessageIds = 'missingLight' | 'missingDark'
 export type Mode = 'dark' | 'light'
 type Class = {
-  mode: Mode
+  colorMode: Mode
   owner: OwnerInfo
   utility: string
   className: string
