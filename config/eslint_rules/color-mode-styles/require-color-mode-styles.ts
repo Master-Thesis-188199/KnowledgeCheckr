@@ -234,7 +234,7 @@ export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options
           const colorModePrefix = missingColorMode === 'dark' ? 'dark:' : ''
           const suggestedClass = `${colorModePrefix}${modifiers}${superior.utility}-${contraryColor}`
 
-          if (DEBUG_LOGS) console.log(`Determined ${suggestedClass} as missing`)
+          if (DEBUG_LOGS) console.log(`[Suggesting]: '${suggestedClass}' as an opposite class to '${superior.className}'`)
 
           missingClasses.push({
             utility: superior.utility,
@@ -243,6 +243,8 @@ export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options
             owner: superior.owner,
             relevantClass: `${superior.utility}-${contraryColor}`,
           })
+
+          if (DEBUG_LOGS) console.log()
         }
 
         nodeMissingClasses.push(...missingClasses)

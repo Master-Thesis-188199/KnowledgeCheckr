@@ -186,7 +186,7 @@ export const requireColorModeStylesRule = {
                     const colorModePrefix = missingColorMode === 'dark' ? 'dark:' : '';
                     const suggestedClass = `${colorModePrefix}${modifiers}${superior.utility}-${contraryColor}`;
                     if (DEBUG_LOGS)
-                        console.log(`Determined ${suggestedClass} as missing`);
+                        console.log(`[Suggesting]: '${suggestedClass}' as an opposite class to '${superior.className}'`);
                     missingClasses.push({
                         utility: superior.utility,
                         mode: missingColorMode,
@@ -194,6 +194,8 @@ export const requireColorModeStylesRule = {
                         owner: superior.owner,
                         relevantClass: `${superior.utility}-${contraryColor}`,
                     });
+                    if (DEBUG_LOGS)
+                        console.log();
                 }
                 nodeMissingClasses.push(...missingClasses);
             }
