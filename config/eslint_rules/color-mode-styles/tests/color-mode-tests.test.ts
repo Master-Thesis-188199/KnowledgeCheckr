@@ -23,6 +23,24 @@ const ruleTester = new RuleTester({
 ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
   valid: [
     // /* ... */
+
+    {
+      name: 'Expect arbitrary (<utility>-[]) values to be recognized',
+      code: `
+    const A = () => (
+      <div className="bg-[#ffffff] dark:bg-neutral-800" />
+    )
+    `,
+    },
+
+    {
+      name: 'Expect multiple arbitrary (<utility>-[]) values to be recognized',
+      code: `
+    const A = () => (
+      <div className="bg-[#ffffff] enabled:hover:active:ring-[#D44D35] dark:enabled:hover:active:ring-white dark:bg-neutral-800" />
+    )
+    `,
+    },
     {
       code: `
     const A = () => (
