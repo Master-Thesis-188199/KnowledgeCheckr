@@ -21,7 +21,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         <h2 className='text-center text-xl font-semibold text-neutral-600 dark:text-neutral-300'>{check.name}</h2>
         <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{check.description}</span>
       </div>
-      <div className='flex flex-wrap justify-evenly gap-8 px-6 text-neutral-600 dark:text-neutral-300'>
+      <div className='flex flex-wrap justify-evenly gap-8 px-6'>
         <StatisticElement label='Questions' value={check.questions.length} />
         <StatisticElement
           label='estimatedTime'
