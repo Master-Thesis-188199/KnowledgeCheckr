@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library */
 import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { Tooltip } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -14,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import {
   ChoiceQuestion,
@@ -299,15 +299,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
-              <Tooltip
-                showArrow={true}
-                shouldFlip={true}
-                closeDelay={0}
-                delay={500}
-                color='primary'
-                content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}
-                // offset={-10}
-                className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
+              <Tooltip tabIndex={-1} content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}>
                 <label className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
                   <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                   <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
@@ -360,16 +352,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
-              <Tooltip
-                tabIndex={-1}
-                showArrow={true}
-                shouldFlip={true}
-                closeDelay={0}
-                delay={500}
-                color='primary'
-                content={`The correct position for this answer`}
-                // offset={-10}
-                className='rounded-md p-1 text-xs ring-[0.5px] dark:bg-neutral-700 dark:ring-neutral-700'>
+              <Tooltip tabIndex={-1} content={`The correct position for this answer`}>
                 <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
                   <input type='hidden' value={index} {...register(`answers.${index}.position` as const, { valueAsNumber: true })} />
                   <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
