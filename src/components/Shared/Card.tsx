@@ -24,7 +24,7 @@ export default function Card<C extends ElementType = 'div'>({ as, disableInterac
     <Component
       {...rest}
       className={cn(
-        'rounded-md py-4 ring-1',
+        'rounded-md p-4 ring-1',
         'bg-neutral-200/40 shadow-md shadow-neutral-200 ring-neutral-400/40 dark:bg-neutral-700/30 dark:shadow-neutral-900/60 dark:ring-neutral-600/70',
         !disableInteractions &&
           cn(
