@@ -251,5 +251,69 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
         },
       ],
     },
+
+    {
+      name: 'Verify missing both dark- and light- mode classes for bg, text utility types are recognized and suggested in utility function `cn` (with existing color-mode styles)',
+      code: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700')}/>)`,
+      errors: [
+        // first cn-argument
+        {
+          messageId: 'missing_both',
+          data: {
+            key: joinArray(['bg', 'ring']),
+            missing: quoteJoinArray(['dark:bg-neutral-700', 'ring-orange-200']),
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: `Add all missing classes for ${joinArray(['bg', 'ring'])}`,
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700 dark:bg-neutral-700 ring-orange-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-700',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700 dark:bg-neutral-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add light-mode ring-orange-200',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700 ring-orange-200', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700')}/>)`,
+            },
+          ],
+        },
+
+        // second cn argument
+        {
+          messageId: 'missing_both',
+          data: {
+            key: joinArray(['bg', 'text', 'ring']),
+            missing: quoteJoinArray(['dark:bg-neutral-600', 'dark:text-blue-300', 'ring-yellow-200']),
+          },
+          suggestions: [
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: `Add all missing classes for ${joinArray(['bg', 'text', 'ring'])}`,
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700 dark:bg-neutral-600 dark:text-blue-300 ring-yellow-200')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:bg-neutral-600',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700 dark:bg-neutral-600')}/>)`,
+            },
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add dark-mode dark:text-blue-300',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700 dark:text-blue-300')}/>)`,
+            },
+
+            {
+              //@ts-expect-error Type declaration does not recognize 'desc' field, even though it exists.
+              desc: 'Add light-mode ring-yellow-200',
+              output: `const A = ({ isEmpty }) => (<div className={cn('bg-neutral-200 text-neutral-700 dark:text-neutral-200 dark:ring-orange-700', isEmpty && 'bg-neutral-300 text-blue-600 dark:ring-yellow-700 ring-yellow-200')}/>)`,
+            },
+          ],
+        },
+      ],
+    },
   ],
 })
