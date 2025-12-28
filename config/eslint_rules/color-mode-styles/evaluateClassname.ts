@@ -33,15 +33,15 @@ export function evaluateClassnameRelevance(
   //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
   const modifyingStyles = classNameArguments.filter((arg) => {
     const parts = arg.split('-')
-    const modifier = parts[0] // e.g. bg, ring, shadow, text, flex, ...
+    const utility = parts[0] // e.g. bg, ring, shadow, text, flex, ...
+    const colorArg = parts[1] // e.g. "black", "white", "neutral", "2" [ring-2], ...
 
-    const isColorModifyingClass = utilityClasses.includes(modifier) // does class start with e.g. "bg-", "ring-", "text-", ...
+    const isRelevantUtilityClass = utilityClasses.includes(utility) // does class start with e.g. "bg-", "ring-", "text-", ...
 
-    const color = parts[1] // e.g. "black", "white", "neutral", "2" [ring-2], ...
+    const usesArbitraryHexValue = colorArg.replace(/[\[\]]/g, '').match(/^\[?#?([0-9A-Fa-f]{6})\]?$/g)
+    const hasColor = colorNames.includes(colorArg) || usesArbitraryHexValue
 
-    const hasColor = colorNames.includes(color)
-
-    return isColorModifyingClass && hasColor
+    return isRelevantUtilityClass && hasColor
   })
 
   //* classname does not modify colors, like ring-2, p-2, border-b-2 --> irreleavnt
