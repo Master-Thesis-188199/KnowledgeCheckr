@@ -28,7 +28,8 @@ export function PracticeKnowledgeCheckButton({ check, className }: { check: Know
           router.push(`/checks/${check.share_key}/practice`)
         }}
         className={cn(
-          'group/play rounded-md p-1.5 enabled:hover:cursor-pointer disabled:hover:cursor-not-allowed dark:text-neutral-400 enabled:dark:group-hover/play:text-green-500/90 disabled:dark:text-neutral-500',
+          'group/play rounded-md p-1.5 text-neutral-600 ring-neutral-400 enabled:hover:ring-1 disabled:hover:cursor-not-allowed dark:text-neutral-400 dark:ring-neutral-500',
+          'enabled:group-hover/play:text-green-400/90 enabled:hover:cursor-pointer disabled:text-neutral-400 enabled:dark:group-hover/play:text-green-500/90 disabled:dark:text-neutral-500',
           className,
         )}>
         <PlayIcon className='size-4.5 enabled:group-hover/play:animate-pulse' />
