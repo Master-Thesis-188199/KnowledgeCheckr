@@ -13,24 +13,16 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
   const [shareToken, setShareToken] = useState(check.share_key)
 
   const isEmpty = check.questions.length === 0
+  const tooltipMessage = isEmpty ? 'This check has no questions, cannot be shared at this moment.' : 'Share this KnowledgeCheck'
 
   return (
     <Tooltip
       showsError={isEmpty}
       content={
-        isEmpty ? (
-          <>
-            <div className='flex items-center gap-1.5'>
-              <InfoIcon className='size-4 text-red-500 dark:text-red-400' />
-              This check has no questions, cannot be shared at this moment.
-            </div>
-          </>
-        ) : (
-          <div className='flex items-center gap-1.5'>
-            <InfoIcon className='size-4' />
-            Share this KnowledgeCheck
-          </div>
-        )
+        <div className='flex items-center gap-1.5'>
+          <InfoIcon className='size-4' />
+          {tooltipMessage}
+        </div>
       }>
       <button
         disabled={isEmpty}
