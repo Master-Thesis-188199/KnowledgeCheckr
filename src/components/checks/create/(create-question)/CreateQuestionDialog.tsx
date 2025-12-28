@@ -321,15 +321,34 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <FieldError<any> field='answers.root' errors={errors} />
 
-      <button
-        type='button'
-        aria-label='Add Answer'
-        onClick={() => append({ id: getUUID(), answer: '', correct: false })}
-        className='flex max-w-fit items-center gap-1 rounded-md py-1 hover:cursor-pointer dark:text-neutral-300/60'>
-        <Plus className='size-4' />
-        Add Answer
-      </button>
+      <AddAnswerButton type='choice-question' watch={watch} append={append} />
     </>
+  )
+}
+
+function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<Question>['append']; type: 'choice-question' | DragDropQuestion['type']; watch: UseFormReturn<Question>['watch'] }) {
+  const generateNewAnswer = () => {
+    switch (type) {
+      case 'choice-question': {
+        append({ id: getUUID(), answer: '', correct: false })
+        break
+      }
+
+      case 'drag-drop': {
+        append({ id: getUUID(), answer: '', position: watch('answers').length })
+      }
+    }
+  }
+
+  return (
+    <button
+      type='button'
+      aria-label='Add Answer'
+      onClick={() => generateNewAnswer()}
+      className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-700 hover:cursor-pointer dark:text-neutral-300/60'>
+      <Plus className='size-4' />
+      Add Answer
+    </button>
   )
 }
 
@@ -399,14 +418,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <FieldError<any> field='answers.root' errors={errors} />
 
-      <button
-        type='button'
-        aria-label='Add Answer'
-        onClick={() => append({ id: getUUID(), answer: '', position: watch('answers').length })}
-        className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-500 hover:cursor-pointer dark:text-neutral-300/60'>
-        <Plus className='size-4' />
-        Add Answer
-      </button>
+      <AddAnswerButton type='drag-drop' watch={watch} append={append} />
     </>
   )
 }
