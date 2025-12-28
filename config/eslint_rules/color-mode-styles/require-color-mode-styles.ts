@@ -164,7 +164,7 @@ export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options
         classEntries.push(result)
       }
 
-      // todo map missing classes by owner first, then by utility to prevent finding matching classes in different arguments of utility functions like cn
+      // map missing classes by owner first, then by utility to prevent finding matching classes in different arguments of utility functions like cn
       // -----
 
       const classEntriesByOwner = groupClassesByOwner(classEntries, getClassOrigin)
