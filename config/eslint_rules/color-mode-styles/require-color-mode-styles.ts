@@ -205,9 +205,6 @@ export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options
         const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode
         createReport(context, attrNode, reportNode, owner, missingClasses)
       }
-
-      if (1 === 1) return
-      //------
     }
 
     return {
