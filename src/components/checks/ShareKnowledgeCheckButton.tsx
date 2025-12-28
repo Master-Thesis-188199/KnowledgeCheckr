@@ -20,7 +20,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
         isEmpty ? (
           <>
             <div className='flex items-center gap-1.5'>
-              <InfoIcon className='size-4 dark:text-red-400' />
+              <InfoIcon className='size-4 text-red-500 dark:text-red-400' />
               This check has no questions, cannot be shared at this moment.
             </div>
           </>
@@ -36,8 +36,9 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
       closeDelay={0}
       shouldFlip
       className={cn(
-        'rounded-md bg-neutral-100 p-2 text-sm shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
-        isEmpty && 'dark:text-red-400/90 dark:shadow-red-400/40',
+        'rounded-md bg-neutral-100 p-2 text-sm text-neutral-600 shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
+        // eslint-disable-next-line require-color-modes/require-color-mode-styles
+        isEmpty && 'shadow-red-500/30 dark:text-red-400/90 dark:shadow-red-400/40',
       )}>
       <button
         disabled={isEmpty}
@@ -65,7 +66,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
             .catch(() => toast('Failed to generate and save share-token', { type: 'error' }))
         }}
         className={cn(
-          'group rounded-md p-1.5 enabled:hover:cursor-pointer enabled:hover:ring-1 disabled:cursor-not-allowed dark:text-neutral-400 dark:ring-neutral-500 disabled:dark:text-neutral-500',
+          'group rounded-md p-1.5 text-neutral-600 ring-neutral-400 enabled:hover:cursor-pointer enabled:hover:ring-1 disabled:cursor-not-allowed disabled:text-neutral-400 dark:text-neutral-400 dark:ring-neutral-500 disabled:dark:text-neutral-500',
           className,
         )}>
         <Share2Icon className='size-4.5 group-active:stroke-3' />
