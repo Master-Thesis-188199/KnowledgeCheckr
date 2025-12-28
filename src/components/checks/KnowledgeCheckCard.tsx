@@ -40,7 +40,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
 
 function Footer({ updatedAt }: { updatedAt?: Date }) {
   return (
-    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-700 px-4 pt-3 text-xs dark:text-neutral-400/70'>
+    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
       <div>last modified: {updatedAt ? new Date(updatedAt).toLocaleDateString('de', { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}</div>
     </div>
   )
