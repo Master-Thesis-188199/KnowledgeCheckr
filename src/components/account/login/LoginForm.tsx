@@ -97,15 +97,15 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
           type='submit'
           className={cn(
             'mt-2 w-full max-w-xs self-center rounded-lg px-4 py-2 ring-1 outline-0',
-            'hover:cursor-pointer hover:ring-[1.8px]',
-            'bg-neutral-300 ring-neutral-400 dark:bg-neutral-700/40 dark:ring-neutral-700',
-            'hover:bg-neutral-400/40 hover:ring-neutral-400/70 active:bg-neutral-200/90 active:ring-neutral-300 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80 dark:active:bg-neutral-700/90 dark:active:ring-neutral-600',
+            'hover:cursor-pointer dark:hover:ring-[1.8px]',
+            'bg-neutral-100/80 shadow-sm shadow-neutral-400/70 ring-neutral-400/70 dark:bg-neutral-700/40 dark:shadow-inherit dark:ring-neutral-700',
+            'hover:bg-neutral-50/80 hover:shadow-neutral-400 hover:ring-neutral-500 active:bg-neutral-200/90 active:ring-neutral-300 dark:hover:bg-neutral-700/70 dark:hover:shadow-inherit dark:hover:ring-neutral-600/80 dark:active:bg-neutral-700/90 dark:active:ring-neutral-600',
           )}>
           Login
         </button>
-        <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
+        <p className='text-sm text-neutral-600/50 dark:text-neutral-400/70'>
           Don&apos;t have an Account?{' '}
-          <Link href={{ pathname: '/account/login', query: { type: 'signup', referer: callbackUrl } }} className='px-2 text-neutral-600 hover:cursor-pointer hover:underline dark:text-neutral-200'>
+          <Link href={{ pathname: '/account/login', query: { type: 'signup', referer: callbackUrl } }} className='px-2 text-neutral-800 hover:cursor-pointer hover:underline dark:text-neutral-200'>
             Signup
           </Link>
         </p>
