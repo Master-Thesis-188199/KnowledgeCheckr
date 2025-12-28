@@ -1,5 +1,5 @@
 import collectClassnames from './collectClassnames'
-import { ClassWithOwner, Options } from './require-color-mode-styles'
+import type { ClassWithOwner, Options } from './require-color-mode-styles'
 
 /**
  * This function evaluate a given className by first checking which type of class it is (dark-, light- mode) and whether it is relevant in the context of color-modes. Thus, whether it uses any `utilityClasses` modifiers and any `colorNames`.

@@ -1,8 +1,8 @@
-import { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import collectClassnames from './collectClassnames.js'
 import createEslintSuggestionFixer from './createEslintSuggestionFixer.js'
 import { evaluateClassnameRelevance } from './evaluateClassname.js'
-import { OwnerInfo } from './types.js'
+import type { OwnerInfo } from './types.js'
 
 const DEBUG_LOGS = false
 
