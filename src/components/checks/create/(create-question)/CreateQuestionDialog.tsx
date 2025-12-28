@@ -411,8 +411,8 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
 
 function DeleteAnswerOptionButton({ index, remove }: { index: number; remove: UseFieldArrayReturn<Question>['remove'] }) {
   return (
-    <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 dark:text-neutral-300/60'>
-      <Trash2 className='size-5 text-red-600/60 dark:text-red-400/60' />
+    <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='group ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 focus:outline-0'>
+      <Trash2 className='size-5 stroke-2 text-red-600/60 group-focus:scale-115 group-focus:text-red-500 dark:text-red-400/60 dark:group-focus:text-red-400/80' />
     </button>
   )
 }
