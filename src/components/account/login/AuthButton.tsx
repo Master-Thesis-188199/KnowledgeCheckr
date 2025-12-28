@@ -77,7 +77,8 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
       {...props}
       data-auth-provider={props.auth_type === 'anonymous' ? 'anonymous' : props.provider}
       className={cn(
-        'flex items-center justify-evenly gap-4 rounded-sm bg-neutral-300/60 px-3 py-2.5 tracking-wide ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-neutral-800/50 dark:ring-neutral-600',
+        'flex items-center justify-evenly gap-4 rounded-sm px-3 py-2.5 tracking-wide ring-1 hover:cursor-pointer hover:shadow-sm',
+        'bg-neutral-100/80 ring-neutral-400 dark:bg-neutral-800/50 dark:ring-neutral-600',
         props?.className,
       )}
       onClick={(e) => {
