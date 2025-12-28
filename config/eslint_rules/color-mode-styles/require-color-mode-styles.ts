@@ -365,7 +365,7 @@ function createReport(
   const missingModes = [...new Set(suggestedClasses.map((s) => s.colorMode))]
   const messageId: MessageIds = missingModes.length > 1 ? 'missing_both' : `missing_${missingModes[0]}`
 
-  const missingUtilityTypes: Class['utility'] = [...new Set(suggestedClasses.map((i) => i.utility))].join(', ')
+  const missingUtilityTypes = [...new Set(suggestedClasses.map((i) => i.utility))].join(', ')
 
   type Suggestion = Omit<TSESLint.SuggestionReportDescriptor<MessageIds>, 'messageId'> & {
     desc: string
