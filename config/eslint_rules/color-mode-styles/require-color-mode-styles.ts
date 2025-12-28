@@ -1,0 +1,404 @@
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import collectClassnames from './collectClassnames.js'
+import createEslintSuggestionFixer from './createEslintSuggestionFixer.js'
+import { evaluateClassnameRelevance } from './evaluateClassname.js'
+import type { OwnerInfo } from './types.js'
+
+const DEBUG_LOGS = false
+
+type MessageIds = 'missing_light' | 'missing_dark' | 'missing_both'
+export type Mode = 'dark' | 'light'
+type Class = {
+  colorMode: Mode
+  utility: Options['utilityClasses'][number]
+  className: string
+  relevantClass: string
+}
+export type ClassWithOwner = Class & { owner: OwnerInfo }
+
+/**
+ * ESLint rule: require-color-mode-styles
+ *
+ * This rule goes over every JSX element and when an element's attributes matches one of the specified attributes (default: 'class' and 'className') the rule will verify its value.
+ *
+ * Case 1: An JSX element ** has no ** attribute(s) that is specified in the 'attributes' array (by default: 'class' and 'className'): Will essentially terminate / finish the rule without issusing problems.
+ * Case 2: An JSX element ** has ** attribute(s) that are specified in the 'attributes' array (by default: 'class' and 'className'):
+ *      | The rule will now evaluate the classes that are assigned to the respective attributes using the `getClassNames` function.
+ *      | Then it goes through each classname and evaluates it by callling the `evaluateClassname` function.
+ *         The function takes in each individual className and determines the color-mode it targets and whether it modifies / uses any colors, thus determines whether it is relevenat in the context of color-modes.
+ *         This means that it first checks the color-mode that is being targetted and essentially checks whether the class uses a matchin utility class ('bg', 'text', ...) that is specified in `utilityClasses`.
+ *         Then it checks if these utility classes also use colors to eliminate classes like ("ring-2", "border-b-2") that do not change / use any colors.
+ *         In case the class in question satisfied all these conditions an object of type:
+ *           {
+ *              mode: 'light' | 'dark',
+ *              utility: typeof utilityClasses[number],    // ('text', 'bg', 'ring', ...)
+ *              className: string,                        // the original class that was passed to the function, e.g. "dark:hover:bg-neutral-200"
+ *              relevantClass: string                     // the essential part of the class, e.g. "bg-neutral-200", "ring-neutral-200"
+ *           }
+ *      | After going over all matchin attributes (e.g. 'className') and evaluating each class, to filter out irrelevant classes, the remaining color related classes are compared.
+ *      | Case 1: When the amount of color related light- and dark- mode classes match then there are both light- mode values and dark-mode values defined for the given attribute.
+ *      | Case 2: When the amount of color related light- and dark- mode classes differ then an issue will be created for the given attribute.
+ *
+ */
+
+const defaultColorNames = [
+  'slate' as const,
+  'gray' as const,
+  'zinc' as const,
+  'neutral' as const,
+  'stone' as const,
+  'red' as const,
+  'orange' as const,
+  'amber' as const,
+  'yellow' as const,
+  'lime' as const,
+  'green' as const,
+  'emerald' as const,
+  'teal' as const,
+  'cyan' as const,
+  'sky' as const,
+  'blue' as const,
+  'indigo' as const,
+  'violet' as const,
+  'purple' as const,
+  'fuchsia' as const,
+  'pink' as const,
+  'rose' as const,
+  'black' as const,
+  'white' as const,
+  'inherit' as const,
+  'current' as const,
+  'transparent' as const,
+]
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function log(...message: any[]) {
+  if (DEBUG_LOGS) console.log(...message)
+}
+
+export type Options = {
+  utilityClasses: Array<'bg' | 'text' | 'border' | 'ring' | 'shadow' | (string & {})>
+  attributes: Array<string>
+  helpers: Array<'cn' | 'tw' | (string & {})>
+  colorNames: Array<(typeof defaultColorNames)[number] | (string & {})>
+}
+
+const DEFAULT_OPTIONS: Options = {
+  utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow'],
+  attributes: ['className', 'class'],
+  helpers: ['cn', 'tw'],
+  colorNames: defaultColorNames,
+}
+
+export const requireColorModeStylesRule: TSESLint.RuleModule<MessageIds, Options[]> = {
+  defaultOptions: [],
+  meta: {
+    type: 'suggestion',
+    docs: {
+      description: 'Require Tailwind color utilities to define both light and dark mode variants for the same property/variant chain.',
+      // recommended: false,
+    },
+    hasSuggestions: true,
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          // Which utility prefixes count as 'color' utilities.
+          utilityClasses: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Which JSX attribute names to inspect (e.g. className, class)
+          attributes: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Helper function names like `cn` and `tw`
+          helpers: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          // Allowed color names (first token after the prefix).
+          // Example: "neutral" in "bg-neutral-200".
+          colorNames: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
+    messages: {
+      missing_dark: 'Element is missing dark-mode style(s) for {{key}} ([{{missing}}]).',
+      missing_light: 'Element is missing light-mode color style(s) for {{key}} ([{{missing}}]).',
+      missing_both: 'Element is missing light and dark color style(s) for {{key}} ([{{missing}}]).',
+    },
+  },
+
+  create(context) {
+    const { utilityClasses, attributes: attributesToCheck, helpers: helperNames, colorNames } = resolveOptions(context.options?.[0])
+
+    /**
+     * Returns either the filename and the position of the partial classname for utility functions like `cn` or the full classname for static className properties.
+     */
+    const getClassOrigin = (owner: OwnerInfo) =>
+      owner.kind === 'helper-segment' ? `at ${context.filename.split('/').at(-1)} ${owner.argNode.loc?.start.line}:${owner.argNode.loc?.start.column}` : `'${owner.classString}'`
+
+    function checkClassName(attrNode: TSESTree.JSXAttribute) {
+      const attrName = attrNode.name && attrNode.name.name.toString()
+      if (!attributesToCheck.includes(attrName)) return
+
+      const colorClassEntries = collectClassnames(attrNode.value, helperNames)
+      if (colorClassEntries.length === 0) return
+
+      // holds only color-mode related classes
+      const classEntries: ClassWithOwner[] = []
+
+      // evaluate class -> strip / remove the ones that are irrelevant for this rule
+      for (const entry of colorClassEntries) {
+        const result = evaluateClassnameRelevance(entry, { utilityClasses, colorNames })
+
+        // irrelevant class
+        if (result === null) continue
+
+        classEntries.push(result)
+      }
+
+      // map missing classes by owner first, then by utility to prevent finding matching classes in different arguments of utility functions like cn
+      // -----
+
+      const classEntriesByOwner = groupClassesByOwner(classEntries, getClassOrigin)
+
+      Array.from(classEntriesByOwner.keys()).forEach((origin) => {
+        if (DEBUG_LOGS) {
+          // log(
+          //   'Found classes',
+          //   origin,
+          //   classEntriesByOwner.get(origin)!.map((entry) => entry.className),
+          // )
+        }
+      })
+
+      const missingClassesByOwner: typeof classEntriesByOwner = new Map()
+
+      // Iterate over each class per-owner, identify missing classes and create report
+      for (const [position, classes] of classEntriesByOwner.entries()) {
+        log(`Scanning for missing classes ${position.trim()}`)
+        const unmatchedClasses = eliminateMatchingClasses(classes)
+        const missingClasses = generateSuggestedClasses(unmatchedClasses)
+        const { dark, light } = seperateColorModeClasses(missingClasses)
+
+        // prettier-ignore
+        if (dark.length > 0) log( position.replace('at', '').trim(), ' is missing these dark-mode classes', dark.map((d) => d.className),)
+
+        // prettier-ignore
+        if (light.length > 0) log( position.replace('at', '').trim(), ' is missing these light-mode classes', light.map((d) => d.className),)
+
+        log(`Done checking ${position.replace('at', '').trim()}\n\n`)
+        missingClassesByOwner.set(position, missingClasses)
+
+        if (missingClasses.length === 0) continue
+        log(`Generating report for ${missingClasses.length} missing classes.`)
+
+        // all the classes in the loop have the same owner
+        const owner = classes[0].owner
+        const reportNode = owner.kind === 'helper-segment' ? owner.argNode : attrNode
+        createReport(context, attrNode, reportNode, owner, missingClasses)
+      }
+    }
+
+    return {
+      JSXAttribute: checkClassName,
+    }
+  },
+}
+
+const plugin = {
+  rules: {
+    'require-color-mode-styles': requireColorModeStylesRule,
+  },
+}
+
+export default plugin
+
+/** Takes in the user-options that were passed to the rule from within the eslint.config and adds default values for missing options */
+function resolveOptions(user?: Partial<Options>): Options {
+  return {
+    utilityClasses: user?.utilityClasses ?? DEFAULT_OPTIONS.utilityClasses,
+    attributes: user?.attributes ?? DEFAULT_OPTIONS.attributes,
+    helpers: user?.helpers ?? DEFAULT_OPTIONS.helpers,
+    colorNames: user?.colorNames ?? DEFAULT_OPTIONS.colorNames,
+  }
+}
+
+/**
+ * This function takes in the collected classnames from a JSX.attribute (like className, class) and groups them by their owner.
+ * This means that className arguments of utility functions like `cn` are separated by their 'argument-position' (owner).
+ *
+ * By grouping the gathered classNames by their owner resolves the issue of comparing classes from different (cn) arguments with each other.
+ *
+ * @param classEntries The collected classnames for a given attribute
+ * @param getClassOrigin The function that determines the unique position / location of classNames
+ * @returns
+ */
+function groupClassesByOwner(classEntries: ClassWithOwner[], getClassOrigin: (owner: OwnerInfo) => string) {
+  const classEntriesByOwner = new Map<string, typeof classEntries>()
+
+  classEntries.forEach((e) => {
+    if (classEntriesByOwner.has(getClassOrigin(e.owner))) {
+      const entries = classEntriesByOwner.get(getClassOrigin(e.owner))!
+      entries.push(e)
+      classEntriesByOwner.set(getClassOrigin(e.owner), entries)
+    } else {
+      classEntriesByOwner.set(getClassOrigin(e.owner), [e])
+    }
+  })
+
+  return classEntriesByOwner
+}
+
+/**
+ * This utility funtion takes in an existing class that has been parsed and generates a class suggestion for the opposite color-mode.
+ * @param targetMode The opposite color-mode for which the contrary class should be generated.
+ * @param class The existing (evaluated) class.
+ * @returns The suggested / missing class based on the existing one from the other color-mode.
+ */
+function generateMissingClass({ className, relevantClass, utility, colorMode, ...rest }: ClassWithOwner): ClassWithOwner {
+  const targetMode = colorMode === 'dark' ? 'light' : 'dark'
+  const modifiers = className.replace('dark:', '').replace(relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
+
+  const currentColor = relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+
+  let contraryColor
+
+  if (currentColor.includes('-')) {
+    const intensity = Number(
+      currentColor
+        .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
+        .split('/')
+        .at(0), // [50, 100, 200, 300, 400, 500, ..., 900]
+    )
+
+    let opacity = ''
+    if (currentColor.includes('/')) {
+      opacity = '/' + currentColor.split('/').at(1)
+    }
+
+    contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
+  } else {
+    contraryColor = currentColor === 'white' ? 'black' : 'white'
+  }
+
+  const colorModePrefix = targetMode === 'dark' ? 'dark:' : ''
+  const suggestedClass = `${colorModePrefix}${modifiers}${utility}-${contraryColor}`
+  const relevantSuggestedClass = `${utility}-${contraryColor}`
+
+  return {
+    colorMode: targetMode,
+    className: suggestedClass,
+    relevantClass: relevantSuggestedClass,
+    utility,
+    ...rest,
+  }
+}
+
+/**
+ * This function takes in all the classes for from a given owner (e.g. argument of cn) and determines which classes do not have opposite classes.
+ * This leaves the classes for which opposite / contrary classes for the other color-mode are to be generated / suggested.
+ *
+ * (identify classes that have no opposite matches, by eliminating those with opposite classes (same modifiers and same utility))
+ * @param classes The classes within a given `cn` argument of simply the attribute it self when the classess originate from a static className attribute.
+ * @returns An array of the classes that have no opposite-class for which suggestions should be made.
+ */
+function eliminateMatchingClasses(classes: ClassWithOwner[]) {
+  // note just comaring lengths could cause problems (dark:text-neutral-200 dark:hover:text-neutral-200 text-neutral-300 active:text-neutral-200)
+  const missing: typeof classes = []
+
+  for (const _class of classes) {
+    if (missing.includes(_class)) continue
+
+    const otherClasses = classes.filter((other) => other.className !== _class.className)
+
+    const match = otherClasses.find((other) => {
+      if (_class.utility !== other.utility) return false
+
+      const modifiersA = _class.className.replace('dark:', '').replace(_class.relevantClass, '')
+      const modifiersB = other.className.replace('dark:', '').replace(other.relevantClass, '')
+
+      if (modifiersA !== modifiersB) return false
+
+      return true
+    })
+
+    if (match) {
+      // log(`[Verose]: Found opposite class for ${_class.className} --> ${match.className}`)
+      continue
+    }
+
+    missing.push(_class)
+  }
+
+  return missing
+}
+
+function seperateColorModeClasses<TClass extends Class>(classes: TClass[]) {
+  const dark: TClass[] = []
+  const light: TClass[] = []
+
+  classes.forEach((cl) => (cl.className.includes('dark:') ? dark.push(cl) : light.push(cl)))
+
+  return { dark, light }
+}
+
+function generateSuggestedClasses(classes: ClassWithOwner[]) {
+  return classes.map((_class) => generateMissingClass(_class))
+}
+
+function createReport(
+  context: TSESLint.RuleContext<MessageIds, Options[]>,
+  originNode: TSESTree.JSXAttribute,
+  reportNode: TSESTree.JSXAttribute | TSESTree.Expression,
+  owner: OwnerInfo,
+  suggestedClasses: ClassWithOwner[],
+) {
+  const sourceCode = context.getSourceCode()
+  const missingModes = [...new Set(suggestedClasses.map((s) => s.colorMode))]
+  const messageId: MessageIds = missingModes.length > 1 ? 'missing_both' : `missing_${missingModes[0]}`
+
+  const missingUtilityTypes = [...new Set(suggestedClasses.map((i) => i.utility))].join(', ')
+
+  type Suggestion = Omit<TSESLint.SuggestionReportDescriptor<MessageIds>, 'messageId'> & {
+    desc: string
+    fix: TSESLint.ReportFixFunction
+  }
+
+  const addAllSuggestion: Suggestion = {
+    desc: `Add all missing classes for ${missingUtilityTypes}`,
+    fix: (fixer) => {
+      const classes = suggestedClasses.map((i) => i.className).join(' ')
+      return createEslintSuggestionFixer(originNode, owner, classes, fixer, sourceCode)
+    },
+  }
+
+  context.report({
+    node: reportNode,
+    messageId,
+    data: {
+      key: missingUtilityTypes,
+      missing: suggestedClasses.map((suggested) => `'${suggested.className}'`).join(', '),
+    },
+    //@ts-expect-error suggest-type requires `messageId`s, but `messageId` and `desc` cannot be used at the same time; and `desc` is more flexible.
+    suggest: [
+      // Add all missing for this owner when there are multiple missing classes
+      ...(suggestedClasses.length > 1 ? [addAllSuggestion] : []),
+
+      // One suggestion per missing class
+      ...suggestedClasses.map(
+        (missing): Suggestion => ({
+          desc: `Add ${missing.colorMode}-mode ${missing.className}`,
+          fix: (fixer) => createEslintSuggestionFixer(originNode, owner, missing.className, fixer, sourceCode),
+        }),
+      ),
+    ],
+  })
+}
