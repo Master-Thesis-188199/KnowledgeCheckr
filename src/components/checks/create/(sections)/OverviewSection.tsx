@@ -14,7 +14,7 @@ export function OverviewSection() {
         <GeneralSection />
         <QuestionsSection />
         <SettingsSection />
-        <Card disableHoverStyles children className='3xl:hidden' />
+        <Card disableInteractions children className='3xl:hidden' />
       </div>
     </>
   )

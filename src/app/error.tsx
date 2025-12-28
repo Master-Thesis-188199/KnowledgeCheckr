@@ -16,7 +16,7 @@ export default function RootErrorBoundary({ error }: { error: Error & { digest?:
 
   return (
     <div className='mb-10 flex h-full items-center justify-center'>
-      <Card disableHoverStyles className={cn('flex max-w-xl flex-col gap-4', isDevelelopment && 'max-w-7xl')}>
+      <Card disableInteractions className={cn('flex max-w-xl flex-col gap-4', isDevelelopment && 'max-w-7xl')}>
         <h2 className='border-b border-neutral-600 pb-2 text-lg font-semibold text-red-400'>{error.name} </h2>
         <div className={cn('px-4 text-red-400/90', isProduction && 'hidden')}>
           <p>{error.message}</p>
