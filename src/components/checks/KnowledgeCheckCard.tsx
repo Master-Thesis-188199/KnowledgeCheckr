@@ -3,19 +3,14 @@
 import { motion } from 'framer-motion'
 import { PracticeKnowledgeCheckButton } from '@/src/components/checks/PracticeKnowledgeCheckButton'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
+import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
   return (
-    <motion.a
-      href={`/checks/edit/${check.id}`}
-      className={cn(
-        'group relative flex h-full flex-col justify-between gap-10 rounded-md py-4 ring-1 hover:ring-2 focus:ring-2',
-        'bg-neutral-200/40 shadow-md shadow-neutral-200 ring-neutral-400/40 dark:bg-neutral-700/30 dark:shadow-neutral-900/60 dark:ring-neutral-500/70',
-        'hover:bg-neutral-200/80 focus:bg-neutral-200/60 focus:ring-neutral-400 dark:hover:bg-neutral-700/60 focus:dark:bg-neutral-700/60 focus:dark:ring-neutral-500',
-      )}>
+    <Card as={motion.a} href={`/checks/edit/${check.id}`} className={cn('group relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
         <PracticeKnowledgeCheckButton check={check} />
@@ -44,7 +39,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         </div>
       </div>
       <Footer updatedAt={check.updatedAt} />
-    </motion.a>
+    </Card>
   )
 }
 
