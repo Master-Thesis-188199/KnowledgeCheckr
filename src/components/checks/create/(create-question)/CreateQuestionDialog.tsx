@@ -300,7 +300,9 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
               <Tooltip tabIndex={-1} content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}>
-                <label className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
+                <label
+                  tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
+                  className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-neutral-500 dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-neutral-300/80'>
                   <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                   <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                   <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
