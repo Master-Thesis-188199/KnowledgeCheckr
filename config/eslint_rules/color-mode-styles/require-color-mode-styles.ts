@@ -227,7 +227,7 @@ function resolveOptions(user?: Partial<Options>): Options {
     utilityClasses: user?.utilityClasses ?? DEFAULT_OPTIONS.utilityClasses,
     attributes: user?.attributes ?? DEFAULT_OPTIONS.attributes,
     helpers: user?.helpers ?? DEFAULT_OPTIONS.helpers,
-    colorNames: user?.colorNames ?? DEFAULT_OPTIONS.colorNames,
+    colorNames: user?.colorNames?.concat(DEFAULT_OPTIONS.colorNames) ?? DEFAULT_OPTIONS.colorNames,
   }
 }
 

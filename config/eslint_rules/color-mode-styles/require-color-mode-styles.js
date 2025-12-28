@@ -194,12 +194,12 @@ const plugin = {
 export default plugin;
 /** Takes in the user-options that were passed to the rule from within the eslint.config and adds default values for missing options */
 function resolveOptions(user) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     return {
         utilityClasses: (_a = user === null || user === void 0 ? void 0 : user.utilityClasses) !== null && _a !== void 0 ? _a : DEFAULT_OPTIONS.utilityClasses,
         attributes: (_b = user === null || user === void 0 ? void 0 : user.attributes) !== null && _b !== void 0 ? _b : DEFAULT_OPTIONS.attributes,
         helpers: (_c = user === null || user === void 0 ? void 0 : user.helpers) !== null && _c !== void 0 ? _c : DEFAULT_OPTIONS.helpers,
-        colorNames: (_d = user === null || user === void 0 ? void 0 : user.colorNames) !== null && _d !== void 0 ? _d : DEFAULT_OPTIONS.colorNames,
+        colorNames: (_e = (_d = user === null || user === void 0 ? void 0 : user.colorNames) === null || _d === void 0 ? void 0 : _d.concat(DEFAULT_OPTIONS.colorNames)) !== null && _e !== void 0 ? _e : DEFAULT_OPTIONS.colorNames,
     };
 }
 /**
