@@ -120,12 +120,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
         }}>
         {children}
       </DialogTrigger>
-      <DialogContent
-        onClose={() => closeDialog()}
-        onPointerDownOutside={() => closeDialog()}
-        onEscapeKeyDown={() => closeDialog({ reset: true })}
-        className='max-w-md dark:border-neutral-600'
-        id='question-dialog'>
+      <DialogContent onClose={() => closeDialog()} onPointerDownOutside={() => closeDialog()} onEscapeKeyDown={() => closeDialog({ reset: true })} className='max-w-md' id='question-dialog'>
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 py-1'>
           <QuestionDialogHeader type={mode} />
           <input {...register('id')} id='id' value={watch('id')} className='hidden' />
