@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/incompatible-library */
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { HTMLProps, ReactNode, useCallback, useEffect, useState } from 'react'
+import { TooltipProps } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -299,15 +300,14 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
-              <Tooltip tabIndex={-1} content={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}>
-                <label
-                  tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
-                  className='flex size-6 items-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-neutral-500 dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-neutral-300/80'>
-                  <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                  <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
-                  <input type='checkbox' {...register(`answers.${index}.correct` as const)} title='Mark as correct' className='appearance-none' />
-                </label>
-              </Tooltip>
+              <CircleAnswer_IndicatorInput
+                registerProps={[`answers.${index}.correct` as const]}
+                inputType='checkbox'
+                register={register}
+                tooltipContent={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}>
+                <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+                <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
+              </CircleAnswer_IndicatorInput>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Answer ${index + 1} -  to your question`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
@@ -373,12 +373,14 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
             <div className='flex items-center gap-3'>
-              <Tooltip tabIndex={-1} content={`The correct position for this answer`}>
-                <label className='group flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 text-sm ring-1 ring-neutral-400 hover:cursor-pointer dark:bg-transparent dark:ring-neutral-500'>
-                  <input type='hidden' value={index} {...register(`answers.${index}.position` as const, { valueAsNumber: true })} />
-                  <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
-                </label>
-              </Tooltip>
+              <CircleAnswer_IndicatorInput
+                value={index}
+                register={register}
+                inputType='hidden'
+                tooltipContent={`The correct position for this answer`}
+                registerProps={[`answers.${index}.position` as const, { valueAsNumber: true }]}>
+                <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
+              </CircleAnswer_IndicatorInput>
               <Input {...register(`answers.${index}.answer` as const)} placeholder={`Moveable exemplary Answer ${index + 1}`} className='-ml-0.5 flex-1 placeholder:text-[15px]' />
               <div className='flex gap-2'>
                 <button
@@ -428,5 +430,39 @@ function DeleteAnswerOptionButton({ index, remove }: { index: number; remove: Us
     <button aria-label='delete answer' type='button' onClick={() => remove(index)} className='group ml-1 flex cursor-pointer items-center gap-1 rounded-md py-1 focus:outline-0'>
       <Trash2 className='size-5 stroke-2 text-red-600/60 group-focus:scale-115 group-focus:text-red-500 dark:text-red-400/60 dark:group-focus:text-red-400/80' />
     </button>
+  )
+}
+
+/**
+ * This component renders the input for a given answer's `correctness` or `position` indicator and wraps the in in a label within a tooltip.
+ * This means that for choice-questions users can click the label to change between `correct´ and `incorrect`.
+ * When used for a drag-drop question it essentially displays its position (readonly)
+ */
+function CircleAnswer_IndicatorInput({
+  register,
+  registerProps,
+  inputType,
+  value,
+  tooltipContent,
+  children,
+}: {
+  register: UseFormReturn<Question>['register']
+  registerProps: Parameters<UseFormReturn<Question>['register']>
+  inputType: NonNullable<Required<HTMLProps<HTMLInputElement>['type']>>
+  value?: HTMLProps<HTMLInputElement>['value']
+  tooltipContent?: TooltipProps['content']
+  children?: ReactNode | ReactNode[]
+}) {
+  return (
+    <>
+      <Tooltip tabIndex={-1} content={tooltipContent}>
+        <label
+          tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
+          className='flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-neutral-500 dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-neutral-300/80'>
+          {children}
+          <input type={inputType} value={value} {...register(...registerProps)} className='appearance-none' />
+        </label>
+      </Tooltip>
+    </>
   )
 }
