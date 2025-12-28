@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Tooltip } from '@heroui/tooltip'
 import { InfoIcon, Share2Icon } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -16,6 +16,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
 
   return (
     <Tooltip
+      showsError={isEmpty}
       content={
         isEmpty ? (
           <>
@@ -30,16 +31,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
             Share this KnowledgeCheck
           </div>
         )
-      }
-      delay={250}
-      offset={8}
-      closeDelay={0}
-      shouldFlip
-      className={cn(
-        'rounded-md bg-neutral-100 p-2 text-sm text-neutral-600 shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
-        // eslint-disable-next-line require-color-modes/require-color-mode-styles
-        isEmpty && 'shadow-red-500/30 dark:text-red-400/90 dark:shadow-red-400/40',
-      )}>
+      }>
       <button
         disabled={isEmpty}
         aria-label='share KnowledgeCheck'
