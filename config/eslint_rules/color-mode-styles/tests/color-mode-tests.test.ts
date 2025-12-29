@@ -67,6 +67,24 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
     )
     `,
     },
+
+    {
+      name: 'Expect custom variable color-styles to be recognized',
+      options: [{ colorNames: ['ring'] } as never],
+      code: `const A = () => (<div className="ring-ring dark:ring-neutral-800" />)`,
+    },
+
+    {
+      name: 'Expect custom variable color-styles with dashes in its name to be recognized',
+      options: [{ colorNames: ['ring-hover'] } as never],
+      code: `const A = () => (<div className="ring-ring-hover dark:ring-neutral-800" />)`,
+    },
+
+    {
+      name: 'Expect custom variable color-styles in combiation with regular classes to be recognized',
+      options: [{ colorNames: ['ring-hover'] } as never],
+      code: `const A = () => (<div className="ring-ring-hover dark:ring-neutral-800 bg-neutral-200 dark:bg-neutral-700 border-white dark:border-black" />)`,
+    },
   ],
   invalid: [
     {
