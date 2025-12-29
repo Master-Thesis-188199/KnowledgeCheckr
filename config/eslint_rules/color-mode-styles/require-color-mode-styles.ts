@@ -267,26 +267,55 @@ function generateMissingClass({ className, relevantClass, utility, colorMode, ..
   const targetMode = colorMode === 'dark' ? 'light' : 'dark'
   const modifiers = className.replace('dark:', '').replace(relevantClass, '') // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
 
-  const currentColor = relevantClass.split('-').slice(1).join('-') // "red-200", "neutral-200", "white"
+  let contraryColor: string
+  const [, ...colorSegments] = relevantClass.split('-').filter(Boolean)
 
-  let contraryColor
+  const evaluateSegment = (segment: string): 'number' | 'arbitrary' | 'name' => {
+    const num = Number(segment)
+    if (!isNaN(num)) return 'number'
 
-  if (currentColor.includes('-')) {
-    const intensity = Number(
-      currentColor
-        .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
-        .split('/')
-        .at(0), // [50, 100, 200, 300, 400, 500, ..., 900]
-    )
+    if (segment.startsWith('[') && segment.endsWith(']')) return 'arbitrary'
 
-    let opacity = ''
-    if (currentColor.includes('/')) {
-      opacity = '/' + currentColor.split('/').at(1)
+    return 'name'
+  }
+  type ParsedColor = { type: 'arbitrary'; value: string } | { type: 'tailwind'; name: string; intensity: number; opacity?: string } | { type: 'variable'; names: string[] }
+
+  const parseColor = (): ParsedColor => {
+    if (colorSegments.length === 1 && evaluateSegment(colorSegments[0]) === 'arbitrary') return { type: 'arbitrary', value: colorSegments[0] }
+
+    // regular tailwind class
+    if (colorSegments.length === 2 && evaluateSegment(colorSegments[0]) === 'name' && evaluateSegment(colorSegments[1]) === 'number') {
+      const intensity = colorSegments[1].split('/')[0]
+      const opacity = intensity.includes('/') ? `/${intensity.split('/')[1]}` : ''
+      return { type: 'tailwind', name: colorSegments[0], intensity: parseInt(intensity), opacity }
     }
 
-    contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`
+    // variable-names
+    if (colorSegments.every((segment) => evaluateSegment(segment) === 'name')) {
+      return { type: 'variable', names: colorSegments }
+    }
+
+    throw new Error(`Unable to parse color: '${colorSegments.join('-')}'`)
+  }
+
+  const color = parseColor()
+
+  if (color.type === 'arbitrary') {
+    // re-use the same arbitrary value
+    contraryColor = color.value
+  } else if (color.type === 'variable') {
+    // black or white --> can be inverted
+    if (color.names.length === 1 && color.names[0].toLowerCase() === 'white') {
+      contraryColor = 'black'
+    } else if (color.names.length === 1 && color.names[0].toLowerCase() === 'black') {
+      contraryColor = 'white'
+    } else {
+      // re-use the variables
+      contraryColor = color.names.join('-')
+    }
   } else {
-    contraryColor = currentColor === 'white' ? 'black' : 'white'
+    // tailwind-colors
+    contraryColor = `${color.name}-${Math.abs(color.intensity - 900)}${color.opacity}`
   }
 
   const colorModePrefix = targetMode === 'dark' ? 'dark:' : ''
