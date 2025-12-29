@@ -88,13 +88,20 @@ function ProgressRing({ stage, title }: Stage) {
         'hover:cursor-pointer',
         'relative',
         !isCompleted(stage) && !isFocussed(stage) && 'opacity-75 dark:opacity-65',
-        isCompleted(stage) && 'dark:ring-blue-80 ring-blue-820 text-blue-500/80 dark:text-blue-400/80',
+        isCompleted(stage) && 'text-blue-500/80 ring-blue-400/80 dark:text-blue-400 dark:ring-blue-400/80',
         isFocussed(stage) && 'text-blue-500 ring-blue-500 dark:text-blue-400 dark:ring-blue-400',
         !showOnSmallScreens && 'hidden @sm:flex',
       )}
       aria-label={`Stage ${stage}`}>
       {stage}
-      <span className={cn('absolute -right-20 -bottom-7 -left-20 text-center opacity-75 dark:opacity-65', isCompleted(stage) && 'opacity-80', isFocussed(stage) && 'opacity-95')}>{title}</span>
+      <span
+        className={cn(
+          'absolute -right-20 -bottom-7 -left-20 text-center opacity-75 dark:opacity-65',
+          isCompleted(stage) && 'opacity-80 dark:opacity-80',
+          isFocussed(stage) && 'opacity-95 dark:opacity-95',
+        )}>
+        {title}
+      </span>
     </li>
   )
 }
