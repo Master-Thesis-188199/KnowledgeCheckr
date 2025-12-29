@@ -79,7 +79,7 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
       className={cn(
         'flex items-center justify-evenly gap-4 rounded-sm px-3 py-2.5 tracking-wide ring-1 hover:cursor-pointer hover:shadow-sm',
         'bg-neutral-100/80 ring-neutral-400 dark:bg-neutral-800/50 dark:ring-neutral-600',
-        'shadow-neutral-300 hover:bg-neutral-50/80 hover:ring-neutral-600/70 dark:shadow-inherit dark:hover:bg-neutral-700/50 dark:hover:ring-neutral-500/90',
+        'hover:ring-ring-hover dark:hover:ring-ring-hover shadow-neutral-300 hover:bg-neutral-50/80 dark:shadow-inherit dark:hover:bg-neutral-700/50',
         props?.className,
       )}
       onClick={(e) => {

@@ -99,7 +99,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             'mt-2 w-full max-w-xs self-center rounded-lg px-4 py-2 ring-1 outline-0',
             'hover:cursor-pointer dark:hover:ring-[1.8px]',
             'bg-neutral-100/80 shadow-sm shadow-neutral-400/70 ring-neutral-400/70 dark:bg-neutral-700/40 dark:shadow-inherit dark:ring-neutral-700',
-            'hover:bg-neutral-50/80 hover:shadow-neutral-400 hover:ring-neutral-500 active:bg-neutral-200/90 active:ring-neutral-300 dark:hover:bg-neutral-700/70 dark:hover:shadow-inherit dark:hover:ring-neutral-600/80 dark:active:bg-neutral-700/90 dark:active:ring-neutral-600',
+            'hover:ring-ring-hover dark:hover:ring-ring-hover hover:bg-neutral-50/80 hover:shadow-neutral-400 active:bg-neutral-200/90 active:ring-neutral-300 dark:hover:bg-neutral-700/70 dark:hover:shadow-inherit dark:active:bg-neutral-700/90 dark:active:ring-neutral-600',
           )}>
           Login
         </button>

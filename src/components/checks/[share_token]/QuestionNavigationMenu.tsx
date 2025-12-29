@@ -22,7 +22,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
           {knowledgeCheck.questions.map((_, i) => (
             <button
               className={cn(
-                'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:ring-neutral-300/60 dark:ring-neutral-500 dark:hover:bg-neutral-600',
+                'hover:ring-ring-hover flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer dark:ring-neutral-500 dark:hover:bg-neutral-600',
                 i === currentQuestionIndex && 'hover:cursor-default dark:bg-neutral-600 dark:ring-neutral-300/60',
               )}
               onClick={() => setCurrentQuestionIndex(i)}

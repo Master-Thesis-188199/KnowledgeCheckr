@@ -172,7 +172,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
-                      'cursor-pointer text-sm hover:ring-1 hover:ring-neutral-400 dark:text-neutral-400/80 dark:hover:ring-neutral-300/40',
+                      'hover:ring-ring-hover dark:hover:ring-ring-hover cursor-pointer text-sm hover:ring-1 dark:text-neutral-400/80',
                       state.value === option.value ? 'bg-neutral-200/80 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
                     )}
                     key={option.value + i}
@@ -197,8 +197,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   key={state.query}
                   value={state.query}
                   className={cn(
-                    'bg-transparent text-neutral-800 hover:cursor-pointer hover:ring-neutral-400/80 dark:text-neutral-300/90 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
-                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed border-neutral-400/80 pt-2 hover:ring-1 dark:border-neutral-500 dark:hover:ring-neutral-300/40',
+                    'hover:ring-ring-hover bg-transparent text-neutral-800 hover:cursor-pointer dark:text-neutral-300/90 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
+                    'dark:hover:ring-ring-hover mt-2 rounded-t-none border-t-[1.5px] border-dashed border-neutral-400/80 pt-2 hover:ring-1 dark:border-neutral-500',
                   )}
                   onSelect={() => createOption()}>
                   Create category &quot;{state.query}&quot;

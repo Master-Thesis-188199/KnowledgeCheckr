@@ -59,7 +59,7 @@ export default function QuestionsSection() {
                 </div>
               </div>
               <CreateQuestionDialog initialValues={question}>
-                <div className='group my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70'>
+                <div className='group dark:hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
                   <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
                 </div>
               </CreateQuestionDialog>
@@ -67,7 +67,7 @@ export default function QuestionsSection() {
                 aria-label='Delete Question'
                 type='button'
                 onClick={() => removeQuestion(question.id)}
-                className='group my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70'>
+                className='group dark:hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
                 <Trash2 className='size-4 text-red-600/70 group-hover:stroke-3 dark:text-red-400/70' />
               </button>
             </Card>

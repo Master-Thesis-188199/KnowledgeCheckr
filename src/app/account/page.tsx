@@ -43,8 +43,8 @@ export default async function AccountPage() {
             formAction={signout}
             className={cn(
               'mt-2 rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
-              'bg-neutral-300/60 ring-neutral-400 hover:ring-neutral-500/80',
-              'dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70',
+              'hover:ring-ring-hover bg-neutral-300/60 ring-neutral-400',
+              'dark:hover:ring-ring-hover dark:bg-neutral-700 dark:ring-neutral-600',
             )}>
             Signout
             {isAnonymous && <span className='ml-2 text-sm text-neutral-400'>(delete data)</span>}
