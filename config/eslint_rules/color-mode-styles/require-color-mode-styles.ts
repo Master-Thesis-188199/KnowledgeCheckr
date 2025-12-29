@@ -6,7 +6,7 @@ import type { OwnerInfo } from './types.js'
 
 const DEBUG_LOGS = false
 
-type MessageIds = 'missing_light' | 'missing_dark' | 'missing_both'
+export type MessageIds = 'missing_light' | 'missing_dark' | 'missing_both'
 export type Mode = 'dark' | 'light'
 type Class = {
   colorMode: Mode
