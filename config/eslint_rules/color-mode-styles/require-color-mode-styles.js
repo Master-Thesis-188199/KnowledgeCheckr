@@ -239,7 +239,7 @@ function generateMissingClass(_a) {
     let contraryColor;
     const [, ...colorSegments] = relevantClass.split('-').filter(Boolean);
     const evaluateSegment = (segment) => {
-        const num = Number(segment);
+        const num = Number(segment.split('/')[0]);
         if (!isNaN(num))
             return 'number';
         if (segment.startsWith('[') && segment.endsWith(']'))

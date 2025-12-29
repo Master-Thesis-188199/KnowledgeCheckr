@@ -271,7 +271,7 @@ function generateMissingClass({ className, relevantClass, utility, colorMode, ..
   const [, ...colorSegments] = relevantClass.split('-').filter(Boolean)
 
   const evaluateSegment = (segment: string): 'number' | 'arbitrary' | 'name' => {
-    const num = Number(segment)
+    const num = Number(segment.split('/')[0])
     if (!isNaN(num)) return 'number'
 
     if (segment.startsWith('[') && segment.endsWith(']')) return 'arbitrary'
