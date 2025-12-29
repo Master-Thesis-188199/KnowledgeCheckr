@@ -458,7 +458,7 @@ function CircleAnswer_IndicatorInput({
       <Tooltip tabIndex={-1} content={tooltipContent}>
         <label
           tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
-          className='flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-neutral-500 dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-neutral-300/80'>
+          className='flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-neutral-500 dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-neutral-300/80'>
           {children}
           <input type={inputType} value={value} {...register(...registerProps)} className='appearance-none' />
         </label>
