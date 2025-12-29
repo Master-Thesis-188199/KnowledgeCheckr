@@ -7,7 +7,9 @@ export default async function Unauthorized() {
         <div className='flex h-12 items-center justify-center border-r-[0.5px] border-black pr-4 text-xl font-semibold dark:border-gray-500'>401</div>
         <h1>You&apos;re not authorized to access this page.</h1>
       </div>
-      <Link className='mt-8 rounded-md px-3 py-1.5 ring-1 dark:bg-neutral-800 dark:ring-neutral-600 dark:hover:bg-neutral-700' href={'/account/login?type=signin'}>
+      <Link
+        className='ring-ring mt-8 rounded-md bg-neutral-100 px-3 py-1.5 shadow-sm ring-1 shadow-neutral-300 hover:bg-neutral-200 dark:bg-neutral-800 dark:shadow-neutral-600 dark:ring-neutral-600 dark:hover:bg-neutral-700'
+        href={'/account/login?type=signin'}>
         Login
       </Link>
     </div>
