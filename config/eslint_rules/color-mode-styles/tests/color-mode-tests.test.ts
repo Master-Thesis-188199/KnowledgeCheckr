@@ -1,7 +1,7 @@
 import tsParser from '@typescript-eslint/parser'
 import { RuleTester } from '@typescript-eslint/utils/ts-eslint'
 import { requireColorModeStylesRule } from '../require-color-mode-styles.js'
-import createTest from './createTest'
+import { createStaticClassTest } from './createTest'
 
 const quoteString = (input: string) => `'${input}'`
 const quoteJoinArray = (options: string[], seperator = ', ') => options.map(quoteString).join(seperator)
@@ -174,7 +174,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       ],
     },
 
-    createTest({
+    createStaticClassTest({
       name: 'Verify missing dark-mode classes are detected based on variable-usage in light-mode (suggesting same variables)',
       baseClasses: ['bg-bg-hover', 'ring-ring'],
       missingClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
@@ -183,7 +183,7 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       ruleOptions: { colorNames: ['bg-hover', 'ring'] },
     }),
 
-    createTest({
+    createStaticClassTest({
       name: 'Verify missing light-mode classes are detected based on variable-usage in dark-mode (suggesting same variables)',
       baseClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
       missingClasses: ['bg-bg-hover', 'ring-ring'],
