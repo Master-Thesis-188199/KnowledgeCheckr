@@ -132,18 +132,24 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
             selectTriggerClassname,
           )}>
-          <Button id={id} variant='outline' role='combobox' aria-expanded={state.open} className='w-full justify-between font-normal capitalize hover:text-inherit' disabled={isLoading}>
+          <Button
+            id={id}
+            variant='ghost'
+            role='combobox'
+            aria-expanded={state.open}
+            className='w-full justify-between font-normal capitalize enabled:hover:text-neutral-800 dark:enabled:hover:text-neutral-200'
+            disabled={isLoading}>
             {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600 dark:bg-transparent', popoverContentClassname)}>
+        <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
           <Command className='bg-neutral-100 dark:bg-neutral-800'>
             <CommandInput
               value={state.query}
               onValueChange={(query) => dispatch({ type: 'SET_QUERY', payload: query })}
               placeholder='Search option...'
-              className='h-9 dark:text-neutral-200 dark:placeholder:text-neutral-400'
+              className='h-9 text-neutral-700 placeholder:text-neutral-500 dark:text-neutral-200 dark:placeholder:text-neutral-400'
               onKeyDown={(e) => {
                 switch (e.key) {
                   case 'ArrowDown':
@@ -172,8 +178,10 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
-                      'hover:ring-ring-hover dark:hover:ring-ring-hover cursor-pointer text-sm hover:ring-1 dark:text-neutral-400/80',
-                      state.value === option.value ? 'bg-neutral-200/80 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60' : 'hover:text-inherit',
+                      'hover:ring-ring-hover dark:hover:ring-ring-hover cursor-pointer text-sm text-neutral-500 hover:ring-1 dark:text-neutral-400/80',
+                      state.value === option.value
+                        ? 'bg-neutral-200/80 text-neutral-700 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60'
+                        : 'hover:text-inherit',
                     )}
                     key={option.value + i}
                     value={option.value}
@@ -197,8 +205,9 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   key={state.query}
                   value={state.query}
                   className={cn(
-                    'hover:ring-ring-hover bg-transparent text-neutral-800 hover:cursor-pointer dark:text-neutral-300/90 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600',
-                    'dark:hover:ring-ring-hover mt-2 rounded-t-none border-t-[1.5px] border-dashed border-neutral-400/80 pt-2 hover:ring-1 dark:border-neutral-500',
+                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 hover:cursor-pointer hover:ring-1',
+                    'border-neutral-400/80 text-neutral-800 dark:border-neutral-500 dark:text-neutral-300/90',
+                    'dark:hover:ring-ring hover:ring-ring hover:bg-neutral-300 dark:hover:bg-neutral-600',
                   )}
                   onSelect={() => createOption()}>
                   Create category &quot;{state.query}&quot;
