@@ -18,7 +18,7 @@ export default async function ChecksPage() {
         {checks.length === 0 && (
           <div>
             No checks found. Create a new one{' '}
-            <Link href='/checks/create' className='text-blue-500 underline'>
+            <Link href='/checks/create' className='text-blue-500 underline dark:text-blue-500'>
               here
             </Link>
             .
