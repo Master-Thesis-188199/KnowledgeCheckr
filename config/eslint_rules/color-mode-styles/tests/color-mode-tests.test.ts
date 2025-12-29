@@ -1,6 +1,7 @@
 import tsParser from '@typescript-eslint/parser'
 import { RuleTester } from '@typescript-eslint/utils/ts-eslint'
 import { requireColorModeStylesRule } from '../require-color-mode-styles.js'
+import createTest from './createTest'
 
 const quoteString = (input: string) => `'${input}'`
 const quoteJoinArray = (options: string[], seperator = ', ') => options.map(quoteString).join(seperator)
@@ -172,6 +173,24 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
         },
       ],
     },
+
+    createTest({
+      name: 'Verify missing dark-mode classes are detected based on variable-usage in light-mode (suggesting same variables)',
+      baseClasses: ['bg-bg-hover', 'ring-ring'],
+      missingClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
+      errorType: 'missing_dark',
+      utilities: ['bg', 'ring'],
+      ruleOptions: { colorNames: ['bg-hover', 'ring'] },
+    }),
+
+    createTest({
+      name: 'Verify missing light-mode classes are detected based on variable-usage in dark-mode (suggesting same variables)',
+      baseClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
+      missingClasses: ['bg-bg-hover', 'ring-ring'],
+      errorType: 'missing_light',
+      utilities: ['bg', 'ring'],
+      ruleOptions: { colorNames: ['bg-hover', 'ring'] },
+    }),
 
     //. Dynamic classes -> utility functions like `cn`
 
