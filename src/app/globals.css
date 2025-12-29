@@ -23,8 +23,8 @@ html[data-theme='dark'] {
   --ring-z-1: var(--color-neutral-700);
 
   --ring: var(--color-neutral-500);
-  --ring-hover: rgba(var(--color-neutral-300), 0.6);
-  --ring-focus: rgba(var(--color-neutral-300), 0.8);
+  --ring-hover: color-mix(in oklab, var(--color-neutral-300) 70%, transparent);
+  --ring-focus: color-mix(in oklab, var(--color-neutral-300) 80%, transparent);
 
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -76,7 +76,7 @@ html[data-theme='dark'] {
 
   --ring: var(--color-neutral-400);
   --ring-hover: var(--color-neutral-500);
-  --ring-focus: rgba(var(--color-neutral-600), 1);
+  --ring-focus: var(--color-neutral-600);
 
   --card: oklch(0.205 0 0);
   --radius: 0.625rem;
