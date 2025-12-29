@@ -275,7 +275,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         className={cn(
           'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
           'has-enabled:hover:cursor-pointer has-enabled:hover:ring-neutral-500 has-enabled:dark:hover:ring-neutral-300/60',
-          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
+          'has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus has-enabled:focus:ring-[1.2px]',
           'flex items-center justify-center',
           'resize-none select-none',
           'has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
