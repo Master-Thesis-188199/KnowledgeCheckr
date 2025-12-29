@@ -126,10 +126,10 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-label={`popover-trigger-${name}`}
           className={cn(
             'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer',
-            'ring-ring bg-neutral-100/90 text-neutral-600 placeholder:text-neutral-400/90 dark:bg-transparent dark:text-neutral-300 dark:ring-neutral-500 dark:placeholder:text-neutral-600',
-            'hover:ring-ring-hover focus:ring-neutral-600 dark:hover:ring-neutral-300/60 dark:focus:ring-neutral-300/80',
-            state.open && 'ring-neutral-600 dark:ring-neutral-300/80',
-            'focus-visible:ring-[1.2px] focus-visible:ring-neutral-600 dark:focus-visible:ring-neutral-300/80',
+            'ring-ring dark:ring-ring bg-neutral-100/90 text-neutral-600 placeholder:text-neutral-400/90 dark:bg-transparent dark:text-neutral-300 dark:placeholder:text-neutral-600',
+            'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
+            state.open && 'ring-ring-focus dark:ring-ring-focus',
+            'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
             selectTriggerClassname,
           )}>
           <Button id={id} variant='outline' role='combobox' aria-expanded={state.open} className='w-full justify-between font-normal capitalize hover:text-inherit' disabled={isLoading}>
