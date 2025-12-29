@@ -286,7 +286,7 @@ function generateMissingClass({ className, relevantClass, utility, colorMode, ..
     // regular tailwind class
     if (colorSegments.length === 2 && evaluateSegment(colorSegments[0]) === 'name' && evaluateSegment(colorSegments[1]) === 'number') {
       const intensity = colorSegments[1].split('/')[0]
-      const opacity = intensity.includes('/') ? `/${intensity.split('/')[1]}` : ''
+      const opacity = colorSegments[1].includes('/') ? `/${colorSegments[1].split('/')[1]}` : ''
       return { type: 'tailwind', name: colorSegments[0], intensity: parseInt(intensity), opacity }
     }
 
