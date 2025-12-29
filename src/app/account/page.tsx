@@ -6,6 +6,7 @@ import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import OAuthButton from '@/src/components/account/login/OAuthButton'
 import { SocialButton } from '@/src/components/account/SocialButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
+import Card from '@/src/components/Shared/Card'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { deleteUser } from '@/src/lib/auth/deleteUser'
@@ -27,7 +28,7 @@ export default async function AccountPage() {
       <PageHeading title='Account Information' />
 
       <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
-        <form className='flex min-w-sm flex-col gap-8 rounded-md bg-neutral-200/40 p-6 ring-1 ring-neutral-400/80 dark:bg-transparent dark:ring-neutral-600'>
+        <Card as='form' disableInteractions className='dark: flex min-w-sm flex-col gap-8 rounded-md p-6'>
           <div className='flex flex-col items-center gap-5'>
             <UserAvatar user={user} className='m-0 size-16 self-center' />
             <div className='flex flex-col items-center gap-2'>
@@ -49,7 +50,7 @@ export default async function AccountPage() {
             Signout
             {isAnonymous && <span className='ml-2 text-sm text-neutral-500 dark:text-neutral-400'>(delete data)</span>}
           </button>
-        </form>
+        </Card>
       </div>
     </>
   )
