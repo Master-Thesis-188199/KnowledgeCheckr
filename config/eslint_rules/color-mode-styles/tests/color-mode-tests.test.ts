@@ -1,6 +1,7 @@
 import tsParser from '@typescript-eslint/parser'
 import { RuleTester } from '@typescript-eslint/utils/ts-eslint'
 import { requireColorModeStylesRule } from '../require-color-mode-styles.js'
+import { createDynamicClassTest, createStaticClassTest } from './createTest'
 
 const quoteString = (input: string) => `'${input}'`
 const quoteJoinArray = (options: string[], seperator = ', ') => options.map(quoteString).join(seperator)
@@ -66,6 +67,24 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       />
     )
     `,
+    },
+
+    {
+      name: 'Expect custom variable color-styles to be recognized',
+      options: [{ colorNames: ['ring'] } as never],
+      code: `const A = () => (<div className="ring-ring dark:ring-neutral-800" />)`,
+    },
+
+    {
+      name: 'Expect custom variable color-styles with dashes in its name to be recognized',
+      options: [{ colorNames: ['ring-hover'] } as never],
+      code: `const A = () => (<div className="ring-ring-hover dark:ring-neutral-800" />)`,
+    },
+
+    {
+      name: 'Expect custom variable color-styles in combiation with regular classes to be recognized',
+      options: [{ colorNames: ['ring-hover'] } as never],
+      code: `const A = () => (<div className="ring-ring-hover dark:ring-neutral-800 bg-neutral-200 dark:bg-neutral-700 border-white dark:border-black" />)`,
     },
   ],
   invalid: [
@@ -155,7 +174,42 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       ],
     },
 
+    createStaticClassTest({
+      name: 'Verify missing dark-mode classes are detected based on variable-usage in light-mode (suggesting same variables)',
+      baseClasses: ['bg-bg-hover', 'ring-ring'],
+      missingClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
+      errorType: 'missing_dark',
+      utilities: ['bg', 'ring'],
+      ruleOptions: { colorNames: ['bg-hover', 'ring'] },
+    }),
+
+    createStaticClassTest({
+      name: 'Verify missing light-mode classes are detected based on variable-usage in dark-mode (suggesting same variables)',
+      baseClasses: ['dark:bg-bg-hover', 'dark:ring-ring'],
+      missingClasses: ['bg-bg-hover', 'ring-ring'],
+      errorType: 'missing_light',
+      utilities: ['bg', 'ring'],
+      ruleOptions: { colorNames: ['bg-hover', 'ring'] },
+    }),
+
     //. Dynamic classes -> utility functions like `cn`
+    createDynamicClassTest({
+      name: 'Verify missing light-mode dynamic classes are detected based on variable-usage in dark-mode (suggesting same variables); while not falsly detecting existing utility-class matches',
+      type: 'utilityFunction',
+      functionName: 'cn',
+      utilities: [['bg', 'ring'], ['bg']],
+      errorType: ['missing_light', 'missing_dark'],
+      baseArguments: [
+        ['dark:bg-bg-hover', 'dark:ring-ring'],
+        ['isEmpty &&', 'ring-neutral-200 bg-neutral-200 dark:ring-neutral-700'],
+      ],
+      missingArguments: [
+        // ignore-prettier
+        ['bg-bg-hover', 'ring-ring'],
+        ['dark:bg-neutral-700'],
+      ],
+      ruleOptions: { colorNames: ['bg-hover', 'ring'] },
+    }),
 
     {
       //* test missing dark-mode styles without existing opposite-class matches in dynamic className properties (`cn`)

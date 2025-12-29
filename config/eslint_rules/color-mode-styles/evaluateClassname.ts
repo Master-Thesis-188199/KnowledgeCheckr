@@ -32,14 +32,16 @@ export function evaluateClassnameRelevance(
 
   //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
   const modifyingStyles = classNameArguments.filter((arg) => {
-    const parts = arg.split('-')
-    const utility = parts[0] // e.g. bg, ring, shadow, text, flex, ...
-    const colorArg = parts[1] // e.g. "black", "white", "neutral", "2" [ring-2], ...
+    const [
+      utility, // e.g. bg, ring, shadow, text, flex, ...
+      colorName, // e.g. "black", "white", "neutral", "2" [ring-2], inherit, transparent, ...
+      ...variableNameSegments // e.g. "black", "white", "neutral", "2" [ring-2], ...
+    ] = arg.split('-')
 
     const isRelevantUtilityClass = utilityClasses.includes(utility) // does class start with e.g. "bg-", "ring-", "text-", ...
 
-    const usesArbitraryHexValue = colorArg.replace(/[\[\]]/g, '').match(/^\[?#?([0-9A-Fa-f]{6})\]?$/g)
-    const hasColor = colorNames.includes(colorArg) || usesArbitraryHexValue
+    const usesArbitraryHexValue = colorName.replace(/[\[\]]/g, '').match(/^\[?#?([0-9A-Fa-f]{6})\]?$/g)
+    const hasColor = colorNames.includes(colorName) || usesArbitraryHexValue || colorNames.includes([colorName, variableNameSegments].join('-'))
 
     return isRelevantUtilityClass && hasColor
   })

@@ -194,12 +194,12 @@ const plugin = {
 export default plugin;
 /** Takes in the user-options that were passed to the rule from within the eslint.config and adds default values for missing options */
 function resolveOptions(user) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     return {
         utilityClasses: (_a = user === null || user === void 0 ? void 0 : user.utilityClasses) !== null && _a !== void 0 ? _a : DEFAULT_OPTIONS.utilityClasses,
         attributes: (_b = user === null || user === void 0 ? void 0 : user.attributes) !== null && _b !== void 0 ? _b : DEFAULT_OPTIONS.attributes,
         helpers: (_c = user === null || user === void 0 ? void 0 : user.helpers) !== null && _c !== void 0 ? _c : DEFAULT_OPTIONS.helpers,
-        colorNames: (_d = user === null || user === void 0 ? void 0 : user.colorNames) !== null && _d !== void 0 ? _d : DEFAULT_OPTIONS.colorNames,
+        colorNames: (_e = (_d = user === null || user === void 0 ? void 0 : user.colorNames) === null || _d === void 0 ? void 0 : _d.concat(DEFAULT_OPTIONS.colorNames)) !== null && _e !== void 0 ? _e : DEFAULT_OPTIONS.colorNames,
     };
 }
 /**
@@ -236,21 +236,52 @@ function generateMissingClass(_a) {
     var { className, relevantClass, utility, colorMode } = _a, rest = __rest(_a, ["className", "relevantClass", "utility", "colorMode"]);
     const targetMode = colorMode === 'dark' ? 'light' : 'dark';
     const modifiers = className.replace('dark:', '').replace(relevantClass, ''); // stripping e.g "bg-neutral-200" from "dark:hover:bg-neutral-200" to leave "hover:"
-    const currentColor = relevantClass.split('-').slice(1).join('-'); // "red-200", "neutral-200", "white"
     let contraryColor;
-    if (currentColor.includes('-')) {
-        const intensity = Number(currentColor
-            .split('-')[1] // [50, 100, 200, 200/80, 800, 900/90] --> remove potential opacity modifiers
-            .split('/')
-            .at(0));
-        let opacity = '';
-        if (currentColor.includes('/')) {
-            opacity = '/' + currentColor.split('/').at(1);
+    const [, ...colorSegments] = relevantClass.split('-').filter(Boolean);
+    const evaluateSegment = (segment) => {
+        const num = Number(segment.split('/')[0]);
+        if (!isNaN(num))
+            return 'number';
+        if (segment.startsWith('[') && segment.endsWith(']'))
+            return 'arbitrary';
+        return 'name';
+    };
+    const parseColor = () => {
+        if (colorSegments.length === 1 && evaluateSegment(colorSegments[0]) === 'arbitrary')
+            return { type: 'arbitrary', value: colorSegments[0] };
+        // regular tailwind class
+        if (colorSegments.length === 2 && evaluateSegment(colorSegments[0]) === 'name' && evaluateSegment(colorSegments[1]) === 'number') {
+            const intensity = colorSegments[1].split('/')[0];
+            const opacity = colorSegments[1].includes('/') ? `/${colorSegments[1].split('/')[1]}` : '';
+            return { type: 'tailwind', name: colorSegments[0], intensity: parseInt(intensity), opacity };
         }
-        contraryColor = `${currentColor.split('-').at(0)}-${Math.abs(intensity - 900)}${opacity}`;
+        // variable-names
+        if (colorSegments.every((segment) => evaluateSegment(segment) === 'name')) {
+            return { type: 'variable', names: colorSegments };
+        }
+        throw new Error(`Unable to parse color: '${colorSegments.join('-')}'`);
+    };
+    const color = parseColor();
+    if (color.type === 'arbitrary') {
+        // re-use the same arbitrary value
+        contraryColor = color.value;
+    }
+    else if (color.type === 'variable') {
+        // black or white --> can be inverted
+        if (color.names.length === 1 && color.names[0].toLowerCase() === 'white') {
+            contraryColor = 'black';
+        }
+        else if (color.names.length === 1 && color.names[0].toLowerCase() === 'black') {
+            contraryColor = 'white';
+        }
+        else {
+            // re-use the variables
+            contraryColor = color.names.join('-');
+        }
     }
     else {
-        contraryColor = currentColor === 'white' ? 'black' : 'white';
+        // tailwind-colors
+        contraryColor = `${color.name}-${Math.abs(color.intensity - 900)}${color.opacity}`;
     }
     const colorModePrefix = targetMode === 'dark' ? 'dark:' : '';
     const suggestedClass = `${colorModePrefix}${modifiers}${utility}-${contraryColor}`;
