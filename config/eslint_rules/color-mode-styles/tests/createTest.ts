@@ -151,3 +151,7 @@ export function createDynamicClassTest({
     })),
   }
 }
+
+export default function declareTest(props: StaticSpecProps | DynamicSpecProps) {
+  return props.type === 'staticClassname' ? createStaticClassTest(props) : createDynamicClassTest(props)
+}
