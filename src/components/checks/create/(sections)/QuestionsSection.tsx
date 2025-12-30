@@ -37,8 +37,7 @@ export default function QuestionsSection() {
                 className={cn(
                   'question-accessibility',
                   'absolute -top-3 left-0 rounded-md px-1.5 py-0.5 text-xs capitalize italic shadow-md ring-1',
-                  'bg-neutral-200 text-neutral-600 shadow-neutral-300 ring-neutral-400',
-                  'dark:bg-neutral-800 dark:text-neutral-300/90 dark:shadow-neutral-800 dark:ring-neutral-600',
+                  'bg-neutral-200 text-neutral-600 shadow-neutral-300 ring-neutral-400 dark:bg-neutral-800 dark:text-neutral-300/90 dark:shadow-neutral-800 dark:ring-neutral-600',
                   question.accessibility === 'all' && 'hidden',
                 )}>
                 {question.accessibility.split('-').at(0)} Question
@@ -59,7 +58,7 @@ export default function QuestionsSection() {
                 </div>
               </div>
               <CreateQuestionDialog initialValues={question}>
-                <div className='group dark:hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+                <div className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
                   <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
                 </div>
               </CreateQuestionDialog>
@@ -67,8 +66,8 @@ export default function QuestionsSection() {
                 aria-label='Delete Question'
                 type='button'
                 onClick={() => removeQuestion(question.id)}
-                className='group dark:hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
-                <Trash2 className='size-4 text-red-600/70 group-hover:stroke-3 dark:text-red-400/70' />
+                className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+                <Trash2 className='size-4 text-red-600/70 group-hover:stroke-[2.5] dark:text-red-400/70' />
               </button>
             </Card>
           ))}
