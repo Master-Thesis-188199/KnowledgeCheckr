@@ -32,8 +32,9 @@ export function OpenQuestion({
         'my-auto h-full',
 
         isEvaluated && 'relative ring-2',
-        isCorrect && 'bg-radial from-neutral-700/60 via-neutral-700/60 to-green-500/15 dark:ring-green-500/70',
-        isIncorrect && 'cursor-help bg-radial from-neutral-700/60 via-neutral-700/60 to-red-400/15 dark:ring-red-400/70',
+        isCorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-green-500/20 ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/15 dark:ring-green-500/70',
+        isIncorrect &&
+          'cursor-help bg-radial from-neutral-200/60 via-neutral-200/60 to-red-500/20 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
       )}
     />
   )
