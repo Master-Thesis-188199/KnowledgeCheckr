@@ -126,7 +126,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-label={`popover-trigger-${name}`}
           className={cn(
             'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer',
-            'ring-ring dark:ring-ring bg-neutral-100/90 text-neutral-600 placeholder:text-neutral-400/90 dark:bg-transparent dark:text-neutral-300 dark:placeholder:text-neutral-600',
+            'ring-ring dark:ring-ring bg-neutral-100/90 text-neutral-600 placeholder:text-neutral-400/90 dark:bg-transparent dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
             state.open && 'ring-ring-focus dark:ring-ring-focus',
             'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
@@ -137,7 +137,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             variant='ghost'
             role='combobox'
             aria-expanded={state.open}
-            className='w-full justify-between font-normal capitalize enabled:hover:text-neutral-800 dark:enabled:hover:text-neutral-200'
+            className='w-full justify-between font-normal capitalize enabled:hover:text-neutral-800 dark:enabled:hover:text-neutral-200/85'
             disabled={isLoading}>
             {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
@@ -178,10 +178,14 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
-                      'hover:ring-ring-hover dark:hover:ring-ring-hover cursor-pointer text-sm text-neutral-500 hover:ring-1 dark:text-neutral-400/80',
-                      state.value === option.value
-                        ? 'bg-neutral-200/80 text-neutral-700 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60'
-                        : 'hover:text-inherit',
+                      'hover:ring-ring dark:hover:ring-ring cursor-pointer text-sm text-neutral-500 hover:ring-1 data-[selected="true"]:hover:bg-neutral-200/50 dark:text-neutral-400/80 dark:data-[selected="true"]:hover:bg-neutral-700/50',
+                      // disable / set selected-styles to mimic default styles ^^^   (because the selection is still displayed when element is no longer hovered and is not displayed when select-modal is opened)
+                      'data-[selected=true]:bg-transparent data-[selected=true]:text-neutral-500 dark:data-[selected=true]:bg-transparent dark:data-[selected=true]:text-neutral-400/80',
+
+                      'data-[selected="true"]:hover:text-neutral-600 dark:data-[selected="true"]:hover:text-neutral-300/80',
+                      state.value === option.value && 'bg-neutral-200/80 text-neutral-700 ring-1 ring-neutral-400/60 dark:bg-neutral-700/60 dark:text-neutral-300 dark:ring-neutral-500/60',
+                      state.value === option.value &&
+                        'ring-1 ring-neutral-400/60 data-[selected=true]:bg-neutral-200/80 data-[selected=true]:text-neutral-700 dark:ring-neutral-500/60 data-[selected=true]:dark:bg-neutral-700/60 data-[selected=true]:dark:text-neutral-300',
                     )}
                     key={option.value + i}
                     value={option.value}
