@@ -9,21 +9,22 @@ export function PracticeCategorySelection({ questions, share_token }: { question
   const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
 
   const optionClasses = cn(
-    'cursor-pointer px-3 py-1.5 hover:ring-1 hover:rounded-md dark:ring-neutral-400/70 dark:hover:bg-neutral-800 ',
-    'dark:active:bg-neutral-700',
-    'last:border-b-0 border-b border-neutral-600 first:border-b-3 first:hover:border-b-transparent',
+    'cursor-pointer px-3 py-1.5 hover:ring-1 hover:rounded-md hover:bg-neutral-200/90 dark:ring-neutral-400/70 dark:hover:bg-neutral-800 ',
+    'dark:active:bg-neutral-700 active:bg-neutral-300/80 ',
+    'hover:ring-ring dark:ring-ring-ring',
+    'last:border-b-0 border-b border-ring-subtle dark:border-neutral-600 first:border-b-3 first:hover:border-b-transparent',
   )
 
   return (
     <div className='mx-auto flex flex-col gap-6 md:my-auto md:pb-32'>
       <div>
         <h2 className='text-lg font-semibold'>Select practice category</h2>
-        <p className='text-neutral-400'>Choose the question-category you want to practice with.</p>
+        <p className='text-neutral-500 dark:text-neutral-400'>Choose the question-category you want to practice with.</p>
       </div>
-      <ul className='flex flex-col rounded-md ring-2 select-none dark:text-neutral-300 dark:ring-neutral-600' id='category-selection'>
+      <ul className='dark:ring-ring-subtle ring-ring-subtle flex flex-col rounded-md text-neutral-700 ring-2 select-none dark:text-neutral-300' id='category-selection'>
         <Link
           data-category='all'
-          className={cn(optionClasses, 'dark:bg-neutral-700/40')}
+          className={cn(optionClasses, 'rounded-t-md bg-neutral-200 hover:bg-neutral-300/80 dark:bg-neutral-700/50 dark:hover:bg-neutral-700')}
           href={{
             pathname: `/checks/${share_token}/practice`,
             query: { category: '_none_' },
