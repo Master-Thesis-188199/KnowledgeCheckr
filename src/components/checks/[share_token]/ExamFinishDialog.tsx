@@ -19,7 +19,9 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
 
   return (
     <Dialog>
-      <DialogTrigger className={cn('', triggerClassname)}>{children}</DialogTrigger>
+      <DialogTrigger asChild className={cn('', triggerClassname)}>
+        {children}
+      </DialogTrigger>
       <DialogContent className='bg-neutral-100 shadow-md shadow-neutral-50/30 dark:bg-neutral-900 dark:shadow-neutral-900/80'>
         <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
           <DialogTitle>Finish Examination Attempt?</DialogTitle>
