@@ -56,7 +56,7 @@ export default function SettingsSection() {
           </div>
 
           <div className='-mt-2 hidden sm:block'>
-            <div className='border-b border-neutral-400'>
+            <div className='border-b border-neutral-400/70 dark:border-neutral-400'>
               <nav className='-mb-px flex justify-between px-4' aria-label='Tabs'>
                 {tabs.map((tab) => (
                   <TabButton key={tab.name} tab={tab} />
@@ -120,7 +120,7 @@ export default function SettingsSection() {
                     <option value='01:30' label='90 minutes'></option>
                   </datalist>
 
-                  <span className='absolute -bottom-5 left-2.5 text-sm tracking-wider text-neutral-400'>
+                  <span className='absolute -bottom-5 left-2.5 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>
                     {format(new Date(examTimeFrameSeconds! * 1000 - 3600 * 1000), 'HH:mm')
                       .split(':')
                       .map((el, i) => `${el}${i === 0 ? 'h' : 'm'}`)
