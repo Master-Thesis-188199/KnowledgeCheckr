@@ -22,6 +22,7 @@ html[data-theme='dark'] {
   --background-z-1: var(--color-neutral-800);
   --ring-z-1: var(--color-neutral-700);
 
+  --ring-subtle: var(--color-neutral-600);
   --ring: var(--color-neutral-500);
   --ring-hover: color-mix(in oklab, var(--color-neutral-300) 70%, transparent);
   --ring-focus: color-mix(in oklab, var(--color-neutral-300) 80%, transparent);
@@ -74,6 +75,7 @@ html[data-theme='dark'] {
   --background-z-1: var(--color-neutral-200);
   --ring-z-1: var(--color-neutral-700);
 
+  --ring-subtle: color-mix(in oklab, var(--color-neutral-400) 50%, transparent);
   --ring: var(--color-neutral-400);
   --ring-hover: var(--color-neutral-500);
   --ring-focus: var(--color-neutral-600);
@@ -154,6 +156,7 @@ html[data-theme='dark'] {
   --color-ring: var(--ring);
   --color-ring-hover: var(--ring-hover);
   --color-ring-focus: var(--ring-focus);
+  --color-ring-subtle: var(--ring-subtle);
 
   @keyframes accordion-down {
     from {
