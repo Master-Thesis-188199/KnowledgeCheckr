@@ -1,6 +1,7 @@
 'use client'
 import { useMemo } from 'react'
 import Link from 'next/link'
+import Card from '@/src/components/Shared/Card'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
@@ -16,7 +17,7 @@ export function PracticeCategorySelection({ questions, share_token }: { question
   )
 
   return (
-    <div className='mx-auto flex flex-col gap-6 md:my-auto md:pb-32'>
+    <Card className='mx-auto flex flex-col gap-6 p-6 md:my-auto md:mt-32' disableInteractions>
       <div>
         <h2 className='text-lg font-semibold'>Select practice category</h2>
         <p className='text-neutral-500 dark:text-neutral-400'>Choose the question-category you want to practice with.</p>
@@ -44,6 +45,6 @@ export function PracticeCategorySelection({ questions, share_token }: { question
           </Link>
         ))}
       </ul>
-    </div>
+    </Card>
   )
 }
