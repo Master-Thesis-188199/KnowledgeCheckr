@@ -31,7 +31,7 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
 
 function MenuBar() {
   return (
-    <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
+    <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200'>
       <div className='2 flex items-center gap-4'>
         <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-8' />
         <span className='tracking-widest'>KnowledgeCheckr</span>
