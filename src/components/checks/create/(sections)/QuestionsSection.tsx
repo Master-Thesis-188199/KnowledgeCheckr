@@ -28,9 +28,9 @@ export default function QuestionsSection() {
               data-question={question.question}
               key={i + question.id}
               className={cn(
-                'question relative flex gap-3 p-2 hover:bg-none',
+                'question relative flex gap-3 p-2 first:mt-3 hover:bg-none',
                 // increase space to previous element / section-header when accessibility badge is displayed
-                question.accessibility !== 'all' && 'mt-2',
+                question.accessibility !== 'all' && 'mt-2 first:mt-6',
               )}>
               <div
                 title={question.accessibility === 'all' ? undefined : question.accessibility === 'exam-only' ? 'Excluded from practice!' : 'Excluded from examinations!'}
