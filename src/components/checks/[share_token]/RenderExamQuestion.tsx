@@ -33,8 +33,8 @@ export default function RenderExamQuestion() {
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
 
   return (
-    <form className='grid gap-6 rounded-md p-4 ring-1 dark:ring-neutral-600' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
-      <input name='question' readOnly disabled className='text-lg font-semibold' value={question.question} />
+    <form className='dark:ring-ring-subtle ring-ring-subtle grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
+      <input name='question' readOnly disabled className='text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={question.question} />
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
         <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
       )}
@@ -68,11 +68,11 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
             }}
             className='peer hidden'
           />
-          <CircleIcon className='size-4.5 peer-checked:fill-neutral-300' />
+          <CircleIcon className='size-4.5 peer-checked:fill-neutral-400 dark:peer-checked:fill-neutral-300' />
           {answer.answer}
         </label>
       ))}
-      <button type='button' className='hidden underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset()}>
+      <button type='button' className='hidden text-neutral-500 underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset()}>
         Reset
       </button>
     </ul>
