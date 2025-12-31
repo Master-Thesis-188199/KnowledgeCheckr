@@ -1,11 +1,9 @@
-import { FlaskConicalIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import GithubSvg from '@/public/icons/social/GithubSvg'
-import GoogleIcon from '@/public/icons/social/GoogleIcon'
-import OAuthButton from '@/src/components/account/login/OAuthButton'
-import { SocialButton } from '@/src/components/account/SocialButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
+import { DexProviderButton } from '@/src/components/Shared/Authentication/DexProviderButton'
+import { GithubSocialButton } from '@/src/components/Shared/Authentication/GithubSocialButton'
+import { GoogleSocialButton } from '@/src/components/Shared/Authentication/GoogleSocialButton'
 import Card from '@/src/components/Shared/Card'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
@@ -22,6 +20,7 @@ export default async function AccountPage() {
   }
 
   const { isAnonymous } = user
+  const linkingPossible = env.AUTH_GITHUB_ENABLED || env.AUTH_GOOGLE_ENABLED || env.NEXT_PUBLIC_MODE === 'test'
 
   return (
     <>
@@ -37,13 +36,13 @@ export default async function AccountPage() {
             </div>
           </div>
 
-          <LinkAccountSection user={user} />
+          <LinkAccountSection user={user} disabled={!linkingPossible} />
 
           <button
             type='submit'
             formAction={signout}
             className={cn(
-              'mt-2 rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
+              'rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
               'bg-neutral-300/60 text-neutral-700 ring-neutral-400 dark:bg-neutral-700 dark:text-neutral-200 dark:ring-neutral-600',
               'hover:ring-ring-hover dark:hover:ring-ring-hover',
             )}>
@@ -56,8 +55,8 @@ export default async function AccountPage() {
   )
 }
 
-function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser }) {
-  if (!isAnonymous) return null
+function LinkAccountSection({ user: { isAnonymous }, disabled }: { user: BetterAuthUser; disabled?: boolean }) {
+  if (!isAnonymous || disabled) return null
 
   return (
     <div className='mx-2 flex flex-col gap-6'>
@@ -69,9 +68,9 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
         </span>
       </div>
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90'>
-        <SocialButton icon={GoogleIcon} provider='google' aria-label='SignIn using Google' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
-        <SocialButton icon={GithubSvg} provider='github' aria-label='SignIn using GitHub' callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
-        {env.NEXT_PUBLIC_MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />}
+        <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
+        <GithubSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
+        <DexProviderButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
       </div>
     </div>
   )
