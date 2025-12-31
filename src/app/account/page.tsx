@@ -1,8 +1,7 @@
-import { FlaskConicalIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import OAuthButton from '@/src/components/account/login/OAuthButton'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
+import { DexProviderButton } from '@/src/components/Shared/Authentication/DexProviderButton'
 import { GithubSocialButton } from '@/src/components/Shared/Authentication/GithubSocialButton'
 import { GoogleSocialButton } from '@/src/components/Shared/Authentication/GoogleSocialButton'
 import Line from '@/src/components/Shared/Line'
@@ -67,7 +66,7 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
         <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <GithubSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
-        {env.NEXT_PUBLIC_MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />}
+        <DexProviderButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
       </div>
     </div>
   )
