@@ -1,3 +1,4 @@
+import { OctagonAlertIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
@@ -41,7 +42,7 @@ export default async function AccountPage() {
             type='submit'
             formAction={signout}
             className={cn(
-              'mt-2 rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
+              'rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
               'bg-neutral-300/60 text-neutral-700 ring-neutral-400 dark:bg-neutral-700 dark:text-neutral-200 dark:ring-neutral-600',
               'hover:ring-ring-hover dark:hover:ring-ring-hover',
             )}>
@@ -57,6 +58,8 @@ export default async function AccountPage() {
 function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser }) {
   if (!isAnonymous) return null
 
+  const areSocialProvidersAvailable = env.AUTH_GITHUB_ENABLED || env.AUTH_GOOGLE_ENABLED || env.NEXT_PUBLIC_MODE === 'test'
+
   return (
     <div className='mx-2 flex flex-col gap-6'>
       <Line className='text-neutral-400 dark:text-neutral-500' dashSize={4} dashed dashSpacing={6} />
@@ -66,12 +69,26 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
           To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.
         </span>
       </div>
-      <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90'>
+      <div className={cn('mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90', !areSocialProvidersAvailable && 'hidden')}>
         <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <GithubSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <DexProviderButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
       </div>
+      <NoConfiguredProviders show={!areSocialProvidersAvailable} />
     </div>
+  )
+}
+
+function NoConfiguredProviders({ show }: { show: boolean }) {
+  if (!show) return null
+
+  return (
+    <>
+      <div className='mx-auto grid grid-cols-[auto_1fr] gap-2 gap-y-6 text-sm text-red-600 dark:text-red-400/90'>
+        <OctagonAlertIcon className='size-5' />
+        <p>To link your account social providers must be configured</p>
+      </div>
+    </>
   )
 }
 
