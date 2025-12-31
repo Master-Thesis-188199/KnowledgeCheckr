@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
 import { anonymous, genericOAuth } from 'better-auth/plugins'
 import { eq } from 'drizzle-orm'
+import { isEmpty } from 'lodash'
 import { headers } from 'next/headers'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
@@ -18,12 +19,13 @@ type ProviderConfig<K extends keyof SocialProviders> = Partial<Pick<SocialProvid
  * @param clientSecret The secrets for the given provider
  * @returns The configuration for the specfici provider
  */
-const initProvider = <K extends keyof SocialProviders>(name: K, clientId?: string, clientSecret?: string): ProviderConfig<K> => {
-  const areSecretsValid = clientId !== undefined && clientId.length > 0 && clientSecret !== undefined && clientSecret.length > 0
+const initProvider = <K extends keyof SocialProviders>(name: K, config: Partial<ProviderConfig<K>[K]>): ProviderConfig<K> => {
+  if (isEmpty(config)) return {} as ProviderConfig<K>
+  if (Object.values(config).some((val) => val === undefined)) return {} as ProviderConfig<K>
 
-  const providerConfig = { [name]: { clientId, clientSecret } } as unknown as ProviderConfig<K>
+  const providerConfig = { [name]: config } as unknown as ProviderConfig<K>
 
-  return areSecretsValid ? providerConfig : ({} as ProviderConfig<K>)
+  return providerConfig
 }
 
 export const auth = betterAuth({
@@ -55,8 +57,8 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   socialProviders: {
-    ...initProvider('github', env.AUTH_GITHUB_ID, env.AUTH_GITHUB_SECRET),
-    ...initProvider('google', env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
+    ...initProvider('github', { clientId: env.AUTH_GITHUB_ID, clientSecret: env.AUTH_GITHUB_SECRET }),
+    ...initProvider('google', { clientId: env.AUTH_GOOGLE_ID, clientSecret: env.AUTH_GOOGLE_SECRET }),
   },
   plugins: [
     nextCookies(),
