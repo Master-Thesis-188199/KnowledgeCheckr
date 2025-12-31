@@ -211,6 +211,18 @@ ruleTester.run('color-mode-styles rule', requireColorModeStylesRule, {
       ruleOptions: { colorNames: ['bg-hover', 'ring'] },
     }),
 
+    createDynamicClassTest({
+      name: 'Verify suggesting contrary color with intensity 900 and 50',
+      functionName: 'cn',
+      type: 'utilityFunction',
+      baseArguments: [['dark:bg-neutral-900/80'], ['bg-neutral-50/80']],
+      errorType: ['missing_light', 'missing_dark'],
+      missingArguments: [['bg-neutral-50/80'], ['dark:bg-neutral-900/80']],
+      utilities: [['bg'], ['bg']],
+    }),
+
+    // ---
+
     {
       //* test missing dark-mode styles without existing opposite-class matches in dynamic className properties (`cn`)
       name: 'Verify missing dark-mode classes for bg, text utility types are recognized and suggested in utility function `cn` (without existing color-mode styles)',
