@@ -315,7 +315,22 @@ function generateMissingClass({ className, relevantClass, utility, colorMode, ..
     }
   } else {
     // tailwind-colors
-    contraryColor = `${color.name}-${Math.abs(color.intensity - 900)}${color.opacity}`
+
+    const { intensity } = color
+
+    // edge-case:   intensity = 900 --> contrary = 0 which is not a valid tailwind color-intensity.
+    if (intensity === 900) {
+      // the nearest color-identifier
+      contraryColor = `${color.name}-${50}${color.opacity}`
+    }
+    // edge-case:  intensity = 50 --> contrary would be 850 which is not a valid color-intensity either.
+    else if (intensity === 50) {
+      contraryColor = `${color.name}-${900}${color.opacity}`
+    }
+    // default
+    else {
+      contraryColor = `${color.name}-${Math.abs(intensity - 900)}${color.opacity}`
+    }
   }
 
   const colorModePrefix = targetMode === 'dark' ? 'dark:' : ''
