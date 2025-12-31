@@ -19,20 +19,22 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
 
   return (
     <Dialog>
-      <DialogTrigger className={cn('', triggerClassname)}>{children}</DialogTrigger>
-      <DialogContent className='shadow-md dark:bg-neutral-900 dark:shadow-neutral-900/80'>
+      <DialogTrigger asChild className={cn('', triggerClassname)}>
+        {children}
+      </DialogTrigger>
+      <DialogContent className='bg-neutral-100 shadow-md shadow-neutral-50/30 dark:bg-neutral-900 dark:shadow-neutral-900/80'>
         <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
           <DialogTitle>Finish Examination Attempt?</DialogTitle>
-          <DialogDescription className='tracking-tight dark:text-neutral-400'>Do you want to submit your examination reults?</DialogDescription>
+          <DialogDescription className='tracking-tight text-neutral-500 dark:text-neutral-400'>Do you want to submit your examination reults?</DialogDescription>
         </DialogHeader>
         <div className='mt-2 flex flex-col gap-8'>
           <div className='flex flex-col gap-4'>
-            <span className='dark:text-neutral-200'>Question Overview</span>
+            <span className='text-neutral-700 dark:text-neutral-200'>Question Overview</span>
             <div className='flex flex-wrap gap-4 px-4'>
               {knowledgeCheck.questions.map((q, i) => (
-                <div className={cn('relative flex w-9 rounded-md py-1 text-center ring-1 dark:ring-neutral-700', isQuestionAnswered(q) && 'dark:bg-green-800/60')} key={i}>
+                <div className={cn('dark:ring-ring ring-ring relative flex w-9 rounded-md py-1 text-center ring-1', isQuestionAnswered(q) && 'bg-green-700/20 dark:bg-green-800/60')} key={i}>
                   <div className={cn('absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]', isQuestionAnswered(q) && 'flex')}>
-                    <CheckCheckIcon className={cn('size-4 dark:text-green-400/80')} />
+                    <CheckCheckIcon className={cn('size-4 text-green-700 dark:text-green-400/80')} />
                   </div>
                   <span className={cn('mx-auto')}>{i + 1}</span>
                 </div>
@@ -41,7 +43,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
           </div>
           <div className='flex justify-between'>
             <DialogClose asChild>
-              <Button variant='outline' className='rounded-md px-4 py-1.5 ring-1 dark:ring-neutral-600'>
+              <Button variant='outline' className='dark:ring-ring-subtle ring-ring rounded-md px-4 py-1.5 ring-1'>
                 Cancel
               </Button>
             </DialogClose>
@@ -58,7 +60,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                     redirect('/checks')
                   })
               }
-              className='rounded-md px-4 py-1.5 ring-[1.5px] dark:bg-black dark:ring-neutral-600'>
+              className='dark:ring-ring-subtle ring-ring-subtle rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] dark:bg-black'>
               Submit
             </Button>
           </div>

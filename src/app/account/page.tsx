@@ -4,6 +4,7 @@ import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUse
 import { DexProviderButton } from '@/src/components/Shared/Authentication/DexProviderButton'
 import { GithubSocialButton } from '@/src/components/Shared/Authentication/GithubSocialButton'
 import { GoogleSocialButton } from '@/src/components/Shared/Authentication/GoogleSocialButton'
+import Card from '@/src/components/Shared/Card'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { deleteUser } from '@/src/lib/auth/deleteUser'
@@ -25,7 +26,7 @@ export default async function AccountPage() {
       <PageHeading title='Account Information' />
 
       <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
-        <form className='flex min-w-sm flex-col gap-8 rounded-md bg-neutral-200/40 p-6 ring-1 ring-neutral-400/80 dark:bg-transparent dark:ring-neutral-600'>
+        <Card as='form' disableInteractions className='dark: flex min-w-sm flex-col gap-8 rounded-md p-6'>
           <div className='flex flex-col items-center gap-5'>
             <UserAvatar user={user} className='m-0 size-16 self-center' />
             <div className='flex flex-col items-center gap-2'>
@@ -41,13 +42,13 @@ export default async function AccountPage() {
             formAction={signout}
             className={cn(
               'mt-2 rounded-md px-3 py-1.5 ring-1 hover:cursor-pointer hover:ring-[1.5px]',
-              'bg-neutral-300/60 ring-neutral-400 hover:ring-neutral-500/80',
-              'dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-neutral-500/70',
+              'bg-neutral-300/60 text-neutral-700 ring-neutral-400 dark:bg-neutral-700 dark:text-neutral-200 dark:ring-neutral-600',
+              'hover:ring-ring-hover dark:hover:ring-ring-hover',
             )}>
             Signout
-            {isAnonymous && <span className='ml-2 text-sm text-neutral-400'>(delete data)</span>}
+            {isAnonymous && <span className='ml-2 text-sm text-neutral-500 dark:text-neutral-400'>(delete data)</span>}
           </button>
-        </form>
+        </Card>
       </div>
     </>
   )
@@ -58,12 +59,14 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
 
   return (
     <div className='mx-2 flex flex-col gap-6'>
-      <Line className='text-neutral-500' dashSize={4} dashed dashSpacing={6} />
+      <Line className='text-neutral-400 dark:text-neutral-500' dashSize={4} dashed dashSpacing={6} />
       <div className='flex flex-col gap-2'>
-        <h2 className='text-lg font-semibold dark:text-neutral-300'>Link your Account</h2>
-        <span className='text-sm dark:text-neutral-400'>To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.</span>
+        <h2 className='text-lg font-semibold text-neutral-600 dark:text-neutral-300'>Link your Account</h2>
+        <span className='text-sm text-neutral-500 dark:text-neutral-400'>
+          To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.
+        </span>
       </div>
-      <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
+      <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90'>
         <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <GithubSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <DexProviderButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />

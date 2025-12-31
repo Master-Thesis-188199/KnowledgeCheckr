@@ -30,6 +30,7 @@ const eslintConfig = defineConfig([
       'unused-imports': unusedImports,
       'require-color-modes': requireColorModeStyles,
     },
+
     rules: {
       'server-only-first/server-only-first': 'error',
 
@@ -46,9 +47,10 @@ const eslintConfig = defineConfig([
       'require-color-modes/require-color-mode-styles': [
         'warn',
         {
-          utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow'],
-          attributes: ['className', 'class'],
+          utilityClasses: ['bg', 'text', 'border', 'ring', 'shadow', 'from', 'via', 'to', 'fill', 'outline'],
+          attributes: ['className', 'class', 'triggerClassname', 'indicatorClasses'],
           helpers: ['cn', 'tw', 'clsx'],
+          colorNames: ['ring', 'ring-hover', 'ring-subtle'],
         },
       ],
     },

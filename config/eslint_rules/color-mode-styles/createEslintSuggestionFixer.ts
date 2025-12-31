@@ -1,5 +1,5 @@
-import { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import { OwnerInfo } from './types'
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type { OwnerInfo } from './types'
 
 export default function createFixableSuggestions(attrNode: TSESTree.JSXAttribute, owner: OwnerInfo, suggestedClasses: string, fixer: TSESLint.RuleFixer, sourceCode: TSESLint.SourceCode) {
   const value = attrNode.value

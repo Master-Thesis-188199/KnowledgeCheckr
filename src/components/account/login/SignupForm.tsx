@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import { z } from 'zod'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Input from '@/src/components/Shared/form/Input'
+import { cn } from '@/src/lib/Shared/utils'
 import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { signup } from '../../../lib/account/login/AccountActions'
 
@@ -103,7 +104,12 @@ export default function SignupForm({ callbackUrl }: { callbackUrl?: string }) {
           type='submit'
           data-auth-provider='credential'
           disabled={!isValid}
-          className='mt-2 w-full max-w-xs self-center rounded-lg bg-neutral-300 px-4 py-2 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer hover:bg-neutral-400/40 hover:ring-[1.8px] hover:ring-neutral-400/70 active:bg-neutral-700/90 active:ring-neutral-600 dark:bg-neutral-700/40 dark:ring-neutral-700 dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-600/80'>
+          className={cn(
+            'mt-2 w-full max-w-xs self-center rounded-lg px-4 py-2 ring-1 outline-0',
+            'hover:cursor-pointer dark:hover:ring-[1.8px]',
+            'bg-neutral-100/80 shadow-sm shadow-neutral-400/70 ring-neutral-400/70 dark:bg-neutral-700/40 dark:shadow-inherit dark:ring-neutral-700',
+            'hover:ring-ring-hover dark:hover:ring-ring-hover hover:bg-neutral-50/80 hover:shadow-neutral-400 active:bg-neutral-200/90 active:ring-neutral-300 dark:hover:bg-neutral-700/70 dark:hover:shadow-inherit dark:active:bg-neutral-700/90 dark:active:ring-neutral-600',
+          )}>
           Create account
         </button>
         <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
