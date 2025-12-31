@@ -1,4 +1,3 @@
-import { OctagonAlertIcon } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
@@ -21,6 +20,7 @@ export default async function AccountPage() {
   }
 
   const { isAnonymous } = user
+  const linkingPossible = env.AUTH_GITHUB_ENABLED || env.AUTH_GOOGLE_ENABLED || env.NEXT_PUBLIC_MODE === 'test'
 
   return (
     <>
@@ -36,7 +36,7 @@ export default async function AccountPage() {
             </div>
           </div>
 
-          <LinkAccountSection user={user} />
+          <LinkAccountSection user={user} disabled={!linkingPossible} />
 
           <button
             type='submit'
@@ -55,10 +55,8 @@ export default async function AccountPage() {
   )
 }
 
-function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser }) {
-  if (!isAnonymous) return null
-
-  const areSocialProvidersAvailable = env.AUTH_GITHUB_ENABLED || env.AUTH_GOOGLE_ENABLED || env.NEXT_PUBLIC_MODE === 'test'
+function LinkAccountSection({ user: { isAnonymous }, disabled }: { user: BetterAuthUser; disabled?: boolean }) {
+  if (!isAnonymous || disabled) return null
 
   return (
     <div className='mx-2 flex flex-col gap-6'>
@@ -69,26 +67,12 @@ function LinkAccountSection({ user: { isAnonymous } }: { user: BetterAuthUser })
           To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.
         </span>
       </div>
-      <div className={cn('mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90', !areSocialProvidersAvailable && 'hidden')}>
+      <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90'>
         <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <GithubSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
         <DexProviderButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />
       </div>
-      <NoConfiguredProviders show={!areSocialProvidersAvailable} />
     </div>
-  )
-}
-
-function NoConfiguredProviders({ show }: { show: boolean }) {
-  if (!show) return null
-
-  return (
-    <>
-      <div className='mx-auto grid grid-cols-[auto_1fr] gap-2 gap-y-6 text-sm text-red-600 dark:text-red-400/90'>
-        <OctagonAlertIcon className='size-5' />
-        <p>To link your account social providers must be configured</p>
-      </div>
-    </>
   )
 }
 
