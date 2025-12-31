@@ -77,7 +77,7 @@ function log(...message: any[]) {
 }
 
 export type Options = {
-  utilityClasses: Array<'bg' | 'text' | 'border' | 'ring' | 'shadow' | (string & {})>
+  utilityClasses: Array<'bg' | 'text' | 'border' | 'ring' | 'shadow' | 'to' | 'from' | 'via' | 'fill' | (string & {})>
   attributes: Array<string>
   helpers: Array<'cn' | 'tw' | (string & {})>
   colorNames: Array<(typeof defaultColorNames)[number] | (string & {})>
