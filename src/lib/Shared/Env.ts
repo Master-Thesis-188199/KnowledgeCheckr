@@ -131,5 +131,5 @@ if (res.error) {
   throw e
 }
 
-const env = envSchema.parse(process.env) as z.infer<typeof envSchema>
+const env = res.data
 export default env
