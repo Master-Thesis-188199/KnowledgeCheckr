@@ -336,6 +336,7 @@ function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<
 
       case 'drag-drop': {
         append({ id: getUUID(), answer: '', position: watch('answers').length })
+        break
       }
     }
   }
