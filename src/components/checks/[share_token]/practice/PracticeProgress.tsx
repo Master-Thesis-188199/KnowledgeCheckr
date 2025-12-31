@@ -11,7 +11,7 @@ export function PracticeProgress() {
 
   return (
     <div className='relative mx-5 my-0'>
-      <Progress value={(results.length / questions.length) * 100} className='h-5' indicatorClasses='bg-green-700' />
+      <Progress value={(results.length / questions.length) * 100} className='h-5' indicatorClasses='dark:bg-green-700 bg-green-500' />
 
       <div className='absolute -top-1 right-1 -bottom-1 left-1 m-0 flex items-center justify-center p-0 text-sm'>
         {results.length} / {questions.length} answered

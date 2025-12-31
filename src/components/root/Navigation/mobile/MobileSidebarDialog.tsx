@@ -52,7 +52,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
             leave='transition-opacity ease-linear duration-300'
             leaveFrom='opacity-100'
             leaveTo='opacity-0'>
-            <div className='fixed inset-0 bg-neutral-900/80' onClick={toggleSidebar} />
+            <div className='fixed inset-0 bg-neutral-900/80 dark:bg-neutral-900/80' onClick={toggleSidebar} />
           </Transition.Child>
         </div>
       </Transition.Root>
