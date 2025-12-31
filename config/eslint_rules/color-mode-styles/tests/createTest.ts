@@ -14,7 +14,7 @@ type DynamicSpecProps = {
   missingArguments: string[][]
 
   errorType: MessageIds[]
-  utilities: string[][]
+  utilities: Array<Array<Options['utilityClasses'][number]>>
 } & Omit<SpecProps, 'baseClasses' | 'missingClasses' | 'errorType' | 'utilities'>
 
 type SpecProps = Omit<RunTests<MessageIds, Options[]>['invalid'][number], 'code' | 'errors' | 'output' | 'options'> & {
@@ -22,7 +22,7 @@ type SpecProps = Omit<RunTests<MessageIds, Options[]>['invalid'][number], 'code'
   name: string
   baseClasses: string[]
   missingClasses: string[]
-  utilities: string[]
+  utilities: Array<Options['utilityClasses'][number]>
   ruleOptions?: Partial<Options>
   jsxTag?: ElementType
 }
@@ -86,7 +86,7 @@ export function createDynamicClassTest({
   ...optionalProps
 }: DynamicSpecProps): RunTests<MessageIds, Options[]>['invalid'][number] {
   const tag = jsxTag ?? 'div'
-  const options = ruleOptions ? ([ruleOptions] as never) : undefined
+  const options = ruleOptions ? ([ruleOptions] as never) : []
 
   const createClassnames = (funcArguments: string[][]) => {
     return `${functionName}(${funcArguments.map((arg) => "'" + arg.join(' ') + "'").join(', ')})`
