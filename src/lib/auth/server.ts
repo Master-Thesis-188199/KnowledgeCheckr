@@ -8,6 +8,24 @@ import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/driz
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
 
+type SocialProviders = NonNullable<Parameters<typeof betterAuth>[0]['socialProviders']>
+type ProviderConfig<K extends keyof SocialProviders> = Partial<Pick<SocialProviders, K>>
+
+/**
+ * This simple utility function configures a given better-auth social-provider when it's respective environment-variables are set
+ * @param name The name of the provider that is to be initialized / configured
+ * @param clientId The id secret for the given provider
+ * @param clientSecret The secrets for the given provider
+ * @returns The configuration for the specfici provider
+ */
+const initProvider = <K extends keyof SocialProviders>(name: K, clientId?: string, clientSecret?: string): ProviderConfig<K> => {
+  const areSecretsValid = clientId !== undefined && clientId.length > 0 && clientSecret !== undefined && clientSecret.length > 0
+
+  const providerConfig = { [name]: { clientId, clientSecret } } as unknown as ProviderConfig<K>
+
+  return areSecretsValid ? providerConfig : ({} as ProviderConfig<K>)
+}
+
 export const auth = betterAuth({
   rateLimit: {
     enabled: env.NEXT_PUBLIC_MODE === 'test' ? false : true,
@@ -37,14 +55,8 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   socialProviders: {
-    github: {
-      clientId: env.AUTH_GITHUB_ID,
-      clientSecret: env.AUTH_GITHUB_SECRET,
-    },
-    google: {
-      clientId: env.AUTH_GOOGLE_ID,
-      clientSecret: env.AUTH_GOOGLE_SECRET,
-    },
+    ...initProvider('github', env.AUTH_GITHUB_ID, env.AUTH_GITHUB_SECRET),
+    ...initProvider('google', env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
   },
   plugins: [
     nextCookies(),
