@@ -74,7 +74,7 @@ function FormHeader({ title, subTitle }: { title: string; subTitle?: string }) {
 }
 
 function SocialProviderSection({ callbackUrl, label }: { callbackUrl?: string; label: string }) {
-  if (!env.AUTH_GITHUB_ENABLED && !env.AUTH_GOOGLE_ENABLED && env.NEXT_PUBLIC_MODE === 'production') return null
+  if (!env.AUTH_GITHUB_ENABLED && !env.AUTH_GOOGLE_ENABLED && env.NEXT_PUBLIC_MODE !== 'test') return null
 
   return (
     <>
