@@ -2,13 +2,13 @@ import { FlaskConicalIcon, VenetianMaskIcon } from 'lucide-react'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import GithubSvg from '@/public/icons/social/GithubSvg'
-import GoogleIcon from '@/public/icons/social/GoogleIcon'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import { AnonymousSigninButton } from '@/src/components/account/login/AnonymousSigninButton'
 import LoginForm from '@/src/components/account/login/LoginForm'
 import OAuthButton from '@/src/components/account/login/OAuthButton'
 import SignupForm from '@/src/components/account/login/SignupForm'
 import { SocialButton } from '@/src/components/account/SocialButton'
+import { GoogleSocialButton } from '@/src/components/Shared/Authentication/GoogleSocialButton'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
 import { getReferer } from '@/src/lib/Shared/getReferer'
@@ -86,7 +86,7 @@ function SocialProviderSection({ callbackUrl, label }: { callbackUrl?: string; l
       </div>
 
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-200/90'>
-        {env.AUTH_GOOGLE_ENABLED && <SocialButton icon={GoogleIcon} callbackURL={callbackUrl} provider='google' aria-label='SignIn using Google' />}
+        <GoogleSocialButton callbackURL={callbackUrl} />
         {env.AUTH_GITHUB_ENABLED && <SocialButton icon={GithubSvg} callbackURL={callbackUrl} provider='github' aria-label='SignIn using GitHub' />}
         {env.NEXT_PUBLIC_MODE === 'test' && <OAuthButton provider='dex' icon={FlaskConicalIcon} callbackURL={callbackUrl} />}
       </div>
