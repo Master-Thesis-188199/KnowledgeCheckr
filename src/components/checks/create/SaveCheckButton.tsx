@@ -19,6 +19,25 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
     console.error('[SaveCheckButton]: Parsing of store data failed, save-button disabled. ', safeParse.error)
   }
 
+  const formAction = () => {
+    if (!safeParse.success) return undefined
+
+    saveAction({ check: safeParse.data }).catch((e) => {
+      if (isRedirectError(e)) {
+        const key = cacheKey ?? 'check-store'
+        const hasCache = !!sessionStorage.getItem(key)
+
+        if (hasCache) {
+          sessionStorage.removeItem(key)
+        } else {
+          console.debug(`[SaveCheckButton]: No cached data was found for cacheKey: ${key}.`)
+        }
+
+        clearNavigationAbort()
+      }
+    })
+  }
+
   return (
     <Tooltip
       isDisabled={safeParse.success}
@@ -36,28 +55,7 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
         'rounded-md bg-neutral-100 p-2 text-sm shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
         !safeParse.success && 'dark:text-red-400/90 dark:shadow-red-400/40',
       )}>
-      <Button
-        disabled={!safeParse.success}
-        aria-label='save knowledge check'
-        type='submit'
-        formAction={() =>
-          safeParse.success
-            ? saveAction({ check: safeParse.data }).catch((e) => {
-                if (isRedirectError(e)) {
-                  const key = cacheKey ?? 'check-store'
-                  const hasCache = !!sessionStorage.getItem(key)
-
-                  if (hasCache) {
-                    sessionStorage.removeItem(key)
-                  } else {
-                    console.debug(`[SaveCheckButton]: No cached data was found for cacheKey: ${key}.`)
-                  }
-
-                  clearNavigationAbort()
-                }
-              })
-            : new Promise(() => null)
-        }>
+      <Button disabled={!safeParse.success} aria-label='save knowledge check' type='submit' formAction={formAction}>
         Save
       </Button>
     </Tooltip>
