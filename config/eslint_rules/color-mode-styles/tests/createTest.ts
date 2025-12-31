@@ -46,6 +46,17 @@ export function createStaticClassTest({
 
   const options = ruleOptions ? ([ruleOptions] as never) : undefined
 
+  const addAllSuggestion = () => {
+    if (missingClasses.length <= 1) return []
+
+    return [
+      {
+        desc: `Add all missing classes for ${joinArray(utilities)}`,
+        output: `const A = () => (<${tag} className="${baseClassStr} ${missingClasses.join(' ')}" />)`,
+      },
+    ]
+  }
+
   return {
     ...optionalProps,
     name: name,
@@ -59,10 +70,7 @@ export function createStaticClassTest({
           missing: quoteJoinArray(missingClasses),
         },
         suggestions: [
-          {
-            desc: `Add all missing classes for ${joinArray(utilities)}`,
-            output: `const A = () => (<${tag} className="${baseClassStr} ${missingClasses.join(' ')}" />)`,
-          },
+          ...addAllSuggestion(),
           ...missingClasses.map((missingClass): any => ({
             desc: `Add ${missingClass.includes('dark:') ? 'dark' : 'light'}-mode ${missingClass}`,
             output: `const A = () => (<${tag} className="${baseClassStr} ${missingClass}" />)`,
