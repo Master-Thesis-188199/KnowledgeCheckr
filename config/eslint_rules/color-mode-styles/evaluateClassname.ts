@@ -1,4 +1,5 @@
-import { Options } from './require-color-mode-styles'
+import collectClassnames from './collectClassnames'
+import type { ClassWithOwner, Options } from './require-color-mode-styles'
 
 /**
  * This function evaluate a given className by first checking which type of class it is (dark-, light- mode) and whether it is relevant in the context of color-modes. Thus, whether it uses any `utilityClasses` modifiers and any `colorNames`.
@@ -7,15 +8,10 @@ import { Options } from './require-color-mode-styles'
  * @param options.colorNames The colorNames to consider as relevant in the context of color-mode
  * @returns Either null when the class was irrelevant or an object containing relevant information when the class is 'important.'
  */
-export default function evaluateClassname(
-  className: string,
+export function evaluateClassnameRelevance(
+  { className, owner }: ReturnType<typeof collectClassnames>[number],
   { utilityClasses, colorNames }: Pick<Options, 'utilityClasses' | 'colorNames'>,
-): {
-  mode: 'dark' | 'light'
-  utility: string
-  className: string
-  relevantClass: string
-} | null {
+): ClassWithOwner | null {
   if (!className || typeof className !== 'string') return null
 
   const colorMode = className.includes('dark:') ? 'dark' : 'light'
@@ -36,16 +32,18 @@ export default function evaluateClassname(
 
   //* check if last className argument like "border-b-2", "ring-", "ring-neutral-200", "text-neutral-200" is a modifying style: thus uses a relevant prefix ("bg", "ring", ..) and uses a color "-<color>"
   const modifyingStyles = classNameArguments.filter((arg) => {
-    const parts = arg.split('-')
-    const modifier = parts[0] // e.g. bg, ring, shadow, text, flex, ...
+    const [
+      utility, // e.g. bg, ring, shadow, text, flex, ...
+      colorName, // e.g. "black", "white", "neutral", "2" [ring-2], inherit, transparent, ...
+      ...variableNameSegments // e.g. "black", "white", "neutral", "2" [ring-2], ...
+    ] = arg.split('-')
 
-    const isColorModifyingClass = utilityClasses.includes(modifier) // does class start with e.g. "bg-", "ring-", "text-", ...
+    const isRelevantUtilityClass = utilityClasses.includes(utility) // does class start with e.g. "bg-", "ring-", "text-", ...
 
-    const color = parts[1] // e.g. "black", "white", "neutral", "2" [ring-2], ...
+    const usesArbitraryHexValue = colorName.replace(/[\[\]]/g, '').match(/^\[?#?([0-9A-Fa-f]{6})\]?$/g)
+    const hasColor = colorNames.includes(colorName) || usesArbitraryHexValue || colorNames.includes([colorName, variableNameSegments].join('-'))
 
-    const hasColor = colorNames.includes(color)
-
-    return isColorModifyingClass && hasColor
+    return isRelevantUtilityClass && hasColor
   })
 
   //* classname does not modify colors, like ring-2, p-2, border-b-2 --> irreleavnt
@@ -65,9 +63,10 @@ export default function evaluateClassname(
   // console.log(`Considering '${relevantClass}'`)
 
   return {
-    mode: colorMode,
+    colorMode,
     utility,
     className,
     relevantClass,
+    owner,
   }
 }

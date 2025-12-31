@@ -1,6 +1,6 @@
-import { TSESTree } from '@typescript-eslint/utils'
-import { Options } from './require-color-mode-styles'
-import { OwnerHelperSegment,OwnerInfo, OwnerSimple } from './types'
+import type { TSESTree } from '@typescript-eslint/utils'
+import type { Options } from './require-color-mode-styles'
+import type { OwnerHelperSegment, OwnerInfo, OwnerSimple } from './types'
 
 /**
  * This utility function collects the classname / classname-arguments from both static className attributes and dynamic className attributes when using utility functions like `cn`.
