@@ -12,7 +12,7 @@ export const ExaminationStoreContext = createContext<ExaminationStoreApi | undef
 export interface ExaminationStoreProviderProps {
   children: ReactNode
   initialStoreProps?: ExaminationState
-  options?: Partial<useStoreCachingOptions<ExaminationState>>
+  options?: Partial<useStoreCachingOptions<ExaminationStore>>
 }
 
 export function ExaminationStoreProvider({ children, initialStoreProps, options }: ExaminationStoreProviderProps) {
