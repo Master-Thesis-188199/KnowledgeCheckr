@@ -1,6 +1,7 @@
 'use client'
 
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
+import isEmpty from 'lodash/isEmpty'
 import { CheckCheckIcon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -10,7 +11,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
-import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
+import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
@@ -32,8 +33,14 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
             <span className='text-neutral-700 dark:text-neutral-200'>Question Overview</span>
             <div className='flex flex-wrap gap-4 px-4'>
               {knowledgeCheck.questions.map((q, i) => (
-                <div className={cn('dark:ring-ring ring-ring relative flex w-9 rounded-md py-1 text-center ring-1', isQuestionAnswered(q) && 'bg-green-700/20 dark:bg-green-800/60')} key={i}>
-                  <div className={cn('absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]', isQuestionAnswered(q) && 'flex')}>
+                <div
+                  className={cn(
+                    'dark:ring-ring ring-ring relative flex w-9 rounded-md py-1 text-center ring-1',
+                    isQuestionAnswered(examinationState.results, q.id) && 'bg-green-700/20 dark:bg-green-800/60',
+                  )}
+                  key={i}>
+                  <div
+                    className={cn('absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]', isQuestionAnswered(examinationState.results, q.id) && 'flex')}>
                     <CheckCheckIcon className={cn('size-4 text-green-700 dark:text-green-400/80')} />
                   </div>
                   <span className={cn('mx-auto')}>{i + 1}</span>
@@ -70,16 +77,6 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
   )
 }
 
-function isQuestionAnswered(question: Question) {
-  switch (question.type) {
-    case 'single-choice':
-      return question.answers.some((q) => q.correct)
-    case 'multiple-choice':
-      return question.answers.some((q) => q.correct)
-    case 'drag-drop':
-      // todo determinate if user has made changes
-      return false
-    case 'open-question':
-      return !!question.expectation?.trim()?.length
-  }
+function isQuestionAnswered(results: ExaminationSchema['results'], id: Question['id']) {
+  return !isEmpty(results.find((r) => r.question_id === id)?.answer ?? {})
 }
