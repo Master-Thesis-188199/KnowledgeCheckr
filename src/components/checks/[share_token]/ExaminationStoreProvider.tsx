@@ -4,7 +4,6 @@ import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 import { createExaminationStore, ExaminationState, ExaminationStore } from '@/hooks/checks/[share_token]/ExaminationStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
-import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
 export type ExaminationStoreApi = ReturnType<typeof createExaminationStore>
 
@@ -13,10 +12,10 @@ export const ExaminationStoreContext = createContext<ExaminationStoreApi | undef
 export interface ExaminationStoreProviderProps {
   children: ReactNode
   initialStoreProps?: ExaminationState
-  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<ExaminationState>, ''>>
+  options?: Partial<useStoreCachingOptions<ExaminationState>>
 }
 
-export function ExaminationStoreProvider({ children, initialStoreProps, options = { cacheKey: 'examination-store' } }: ExaminationStoreProviderProps) {
+export function ExaminationStoreProvider({ children, initialStoreProps, options }: ExaminationStoreProviderProps) {
   //todo consider switching to localStorage to ensure that users do not loose their progress e.g. when their browser / system crashes
   const props = useZustandStore({
     caching: true,
@@ -25,6 +24,7 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
     options: {
       expiresAfter: 10 * 60 * 1000,
       discardCache: (cache) => cache?.knowledgeCheck.id !== initialStoreProps?.knowledgeCheck.id,
+      cacheKey: 'examination-store',
       ...options,
     },
   }) // expire after 10 minutes of inactivity or when cached check-id differs from the initialStore-id (because ids are constants)
