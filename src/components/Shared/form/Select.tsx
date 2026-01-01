@@ -23,6 +23,7 @@ interface CreatableSelectProps extends Classnames {
   onChange?: (value: string) => void
   createable?: boolean
   reset?: boolean
+  disabled?: boolean
 }
 
 interface Classnames {
@@ -67,7 +68,7 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function Select({ options, defaultValue, isLoading = false, name, id, onChange, createable, popoverContentClassname, selectTriggerClassname }: CreatableSelectProps) {
+export default function Select({ options, defaultValue, isLoading = false, name, id, onChange, createable, popoverContentClassname, selectTriggerClassname, disabled }: CreatableSelectProps) {
   const [keySelection, setKeySelection] = React.useState<number>(options.findIndex((o) => o.value === defaultValue?.value) || -1)
 
   const initialState: State = {
@@ -138,7 +139,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             role='combobox'
             aria-expanded={state.open}
             className='w-full justify-between font-normal capitalize enabled:hover:text-neutral-800 dark:enabled:hover:text-neutral-200/85'
-            disabled={isLoading}>
+            disabled={isLoading || disabled}>
             {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
             <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
