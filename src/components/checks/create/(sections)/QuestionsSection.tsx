@@ -11,7 +11,7 @@ export default function QuestionsSection() {
 
   return (
     <Card disableInteractions className='question-section flex break-inside-avoid flex-col p-3'>
-      <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
+      <div className='header -mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>Questions</h2>
         </div>
@@ -34,7 +34,7 @@ export default function QuestionsSection() {
 
 function EmptyQuestionsStatus({ show }: { show: boolean }) {
   return (
-    <div className={cn('my-20 flex flex-col items-center justify-center gap-6', !show && 'hidden')}>
+    <div className={cn('flex h-60 flex-col items-center justify-center gap-6', !show && 'hidden')}>
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
       <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>Currently there are no questions associated to this quiz</span>
     </div>
