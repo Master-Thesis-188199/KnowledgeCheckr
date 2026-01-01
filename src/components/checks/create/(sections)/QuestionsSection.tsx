@@ -36,7 +36,7 @@ function EmptyQuestionsStatus({ show }: { show: boolean }) {
   return (
     <div className={cn('my-20 flex flex-col items-center justify-center gap-6', !show && 'hidden')}>
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
-      <span className='tracking-wide text-neutral-500 dark:text-neutral-400'>Currently there are no questions associated to this quiz</span>
+      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>Currently there are no questions associated to this quiz</span>
     </div>
   )
 }
