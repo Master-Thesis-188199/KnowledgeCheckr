@@ -1,25 +1,36 @@
-import { ComponentPropsWithRef, ElementType, ReactElement } from 'react'
-import { twMerge } from 'tailwind-merge'
+import type { ComponentPropsWithRef, ElementType, ReactElement } from 'react'
+import { cn } from '@/src/lib/Shared/utils'
 
-type BaseProps = {
-  disableHoverStyles?: boolean
+type CardOwnProps = {
+  className?: string
+  disableInteractions?: boolean
 }
 
-type GenericElementProps<C extends ElementType> = {
+export type CardProps<C extends ElementType = 'div'> = {
+  /**
+   * Which underlying element/component to render.
+   * Examples: 'div', 'form', 'input', motion.a, Link, etc.
+   */
   as?: C
-} & BaseProps &
-  // assign generic-element type props and override element-props that are also in BaseProps
-  Omit<ComponentPropsWithRef<C>, keyof BaseProps | 'as'>
+} & CardOwnProps &
+  // Take all props from the chosen element/component,
+  // but drop anything we override ('as', 'className', 'disableHoverStyles')
+  Omit<ComponentPropsWithRef<C>, keyof CardOwnProps | 'as'>
 
-export default function Card<C extends ElementType = 'div'>({ as, className, disableHoverStyles, ...props }: GenericElementProps<C>): ReactElement | null {
-  const Component = (as || 'div') as ElementType
+export default function Card<C extends ElementType = 'div'>({ as, disableInteractions, className, ...rest }: CardProps<C>): ReactElement | null {
+  const Component = (as ?? 'div') as ElementType
 
   return (
     <Component
-      {...props}
-      className={twMerge(
-        'rounded-md bg-neutral-200/40 p-3 ring-1 ring-neutral-400/70 dark:bg-neutral-700/30 dark:ring-neutral-600',
-        !disableHoverStyles && 'dark:hover:bg-neutral-700/70 dark:hover:ring-neutral-500/70',
+      {...rest}
+      className={cn(
+        'rounded-md p-4 ring-1',
+        'bg-neutral-200/40 shadow-md shadow-neutral-200 ring-neutral-400/40 dark:bg-neutral-700/30 dark:shadow-neutral-900/60 dark:ring-neutral-600/70',
+        !disableInteractions &&
+          cn(
+            'hover:ring-2 focus:ring-2',
+            'enabled:focus:ring-ring-focus enabled:hover:bg-neutral-200/80 enabled:focus:bg-neutral-200/60 dark:enabled:hover:bg-neutral-700/60 enabled:focus:dark:bg-neutral-700/60 enabled:focus:dark:ring-neutral-500',
+          ),
         className,
       )}
     />

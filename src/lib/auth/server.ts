@@ -2,11 +2,31 @@ import { betterAuth } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
 import { anonymous, genericOAuth } from 'better-auth/plugins'
 import { eq } from 'drizzle-orm'
+import { isEmpty } from 'lodash'
 import { headers } from 'next/headers'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
+
+type SocialProviders = NonNullable<Parameters<typeof betterAuth>[0]['socialProviders']>
+type ProviderConfig<K extends keyof SocialProviders> = Partial<Pick<SocialProviders, K>>
+
+/**
+ * This simple utility function configures a given better-auth social-provider when it's respective environment-variables are set
+ * @param name The name of the provider that is to be initialized / configured
+ * @param clientId The id secret for the given provider
+ * @param clientSecret The secrets for the given provider
+ * @returns The configuration for the specfici provider
+ */
+const initProvider = <K extends keyof SocialProviders>(name: K, config: Partial<ProviderConfig<K>[K]>): ProviderConfig<K> => {
+  if (isEmpty(config)) return {} as ProviderConfig<K>
+  if (Object.values(config).some((val) => val === undefined)) return {} as ProviderConfig<K>
+
+  const providerConfig = { [name]: config } as unknown as ProviderConfig<K>
+
+  return providerConfig
+}
 
 export const auth = betterAuth({
   rateLimit: {
@@ -37,14 +57,8 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   socialProviders: {
-    github: {
-      clientId: env.AUTH_GITHUB_ID,
-      clientSecret: env.AUTH_GITHUB_SECRET,
-    },
-    google: {
-      clientId: env.AUTH_GOOGLE_ID,
-      clientSecret: env.AUTH_GOOGLE_SECRET,
-    },
+    ...initProvider('github', { clientId: env.AUTH_GITHUB_ID, clientSecret: env.AUTH_GITHUB_SECRET }),
+    ...initProvider('google', { clientId: env.AUTH_GOOGLE_ID, clientSecret: env.AUTH_GOOGLE_SECRET }),
   },
   plugins: [
     nextCookies(),

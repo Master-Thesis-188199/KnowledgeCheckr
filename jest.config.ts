@@ -9,7 +9,13 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const config: Config = {
   verbose: true,
-  testMatch: ['<rootDir>/src/tests/unit/**/*.test.tsx', '<rootDir>/src/tests/unit/**/*.test.ts', '<rootDir>/src/tests/integration/**/*.test.tsx', '<rootDir>/src/tests/integration/**/*.test.ts'],
+  testMatch: [
+    '<rootDir>/src/tests/unit/**/*.test.tsx',
+    '<rootDir>/src/tests/unit/**/*.test.ts',
+    '<rootDir>/src/tests/integration/**/*.test.tsx',
+    '<rootDir>/src/tests/integration/**/*.test.ts',
+    '<rootDir>/config/**/tests/*.test.ts',
+  ],
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./jest.setup.ts'],
   maxWorkers: '50%',
