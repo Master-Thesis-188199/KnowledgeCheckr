@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import Card from '@/src/components/Shared/Card'
 import Input from '@/src/components/Shared/form/Input'
+import { cn } from '@/src/lib/Shared/utils'
 
 export default function GeneralSection() {
   const { setName, setDescription, name, description, closeDate } = useCheckStore((state) => state)
@@ -17,7 +18,13 @@ export default function GeneralSection() {
           <h2 className=''>General Information</h2>
         </div>
       </div>
-      <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
+      <div
+        className={cn(
+          // prettier-ignore
+          'grid items-center p-2',
+          'grid-cols-1 gap-3 *:odd:mt-6 *:odd:first:mt-0',
+          '@md:grid-cols-[auto_1fr] @md:gap-9 @md:gap-x-7 @md:*:odd:mt-0',
+        )}>
         <InputGroup defaultValue={name} onChange={(e) => setName(e.target.value)} name='check-name' label='Name' placeholder='Enter the name of your knowledge check' />
         <InputGroup
           defaultValue={description || ''}
