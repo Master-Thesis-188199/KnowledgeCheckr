@@ -16,6 +16,7 @@ import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { cn } from '@/src/lib/Shared/utils'
 import {
   ChoiceQuestion,
   DragDropQuestion,
@@ -462,7 +463,11 @@ function CircleAnswer_IndicatorInput({
       <Tooltip tabIndex={-1} content={tooltipContent}>
         <label
           tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
-          className='has-focus:ring-ring-focus dark:has-focus:ring-ring-focus flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer has-focus:ring-[1.2px] dark:bg-transparent dark:ring-neutral-500'>
+          className={cn(
+            'has-focus:ring-ring-focus dark:has-focus:ring-ring-focus flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 has-focus:ring-[1.2px] dark:bg-transparent dark:ring-neutral-500',
+            // when there are clickable interactions (value===undefined) set cursor-pointer, otherwise no interactions -> just tooltips
+            value === undefined ? 'hover:cursor-pointer' : 'hover:cursor-help',
+          )}>
           {children}
           <input type={inputType} value={value} {...register(...registerProps)} className='appearance-none' />
         </label>
