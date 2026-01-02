@@ -2,10 +2,20 @@ import { ChangeEvent, HTMLProps, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
+import { z, ZodTypeAny } from 'zod'
 import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
+import { StripEffects } from '@/src/schemas/utils/stripEffects'
+
+function unwrapOuterEffects<Schema extends ZodTypeAny>(schema: Schema): StripEffects<Schema> {
+  if (schema instanceof z.ZodEffects) {
+    return unwrapOuterEffects(schema._def.schema)
+  }
+
+  return schema as StripEffects<Schema>
+}
 
 export default function Field({
   form,
@@ -29,7 +39,8 @@ export default function Field({
       render={({ field, fieldState }) => {
         const hasError = !!fieldState.error
         const showDescription = (isFocused && !hasError) || isHovered
-        const description = KnowledgeCheckSchema._def.schema.shape[field.name as keyof KnowledgeCheck]?.description ?? ''
+        const shape = unwrapOuterEffects(KnowledgeCheckSchema).shape
+        const description = shape[field.name as keyof typeof shape]?.description
 
         return (
           <>
