@@ -33,7 +33,7 @@ export default function Field({
           <>
             <FormLabel className='self-baseline capitalize'>{label ?? field.name}</FormLabel>
 
-            <div className='relative grid gap-2'>
+            <div className='relative grid'>
               <FormControl>
                 {/* @ts-expect-error The field-value is currently equal to the property of the `KnowledgeCheck` object that matches the name. Thus, not just 'string' | 'number' but also objects. */}
                 <ShadcnInput
@@ -67,7 +67,7 @@ export default function Field({
                   {hasError ? (
                     <motion.div
                       key='error'
-                      className='absolute inset-0 left-2'
+                      className='absolute inset-0 top-1 left-2'
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 2 }}
@@ -78,7 +78,7 @@ export default function Field({
                   ) : showDescription && description ? (
                     <motion.div
                       key='desc'
-                      className='absolute inset-0 left-2 z-10'
+                      className='absolute inset-0 top-1 left-2 z-10'
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 2 }}
