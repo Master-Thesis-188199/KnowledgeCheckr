@@ -1,8 +1,10 @@
 import { ChangeEvent, HTMLProps, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
+import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
 
 export default function Field({
@@ -33,7 +35,8 @@ export default function Field({
           <>
             <FormLabel className='self-baseline capitalize'>{label ?? field.name}</FormLabel>
 
-            <div className='relative grid'>
+            {/* moves input indicators like 'number' | 'date' to the left to make room for the info / error icon */}
+            <div className='relative grid **:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6'>
               <FormControl>
                 {/* @ts-expect-error The field-value is currently equal to the property of the `KnowledgeCheck` object that matches the name. Thus, not just 'string' | 'number' but also objects. */}
                 <ShadcnInput
@@ -44,8 +47,6 @@ export default function Field({
                     setIsFocused(true)
                     field.onBlur?.()
                   }}
-                  onMouseOver={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
                   onBlur={() => {
                     setIsFocused(false)
                     field.onBlur()
@@ -61,6 +62,31 @@ export default function Field({
                   }
                 />
               </FormControl>
+
+              <AnimatePresence mode='wait'>
+                {!hasError && (
+                  <motion.div
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    key='info-icon'
+                    className={cn('text-muted-foreground absolute inset-y-0 right-3 z-10 flex items-center hover:cursor-pointer hover:text-current dark:hover:text-current')}>
+                    <InfoIcon className={cn('size-4')} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} />
+                  </motion.div>
+                )}
+                {hasError && (
+                  <motion.div
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    key='error-icon'
+                    className={cn('text-destructive absolute inset-y-0 right-3 z-10 flex items-center')}>
+                    <TriangleAlertIcon className={cn('size-4')} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className='relative'>
                 <AnimatePresence mode='wait' initial={false}>
