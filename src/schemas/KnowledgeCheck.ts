@@ -15,19 +15,21 @@ export const KnowledgeCheckSchema = z
       .uuid()
       .default(() => getUUID()),
 
-    name: z.string().default('Knowledge Check'),
+    name: z.string().default('Knowledge Check').describe('The name under which the created check is associated with.'),
 
     description: z
       .string()
       .nullable()
-      .default(() => lorem().substring(0, Math.floor(Math.random() * 100))),
+      .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
+      .describe('Describe the concept of your knowledge check using a few words.'),
 
     difficulty: z
       .number()
       .min(1, 'Please specify a difficulty between 1 and 10.')
       .max(10, 'Please specify a difficulty between 1 and 10.')
       .optional()
-      .default(() => (Math.floor(Math.random() * 1000) % 10) + 1),
+      .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
+      .describe('Defines the skill level needed for this check.'),
 
     questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
     questionCategories: z
@@ -43,8 +45,8 @@ export const KnowledgeCheckSchema = z
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
-      .default(() => new Date(Date.now())),
-
+      .default(() => new Date(Date.now()))
+      .describe('The day on which users can use the check.'),
     closeDate: z
       .date()
       .or(z.string())
@@ -52,7 +54,8 @@ export const KnowledgeCheckSchema = z
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
       .nullable()
-      .default(null),
+      .default(null)
+      .describe('The last day on which the check can be used by others.'),
 
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
