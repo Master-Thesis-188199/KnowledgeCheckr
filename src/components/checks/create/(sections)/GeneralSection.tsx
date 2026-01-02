@@ -1,49 +1,74 @@
 'use client'
 
-import { ComponentType, InputHTMLAttributes } from 'react'
-import { Textarea } from '@headlessui/react'
+import { ComponentType, InputHTMLAttributes, useCallback } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { addDays, format } from 'date-fns'
+import { useForm } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
+import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
+import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
+import { cn } from '@/src/lib/Shared/utils'
+import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
+import schemaDefaults from '@/src/schemas/utils/schemaDefaults'
+import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
+import { Any } from '@/types'
 
 export default function GeneralSection() {
-  const { setName, setDescription, name, description, closeDate } = useCheckStore((state) => state)
+  const { setName, setDescription, name, description, closeDate, openDate, difficulty } = useCheckStore((state) => state)
+  const now = useCallback(() => new Date(Date.now()), [])()
+
+  const form = useForm({
+    resolver: zodResolver(KnowledgeCheckSchema),
+    defaultValues: {
+      ...schemaDefaults(stripZodDefault(KnowledgeCheckSchema)),
+      difficulty,
+      name,
+      description,
+
+      // the date-value causes the input to not display the `Date` object
+      openDate: format(openDate ?? now, 'yyyy-LL-dd') as Any,
+      closeDate: format(closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
+    },
+    mode: 'all',
+  })
 
   return (
-    <Card className='@container flex flex-col gap-8 p-3' disableInteractions>
-      <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
-        <div className='flex items-center justify-between'>
-          <h2 className=''>General Information</h2>
+    <Form {...form}>
+      <Card
+        as='form'
+        onChange={() => {
+          // transfer form-values into create-store
+          if (name !== form.getValues().name) setName(form.getValues().name)
+          if (description !== form.getValues().description && form.getValues().description !== null) setDescription(form.getValues().description!)
+        }}
+        className='@container flex flex-col gap-8 p-3'
+        disableInteractions>
+        <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
+          <div className='flex items-center justify-between'>
+            <h2 className=''>General Information</h2>
+          </div>
         </div>
-      </div>
-      <div className='grid grid-cols-[auto_1fr] items-center gap-9 gap-x-7 p-2'>
-        <InputGroup defaultValue={name} onChange={(e) => setName(e.target.value)} name='check-name' label='Name' placeholder='Enter the name of your knowledge check' />
-        <InputGroup
-          defaultValue={description || ''}
-          onChange={(e) => setDescription(e.target.value)}
-          label='Description'
-          className='min-h-20 resize-none'
-          as={Textarea}
-          name='check-description'
-          placeholder='Describe the concept of your knowledge check using a few words.'
-        />
-        <InputGroup
-          label='Deadline'
-          type='date'
-          name='check-close-date'
-          // eslint-disable-next-line react-hooks/purity
-          defaultValue={new Date(closeDate ?? Date.now())
-            .toLocaleDateString('de')
-            .split('.')
-            .reverse()
-            .map((el) => (el.length < 2 ? '0' + el : el))
-            .join('-')}
-          className='text-sm text-neutral-500 dark:text-neutral-400 [&::-webkit-calendar-picker-indicator]:brightness-50'
-        />
-        <InputGroup label='Administrators' name='check-contributors' />
-      </div>
-    </Card>
+
+        <div
+          className={cn(
+            // prettier-ignore
+            'grid p-2',
+            'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-6 *:odd:first:mt-0',
+            '@md:grid-cols-[auto_1fr] @md:gap-9 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
+            'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
+            'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
+          )}>
+          <Field form={form} name='name' type='text' />
+          <Field form={form} name='description' placeholder='Describe the concept of your knowledge check using a few words.' type='text' />
+          <Field form={form} name='difficulty' type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
+          <Field form={form} label='Start Date' name='openDate' type='date' onChange={({ valueAsDate, value }) => (valueAsDate ? format(new Date(Date.parse(value)), 'yyyy-LL-dd') : null)} />
+          <Field form={form} label='Deadline' name='closeDate' type='date' onChange={({ valueAsDate, value }) => (valueAsDate ? format(new Date(Date.parse(value)), 'yyyy-LL-dd') : null)} />
+        </div>
+      </Card>
+    </Form>
   )
 }
 
