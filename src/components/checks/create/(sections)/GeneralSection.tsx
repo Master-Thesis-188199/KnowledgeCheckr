@@ -11,7 +11,7 @@ import Card from '@/src/components/Shared/Card'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
+import { KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
 export default function GeneralSection() {
@@ -37,9 +37,20 @@ export default function GeneralSection() {
         onChange={() => {
           const values = form.getValues()
 
-          // transfer form-values into create-store
-          console.debug('Updating store with:', values)
-          updateCheck(values)
+          const { success, error } = safeParseKnowledgeCheck(values)
+          if (!success) {
+            for (const [key, messages] of Object.entries(error.formErrors.fieldErrors)) {
+              if (!messages) continue
+
+              for (const msg of messages) form.setError(key as Any, { message: msg, type: 'custom' })
+            }
+          } else {
+            form.clearErrors()
+
+            // transfer form-values into create-store
+            console.debug('Updating store with:', values)
+            updateCheck(values)
+          }
         }}
         className='@container flex flex-col gap-8 p-3'
         disableInteractions>
