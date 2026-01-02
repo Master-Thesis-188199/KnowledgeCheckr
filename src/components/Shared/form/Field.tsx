@@ -71,8 +71,10 @@ export default function Field({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     key='info-icon'
+                    onMouseOver={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
                     className={cn('text-muted-foreground absolute inset-y-0 right-3 z-10 flex items-center hover:cursor-pointer hover:text-current dark:hover:text-current')}>
-                    <InfoIcon className={cn('size-4')} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} />
+                    <InfoIcon className={cn('size-4')} />
                   </motion.div>
                 )}
                 {hasError && (
