@@ -12,25 +12,20 @@ import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
-import schemaDefaults from '@/src/schemas/utils/schemaDefaults'
-import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
 import { Any } from '@/types'
 
 export default function GeneralSection() {
-  const { setName, setDescription, name, description, closeDate, openDate, difficulty } = useCheckStore((state) => state)
+  const { updateCheck, ...check } = useCheckStore((state) => state)
   const now = useCallback(() => new Date(Date.now()), [])()
 
   const form = useForm({
     resolver: zodResolver(KnowledgeCheckSchema),
     defaultValues: {
-      ...schemaDefaults(stripZodDefault(KnowledgeCheckSchema)),
-      difficulty,
-      name,
-      description,
+      ...check,
 
       // the date-value causes the input to not display the `Date` object
-      openDate: format(openDate ?? now, 'yyyy-LL-dd') as Any,
-      closeDate: format(closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
+      openDate: format(check.openDate ?? now, 'yyyy-LL-dd') as Any,
+      closeDate: format(check.closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
     },
     mode: 'all',
   })
@@ -40,9 +35,11 @@ export default function GeneralSection() {
       <Card
         as='form'
         onChange={() => {
+          const values = form.getValues()
+
           // transfer form-values into create-store
-          if (name !== form.getValues().name) setName(form.getValues().name)
-          if (description !== form.getValues().description && form.getValues().description !== null) setDescription(form.getValues().description!)
+          console.debug('Updating store with:', values)
+          updateCheck(values)
         }}
         className='@container flex flex-col gap-8 p-3'
         disableInteractions>
