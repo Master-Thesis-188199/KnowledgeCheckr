@@ -1,3 +1,4 @@
+import { addDays, isFuture } from 'date-fns'
 import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -41,6 +42,7 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
       .default(() => new Date(Date.now())),
 
     closeDate: z
@@ -48,6 +50,7 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
       .nullable()
       .default(null),
 
