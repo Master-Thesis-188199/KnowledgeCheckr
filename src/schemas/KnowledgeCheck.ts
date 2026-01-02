@@ -1,4 +1,4 @@
-import { addDays, isFuture } from 'date-fns'
+import { addDays, isBefore, isFuture } from 'date-fns'
 import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -71,6 +71,17 @@ export const KnowledgeCheckSchema = z
   })
   .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',
+  })
+  .superRefine(({ openDate, closeDate }, ctx) => {
+    if (closeDate === null) return
+
+    if (isBefore(closeDate, openDate)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'The closeDate cannot be before the start date',
+        path: ['closeDate'],
+      })
+    }
   })
 
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
