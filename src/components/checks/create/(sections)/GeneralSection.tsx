@@ -61,8 +61,8 @@ export default function GeneralSection() {
           <Field form={form} name='name' type='text' />
           <Field form={form} name='description' placeholder='Describe the concept of your knowledge check using a few words.' type='text' />
           <Field form={form} name='difficulty' type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
-          <Field form={form} label='Start Date' name='openDate' type='date' onChange={({ valueAsDate, value }) => (valueAsDate ? format(new Date(Date.parse(value)), 'yyyy-LL-dd') : null)} />
-          <Field form={form} label='Deadline' name='closeDate' type='date' onChange={({ valueAsDate, value }) => (valueAsDate ? format(new Date(Date.parse(value)), 'yyyy-LL-dd') : null)} />
+          <Field form={form} label='Start Date' name='openDate' type='date' />
+          <Field form={form} label='Deadline' name='closeDate' type='date' />
         </div>
       </Card>
     </Form>
