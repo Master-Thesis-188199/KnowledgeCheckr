@@ -67,13 +67,15 @@ export default function GeneralSection() {
 
               for (const msg of messages) form.setError(key as Any, { message: msg, type: 'custom' })
             }
-          } else {
-            form.clearErrors()
 
-            // transfer form-values into create-store
-            console.debug('Updating store with:', values)
-            updateCheck(values)
+            return
           }
+
+          form.clearErrors()
+
+          // transfer form-values into create-store
+          console.debug('Updating store with:', values)
+          updateCheck(values)
         }}
         className='@container flex flex-col gap-8 p-3'
         disableInteractions>
