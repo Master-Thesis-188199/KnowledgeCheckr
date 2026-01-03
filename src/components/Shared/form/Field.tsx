@@ -2,36 +2,23 @@ import { ChangeEvent, HTMLProps, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
-import { z, ZodTypeAny } from 'zod'
 import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import { cn } from '@/src/lib/Shared/utils'
-import { StripEffects } from '@/src/schemas/utils/stripEffects'
-
-function unwrapOuterEffects<Schema extends ZodTypeAny>(schema: Schema): StripEffects<Schema> {
-  if (schema instanceof z.ZodEffects) {
-    return unwrapOuterEffects(schema._def.schema)
-  }
-
-  return schema as StripEffects<Schema>
-}
-type EffectWrappedObject =
-  | z.AnyZodObject
-  //@ts-expect-error expect warningn about circular type declaration
-  | z.ZodEffects<EffectWrappedObject>
+import { DescriptionMap, getDescriptionForRhfName } from '@/src/schemas/utils/extractDescriptions'
 
 export default function Field<Values extends FieldValues>({
   form,
   name,
   onChange,
   label,
-  schema,
+  descriptions,
   ...props
 }: {
   form: UseFormReturn<Values>
   name: Parameters<typeof FormField<Values>>['0']['name']
   label?: string
-  schema?: EffectWrappedObject
+  descriptions?: DescriptionMap
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form' | 'className'>) {
   const [isFocused, setIsFocused] = useState(false)
@@ -44,7 +31,7 @@ export default function Field<Values extends FieldValues>({
       render={({ field, fieldState }) => {
         const hasError = !!fieldState.error
         const showDescription = (isFocused && !hasError) || isHovered
-        const description = schema ? unwrapOuterEffects(schema).shape?.[field.name]?.description : ''
+        const description = descriptions ? getDescriptionForRhfName(descriptions, field.name) : undefined
 
         return (
           <>
