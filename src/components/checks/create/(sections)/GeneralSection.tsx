@@ -14,6 +14,7 @@ import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
 
 export default function GeneralSection() {
@@ -34,7 +35,8 @@ export default function GeneralSection() {
     mode: 'all',
   })
 
-  const props = useWatch({ control: form.control })
+  const baseFieldProps = { form, descriptions: extractDescriptionMap(KnowledgeCheckSchema) }
+  const formValues = useWatch({ control: form.control })
 
   /**
    * This effect when called checks whether the form changes. When it has no errors it re-enables the `MultiStage` navigation, in case it was disabled.
@@ -52,7 +54,7 @@ export default function GeneralSection() {
     const msg = `Please resolve ${errors.length > 1 ? 'all' : '1'} error${errors.length > 1 ? 's' : ''} in the form on your screen, to continue`
     console.warn(msg)
     setEnabled(false, msg)
-  }, [props])
+  }, [formValues])
 
   return (
     <Form {...form}>
@@ -100,11 +102,11 @@ export default function GeneralSection() {
             'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
-          <Field form={form} name='name' type='text' placeholder='Science Fiction Check' />
-          <Field form={form} name='description' placeholder='Learn about science fiction' type='text' />
-          <Field form={form} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
-          <Field form={form} label='Start Date' name='openDate' type='date' />
-          <Field form={form} label='Deadline' name='closeDate' type='date' />
+          <Field {...baseFieldProps} name='name' type='text' placeholder='Science Fiction Check' />
+          <Field {...baseFieldProps} name='description' placeholder='Learn about science fiction' type='text' />
+          <Field {...baseFieldProps} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
+          <Field {...baseFieldProps} label='Start Date' name='openDate' type='date' />
+          <Field {...baseFieldProps} label='Deadline' name='closeDate' type='date' />
         </div>
       </Card>
     </Form>
