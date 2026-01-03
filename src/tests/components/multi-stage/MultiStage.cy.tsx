@@ -36,12 +36,12 @@ describe('Multi-Stage Test Suite: ', () => {
     )
 
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1)
-    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('li').should('have.length', 5)
+    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('button').should('have.length', 5)
 
-    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('li').first().should('have.attr', 'data-active', 'true')
+    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('button').first().should('have.attr', 'data-active', 'true')
     cy.get('#stage-1').should('be.visible')
 
-    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('li').last().click().should('have.attr', 'data-active', 'true')
+    cy.get('#multi-stage-list-parent').children().filter(':visible').children().filter('button').last().click().should('have.attr', 'data-active', 'true')
     cy.get('#stage-5').should('be.visible')
   })
 })
