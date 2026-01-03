@@ -13,12 +13,13 @@ import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
 export default function GeneralSection() {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
+  const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
   const now = useCallback(() => new Date(Date.now()), [])()
 
   const form = useForm({
@@ -64,6 +65,11 @@ export default function GeneralSection() {
           if (!success) {
             for (const [key, messages] of Object.entries(error.formErrors.fieldErrors)) {
               if (!messages) continue
+
+              if (!FIELDS.includes(key as keyof KnowledgeCheck)) {
+                console.warn(`[Form]: Detected error for '${key}' but is not part of relevant fields`, FIELDS, ', ignoring error.')
+                continue
+              }
 
               for (const msg of messages) form.setError(key as Any, { message: msg, type: 'custom' })
             }
