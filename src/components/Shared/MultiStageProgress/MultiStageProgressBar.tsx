@@ -75,11 +75,13 @@ function useFilterStages_SmallScreens(stage: Stage['stage']) {
 }
 
 function ProgressRing({ stage, title }: Stage) {
-  const { isFocussed, setStage, isCompleted } = useMultiStageStore((state) => state)
+  const { isFocussed, setStage, isCompleted, enabled } = useMultiStageStore((state) => state)
   const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
 
   return (
-    <li
+    <button
+      type='button'
+      disabled={!enabled}
       onClick={() => setStage(stage)}
       data-active={isFocussed(stage)}
       data-stage-name={title?.toLowerCase()}
@@ -91,6 +93,8 @@ function ProgressRing({ stage, title }: Stage) {
         isCompleted(stage) && 'text-blue-500/80 ring-blue-400/80 dark:text-blue-400 dark:ring-blue-400/80',
         isFocussed(stage) && 'text-blue-500 ring-blue-500 dark:text-blue-400 dark:ring-blue-400',
         !showOnSmallScreens && 'hidden @sm:flex',
+        'disabled:cursor-not-allowed',
+        isFocussed(stage) && 'disabled:text-red-500/80 disabled:ring-red-500/80 dark:disabled:text-red-400/80 dark:disabled:ring-red-400/80',
       )}
       aria-label={`Stage ${stage}`}>
       {stage}
@@ -102,7 +106,7 @@ function ProgressRing({ stage, title }: Stage) {
         )}>
         {title}
       </span>
-    </li>
+    </button>
   )
 }
 
