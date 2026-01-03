@@ -100,8 +100,8 @@ export default function GeneralSection() {
             'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
-          <Field form={form} name='name' type='text' />
-          <Field form={form} name='description' placeholder='Describe the concept of your knowledge check using a few words.' type='text' />
+          <Field form={form} name='name' type='text' placeholder='Science Fiction Check' />
+          <Field form={form} name='description' placeholder='Learn about science fiction' type='text' />
           <Field form={form} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
           <Field form={form} label='Start Date' name='openDate' type='date' />
           <Field form={form} label='Deadline' name='closeDate' type='date' />
