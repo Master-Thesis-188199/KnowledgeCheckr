@@ -1,12 +1,11 @@
 import { ChangeEvent, HTMLProps, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
-import { UseFormReturn } from 'react-hook-form'
+import { FieldValues, UseFormReturn } from 'react-hook-form'
 import { z, ZodTypeAny } from 'zod'
 import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck, KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
 import { StripEffects } from '@/src/schemas/utils/stripEffects'
 
 function unwrapOuterEffects<Schema extends ZodTypeAny>(schema: Schema): StripEffects<Schema> {
@@ -16,17 +15,23 @@ function unwrapOuterEffects<Schema extends ZodTypeAny>(schema: Schema): StripEff
 
   return schema as StripEffects<Schema>
 }
+type EffectWrappedObject =
+  | z.AnyZodObject
+  //@ts-expect-error expect warningn about circular type declaration
+  | z.ZodEffects<EffectWrappedObject>
 
-export default function Field({
+export default function Field<Values extends FieldValues>({
   form,
   name,
   onChange,
   label,
+  schema,
   ...props
 }: {
-  form: UseFormReturn<KnowledgeCheck>
-  name: Parameters<typeof FormField<KnowledgeCheck>>['0']['name']
+  form: UseFormReturn<Values>
+  name: Parameters<typeof FormField<Values>>['0']['name']
   label?: string
+  schema?: EffectWrappedObject
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form' | 'className'>) {
   const [isFocused, setIsFocused] = useState(false)
@@ -39,8 +44,7 @@ export default function Field({
       render={({ field, fieldState }) => {
         const hasError = !!fieldState.error
         const showDescription = (isFocused && !hasError) || isHovered
-        const shape = unwrapOuterEffects(KnowledgeCheckSchema).shape
-        const description = shape[field.name as keyof typeof shape]?.description
+        const description = schema ? unwrapOuterEffects(schema).shape?.[field.name]?.description : ''
 
         return (
           <>
@@ -49,7 +53,6 @@ export default function Field({
             {/* moves input indicators like 'number' | 'date' to the left to make room for the info / error icon */}
             <div className='relative grid **:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6'>
               <FormControl>
-                {/* @ts-expect-error The field-value is currently equal to the property of the `KnowledgeCheck` object that matches the name. Thus, not just 'string' | 'number' but also objects. */}
                 <ShadcnInput
                   className='peer hover:cursor-text'
                   {...props}
