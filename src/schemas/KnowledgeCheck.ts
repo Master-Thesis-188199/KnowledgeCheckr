@@ -1,4 +1,6 @@
-import { addDays, isBefore, isFuture } from 'date-fns'
+import { addDays } from 'date-fns/addDays'
+import { isBefore } from 'date-fns/isBefore'
+import { isFuture } from 'date-fns/isFuture'
 import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
