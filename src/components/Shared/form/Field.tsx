@@ -28,7 +28,7 @@ export default function Field({
   name: Parameters<typeof FormField<KnowledgeCheck>>['0']['name']
   label?: string
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
-} & Pick<HTMLProps<HTMLInputElement>, 'value' | 'defaultValue' | 'defaultChecked' | 'type' | 'placeholder'>) {
+} & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form' | 'className'>) {
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -56,10 +56,12 @@ export default function Field({
                   {...field}
                   onFocus={(e) => {
                     setIsFocused(true)
+                    props.onBlur?.(e)
                     field.onBlur?.()
                   }}
-                  onBlur={() => {
+                  onBlur={(e) => {
                     setIsFocused(false)
+                    props.onBlur?.(e)
                     field.onBlur()
                   }}
                   onChange={
