@@ -46,7 +46,7 @@ export const KnowledgeCheckSchema = z
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
       .default(() => new Date(Date.now()))
-      .describe('The day on which users can use the check.'),
+      .describe('The day on which users can start to use the check.'),
     closeDate: z
       .date()
       .or(z.string())
