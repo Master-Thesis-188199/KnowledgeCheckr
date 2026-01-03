@@ -1,20 +1,23 @@
 'use client'
 
-import { ComponentType, InputHTMLAttributes, useCallback } from 'react'
+import { ComponentType, InputHTMLAttributes, useCallback, useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays, format } from 'date-fns'
-import { useForm } from 'react-hook-form'
+import isEmpty from 'lodash/isEmpty'
+import { useForm, useWatch } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
+import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
 export default function GeneralSection() {
+  const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
   const now = useCallback(() => new Date(Date.now()), [])()
 
@@ -29,6 +32,26 @@ export default function GeneralSection() {
     },
     mode: 'all',
   })
+
+  const props = useWatch({ control: form.control })
+
+  /**
+   * This effect when called checks whether the form changes. When it has no errors it re-enables the `MultiStage` navigation, in case it was disabled.
+   * When the form has errors, the navigation is disabled and a reason is set.
+   */
+  useEffect(() => {
+    if (isEmpty(form.formState.errors)) {
+      // only update the state once
+      if (!enabled) setEnabled(true)
+      return
+    }
+
+    const errors = Object.keys(form.formState.errors)
+
+    const msg = `Please resolve ${errors.length > 1 ? 'all' : '1'} error${errors.length > 1 ? 's' : ''} in the form on your screen, to continue`
+    console.warn(msg)
+    setEnabled(false, msg)
+  }, [props])
 
   return (
     <Form {...form}>
