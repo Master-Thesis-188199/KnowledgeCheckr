@@ -4,7 +4,7 @@ import { ComponentType, InputHTMLAttributes, useCallback, useEffect } from 'reac
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays, format } from 'date-fns'
 import isEmpty from 'lodash/isEmpty'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm, UseFormProps, useWatch } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
@@ -17,7 +17,7 @@ import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
 
-export default function GeneralSection() {
+export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
@@ -33,6 +33,7 @@ export default function GeneralSection() {
       closeDate: format(check.closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
     },
     mode: 'all',
+    ...config,
   })
 
   const baseFieldProps = { form, descriptions: extractDescriptionMap(KnowledgeCheckSchema) }
