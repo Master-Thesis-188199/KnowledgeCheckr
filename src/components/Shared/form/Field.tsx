@@ -124,7 +124,7 @@ export default function Field({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 2 }}
                       transition={{ duration: 0.3, ease: 'easeOut' }}>
-                      <FormDescription className='-ml-2 bg-[#EEEEEF] p-2 pt-0 dark:bg-neutral-800'>{description}</FormDescription>
+                      <FormDescription className='-ml-2 bg-[#EEEEEF] px-2 pt-0 dark:bg-neutral-800'>{description}</FormDescription>
                     </motion.div>
                   ) : (
                     <></>
