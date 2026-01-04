@@ -98,8 +98,8 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
           className={cn(
             // prettier-ignore
             'grid p-2',
-            'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-6 *:odd:first:mt-0',
-            '@md:grid-cols-[auto_1fr] @md:gap-9 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
+            'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0',
+            '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
             'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
