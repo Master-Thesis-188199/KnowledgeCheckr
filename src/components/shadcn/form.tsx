@@ -81,7 +81,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
-  const { error, formMessageId } = useFormField()
+  const { error, formMessageId, name } = useFormField()
   const body = error ? String(error?.message ?? '') : props.children
 
   if (!body) {
@@ -89,7 +89,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   }
 
   return (
-    <p data-slot='form-message' id={formMessageId} className={cn('text-destructive text-sm', className)} {...props}>
+    <p data-slot='form-message' id={formMessageId} data-field-error={name} className={cn('text-destructive text-sm', className)} {...props}>
       {body}
     </p>
   )
