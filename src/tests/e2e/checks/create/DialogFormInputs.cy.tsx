@@ -78,8 +78,8 @@ function verifyOpenCloseEditMenu(
 
   if (editAction_BeforeValidation) editAction_BeforeValidation()
 
-  cy.get('#question-dialog input[id="question"]').should('have.value', question.question)
-  cy.get('#question-dialog input[id="points"]').should('have.value', question.points)
+  cy.get('#question-dialog input[name="question"]').should('have.value', question.question)
+  cy.get('#question-dialog input[name="points"]').should('have.value', question.points)
   cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
 
   if (validateProps.answers && (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop')) {
