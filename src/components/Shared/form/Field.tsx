@@ -6,6 +6,7 @@ import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from 
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import { cn } from '@/src/lib/Shared/utils'
 import { DescriptionMap, getDescriptionForRhfName } from '@/src/schemas/utils/extractDescriptions'
+import { Any } from '@/types'
 
 export default function Field<Values extends FieldValues>({
   form,
@@ -16,6 +17,7 @@ export default function Field<Values extends FieldValues>({
   showLabel = true,
   labelClassname,
   className,
+  modifyValue,
   ...props
 }: {
   form: UseFormReturn<Values>
@@ -25,6 +27,7 @@ export default function Field<Values extends FieldValues>({
   showLabel?: boolean
   labelClassname?: string
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
+  modifyValue?: (value: Any) => Any
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -54,6 +57,7 @@ export default function Field<Values extends FieldValues>({
                   className='peer hover:cursor-text'
                   {...props}
                   {...field}
+                  value={modifyValue ? modifyValue(field.value) : field.value}
                   onFocus={(e) => {
                     setIsFocused(true)
                     props.onFocus?.(e)
