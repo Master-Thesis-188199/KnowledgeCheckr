@@ -13,12 +13,16 @@ export default function Field<Values extends FieldValues>({
   onChange,
   label,
   descriptions,
+  showLabel = true,
+  labelClassname,
   ...props
 }: {
   form: UseFormReturn<Values>
   name: Parameters<typeof FormField<Values>>['0']['name']
   label?: string
   descriptions?: DescriptionMap
+  showLabel?: boolean
+  labelClassname?: string
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form' | 'className'>) {
   const [isFocused, setIsFocused] = useState(false)
@@ -35,7 +39,7 @@ export default function Field<Values extends FieldValues>({
 
         return (
           <>
-            <FormLabel className='self-baseline capitalize'>{label ?? field.name}</FormLabel>
+            <FormLabel className={cn('self-baseline pl-1 capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
 
             <div
               className={cn(
@@ -101,7 +105,7 @@ export default function Field<Values extends FieldValues>({
                   {hasError ? (
                     <motion.div
                       key='error'
-                      className='absolute inset-0 top-1 left-2'
+                      className='absolute inset-0 top-1 left-1'
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 2 }}
