@@ -57,9 +57,9 @@ export default function Field<Values extends FieldValues>({
               <FormControl>
                 <ShadcnInput
                   className='peer hover:cursor-text'
-                  {...props}
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
+                  {...props}
                   onFocus={(e) => {
                     // this prevents the description from being shown when the checkbox is clicked --> thus has focus
                     if (props.type !== 'checkbox') setIsFocused(true)
