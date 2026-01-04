@@ -1,10 +1,9 @@
 'use client'
 
 import { UsersIcon } from '@heroicons/react/24/outline'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
@@ -14,8 +13,9 @@ import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
+import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const tabs = [
   { name: 'General', icon: EyeIcon },
@@ -26,8 +26,7 @@ const tabs = [
 export default function SettingsSection() {
   const { updateSettings, settings } = useCheckStore((state) => state)
 
-  const form = useForm<KnowledgeCheckSettings>({
-    resolver: zodResolver(KnowledgeCheckSettingsSchema),
+  const { form, baseFieldProps } = useRHF(KnowledgeCheckSettingsSchema, {
     mode: 'all',
     delayError: 100,
     defaultValues: settings,
@@ -73,7 +72,7 @@ export default function SettingsSection() {
           <TabsContentPanel tab='general'>
             <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'>
               <Field
-                form={form}
+                {...baseFieldProps}
                 name='questionOrder'
                 label='Randomize Question Order'
                 labelClassname='mt-0.5'
@@ -82,7 +81,7 @@ export default function SettingsSection() {
                 onChange={({ checked }) => (checked ? 'random' : 'create-order')}
               />
               <Field
-                form={form}
+                {...baseFieldProps}
                 name='answerOrder'
                 label='Randomize Answer Order'
                 labelClassname='mt-0.5'
@@ -102,7 +101,7 @@ export default function SettingsSection() {
                 '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
               )}>
               <Field
-                form={form}
+                {...baseFieldProps}
                 onChange={({ value }) =>
                   value
                     .split(':')
