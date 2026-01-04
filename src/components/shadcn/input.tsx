@@ -14,6 +14,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
         'bg-neutral-100/90 text-neutral-600 hover:cursor-text dark:bg-neutral-800 dark:text-neutral-300/80',
         'hover:border-ring-hover dark:hover:border-ring-hover',
         'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:hover:border-destructive',
+        type === 'checkbox' && 'size-4.5',
         className,
       )}
       {...props}
