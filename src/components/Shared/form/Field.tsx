@@ -105,8 +105,8 @@ export default function Field<Values extends FieldValues>({
 
               <div className='relative'>
                 <AnimatePresence mode='wait' initial={false}>
-                  {hasError ? <RenderAbsoluteError /> : <></>}
-                  {!hasError && showDescription && description ? <RenderAbsoluteDescription description={description} /> : <></>}
+                  {hasError ? <RenderInlineError /> : null}
+                  {!hasError && showDescription && description ? <RenderInlineDescription description={description} /> : null}
                 </AnimatePresence>
               </div>
             </div>
