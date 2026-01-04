@@ -17,6 +17,7 @@ export default function Field<Values extends FieldValues>({
   showLabel = true,
   labelClassname,
   className,
+  children,
   modifyValue,
   ...props
 }: {
@@ -26,6 +27,7 @@ export default function Field<Values extends FieldValues>({
   descriptions?: DescriptionMap
   showLabel?: boolean
   labelClassname?: string
+  children?: React.ReactNode
   onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
   modifyValue?: (value: Any) => Any
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
@@ -115,6 +117,7 @@ export default function Field<Values extends FieldValues>({
                   {!hasError && showDescription && description ? <RenderInlineDescription description={description} /> : null}
                 </AnimatePresence>
               </div>
+              {children}
             </div>
           </>
         )
