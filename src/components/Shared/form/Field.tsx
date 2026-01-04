@@ -83,7 +83,10 @@ export default function Field<Values extends FieldValues>({
                     key='info-icon'
                     onMouseOver={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
-                    className={cn('text-muted-foreground absolute inset-y-0 right-3 z-10 flex items-center hover:cursor-pointer hover:text-current dark:hover:text-current', !description && 'hidden')}>
+                    className={cn(
+                      'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                      !description && 'hidden',
+                    )}>
                     <InfoIcon className={cn('size-4')} />
                   </motion.div>
                 )}
@@ -94,8 +97,8 @@ export default function Field<Values extends FieldValues>({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     key='error-icon'
-                    className={cn('text-destructive absolute inset-y-0 right-3 z-10 flex items-center')}>
-                    <TriangleAlertIcon className={cn('size-4')} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} />
+                    className={cn('text-destructive absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline')}>
+                    <TriangleAlertIcon className={cn('size-4')} />
                   </motion.div>
                 )}
               </AnimatePresence>
