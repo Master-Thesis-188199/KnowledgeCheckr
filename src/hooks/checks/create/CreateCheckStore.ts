@@ -99,7 +99,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
           }),
         removeQuestion,
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
-        updateCheck: (update) => set((prev) => ({ ...prev, ...update })),
+        updateCheck: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
       }
     },
   })
