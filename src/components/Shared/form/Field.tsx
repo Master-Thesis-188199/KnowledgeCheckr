@@ -37,8 +37,12 @@ export default function Field<Values extends FieldValues>({
           <>
             <FormLabel className='self-baseline capitalize'>{label ?? field.name}</FormLabel>
 
-            {/* moves input indicators like 'number' | 'date' to the left to make room for the info / error icon */}
-            <div className='relative grid **:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6'>
+            <div
+              className={cn(
+                'relative grid',
+                // moves input indicators like 'number' | 'date' to the left to make room for the info / error icon
+                (description || hasError) && '**:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6',
+              )}>
               <FormControl>
                 <ShadcnInput
                   className='peer hover:cursor-text'
