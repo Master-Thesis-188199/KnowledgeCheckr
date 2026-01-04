@@ -64,6 +64,8 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
         onChange={() => {
           const values = form.getValues()
 
+          form.clearErrors()
+
           const { success, error } = safeParseKnowledgeCheck(values)
           if (!success) {
             for (const [key, messages] of Object.entries(error.formErrors.fieldErrors)) {
@@ -79,8 +81,6 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
 
             return
           }
-
-          form.clearErrors()
 
           // transfer form-values into create-store
           console.debug('Updating store with:', values)
