@@ -108,7 +108,11 @@ export default function SettingsSection() {
                     .map((el, i) => parseInt(el) * (i === 0 ? 3600 : 60))
                     .reduce((a, b) => a + b, 0)
                 }
-                modifyValue={(value: number) => format(new Date(value * 1000 - 3600 * 1000), 'HH:mm')}
+                modifyValue={(value: number) => {
+                  const hours = Math.floor(value / 3600)
+                  const minutes = Math.floor((value % 3600) / 60)
+                  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` // --> HH:mm format
+                }}
                 type='time'
                 name='examTimeFrameSeconds'
                 label='Examination Time Frame'
