@@ -1,7 +1,6 @@
 'use client'
 
 import { UsersIcon } from '@heroicons/react/24/outline'
-import { format } from 'date-fns'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
 import { useWatch } from 'react-hook-form'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
@@ -146,19 +145,14 @@ export default function SettingsSection() {
 function humanReadableDuration(seconds?: number, isErrorneous?: boolean) {
   if (isErrorneous || seconds === undefined) return null
 
-  return format(new Date(seconds * 1000 - 3600 * 1000), 'H:m')
-    .split(':')
-    .filter(Boolean)
-    .map((el, i, segments) => {
-      const val = parseInt(el)
-      if (segments.length === 1) return `${el} minute${val > 1 ? 's' : ''}`
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
 
-      if (el === '0') return ''
-      const suffix = i === 0 ? 'hour' : 'minute'
-      return `${el} ${suffix}${val > 1 ? 's' : ''}`
-    })
-    .filter(Boolean)
-    .join(' and ')
+  const segments: string[] = []
+  if (hours > 0) segments.push(`${hours} hour${hours > 1 ? 's' : ''}`)
+  if (minutes > 0) segments.push(`${minutes} minute${minutes > 1 ? 's' : ''}`)
+
+  return segments.join(' and ')
 }
 
 function TemporarySettingsOptions() {
