@@ -114,6 +114,39 @@ export default function Field<Values extends FieldValues>({
   )
 }
 
+function RenderInlineError() {
+  return (
+    <motion.div
+      key='error'
+      initial={{ opacity: 0, height: 0, y: -4 }}
+      animate={{ opacity: 1, height: 'auto', y: 0 }}
+      exit={{ opacity: 0, height: 0, y: -4 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className='overflow-hidden'
+      aria-live='polite'>
+      <div className='pt-1'>
+        <FormMessage />
+      </div>
+    </motion.div>
+  )
+}
+
+function RenderInlineDescription({ description }: { description: string }) {
+  return (
+    <motion.div
+      key='desc'
+      initial={{ opacity: 0, height: 0, y: -4 }}
+      animate={{ opacity: 1, height: 'auto', y: 0 }}
+      exit={{ opacity: 0, height: 0, y: -4 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className='overflow-hidden'>
+      <div className='pt-1'>
+        <FormDescription>{description}</FormDescription>
+      </div>
+    </motion.div>
+  )
+}
+
 function RenderAbsoluteError() {
   return (
     <motion.div
