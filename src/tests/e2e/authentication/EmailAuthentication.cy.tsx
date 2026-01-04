@@ -79,7 +79,7 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.wait('@signup-request').then((interception) => {
       const response = interception.response
-      const responseBody = response?.body.toString().split('1:').at(1)
+      const responseBody = response?.body.toString().split('1:').at(-1)
       const body = JSON.parse(responseBody)
 
       expect(response?.statusCode).to.eq(200)
@@ -135,7 +135,7 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.get('button[type="submit"]').filter(':visible').click()
     cy.wait('@login-request').then((interception) => {
       const response = interception.response
-      const responseBody = response?.body.toString().split('1:').at(1)
+      const responseBody = response?.body.toString().split('1:').at(-1)
       const body = JSON.parse(responseBody)
 
       expect(response?.statusCode).to.eq(200)
