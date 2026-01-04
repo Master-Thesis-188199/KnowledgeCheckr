@@ -61,7 +61,8 @@ export default function Field<Values extends FieldValues>({
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
                   onFocus={(e) => {
-                    setIsFocused(true)
+                    // this prevents the description from being shown when the checkbox is clicked --> thus has focus
+                    if (props.type !== 'checkbox') setIsFocused(true)
                     props.onFocus?.(e)
                   }}
                   onBlur={(e) => {
@@ -93,6 +94,8 @@ export default function Field<Values extends FieldValues>({
                     onMouseLeave={() => setIsHovered(false)}
                     className={cn(
                       'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                      // positions the icon next to the checkbox
+                      props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
                       !description && 'hidden',
                     )}>
                     <InfoIcon className={cn('size-4')} />
@@ -105,7 +108,11 @@ export default function Field<Values extends FieldValues>({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     key='error-icon'
-                    className={cn('text-destructive absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline')}>
+                    className={cn(
+                      'text-destructive absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline',
+                      // positions the icon next to the checkbox
+                      props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
+                    )}>
                     <TriangleAlertIcon className={cn('size-4')} />
                   </motion.div>
                 )}
