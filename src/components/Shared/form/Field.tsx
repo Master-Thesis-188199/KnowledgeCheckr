@@ -28,7 +28,7 @@ export default function Field<Values extends FieldValues>({
   showLabel?: boolean
   labelClassname?: string
   children?: React.ReactNode
-  onChange?: (values: Pick<ChangeEvent<HTMLInputElement>['target'], 'value' | 'valueAsDate' | 'valueAsNumber'>) => unknown
+  onChange?: (values: ChangeEvent<HTMLInputElement>['target']) => unknown
   modifyValue?: (value: Any) => Any
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
   const [isFocused, setIsFocused] = useState(false)
