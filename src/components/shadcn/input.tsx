@@ -11,7 +11,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
         'focus-visible:border-ring-hover focus-visible:ring-ring-hover/50 focus-visible:ring-[3px]',
 
         'rounded-md px-3 py-1.5',
-        'bg-neutral-100/90 text-neutral-600 hover:cursor-text dark:bg-neutral-800 dark:text-neutral-300/80',
+        'bg-input text-neutral-600 hover:cursor-text dark:text-neutral-300/80',
         'hover:border-ring-hover dark:hover:border-ring-hover',
         'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:hover:border-destructive',
         type === 'checkbox' && 'size-4.5',
