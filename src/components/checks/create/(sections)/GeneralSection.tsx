@@ -55,7 +55,7 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
     const msg = `Please resolve ${errors.length > 1 ? 'all' : '1'} error${errors.length > 1 ? 's' : ''} in the form on your screen, to continue`
     console.warn(msg)
     setEnabled(false, msg)
-  }, [formValues])
+  }, [formValues, enabled, setEnabled, form.formState.errors])
 
   return (
     <Form {...form}>
