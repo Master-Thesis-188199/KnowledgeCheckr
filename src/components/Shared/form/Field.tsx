@@ -50,8 +50,7 @@ export default function Field<Values extends FieldValues>({
                   {...field}
                   onFocus={(e) => {
                     setIsFocused(true)
-                    props.onBlur?.(e)
-                    field.onBlur?.()
+                    props.onFocus?.(e)
                   }}
                   onBlur={(e) => {
                     setIsFocused(false)
