@@ -135,7 +135,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               <Field form={form} name='question' placeholder='Formulate your question here' labelClassname={cn('text-base -ml-1', label_classes)} />
             </div>
 
-            <div className='flex items-baseline gap-x-12'>
+            <div className={cn('flex items-baseline gap-x-12', errors.points && 'gap-x-8')}>
               <div className='grid items-center gap-2'>
                 <Field form={form} name='points' type='number' onChange={({ valueAsNumber }) => valueAsNumber} labelClassname={cn('text-base -ml-1', label_classes)} />
               </div>
