@@ -37,7 +37,7 @@ export default function SettingsSection() {
     formState: { errors },
   } = form
 
-  const { examTimeFrameSeconds } = useWatch({ control })
+  const { examTimeFrameSeconds, questionOrder, answerOrder } = useWatch({ control })
 
   return (
     <Form {...form}>
@@ -78,6 +78,7 @@ export default function SettingsSection() {
                 className='place-self-start'
                 type='checkbox'
                 onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+                checked={questionOrder === 'random'}
               />
               <Field
                 {...baseFieldProps}
@@ -87,6 +88,7 @@ export default function SettingsSection() {
                 className='place-self-start'
                 type='checkbox'
                 onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+                checked={answerOrder === 'random'}
               />
             </div>
           </TabsContentPanel>
