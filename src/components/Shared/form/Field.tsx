@@ -124,7 +124,7 @@ function RenderInlineError() {
       initial={{ opacity: 0, height: 0, y: -4 }}
       animate={{ opacity: 1, height: 'auto', y: 0 }}
       exit={{ opacity: 0, height: 0, y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
       className='overflow-hidden'
       aria-live='polite'>
       <div className='pt-1'>
@@ -141,7 +141,7 @@ function RenderInlineDescription({ description }: { description: string }) {
       initial={{ opacity: 0, height: 0, y: -4 }}
       animate={{ opacity: 1, height: 'auto', y: 0 }}
       exit={{ opacity: 0, height: 0, y: -4 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
       className='overflow-hidden'>
       <div className='pt-1'>
         <FormDescription>{description}</FormDescription>
