@@ -102,30 +102,8 @@ export default function Field<Values extends FieldValues>({
 
               <div className='relative'>
                 <AnimatePresence mode='wait' initial={false}>
-                  {hasError ? (
-                    <motion.div
-                      key='error'
-                      className='absolute inset-0 top-1 left-1'
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 2 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
-                      aria-live='polite'>
-                      <FormMessage />
-                    </motion.div>
-                  ) : showDescription && description ? (
-                    <motion.div
-                      key='desc'
-                      className='absolute inset-0 top-1 left-2 z-10'
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 2 }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}>
-                      <FormDescription className='-ml-2 bg-[#EEEEEF] px-2 pt-0 dark:bg-neutral-800'>{description}</FormDescription>
-                    </motion.div>
-                  ) : (
-                    <></>
-                  )}
+                  {hasError ? <RenderAbsoluteError /> : <></>}
+                  {!hasError && showDescription && description ? <RenderAbsoluteDescription description={description} /> : <></>}
                 </AnimatePresence>
               </div>
             </div>
@@ -133,5 +111,34 @@ export default function Field<Values extends FieldValues>({
         )
       }}
     />
+  )
+}
+
+function RenderAbsoluteError() {
+  return (
+    <motion.div
+      key='error'
+      className='absolute inset-0 top-1 left-1'
+      initial={{ opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 2 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      aria-live='polite'>
+      <FormMessage />
+    </motion.div>
+  )
+}
+
+function RenderAbsoluteDescription({ description }: { description: string }) {
+  return (
+    <motion.div
+      key='desc'
+      className='absolute inset-0 top-1 left-2 z-10'
+      initial={{ opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 2 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}>
+      <FormDescription className='-ml-2 bg-[#EEEEEF] px-2 pt-0 dark:bg-neutral-800'>{description}</FormDescription>
+    </motion.div>
   )
 }
