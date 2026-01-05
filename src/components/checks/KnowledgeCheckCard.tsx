@@ -3,7 +3,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
-import { PracticeKnowledgeCheckButton } from '@/src/components/checks/PracticeKnowledgeCheckButton'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
@@ -15,7 +14,6 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
     <Card as={motion.a} href={`/checks/edit/${check.id}`} className={cn('group relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
-        <PracticeKnowledgeCheckButton check={check} />
         <KnowledgeCheckMenu id={check.id} questions={check.questions} share_key={check.share_key} />
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
