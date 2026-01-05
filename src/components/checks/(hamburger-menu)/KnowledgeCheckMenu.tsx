@@ -1,4 +1,4 @@
-import { EllipsisIcon, Share2Icon, TrashIcon } from 'lucide-react'
+import { ArrowUpRightIcon, CopyPlusIcon, EllipsisIcon, Share2Icon, SquarePenIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -63,11 +63,12 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56' align='start'>
+      <DropdownMenuContent className='w-58' align='start'>
         <DropdownMenuLabel className='text-center'>Actions</DropdownMenuLabel>
 
         <DropdownMenuGroup>
           <DropdownMenuItem
+            className='group justify-between'
             enableTooltip={!hasQuestions}
             tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, practice disabled.' }}
             disabled={!hasQuestions}
@@ -75,9 +76,11 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
               router.push(`${window.location.origin}/checks/${token}/practice`)
             })}>
             Start Practicing
+            <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400' />
           </DropdownMenuItem>
 
           <DropdownMenuItem
+            className='group justify-between'
             enableTooltip={!hasQuestions}
             tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, examination disabled.' }}
             disabled={!hasQuestions}
@@ -85,6 +88,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
               router.push(`${window.location.origin}/checks/${token}`)
             })}>
             Start Examination
+            <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -112,7 +116,6 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 })}>
                 start Examination
               </DropdownMenuItem>
-              <DropdownMenuItem>start Examination</DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
@@ -120,9 +123,15 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <Link href={`/checks/edit/${id}`}>Edit KnowledgeCheck</Link>
+            <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
+              Edit KnowledgeCheck
+              <SquarePenIcon className='size-3.5 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>Duplicate KnowledgeCheck</DropdownMenuItem>
+          <DropdownMenuItem className='justify-between' disabled>
+            Clone KnowledgeCheck
+            <CopyPlusIcon className='size-4 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
+          </DropdownMenuItem>
           <DropdownMenuItem disabled>Inspect Statistics</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
