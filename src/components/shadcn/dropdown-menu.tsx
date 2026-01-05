@@ -163,7 +163,7 @@ function DropdownMenuSubTrigger({
         )}
         {...props}>
         {children}
-        <ChevronRightIcon className='ml-auto size-4' />
+        <ChevronRightIcon className='ml-auto size-4 text-neutral-600 dark:text-neutral-400' />
       </DropdownMenuPrimitive.SubTrigger>
     </ConditionalTooltip>
   )
