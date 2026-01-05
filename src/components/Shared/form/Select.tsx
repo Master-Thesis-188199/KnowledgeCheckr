@@ -131,7 +131,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
             state.open && 'ring-ring-focus dark:ring-ring-focus',
             'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
-            'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-pointer disabled:opacity-100',
+            'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-not-allowed disabled:opacity-50',
             selectTriggerClassname,
           )}>
           <Button
