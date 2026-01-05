@@ -20,7 +20,7 @@ import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
-export default function KnowledgeCheckCardHamburgerMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
+export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
   const router = useRouter()
   const isAccessible = share_key !== null
   const hasQuestions = questions.length > 0
