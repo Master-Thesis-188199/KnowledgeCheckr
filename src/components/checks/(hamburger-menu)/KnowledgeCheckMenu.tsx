@@ -24,7 +24,6 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
   const router = useRouter()
-  const isAccessible = share_key !== null
   const hasQuestions = questions.length > 0
 
   /**
@@ -62,12 +61,14 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
 
         <DropdownMenuGroup>
           <DropdownMenuItem
+            disabled={!hasQuestions}
             onClick={gatherShareToken('Unable to start Practice', (token) => {
               router.push(`${window.location.origin}/checks/${token}/practice`)
             })}>
             Start Practicing
           </DropdownMenuItem>
           <DropdownMenuItem
+            disabled={!hasQuestions}
             onClick={gatherShareToken('Unable to start Examination', (token) => {
               router.push(`${window.location.origin}/checks/${token}`)
             })}>
@@ -76,7 +77,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
         </DropdownMenuGroup>
 
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Invite users to</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger disabled={!hasQuestions}>Invite users to</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <DropdownMenuItem
