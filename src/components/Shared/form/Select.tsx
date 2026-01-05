@@ -128,11 +128,17 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-expanded={state.open}
           disabled={isLoading || disabled}
           className={cn(
-            'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize ring-1 placeholder:text-[15px] hover:cursor-pointer',
-            'ring-ring dark:ring-ring bg-input dark:bg-input/30 text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
-            'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
-            state.open && 'ring-ring-focus dark:ring-ring-focus',
-            'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
+            'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize placeholder:text-[15px] hover:cursor-pointer',
+            'border-ring border transition-[color,box-shadow] outline-none',
+            'bg-input dark:bg-input/30 text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
+            'hover:border-ring-hover focus:border-ring-focus dark:hover:border-ring-hover dark:focus:border-ring-focus',
+            state.open && 'border-ring-focus dark:border-ring-focus ring-ring-hover/50 dark:ring-ring-hover/50 ring-[3px]',
+
+            // outline like styles for focus: and focus-visible
+            // eslint-disable-next-line require-color-modes/require-color-mode-styles
+            'focus-visible:border-ring-hover focus-visible:ring-ring-hover/50 focus-visible:ring-[3px]',
+            // eslint-disable-next-line require-color-modes/require-color-mode-styles
+            'focus:border-ring-hover focus:ring-ring-hover/50 focus:ring-[3px]',
             'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-not-allowed disabled:opacity-50',
             selectTriggerClassname,
           )}>
