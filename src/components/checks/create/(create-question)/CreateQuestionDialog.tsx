@@ -25,7 +25,6 @@ import {
   instantiateMultipleChoice,
   instantiateOpenQuestion,
   instantiateSingleChoice,
-  OpenQuestion,
   Question,
   QuestionSchema,
 } from '@/src/schemas/QuestionSchema'
@@ -272,7 +271,7 @@ function AnswerOptions(options: AnswerOptionProps) {
       return <ChoiceQuestionAnswers {...options} />
 
     case 'open-question':
-      return <OpenQuestionAnswers {...options} />
+      return <OpenQuestionAnswers />
 
     case 'drag-drop':
       return <DragDropQuestionAnswers {...options} />
@@ -306,8 +305,6 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
               <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' placeholder={`Answer ${index + 1} -  to your question`} showLabel={false} />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
           </div>
         ))}
       </div>
@@ -348,15 +345,10 @@ function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<
   )
 }
 
-function OpenQuestionAnswers({ errors }: AnswerOptionProps) {
+function OpenQuestionAnswers() {
   const form = useFormContext()
 
-  return (
-    <>
-      <Field form={form} name='expectation' id='expectation' placeholder='What answer are you looking expecting' showLabel={false} />
-      <FieldError<OpenQuestion> field='expectation' errors={errors} />
-    </>
-  )
+  return <Field form={form} name='expectation' id='expectation' placeholder='What answer are you looking expecting' showLabel={false} />
 }
 
 function DragDropQuestionAnswers({ register, errors, control, watch, setValue }: AnswerOptionProps) {
@@ -409,8 +401,6 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 <DeleteAnswerOptionButton index={index} remove={remove} />
               </div>
             </div>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <FieldError<any> field={`answers.${index}.answer`} errors={errors} />
           </div>
         ))}
       </div>
