@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
 import { cn } from '@/lib/Shared/utils'
-import { Button } from '@/src/components/shadcn/button'
 import { Command, CommandGroup, CommandInput, CommandItem } from '@/src/components/shadcn/command'
 
 /*
@@ -123,10 +122,13 @@ export default function Select({ options, defaultValue, isLoading = false, name,
       />
       <Popover open={state.open} onOpenChange={(open) => dispatch({ type: 'SET_OPEN', payload: open })}>
         <PopoverTrigger
-          asChild
+          id={id}
           aria-label={`popover-trigger-${name}`}
+          role='combobox'
+          aria-expanded={state.open}
+          disabled={isLoading || disabled}
           className={cn(
-            'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer',
+            'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize ring-1 placeholder:text-[15px] hover:cursor-pointer',
             'ring-ring dark:ring-ring bg-input dark:bg-input/30 text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
             state.open && 'ring-ring-focus dark:ring-ring-focus',
@@ -134,16 +136,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-not-allowed disabled:opacity-50',
             selectTriggerClassname,
           )}>
-          <Button
-            id={id}
-            variant='ghost'
-            role='combobox'
-            aria-expanded={state.open}
-            className='w-full justify-between font-normal capitalize enabled:hover:text-neutral-800 dark:enabled:hover:text-neutral-200/85'
-            disabled={isLoading || disabled}>
-            {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
-            <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-          </Button>
+          {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
+          <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
           <Command className='bg-neutral-100 dark:bg-neutral-800'>
