@@ -69,14 +69,6 @@ function parseAnswer(
   }
 }
 
-async function parseCategory(db: DrizzleDB, category_id: string): Promise<Question['category']> {
-  await requireAuthentication()
-
-  const categories = await db.select({ name: db_category.name }).from(db_category).where(eq(db_category.id, category_id)).orderBy(db_category.createdAt)
-
-  return categories.at(0)!.name
-}
-
 export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Question>(question_id: Question['id']): Promise<ExpectedQuestion | null> {
   const db = await getDatabase()
 

@@ -87,6 +87,7 @@ export function RenderPracticeQuestion() {
 
   //* Handle reseting form inputs when question changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     if (watch('type') === question.type && watch('question_id') === question.id) return
     else {
       //* When the question is changed reset the form (and set the new question id and type)

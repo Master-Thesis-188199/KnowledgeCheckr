@@ -125,6 +125,7 @@ jobs:
         name: Collect repository variables
         with:
           secrets: ${{ toJSON(vars) }}
+          exclude: NEXT_PUBLIC_MODE
           file: ".env-vars"
 
       - uses: 0ndt/envfile@v2

@@ -44,7 +44,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
       <PageHeading title='Practice' />
 
-      <div className='mx-auto'>
+      <div className='mx-auto w-full max-w-3/4 lg:max-w-1/2'>
         <PracticeQuestionNavigation />
 
         <PracticeProgress />

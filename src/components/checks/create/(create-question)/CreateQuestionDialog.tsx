@@ -81,7 +81,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     register,
     handleSubmit,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, disabled },
     reset: resetInputs,
     watch,
     control,
@@ -144,6 +144,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   Question Type
                 </label>
                 <CreateableSelect
+                  disabled={disabled}
                   name='type'
                   defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                   onChange={(type) => {
@@ -191,6 +192,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 </label>
 
                 <Select
+                  disabled={disabled}
                   selectTriggerClassname='-ml-0.5 min-w-36'
                   popoverContentClassname='w-[170px]'
                   onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
@@ -213,6 +215,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 Category
               </label>
               <Select
+                disabled={disabled}
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='w-[470px]'
                 onChange={(category) => register('category').onChange({ target: { value: category, name: 'category' } })}
