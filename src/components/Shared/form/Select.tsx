@@ -127,7 +127,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-label={`popover-trigger-${name}`}
           className={cn(
             'w-full border-0 ring-1 outline-0 placeholder:text-[15px] hover:cursor-pointer',
-            'ring-ring dark:ring-ring bg-neutral-100/90 text-neutral-600 placeholder:text-neutral-400/90 dark:bg-transparent dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
+            'ring-ring dark:ring-ring bg-input dark:bg-input/30 text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:ring-ring-hover focus:ring-ring-focus dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
             state.open && 'ring-ring-focus dark:ring-ring-focus',
             'focus-visible:ring-ring-focus dark:focus-visible:ring-ring-focus focus-visible:ring-[1.2px]',
