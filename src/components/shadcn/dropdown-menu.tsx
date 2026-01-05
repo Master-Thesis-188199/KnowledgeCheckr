@@ -14,7 +14,13 @@ function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMe
 }
 
 function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
-  return <DropdownMenuPrimitive.Trigger data-slot='dropdown-menu-trigger' {...props} />
+  return (
+    <DropdownMenuPrimitive.Trigger
+      data-slot='dropdown-menu-trigger'
+      {...props}
+      className={cn('ring-ring data-[state=open]:bg-neutral-200 data-[state=open]:ring-1 dark:data-[state=open]:bg-neutral-700', props.className)}
+    />
+  )
 }
 
 function DropdownMenuContent({ className, sideOffset = 4, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
