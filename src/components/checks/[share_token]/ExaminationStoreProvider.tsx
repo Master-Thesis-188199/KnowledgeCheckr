@@ -40,13 +40,19 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
         // mutate cache when the underlying check (initialStoreProps) change, but preserve order, results and startedAt values
         if (initialStoreProps !== undefined && formatUpdateDate(cache?.knowledgeCheck.updatedAt) !== formatUpdateDate(initialStoreProps?.knowledgeCheck.updatedAt)) {
           console.warn('[Examination]: Check has been updated, mutating cache!')
-          const update = Object.assign({}, initialStoreProps)
 
           // preserve the cached order of questions
-          update.knowledgeCheck.questions = initialStoreProps.knowledgeCheck.questions.toSorted(
+          const preservedQuestionsOrder = initialStoreProps.knowledgeCheck.questions.toSorted(
             (a, b) => cache.knowledgeCheck.questions.findIndex((q) => q.id === a.id) - cache.knowledgeCheck.questions.findIndex((q) => q.id === b.id),
           )
 
+          const update: typeof initialStoreProps = {
+            ...initialStoreProps,
+            knowledgeCheck: {
+              ...initialStoreProps.knowledgeCheck,
+              questions: preservedQuestionsOrder,
+            },
+          }
           return { ...cache, ...update, results: cache.results, startedAt: cache.startedAt }
         }
 
