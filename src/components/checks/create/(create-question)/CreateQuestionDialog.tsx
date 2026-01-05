@@ -16,6 +16,7 @@ import Input from '@/src/components/Shared/form/Input'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { cn } from '@/src/lib/Shared/utils'
 import {
   ChoiceQuestion,
   DragDropQuestion,
@@ -74,7 +75,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
     register,
     handleSubmit,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, disabled },
     reset: resetInputs,
     watch,
     control,
@@ -155,6 +156,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               </label>
               <CreateableSelect
                 name='type'
+                disabled={disabled}
                 defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
                 onChange={(type) => {
                   if (type !== watch('type')) {
@@ -201,6 +203,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               </label>
 
               <Select
+                disabled={disabled}
                 selectTriggerClassname='-ml-0.5 min-w-36'
                 popoverContentClassname='w-[170px]'
                 onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
@@ -223,6 +226,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
               Category
             </label>
             <Select
+              disabled={disabled}
               selectTriggerClassname='-ml-0.5'
               popoverContentClassname='w-[470px]'
               onChange={(category) => register('category').onChange({ target: { value: category, name: 'category' } })}
@@ -459,7 +463,11 @@ function CircleAnswer_IndicatorInput({
       <Tooltip tabIndex={-1} content={tooltipContent}>
         <label
           tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
-          className='has-focus:ring-ring-focus dark:has-focus:ring-ring-focus flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer has-focus:ring-[1.2px] dark:bg-transparent dark:ring-neutral-500'>
+          className={cn(
+            'has-focus:ring-ring-focus dark:has-focus:ring-ring-focus flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 has-focus:ring-[1.2px] dark:bg-transparent dark:ring-neutral-500',
+            // when there are clickable interactions (value===undefined) set cursor-pointer, otherwise no interactions -> just tooltips
+            value === undefined ? 'hover:cursor-pointer' : 'hover:cursor-help',
+          )}>
           {children}
           <input type={inputType} value={value} {...register(...registerProps)} className='appearance-none' />
         </label>

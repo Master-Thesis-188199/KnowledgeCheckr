@@ -33,14 +33,49 @@ export default function RenderExamQuestion() {
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
 
   return (
-    <form className='dark:ring-ring-subtle ring-ring-subtle grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
-      <input name='question' readOnly disabled className='text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={question.question} />
+    <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
+      <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
+
       {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
         <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
       )}
       {question.type === 'open-question' && <ExamOpenQuestionAnswer setValue={setValue} reset={resetInputs} />}
       {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} getValues={getValues} setValue={setValue} reset={resetInputs} />}
     </form>
+  )
+}
+
+function QuestionHeader({ title, index, variant = 'inline' }: { title: string; index: number; variant?: 'inline' | 'absolute' | 'inline-left' }) {
+  if (variant === 'inline-left') return HeaderLeftInline({ title, index })
+  if (variant === 'absolute') return HeaderAbsolute({ title, index })
+
+  return HeaderInline({ title, index })
+}
+
+function HeaderLeftInline({ title, index }: { title: string; index: number }) {
+  return (
+    <div className='-mt-4 -ml-4 grid grid-cols-[auto_1fr] gap-3'>
+      <div className='ring-ring dark:ring-ring flex max-h-10 items-center rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <p className='mt-[0.4rem] text-lg font-semibold text-neutral-800 dark:text-neutral-200' children={title} />
+    </div>
+  )
+}
+
+function HeaderAbsolute({ title, index }: { title: string; index: number }) {
+  return (
+    <>
+      <div className='ring-ring dark:ring-ring absolute top-0 left-0 rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <input name='question' readOnly disabled className='mt-8 w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />{' '}
+    </>
+  )
+}
+
+function HeaderInline({ title, index }: { title: string; index: number }) {
+  return (
+    <div className='flex gap-3'>
+      <div className='ring-ring-hover dark:ring-ring rounded-full bg-neutral-300 px-2.5 py-0.5 tabular-nums ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <input name='question' readOnly disabled className='w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />
+    </div>
   )
 }
 

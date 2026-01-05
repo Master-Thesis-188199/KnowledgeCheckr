@@ -1,6 +1,7 @@
 'use client'
 import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
+import { isEqual } from 'lodash'
 import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
 
@@ -15,6 +16,13 @@ const InfiniteScrollContext = createContext<InfiniteScrollContext | undefined>(u
 
 export function InfiniteScrollProvider<TElement>({ initialItems, children }: { children: React.ReactNode; initialItems: TElement[] }) {
   const [items, setItems] = useState<TElement[]>(initialItems)
+
+  useEffect(() => {
+    if (isEqual(items, initialItems)) return
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setItems(initialItems)
+  }, [initialItems])
 
   const addItems: InfiniteScrollContext<TElement>['addItems'] = (items) => setItems((prev) => prev.concat(items))
   const reset = () => setItems(initialItems)
