@@ -19,12 +19,19 @@ import {
 import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
+import { TooltipProps } from '@/src/components/Shared/Tooltip'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
   const router = useRouter()
   const hasQuestions = questions.length > 0
+
+  const baseTooltipOptions: Partial<TooltipProps> = {
+    showsError: true,
+    offset: 0,
+    placement: 'right-end',
+  }
 
   /**
    * This simple utility function returns an onClick handler that essentially calls the callback function with the existing share-token or
@@ -61,13 +68,18 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
 
         <DropdownMenuGroup>
           <DropdownMenuItem
+            enableTooltip={!hasQuestions}
+            tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, practice disabled.' }}
             disabled={!hasQuestions}
             onClick={gatherShareToken('Unable to start Practice', (token) => {
               router.push(`${window.location.origin}/checks/${token}/practice`)
             })}>
             Start Practicing
           </DropdownMenuItem>
+
           <DropdownMenuItem
+            enableTooltip={!hasQuestions}
+            tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, examination disabled.' }}
             disabled={!hasQuestions}
             onClick={gatherShareToken('Unable to start Examination', (token) => {
               router.push(`${window.location.origin}/checks/${token}`)
@@ -77,7 +89,9 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
         </DropdownMenuGroup>
 
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={!hasQuestions}>Invite users to</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger enableTooltip={!hasQuestions} tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, sharing disabled.' }} disabled={!hasQuestions}>
+            Invite users to
+          </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <DropdownMenuItem
