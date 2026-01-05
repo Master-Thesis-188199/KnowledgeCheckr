@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InfoIcon, Share2Icon } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
@@ -11,6 +11,12 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function ShareKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
   const [shareToken, setShareToken] = useState(check.share_key)
+
+  // Update share-key when the check has been modified, e.g. when the share-token was removed
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (shareToken !== check.share_key) setShareToken(check.share_key)
+  }, [check.share_key])
 
   const isEmpty = check.questions.length === 0
   const tooltipMessage = isEmpty ? 'This check has no questions, cannot be shared at this moment.' : 'Share this KnowledgeCheck'
