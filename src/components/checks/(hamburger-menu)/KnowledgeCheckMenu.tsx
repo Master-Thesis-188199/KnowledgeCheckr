@@ -17,13 +17,38 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
 import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
+import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
+import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
   const router = useRouter()
   const isAccessible = share_key !== null
   const hasQuestions = questions.length > 0
+
+  /**
+   * This simple utility function returns an onClick handler that essentially calls the callback function with the existing share-token or
+   * generates a new token, stores the token and then calls the callback with the newly generated token. In case storing the token is unsuccessful,
+   * the `failureToastMessage´ is used as the error-message displayed in a toast letting the user know the operation was unsuccessful.
+   * @param failureToastMessage The message used to let users know the operation was unsuccessful
+   * @param callback The callback function which is used when a) a share-key exists or b) after a new token was generated and stored.
+   * @returns a callable onClick handler
+   */
+  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => (_: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (share_key) {
+      callback(share_key)
+      return
+    }
+
+    const token = generateToken()
+    storeKnowledgeCheckShareToken(id, token)
+      .then(() => {
+        router.refresh()
+        callback(token)
+      })
+      .catch(() => toast(failureToastMessage, { type: 'error' }))
+  }
 
   return (
     <DropdownMenu>
@@ -36,15 +61,42 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
         <DropdownMenuLabel className='text-center'>Actions</DropdownMenuLabel>
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>Start Practicing</DropdownMenuItem>
-          <DropdownMenuItem>Start Examination</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={gatherShareToken('Unable to start Practice', (token) => {
+              router.push(`${window.location.origin}/checks/${token}/practice`)
+            })}>
+            Start Practicing
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={gatherShareToken('Unable to start Examination', (token) => {
+              router.push(`${window.location.origin}/checks/${token}`)
+            })}>
+            Start Examination
+          </DropdownMenuItem>
         </DropdownMenuGroup>
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Invite users to</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <DropdownMenuItem>start Practicing</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={gatherShareToken('Unable to generate share-token', (token) => {
+                  navigator.clipboard
+                    .writeText(`${window.location.origin}/checks/${token}/practice`)
+                    .then(() => toast('Successfully saved practice-url to your clipboard.', { type: 'success' }))
+                    .catch(() => toast('Failed to copy practice link to the clipboard.', { type: 'error' }))
+                })}>
+                start Practicing
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={gatherShareToken('Unable to generate share-token', (token) => {
+                  navigator.clipboard
+                    .writeText(`${window.location.origin}/checks/${token}/`)
+                    .then(() => toast('Successfully saved exam-url to your clipboard.', { type: 'success' }))
+                    .catch(() => toast('Failed to copy examination link to the clipboard.', { type: 'error' }))
+                })}>
+                start Examination
+              </DropdownMenuItem>
               <DropdownMenuItem>start Examination</DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
