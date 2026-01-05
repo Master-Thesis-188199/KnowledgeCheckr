@@ -97,7 +97,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
             Invite users to
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent sideOffset={4}>
               <DropdownMenuItem
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {
                   navigator.clipboard
