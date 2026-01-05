@@ -16,6 +16,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
+import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
@@ -74,7 +75,19 @@ export default function KnowledgeCheckCardHamburgerMenu({ id, questions, share_k
           Remove Share Token
           <Share2Icon />
         </DropdownMenuItem>
-        <DropdownMenuItem variant='destructive' className='justify-between'>
+        <DropdownMenuItem
+          variant='destructive'
+          className='justify-between'
+          onClick={() =>
+            removeKnowledgeCheck({ checkId: id }).then((success) => {
+              if (!success) return
+
+              router.refresh()
+              const pageHeading = document.querySelector('main h1')
+              pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+              toast('Successfully deleted KnowledgeCheck', { type: 'success' })
+            })
+          }>
           Delete KnowledgeCheck
           <TrashIcon />
         </DropdownMenuItem>
