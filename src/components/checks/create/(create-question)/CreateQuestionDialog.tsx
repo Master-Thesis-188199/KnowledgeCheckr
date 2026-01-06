@@ -65,7 +65,7 @@ const generateQuestionDefaults = (type: Question['type']): Partial<Question> & P
   }
 }
 
-const DELAY_ERROR_TIME = 0
+const DELAY_ERROR_TIME = 250
 
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
@@ -77,6 +77,8 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const form = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: computeFormDefaults(),
+    mode: 'all',
+    delayError: DELAY_ERROR_TIME,
   })
 
   const {
