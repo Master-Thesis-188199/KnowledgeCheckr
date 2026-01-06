@@ -16,6 +16,7 @@ import Field from '@/src/components/Shared/form/Field'
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import Tooltip from '@/src/components/Shared/Tooltip'
+import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import {
@@ -63,6 +64,8 @@ const generateQuestionDefaults = (type: Question['type']): Partial<Question> & P
       }
   }
 }
+
+const DELAY_ERROR_TIME = 0
 
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
@@ -288,6 +291,13 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
     name: 'answers',
   })
 
+  const debounceValidation = debounceFunction(() => {
+    for (let i = 0; i < fields.length; i++) {
+      // revalidate fields to e.g. check for uniqueness
+      form.trigger(`answers.${i}.answer` as const)
+    }
+  }, DELAY_ERROR_TIME)
+
   return (
     <>
       <div className='grid gap-4'>
@@ -302,7 +312,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                 <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
               </CircleAnswer_IndicatorInput>
-              <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' placeholder={`Answer ${index + 1} -  to your question`} showLabel={false} />
+              <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' placeholder={`Answer ${index + 1} -  to your question`} onKeyUp={debounceValidation} showLabel={false} />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
           </div>
@@ -358,6 +368,13 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
     name: 'answers',
   })
 
+  const debounceValidation = debounceFunction(() => {
+    for (let i = 0; i < fields.length; i++) {
+      // revalidate fields to e.g. check for uniqueness
+      form.trigger(`answers.${i}.answer` as const)
+    }
+  }, DELAY_ERROR_TIME)
+
   return (
     <>
       <div className='grid gap-4'>
@@ -372,7 +389,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 registerProps={[`answers.${index}.position` as const, { valueAsNumber: true }]}>
                 <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
               </CircleAnswer_IndicatorInput>
-              <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' showLabel={false} />
+              <Field form={form} name={`answers.${index}.answer` as const} onKeyUp={debounceValidation} className='flex-1' showLabel={false} />
               <div className='drag-actions flex gap-2'>
                 <button
                   aria-label='move answer up'
