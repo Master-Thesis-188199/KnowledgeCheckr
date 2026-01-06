@@ -16,7 +16,7 @@ export default function Field<Values extends FieldValues>({
   descriptions,
   showLabel = true,
   labelClassname,
-  className,
+  containerClassname,
   children,
   modifyValue,
   ...props
@@ -28,6 +28,7 @@ export default function Field<Values extends FieldValues>({
   showLabel?: boolean
   labelClassname?: string
   children?: React.ReactNode
+  containerClassname?: string
   onChange?: (values: ChangeEvent<HTMLInputElement>['target']) => unknown
   modifyValue?: (value: Any) => Any
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
@@ -63,7 +64,7 @@ export default function Field<Values extends FieldValues>({
                 'relative grid',
                 // moves input indicators like 'number' | 'date' to the left to make room for the info / error icon
                 (description || hasError) && '**:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6',
-                className,
+                containerClassname,
               )}>
               <FormControl>
                 <ShadcnInput

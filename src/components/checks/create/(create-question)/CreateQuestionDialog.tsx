@@ -318,7 +318,14 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                 <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
               </CircleAnswer_IndicatorInput>
-              <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' placeholder={`Answer ${index + 1} -  to your question`} onKeyUp={debounceValidation} showLabel={false} />
+              <Field
+                form={form}
+                name={`answers.${index}.answer` as const}
+                containerClassname='flex-1'
+                placeholder={`Answer ${index + 1} -  to your question`}
+                onKeyUp={debounceValidation}
+                showLabel={false}
+              />
               <DeleteAnswerOptionButton index={index} remove={remove} />
             </div>
           </div>
@@ -399,7 +406,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 registerProps={[`answers.${index}.position` as const, { valueAsNumber: true }]}>
                 <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
               </CircleAnswer_IndicatorInput>
-              <Field form={form} name={`answers.${index}.answer` as const} onKeyUp={debounceValidation} className='flex-1' showLabel={false} />
+              <Field form={form} name={`answers.${index}.answer` as const} onKeyUp={debounceValidation} containerClassname='flex-1' showLabel={false} />
               <div className='drag-actions flex gap-2'>
                 <button
                   aria-label='move answer up'
