@@ -287,7 +287,7 @@ function AnswerOptions(options: AnswerOptionProps) {
 }
 
 function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptionProps) {
-  const form = useFormContext()
+  const form = useFormContext<Question>()
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'answers',
