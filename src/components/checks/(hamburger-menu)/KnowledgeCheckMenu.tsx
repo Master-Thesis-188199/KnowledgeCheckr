@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { ArrowUpRightIcon, CopyPlusIcon, EllipsisIcon, Share2Icon, SquarePenIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,11 +22,14 @@ import {
 import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
+import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { TooltipProps } from '@/src/components/Shared/Tooltip'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const router = useRouter()
   const hasQuestions = questions.length > 0
 
@@ -59,7 +63,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='hover:ring-ring-hover h-auto w-auto px-1 py-0.5 hover:ring-1'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
@@ -158,10 +162,10 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           Remove Share Token
           <Share2Icon />
         </DropdownMenuItem>
-        <DropdownMenuItem
-          variant='destructive'
-          className='justify-between'
-          onClick={() =>
+        <ConfirmationDialog
+          body='This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.'
+          onConfirmSuccess={() => setMenuOpen(false)}
+          confirmAction={() => {
             removeKnowledgeCheck({ checkId: id })
               .then((success) => {
                 if (!success) return
@@ -175,10 +179,12 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 console.error('[Error]: Removing knowledgeCheck failed.', err)
                 toast('Removing knowledgeCheck was unsuccessful!', { type: 'error' })
               })
-          }>
-          Delete KnowledgeCheck
-          <TrashIcon />
-        </DropdownMenuItem>
+          }}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
+            Delete KnowledgeCheck
+            <TrashIcon />
+          </DropdownMenuItem>
+        </ConfirmationDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   )
