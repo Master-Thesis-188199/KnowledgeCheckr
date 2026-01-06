@@ -2,6 +2,7 @@ import { z, ZodIssueCode } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
+import identifyDuplicateFields from '@/src/schemas/utils/refinements/IdentifyDuplicateFields'
 
 const AnswerId = z
   .string()
@@ -27,6 +28,28 @@ const baseQuestion = z.object({
   accessibility: z.enum(['all', 'practice-only', 'exam-only']).default('all').catch('all'),
 })
 
+/**
+ * Ensures that the `answers` have unique names and ids, otherwise location / property based issues are created.
+ * @param answers The array of answers provided by the `superRefine` operrand.
+ * @param ctx The superRefine context to create issues with.
+ */
+const uniqueAnswerConstraints = (answers: Array<{ answer: string; id: string }>, ctx: z.RefinementCtx) => {
+  identifyDuplicateFields(answers, ctx, {
+    field: 'answer',
+    key: (a) => a.answer,
+    normalizeKey: (s) => s.trim().toLowerCase(),
+    message: (dup) => `Answers must be unique. Duplicate: "${dup}"`,
+    mark: 'both',
+  })
+
+  identifyDuplicateFields(answers, ctx, {
+    field: 'id',
+    key: (a) => a.id,
+    message: (dup) => `Answer-ids must be unique. Duplicate id: "${dup}"`,
+    mark: 'both',
+  })
+}
+
 const multipleChoiceAnswerSchema = z.object({
   type: z.literal('multiple-choice'),
   answers: z
@@ -39,8 +62,7 @@ const multipleChoiceAnswerSchema = z.object({
     )
     .min(1, 'Please provide at least one answer')
     .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
+    .superRefine(uniqueAnswerConstraints)
     .default(() => [
       { id: getUUID(), answer: 'Answer 1', correct: false },
       { id: getUUID(), answer: 'Answer 2', correct: true },
@@ -60,9 +82,8 @@ const singleChoiceAnswerSchema = z.object({
       }),
     )
     .min(1, 'Please provide at least one answer')
+    .superRefine(uniqueAnswerConstraints)
     .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' })
     .default(() => [
       { id: getUUID(), answer: 'Answer 1', correct: false },
       { id: getUUID(), answer: 'Answer 2', correct: true },
@@ -121,14 +142,13 @@ const dragDropAnswerSchema = z.object({
         }
       }
     })
+    .superRefine(uniqueAnswerConstraints)
     .default(() => [
       { id: getUUID(), answer: 'Answer 1', position: 0 },
       { id: getUUID(), answer: 'Answer 2', position: 1 },
       { id: getUUID(), answer: 'Answer 3', position: 2 },
       { id: getUUID(), answer: 'Answer 4', position: 3 },
-    ])
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.answer)).size, { message: 'Answers must be unique, meaning that answers must be distinct!' })
-    .refine((answers) => answers.length === new Set(answers.map((answer) => answer.id)).size, { message: 'Answers-ids must be unique, meaning that each answer must have a unique id!' }),
+    ]),
 })
 
 const openAnswerSchema = z.object({
