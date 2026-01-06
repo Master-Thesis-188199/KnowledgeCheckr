@@ -77,7 +77,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const form = useForm<Question>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: computeFormDefaults(),
-    mode: 'all',
+    mode: 'onChange',
     delayError: DELAY_ERROR_TIME,
   })
 
