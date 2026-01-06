@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library */
-import { HTMLProps, ReactNode, useCallback, useEffect, useState } from 'react'
+import { HTMLProps, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { TooltipProps } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
@@ -293,12 +293,16 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
     name: 'answers',
   })
 
-  const debounceValidation = debounceFunction(() => {
-    for (let i = 0; i < fields.length; i++) {
-      // revalidate fields to e.g. check for uniqueness
-      form.trigger(`answers.${i}.answer` as const)
-    }
-  }, DELAY_ERROR_TIME)
+  const debounceValidation = useMemo(
+    () =>
+      debounceFunction(() => {
+        for (let i = 0; i < fields.length; i++) {
+          // revalidate fields to e.g. check for uniqueness
+          form.trigger(`answers.${i}.answer` as const)
+        }
+      }, DELAY_ERROR_TIME),
+    [form, debounceFunction, DELAY_ERROR_TIME, fields],
+  )
 
   return (
     <>
@@ -370,12 +374,16 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
     name: 'answers',
   })
 
-  const debounceValidation = debounceFunction(() => {
-    for (let i = 0; i < fields.length; i++) {
-      // revalidate fields to e.g. check for uniqueness
-      form.trigger(`answers.${i}.answer` as const)
-    }
-  }, DELAY_ERROR_TIME)
+  const debounceValidation = useMemo(
+    () =>
+      debounceFunction(() => {
+        for (let i = 0; i < fields.length; i++) {
+          // revalidate fields to e.g. check for uniqueness
+          form.trigger(`answers.${i}.answer` as const)
+        }
+      }, DELAY_ERROR_TIME),
+    [form, debounceFunction, DELAY_ERROR_TIME, fields],
+  )
 
   return (
     <>
