@@ -301,7 +301,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
           form.trigger(`answers.${i}.answer` as const)
         }
       }, DELAY_ERROR_TIME),
-    [form, debounceFunction, DELAY_ERROR_TIME, fields],
+    [form, fields],
   )
 
   return (
@@ -389,7 +389,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
           form.trigger(`answers.${i}.answer` as const)
         }
       }, DELAY_ERROR_TIME),
-    [form, debounceFunction, DELAY_ERROR_TIME, fields],
+    [form, fields],
   )
 
   return (
