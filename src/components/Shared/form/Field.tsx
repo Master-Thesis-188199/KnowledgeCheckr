@@ -1,4 +1,4 @@
-import { ChangeEvent, HTMLProps, useState } from 'react'
+import { ChangeEvent, HTMLProps, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
@@ -33,6 +33,11 @@ export default function Field<Values extends FieldValues>({
 } & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const previousFocusState = useRef(false)
+
+  useEffect(() => {
+    previousFocusState.current = isFocused
+  }, [isFocused])
 
   return (
     <FormField
@@ -42,6 +47,9 @@ export default function Field<Values extends FieldValues>({
         const hasError = !!fieldState.error
         const showDescription = (isFocused && !hasError) || isHovered
         const description = descriptions ? getDescriptionForRhfName(descriptions, field.name) : undefined
+
+        // when true --> prevents layout shifts when switching between error / description by setting min-h to animation-container. Note this "feature" is only enabled when there is something to switch between (thus, when there is a description (&& !!description))
+        const keepAnimationContainerSize = previousFocusState.current && (showDescription || hasError) && !!description
 
         return (
           <>
@@ -118,7 +126,8 @@ export default function Field<Values extends FieldValues>({
                 )}
               </AnimatePresence>
 
-              <div className='relative'>
+              {/* //* set min-h when state changes but is still in focus, prevent layout shifts when switching between error/description. (!!description ensures that this feature is only enabled when there is a description to display)*/}
+              <div className={cn('relative', keepAnimationContainerSize && 'min-h-6')}>
                 <AnimatePresence mode='wait' initial={false}>
                   {hasError ? <RenderInlineError /> : null}
                   {!hasError && showDescription && description ? <RenderInlineDescription description={description} /> : null}
