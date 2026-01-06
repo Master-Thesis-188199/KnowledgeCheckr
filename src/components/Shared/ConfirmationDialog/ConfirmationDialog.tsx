@@ -17,8 +17,8 @@ type Props = {
   body?: string
   confirmLabel?: string
   cancelLabel?: string
-  confirmAction: () => Promise<void> | void
-  onConfirmSuccess?: () => void // <-- close DragDropMenu here
+  confirmAction: () => Promise<unknown> | unknown
+  onConfirmSuccess?: () => void
   onCancelClose?: () => void
 }
 

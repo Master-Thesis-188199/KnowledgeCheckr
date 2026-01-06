@@ -148,7 +148,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           confirmAction={() =>
             updateKnowledgeCheckShareToken({ checkId: id, token: null })
               .then((success) => {
-                if (!success) return
+                if (!success) return toast('Deletion was unsuccesful, check not found.', { type: 'info' })
 
                 router.refresh()
                 const pageHeading = document.querySelector('main h1')
@@ -171,7 +171,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           confirmAction={() => {
             removeKnowledgeCheck({ checkId: id })
               .then((success) => {
-                if (!success) return
+                if (!success) return toast('Deletion was unsuccesful, check not found.', { type: 'info' })
 
                 router.refresh()
                 const pageHeading = document.querySelector('main h1')
