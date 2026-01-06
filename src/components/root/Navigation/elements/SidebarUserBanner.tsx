@@ -11,19 +11,11 @@ export default async function SidebarUserBanner() {
 
   if (!session || !session.user) return LoginBanner()
 
-  return (
-    <NavigationSidebarElement icon={UserAvatar({ user: session.user })} href={'/account'}>
-      {session.user?.name}
-    </NavigationSidebarElement>
-  )
+  return <NavigationSidebarElement label={session.user?.name} icon={UserAvatar({ user: session.user })} href={'/account'} />
 }
 
 function LoginBanner() {
-  return (
-    <NavigationSidebarElement href='/account/login' icon={<UserRound className={iconClasses} />}>
-      <span>Please Sign In</span>
-    </NavigationSidebarElement>
-  )
+  return <NavigationSidebarElement label={'Please Sign In'} href='/account/login' icon={<UserRound className={iconClasses} />} />
 }
 
 export function UserAvatar({ user: { image, name }, className }: { user: User; className?: string }) {
