@@ -1,12 +1,14 @@
 import { Tooltip as HerouiTooltip, TooltipProps as HerouiTooltipProps } from '@heroui/tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 
-type BaseTooltipProsp = {
+type BaseTooltipProps = {
   showsWarning?: boolean
   showsError?: boolean
 }
 
-export default function Tooltip({ showsWarning, showsError, ...props }: { disabled?: boolean } & BaseTooltipProsp & HerouiTooltipProps) {
+export type TooltipProps = BaseTooltipProps & HerouiTooltipProps
+
+export default function Tooltip({ showsWarning, showsError, ...props }: TooltipProps) {
   return (
     <HerouiTooltip
       delay={250}
