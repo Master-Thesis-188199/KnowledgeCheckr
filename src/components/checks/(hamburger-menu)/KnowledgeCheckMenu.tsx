@@ -141,8 +141,11 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           <DropdownMenuItem disabled>Inspect Statistics</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() =>
+
+        <ConfirmationDialog
+          body='This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.'
+          onConfirmSuccess={() => setMenuOpen(false)}
+          confirmAction={() =>
             updateKnowledgeCheckShareToken({ checkId: id, token: null })
               .then((success) => {
                 if (!success) return
@@ -156,12 +159,12 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 console.error('[Error]: Removing share-token failed.', err)
                 toast('Removing share-token was unsuccessful!', { type: 'error' })
               })
-          }
-          variant='destructive'
-          className='justify-between'>
-          Remove Share Token
-          <Share2Icon />
-        </DropdownMenuItem>
+          }>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
+            Remove Share Token
+            <Share2Icon />
+          </DropdownMenuItem>
+        </ConfirmationDialog>
         <ConfirmationDialog
           body='This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.'
           onConfirmSuccess={() => setMenuOpen(false)}
