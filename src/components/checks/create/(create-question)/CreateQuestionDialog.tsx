@@ -293,7 +293,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
       <div className='grid gap-4'>
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
-            <div className='flex items-center gap-3'>
+            <div className='flex items-start gap-3 [&_button]:mt-1 [&_label]:mt-1.5'>
               <CircleAnswer_IndicatorInput
                 registerProps={[`answers.${index}.correct` as const]}
                 inputType='checkbox'
@@ -363,7 +363,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
       <div className='grid gap-4'>
         {fields.map((field, index) => (
           <div key={field.id} className='grid gap-2'>
-            <div className='flex items-center gap-3'>
+            <div className='flex items-start gap-3 [&_.drag-actions]:mt-1 [&_label]:mt-1.5'>
               <CircleAnswer_IndicatorInput
                 value={index}
                 register={register}
@@ -373,7 +373,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
               </CircleAnswer_IndicatorInput>
               <Field form={form} name={`answers.${index}.answer` as const} className='flex-1' showLabel={false} />
-              <div className='flex gap-2'>
+              <div className='drag-actions flex gap-2'>
                 <button
                   aria-label='move answer up'
                   type='button'
