@@ -137,14 +137,19 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() =>
-            updateKnowledgeCheckShareToken({ checkId: id, token: null }).then((success) => {
-              if (!success) return
+            updateKnowledgeCheckShareToken({ checkId: id, token: null })
+              .then((success) => {
+                if (!success) return
 
-              router.refresh()
-              const pageHeading = document.querySelector('main h1')
-              pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-              toast('Successfully removed share-token', { type: 'success' })
-            })
+                router.refresh()
+                const pageHeading = document.querySelector('main h1')
+                pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+                toast('Successfully removed share-token', { type: 'success' })
+              })
+              .catch((err) => {
+                console.error('[Error]: Removing share-token failed.', err)
+                toast('Removing share-token was unsuccessful!', { type: 'error' })
+              })
           }
           variant='destructive'
           className='justify-between'>
@@ -155,14 +160,19 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
           variant='destructive'
           className='justify-between'
           onClick={() =>
-            removeKnowledgeCheck({ checkId: id }).then((success) => {
-              if (!success) return
+            removeKnowledgeCheck({ checkId: id })
+              .then((success) => {
+                if (!success) return
 
-              router.refresh()
-              const pageHeading = document.querySelector('main h1')
-              pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-              toast('Successfully deleted KnowledgeCheck', { type: 'success' })
-            })
+                router.refresh()
+                const pageHeading = document.querySelector('main h1')
+                pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+                toast('Successfully deleted KnowledgeCheck', { type: 'success' })
+              })
+              .catch((err) => {
+                console.error('[Error]: Removing knowledgeCheck failed.', err)
+                toast('Removing knowledgeCheck was unsuccessful!', { type: 'error' })
+              })
           }>
           Delete KnowledgeCheck
           <TrashIcon />
