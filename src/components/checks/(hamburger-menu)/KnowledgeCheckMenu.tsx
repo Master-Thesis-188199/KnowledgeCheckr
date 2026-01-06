@@ -160,7 +160,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 toast('Removing share-token was unsuccessful!', { type: 'error' })
               })
           }>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
+          <DropdownMenuItem disabled={share_key === null} onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
             Remove Share Token
             <Share2Icon />
           </DropdownMenuItem>
