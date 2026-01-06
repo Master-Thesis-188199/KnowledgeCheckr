@@ -35,6 +35,9 @@ export default function Field<Values extends FieldValues>({
   const [isHovered, setIsHovered] = useState(false)
   const previousFocusState = useRef(false)
 
+  // smooth animations when focussed, quicker animations when hovering ---> affects only description animation that is shown onHover
+  const animationDuration = isHovered && !isFocused ? 0.3 : 0.6
+
   useEffect(() => {
     previousFocusState.current = isFocused
   }, [isFocused])
@@ -129,8 +132,8 @@ export default function Field<Values extends FieldValues>({
               {/* //* set min-h when state changes but is still in focus, prevent layout shifts when switching between error/description. (!!description ensures that this feature is only enabled when there is a description to display)*/}
               <div className={cn('relative', keepAnimationContainerSize && 'min-h-6')}>
                 <AnimatePresence mode='wait' initial={false}>
-                  {hasError ? <RenderInlineError /> : null}
-                  {!hasError && showDescription && description ? <RenderInlineDescription description={description} /> : null}
+                  {hasError ? <RenderInlineError animationDuration={animationDuration} /> : null}
+                  {!hasError && showDescription && description ? <RenderInlineDescription description={description} animationDuration={animationDuration} /> : null}
                 </AnimatePresence>
               </div>
               {children}
@@ -142,14 +145,14 @@ export default function Field<Values extends FieldValues>({
   )
 }
 
-function RenderInlineError() {
+function RenderInlineError({ animationDuration }: { animationDuration: number }) {
   return (
     <motion.div
       key='error'
       initial={{ opacity: 0, height: 0, y: -4 }}
       animate={{ opacity: 1, height: 'auto', y: 0 }}
       exit={{ opacity: 0, height: 0, y: -4 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={{ duration: animationDuration, ease: 'easeOut' }}
       className='overflow-hidden'
       aria-live='polite'>
       <div className='min-h-6 pt-1'>
@@ -159,14 +162,14 @@ function RenderInlineError() {
   )
 }
 
-function RenderInlineDescription({ description }: { description: string }) {
+function RenderInlineDescription({ description, animationDuration }: { description: string; animationDuration: number }) {
   return (
     <motion.div
       key='desc'
       initial={{ opacity: 0, height: 0, y: -4 }}
       animate={{ opacity: 1, height: 'auto', y: 0 }}
       exit={{ opacity: 0, height: 0, y: -4 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
+      transition={{ duration: animationDuration, ease: 'easeOut' }}
       className='overflow-hidden'>
       <div className='min-h-6 pt-1'>
         <FormDescription>{description}</FormDescription>
