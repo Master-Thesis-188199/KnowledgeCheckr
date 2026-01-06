@@ -5,6 +5,8 @@ import { ZustandStore } from '@/types/Shared/ZustandStore'
 export type MultiStageState = {
   stages: Stage[]
   stage: Stage['stage']
+  enabled?: boolean
+  reason?: string
 }
 
 export type MultiStageActions = {
@@ -13,6 +15,7 @@ export type MultiStageActions = {
   isFocussed: (stage: Stage['stage']) => boolean
   isCompleted: (stage: Stage['stage']) => boolean
   setStage: (stage: Stage['stage']) => void
+  setEnabled: (state: boolean, reason?: string) => void
 }
 
 export type MultiStageStore = MultiStageState & MultiStageActions
@@ -20,6 +23,7 @@ export type MultiStageStore = MultiStageState & MultiStageActions
 const defaultState: MultiStageState = {
   stage: 1,
   stages: [],
+  enabled: true,
 }
 export const createMultiStageStore: ZustandStore<MultiStageStore, Partial<MultiStageState>> = ({ initialState }) =>
   createZustandStore({
@@ -33,6 +37,7 @@ export const createMultiStageStore: ZustandStore<MultiStageStore, Partial<MultiS
         isCompleted: (stage: Stage['stage']) => get().stage > stage && stage >= 1,
         isFocussed: (stage: Stage['stage']) => get().stage === stage,
         setStage: (stage: Stage['stage']) => set(() => ({ stage })),
+        setEnabled: (enabled, reason) => set((prev) => ({ ...prev, enabled, reason: !enabled ? reason : undefined })),
       }
     },
   })

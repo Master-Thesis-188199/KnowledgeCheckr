@@ -30,6 +30,7 @@ export function PracticeBreadcrumbs({
             <DropdownMenuContent align='start'>
               <Link
                 data-category={'all'}
+                replace
                 href={{
                   pathname: `/checks/${share_token}/practice`,
                   query: { category: '_none_' },
@@ -38,6 +39,7 @@ export function PracticeBreadcrumbs({
               </Link>
               {categories.map((categoryName) => (
                 <Link
+                  replace
                   data-category={categoryName}
                   key={categoryName}
                   href={{

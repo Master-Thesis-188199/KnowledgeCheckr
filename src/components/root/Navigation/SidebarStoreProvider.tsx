@@ -14,7 +14,7 @@ export interface SidebarStoreProviderProps {
   children: ReactNode
   initialStoreProps?: SidebarState
 
-  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<SidebarState>, ''>>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<SidebarStore>, ''>>
 }
 
 export function SidebarStoreProvider({ children, initialStoreProps, options = { cacheKey: 'sidebar-store' } }: SidebarStoreProviderProps) {

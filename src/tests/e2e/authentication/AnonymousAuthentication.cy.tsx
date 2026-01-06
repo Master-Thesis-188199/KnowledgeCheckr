@@ -24,7 +24,7 @@ describe('Anonymous User Authentication: ', () => {
 
     cy.visit('/checks/create')
 
-    cy.get('input[name="check-name"]').type('Example Anonymous Check')
+    cy.get('input[name="name"]').type('Example Anonymous Check')
 
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
     cy.intercept('POST', `/checks/create`).as('create-server-action')
@@ -46,7 +46,7 @@ describe('Anonymous User Authentication: ', () => {
 
     cy.visit('/checks/create')
 
-    cy.get('input[name="check-name"]').type(CHECK_NAME)
+    cy.get('input[name="name"]').type(CHECK_NAME)
 
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
     cy.intercept('POST', `/checks/create`).as('create-server-action')

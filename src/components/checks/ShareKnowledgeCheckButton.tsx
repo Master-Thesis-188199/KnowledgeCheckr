@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { InfoIcon, Share2Icon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import Tooltip from '@/src/components/Shared/Tooltip'
@@ -11,6 +12,7 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function ShareKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
   const [shareToken, setShareToken] = useState(check.share_key)
+  const router = useRouter()
 
   // Update share-key when the check has been modified, e.g. when the share-token was removed
   useEffect(() => {
@@ -52,6 +54,9 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
                 .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
                 .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
               setShareToken(token)
+              router.refresh()
+              const pageHeading = document.querySelector('main h1')
+              pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
             })
             .catch(() => toast('Failed to generate and save share-token', { type: 'error' }))
         }}
