@@ -2,7 +2,7 @@ import { User } from 'better-auth'
 import { UserRound } from 'lucide-react'
 import Image from 'next/image'
 import { twMerge } from 'tailwind-merge'
-import { SidebarElement } from '@/components/root/Navigation/elements/RenderSideBarItems'
+import { NavigationSidebarElement } from '@/components/root/Navigation/elements/RenderSideBarItems'
 import { iconClasses } from '@/components/root/Navigation/SideBarConfiguration'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { getServerSession } from '@/src/lib/auth/server'
@@ -12,17 +12,17 @@ export default async function SidebarUserBanner() {
   if (!session || !session.user) return LoginBanner()
 
   return (
-    <SidebarElement icon={UserAvatar({ user: session.user })} href={'/account'}>
+    <NavigationSidebarElement icon={UserAvatar({ user: session.user })} href={'/account'}>
       {session.user?.name}
-    </SidebarElement>
+    </NavigationSidebarElement>
   )
 }
 
 function LoginBanner() {
   return (
-    <SidebarElement href='/account/login' icon={<UserRound className={iconClasses} />}>
+    <NavigationSidebarElement href='/account/login' icon={<UserRound className={iconClasses} />}>
       <span>Please Sign In</span>
-    </SidebarElement>
+    </NavigationSidebarElement>
   )
 }
 
