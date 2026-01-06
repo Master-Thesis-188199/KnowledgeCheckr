@@ -130,7 +130,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           className={cn(
             'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize placeholder:text-[15px] hover:cursor-pointer',
             'border-ring border transition-[color,box-shadow] outline-none',
-            'bg-input dark:bg-input/30 text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
+            'bg-input text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:border-ring-hover focus:border-ring-focus dark:hover:border-ring-hover dark:focus:border-ring-focus',
             state.open && 'border-ring-focus dark:border-ring-focus ring-ring-hover/50 dark:ring-ring-hover/50 ring-[3px]',
 
