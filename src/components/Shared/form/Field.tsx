@@ -143,7 +143,7 @@ function RenderInlineError() {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className='overflow-hidden'
       aria-live='polite'>
-      <div className='pt-1'>
+      <div className='min-h-6 pt-1'>
         <FormMessage />
       </div>
     </motion.div>
@@ -159,7 +159,7 @@ function RenderInlineDescription({ description }: { description: string }) {
       exit={{ opacity: 0, height: 0, y: -4 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
       className='overflow-hidden'>
-      <div className='pt-1'>
+      <div className='min-h-6 pt-1'>
         <FormDescription>{description}</FormDescription>
       </div>
     </motion.div>
