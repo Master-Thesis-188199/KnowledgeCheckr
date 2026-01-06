@@ -45,7 +45,7 @@ export default function Field<Values extends FieldValues>({
   return (
     <FormField
       control={form.control}
-      name={name ?? 'name'}
+      name={name}
       render={({ field, fieldState }) => {
         const hasError = !!fieldState.error
         const showDescription = (isFocused && !hasError) || isHovered
