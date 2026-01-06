@@ -25,7 +25,7 @@ function SeparatorElement({ classes }: {} & Extract<SidebarItem, { type: 'separa
   return <div className={cn('h-1 border border-neutral-700 dark:border-neutral-200', classes)} />
 }
 
-export function NavigationSidebarElement({ label, icon, className, href }: { className?: string } & Extract<SidebarItem, { type: 'navigation' }>) {
+export function NavigationSidebarElement({ label, icon, className, href }: { className?: string } & Omit<Extract<SidebarItem, { type: 'navigation' }>, 'type'>) {
   return (
     <CloseMobileSidebarLink
       aria-label='sidebar item'
