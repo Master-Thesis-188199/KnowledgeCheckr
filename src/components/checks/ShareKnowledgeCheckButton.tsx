@@ -18,7 +18,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (shareToken !== check.share_key) setShareToken(check.share_key)
-  }, [check.share_key])
+  }, [check.share_key, shareToken])
 
   const isEmpty = check.questions.length === 0
   const tooltipMessage = isEmpty ? 'This check has no questions, cannot be shared at this moment.' : 'Share this KnowledgeCheck'
