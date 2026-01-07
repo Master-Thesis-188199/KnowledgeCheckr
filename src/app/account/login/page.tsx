@@ -11,7 +11,7 @@ import { GoogleSocialButton } from '@/src/components/Shared/Authentication/Googl
 import Card from '@/src/components/Shared/Card'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
-import { getReferer } from '@/src/lib/Shared/getReferer'
+import { getRefererURL } from '@/src/lib/Shared/getRefererURL'
 import { cn } from '@/src/lib/Shared/utils'
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   let { type, referer } = await searchParams
   type = type || 'signin'
 
-  const callbackUrl = referer ?? (await getReferer())
+  const callbackUrl = referer ?? (await getRefererURL())
 
   const { user } = await getServerSession()
   if (user) {
