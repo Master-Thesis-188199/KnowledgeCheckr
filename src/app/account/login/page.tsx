@@ -1,6 +1,6 @@
 import { VenetianMaskIcon } from 'lucide-react'
 import Image from 'next/image'
-import { redirect } from 'next/navigation'
+import { redirect, RedirectType } from 'next/navigation'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import { AnonymousSigninButton } from '@/src/components/account/login/AnonymousSigninButton'
 import LoginForm from '@/src/components/account/login/LoginForm'
@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   const { user } = await getServerSession()
   if (user) {
-    return redirect('/account')
+    return redirect('/account', RedirectType.replace)
   }
 
   return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { redirect } from 'next/navigation'
+import { redirect, RedirectType } from 'next/navigation'
 import { toast } from 'react-toastify'
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
@@ -43,7 +43,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
                   toast('Successfully submitted examination results', { type: 'success' })
                   sessionStorage.removeItem('examination-store')
                   clearNavigationAbort()
-                  redirect('/checks')
+                  redirect('/checks', RedirectType.replace)
                 })
             }
             start={startedAt}
