@@ -39,8 +39,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   const refererHref = referer ?? (await getRefererURL())
 
-  // when there is callback set --> users will be redirected to their /account page after signin in
-  const callbackURL = (await identifyCallbackHref(refererHref)) ?? '/account'
+  // the origin of the request (referer) to which the user shall be redirected || or null when no referer is set or user comes from the same page.
+  const refererCallback = await identifyCallbackHref(refererHref)
+
+  // set callback either to origin-of-signin (referer)  or  redirect to fallback ('/account')
+  const callbackURL = refererCallback ?? '/account'
 
   const { user } = await getServerSession()
   if (user) {
