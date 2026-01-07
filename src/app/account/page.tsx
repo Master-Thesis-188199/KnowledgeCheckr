@@ -1,5 +1,5 @@
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { redirect, RedirectType } from 'next/navigation'
 import { UserAvatar } from '@/src/components/root/Navigation/elements/SidebarUserBanner'
 import { DexProviderButton } from '@/src/components/Shared/Authentication/DexProviderButton'
 import { GithubSocialButton } from '@/src/components/Shared/Authentication/GithubSocialButton'
@@ -16,7 +16,7 @@ export default async function AccountPage() {
   const { session, user } = await getServerSession()
 
   if (!session || !user) {
-    redirect('/account/login')
+    redirect('/account/login', RedirectType.replace)
   }
 
   const { isAnonymous } = user
@@ -87,5 +87,5 @@ async function signout() {
     await deleteUser({ userId: user.id, abortOnExaminationResults: true })
   }
 
-  redirect('/account/login')
+  redirect('/account/login', RedirectType.replace)
 }
