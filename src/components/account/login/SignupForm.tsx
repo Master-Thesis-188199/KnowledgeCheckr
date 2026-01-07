@@ -16,7 +16,7 @@ import { signup } from '../../../lib/account/login/AccountActions'
 
 type FormValues = z.infer<typeof SignupSchema>
 
-export default function SignupForm({ callbackUrl }: { callbackUrl?: string }) {
+export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
   const [state, formAction] = useActionState(signup, { success: false, values: { callbackUrl: undefined } })
 
   const form = useForm<FormValues>({
@@ -101,7 +101,9 @@ export default function SignupForm({ callbackUrl }: { callbackUrl?: string }) {
           </button>
           <p className='text-sm text-neutral-400 dark:text-neutral-400/70'>
             Already have an Account?
-            <Link href={{ pathname: '/account/login', query: { type: 'signin', referer: callbackUrl } }} className='px-2 text-neutral-600 hover:cursor-pointer hover:underline dark:text-neutral-200'>
+            <Link
+              href={{ pathname: '/account/login', query: { type: 'signin', referer: refererCallbackUrl } }}
+              className='px-2 text-neutral-600 hover:cursor-pointer hover:underline dark:text-neutral-200'>
               Signin
             </Link>
           </p>

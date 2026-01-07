@@ -63,7 +63,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             title={type === 'signup' ? 'Create an account' : 'Welcome back'}
             subTitle={type === 'signup' ? 'Increase your knowledge by creating KnowledgeChecks' : 'Jump right back to where you left of'}
           />
-          {type === 'signup' ? <SignupForm callbackUrl={callbackURL} /> : <LoginForm callbackUrl={callbackURL} />}
+          {type === 'signup' ? <SignupForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} /> : <LoginForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} />}
         </div>
 
         <div className='flex flex-col gap-5'>
