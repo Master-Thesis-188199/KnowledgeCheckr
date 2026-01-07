@@ -3,7 +3,7 @@
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
 import isEmpty from 'lodash/isEmpty'
 import { CheckCheckIcon } from 'lucide-react'
-import { redirect } from 'next/navigation'
+import { redirect, RedirectType } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
@@ -64,7 +64,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                     toast('Successfully submitted examination results', { type: 'success' })
                     sessionStorage.removeItem('examination-store')
                     clearNavigationAbort()
-                    redirect('/checks')
+                    redirect('/checks', RedirectType.replace)
                   })
               }
               className='dark:ring-ring-subtle ring-ring-subtle rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] dark:bg-black'>
