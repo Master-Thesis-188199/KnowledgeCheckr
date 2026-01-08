@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'Invalid logging options' }, { status: 400 })
   }
 
-  if (!env.CAPTURE_CLIENT_LOGS) return
+  if (!env.CAPTURE_CLIENT_LOGS) return NextResponse.json({ ok: false, error: 'Client log capture disabled.' }, { status: 202 })
 
   const { level, context, messages } = parsed.data
   const logger = _logger.createModuleLogger(context ? `client/${context}` : 'Client')
