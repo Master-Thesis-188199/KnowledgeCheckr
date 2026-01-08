@@ -9,7 +9,7 @@ export const logLevels = {
 export type LoggerLevels = keyof typeof logLevels
 
 export const LogSchema = z.object({
-  level: z.enum(['verbose', 'info', 'warn', 'error']),
+  level: z.enum(['verbose', 'info', 'warn', 'error', 'debug']),
   context: z.string().optional(),
   messages: z.array(z.unknown()).default([]),
 })
