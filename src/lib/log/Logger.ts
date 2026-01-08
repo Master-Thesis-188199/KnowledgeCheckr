@@ -4,6 +4,7 @@ import 'node-json-color-stringify'
 import winston, { Logger as WinstonLogger } from 'winston'
 import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
 import { createProductionFileTransports } from '@/src/lib/log/ProductionTransports'
+import { logLevels } from '@/src/lib/log/type'
 import env from '@/src/lib/Shared/Env'
 
 /**
@@ -24,6 +25,7 @@ export interface ModuleLogger extends WinstonLogger {
 }
 
 const logger = winston.createLogger({
+  levels: logLevels,
   level: 'verbose',
   format: winston.format.combine(
     winston.format((log) => ({ ...log, level: log.level.toUpperCase() }))(), //* upper-case level
