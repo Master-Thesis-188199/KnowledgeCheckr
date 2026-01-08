@@ -8,8 +8,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          'bg-neutral-500 dark:bg-black enabled:hover:ring-[1.5px] ring-neutral-500 dark:ring-neutral-600 text-white dark:text-neutral-200 shadow-xs enabled:hover:bg-neutral-500/80 dark:enabled:hover:bg-neutral-900  enabled:active:!bg-neutral-600/95 dark:enabled:active:!bg-neutral-700 enabled:active:scale-[101%] dark:!enabled:active:bg-primary/70',
+        primary: cn(
+          'shadow-xs enabled:hover:ring-[1.5px] ',
+          'bg-neutral-500 ring-neutral-600 shadow-neutral-400 text-white enabled:hover:bg-neutral-500/80 ',
+          'enabled:active:!bg-neutral-600/95 enabled:active:scale-[101%]',
+          'dark:shadow-neutral-800 dark:bg-black dark:ring-neutral-600 dark:text-neutral-200 dark:enabled:hover:bg-neutral-900 dark:enabled:active:!bg-neutral-700 dark:!enabled:active:bg-primary/70',
+        ),
         destructive:
           'bg-destructive text-white shadow-xs enabled:hover:bg-destructive/80 enabled:active:!bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:

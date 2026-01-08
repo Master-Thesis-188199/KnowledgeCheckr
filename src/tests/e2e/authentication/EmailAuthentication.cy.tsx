@@ -61,6 +61,8 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.signUp(USERNAME, EMAIL, '1234567890')
     cy.signOut()
 
+    cy.visit('/account')
+
     cy.login(EMAIL, '1234567890')
   })
 
@@ -79,7 +81,7 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.wait('@signup-request').then((interception) => {
       const response = interception.response
-      const responseBody = response?.body.toString().split('1:').at(1)
+      const responseBody = response?.body.toString().split('1:').at(-1)
       const body = JSON.parse(responseBody)
 
       expect(response?.statusCode).to.eq(200)
@@ -104,9 +106,9 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.get('button[type="submit"]').should('be.disabled')
 
-    cy.get('main * #signup-form [aria-label="field-error-name"]').should('exist')
-    cy.get('main * #signup-form [aria-label="field-error-email"]').should('exist')
-    cy.get('main * #signup-form [aria-label="field-error-password"]').should('exist')
+    cy.get('main * #signup-form [data-field-error="name"]').should('exist')
+    cy.get('main * #signup-form [data-field-error="email"]').should('exist')
+    cy.get('main * #signup-form [data-field-error="password"]').should('exist')
   })
 
   it('Verify that login client-side field errors are displayed on invalid input', () => {
@@ -121,8 +123,8 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.get('button[type="submit"]').should('be.disabled')
     cy.get('button[type="submit"]').click({ force: true })
 
-    cy.get('main * #login-form [aria-label="field-error-email"]').should('exist')
-    cy.get('main * #login-form [aria-label="field-error-password"]').should('exist')
+    cy.get('main * #login-form [data-field-error="email"]').should('exist')
+    cy.get('main * #login-form [data-field-error="password"]').should('exist')
   })
 
   it('Verify that error is displayed when logging in with wrong credentials', () => {
@@ -135,7 +137,7 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.get('button[type="submit"]').filter(':visible').click()
     cy.wait('@login-request').then((interception) => {
       const response = interception.response
-      const responseBody = response?.body.toString().split('1:').at(1)
+      const responseBody = response?.body.toString().split('1:').at(-1)
       const body = JSON.parse(responseBody)
 
       expect(response?.statusCode).to.eq(200)

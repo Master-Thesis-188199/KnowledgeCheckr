@@ -23,11 +23,13 @@ export const envSchema = z
     DATABASE_USER: z.string().min(1, 'The database user must not be empty!'),
     DATABASE_PASSWORD: z.string().optional(),
 
-    AUTH_GITHUB_ID: z.string().min(1, 'NEXTAUTH_GITHUB_ID cannot be empty!'),
-    AUTH_GITHUB_SECRET: z.string().min(1, 'NEXTAUTH_GITHUB_SECRET cannot be empty!'),
+    AUTH_GITHUB_ENABLED: z.boolean().optional().default(false),
+    AUTH_GITHUB_ID: z.string().min(1, 'AUTH_GITHUB_ID cannot be empty!').optional(),
+    AUTH_GITHUB_SECRET: z.string().min(1, 'AUTH_GITHUB_SECRET cannot be empty!').optional(),
 
-    AUTH_GOOGLE_ID: z.string().min(1, 'NEXTAUTH_GOOGLE_ID cannot be empty!'),
-    AUTH_GOOGLE_SECRET: z.string().min(1, 'NEXTAUTH_GOOGLE_SECRET cannot be empty!'),
+    AUTH_GOOGLE_ENABLED: z.boolean().optional().default(false),
+    AUTH_GOOGLE_ID: z.string().min(1, 'AUTH_GOOGLE_ID cannot be empty!').optional(),
+    AUTH_GOOGLE_SECRET: z.string().min(1, 'AUTH_GOOGLE_SECRET cannot be empty!').optional(),
 
     SHOW_APP_VERSION: z
       .string()
@@ -79,6 +81,52 @@ export const envSchema = z
         })
       }
     }
+
+    // Provider checks + logging
+    const providers = [
+      { name: 'GitHub', idKey: 'AUTH_GITHUB_ID' as const, secretKey: 'AUTH_GITHUB_SECRET' as const },
+      { name: 'Google', idKey: 'AUTH_GOOGLE_ID' as const, secretKey: 'AUTH_GOOGLE_SECRET' as const },
+    ]
+
+    for (const p of providers) {
+      const id = env[p.idKey]
+      const secret = env[p.secretKey]
+
+      const hasId = id !== undefined && id.length > 0
+      const hasSecret = secret !== undefined && secret.length > 0
+
+      // both missing: disabled
+      if (!hasId && !hasSecret) {
+        // console.info(`[.env] ${p.name} sign-in disabled (provide ${p.idKey} and ${p.secretKey} to enable it).`)
+        continue
+      }
+
+      // partial auth-secrets --> throw error
+      if (!hasId || !hasSecret) {
+        if (!hasId) console.info(`[.env] ${p.name} sign-in disabled (missing ${p.idKey}).`)
+        if (!hasSecret) console.info(`[.env] ${p.name} sign-in disabled (missing ${p.secretKey}).`)
+
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [!hasId ? p.idKey : p.secretKey],
+          message: `${p.name} auth requires BOTH ${p.idKey} and ${p.secretKey} (either set both or leave both empty).`,
+        })
+        continue
+      }
+    }
+  })
+  .transform((schema): typeof schema => {
+    const AUTH_GITHUB_ENABLED: boolean = schema.AUTH_GITHUB_ID !== undefined && schema.AUTH_GITHUB_SECRET !== undefined && schema.AUTH_GITHUB_ID.length > 0 && schema.AUTH_GITHUB_SECRET.length > 0
+    const AUTH_GOOGLE_ENABLED: boolean = schema.AUTH_GOOGLE_ID !== undefined && schema.AUTH_GOOGLE_SECRET !== undefined && schema.AUTH_GOOGLE_ID.length > 0 && schema.AUTH_GOOGLE_SECRET.length > 0
+
+    if (!AUTH_GITHUB_ENABLED) console.info('[.env] Overriding `AUTH_GITHUB_ENABLED`; GitHub sign-in disabled. (provide `AUTH_GITHUB_ID` and `AUTH_GITHUB_SECRET` variables to enable it)')
+    if (!AUTH_GOOGLE_ENABLED) console.info('[.env] Overriding `AUTH_GOOGLE_ENABLED`; Google sign-in disabled. (provide `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` variables to enable it)')
+
+    return {
+      ...schema,
+      AUTH_GITHUB_ENABLED,
+      AUTH_GOOGLE_ENABLED,
+    }
   })
 
 const res = envSchema.safeParse(process.env)
@@ -88,5 +136,5 @@ if (res.error) {
   throw e
 }
 
-const env = envSchema.parse(process.env) as z.infer<typeof envSchema>
+const env = res.data
 export default env

@@ -89,6 +89,7 @@ export function RenderPracticeQuestion() {
 
   //* Handle reseting form inputs when question changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library
     if (watch('type') === question.type && watch('question_id') === question.id) return
     else {
       //* When the question is changed reset the form (and set the new question id and type)
@@ -123,13 +124,13 @@ export function RenderPracticeQuestion() {
     <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <div className='my-8 flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
-          <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-200'>{currentQuestionIndex + 1}</div>
+          <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-700 dark:ring-neutral-200'>{currentQuestionIndex + 1}</div>
           <h2 className='text-2xl font-semibold'>{question.question}</h2>
         </div>
-        <span className='text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
+        <span className='text-neutral-600 dark:text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
       </div>
 
-      <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-neutral-500', question?.type === 'open-question' && 'grid-cols-1')}>
+      <div id='answer-options' className={cn('ring-ring dark:ring-ring grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1', question?.type === 'open-question' && 'grid-cols-1')}>
         {question.type === 'multiple-choice' && (
           <ChoiceAnswerOption
             type='checkbox'
@@ -171,14 +172,14 @@ export function RenderPracticeQuestion() {
           title={!isValid ? 'Before checking this question you must first answer it' : undefined}
           disabled={!isValid}
           hidden={isSubmitted && isSubmitSuccessful && !isPending}
-          className='mx-auto mt-2 dark:bg-neutral-700'
+          className='enabled:ring-ring-subtle enabled:hover:ring-ring dark:enabled:hover:ring-ring mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:hover:bg-neutral-300 dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600'
           variant='secondary'
           type='submit'>
           <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
           Check Answer
         </Button>
 
-        <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 dark:bg-green-800' variant='secondary' onClick={nextRandomQuestion} type='button'>
+        <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 bg-green-500/60 dark:bg-green-800' variant='secondary' onClick={nextRandomQuestion} type='button'>
           Continue
         </Button>
       </div>
@@ -220,16 +221,16 @@ function FeedbackLegend({ show, disabled }: { show: boolean; disabled?: boolean 
   return (
     <motion.div variants={variants} initial='hide' animate={show ? 'show' : 'hide'} className={cn('result-legend mx-auto grid h-auto grid-cols-2 gap-x-8 gap-y-3')}>
       <div className='flex items-center gap-2'>
-        <div className='size-3 bg-green-400/70' />
-        <div className='text-green-400/70' children='Correctly answered' />
+        <div className='size-3 bg-green-500/70 dark:bg-green-400/70' />
+        <div className='text-green-700 dark:text-green-400/70' children='Correctly answered' />
       </div>
       <div className='flex items-center gap-2'>
-        <div className='size-3 bg-yellow-400/70' />
-        <div className='text-yellow-400/70' children='Correct (missing)' />
+        <div className='size-3 bg-yellow-500/70 dark:bg-yellow-400/70' />
+        <div className='text-yellow-600 dark:text-yellow-400/70' children='Correct (missing)' />
       </div>
       <div className='col-span-2 flex items-center justify-center gap-2'>
-        <div className='size-3 bg-red-400/70' />
-        <div className='text-red-400/70' children='Wrong answer' />
+        <div className='size-3 bg-red-500/70 dark:bg-red-400/70' />
+        <div className='text-red-500/60 dark:text-red-400/70' children='Wrong answer' />
       </div>
     </motion.div>
   )
@@ -241,9 +242,9 @@ function FeedbackLegend({ show, disabled }: { show: boolean; disabled?: boolean 
 function FeedbackIndicators({ correctlySelected, missingSelection, falslySelected }: { correctlySelected?: boolean; missingSelection?: boolean; falslySelected?: boolean }) {
   return (
     <>
-      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-green-500', correctlySelected && 'block')} />
-      <XIcon className={cn('absolute top-1 right-1 hidden size-5 text-red-500', falslySelected && 'block')} />
-      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-yellow-500/80', missingSelection && 'block')} />
+      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-green-400 dark:text-green-500', correctlySelected && 'block')} />
+      <XIcon className={cn('absolute top-1 right-1 hidden size-5 text-red-400 dark:text-red-500', falslySelected && 'block')} />
+      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-yellow-400/80 dark:text-yellow-500/80', missingSelection && 'block')} />
     </>
   )
 }
@@ -276,16 +277,18 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         key={a.id}
         className={cn(
           'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-neutral-500 has-enabled:dark:hover:ring-neutral-300/60',
-          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-neutral-700 has-enabled:dark:focus:ring-neutral-300/80',
+          'has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover has-enabled:hover:cursor-pointer',
+          'has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus has-enabled:focus:ring-[1.2px]',
           'flex items-center justify-center',
           'resize-none select-none',
-          'has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:dark:has-checked:bg-neutral-700/60 has-enabled:dark:has-checked:ring-neutral-300',
+          'has-enabled:has-checked:ring-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
-          isCorrectlySelected(a) && 'bg-radial from-neutral-700/60 via-neutral-700/60 to-green-500/20 font-semibold dark:ring-green-500/70',
-          isFalslySelected(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-red-400/20 has-checked:bg-radial has-checked:font-semibold dark:ring-red-400/70',
-          isMissingSelection(a) && 'cursor-help from-neutral-700/60 via-neutral-700/60 to-yellow-400/20 ring-0 outline-2 outline-yellow-400/60 outline-dashed dark:ring-yellow-400/60',
+          isCorrectlySelected(a) &&
+            'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+          isFalslySelected(a) &&
+            'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+          isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
         )}
         title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
         htmlFor={a.id}>

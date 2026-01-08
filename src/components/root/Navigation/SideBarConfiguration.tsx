@@ -1,4 +1,4 @@
-import { BadgePlus, LayoutDashboard, List } from 'lucide-react'
+import { FolderSearchIcon, HouseIcon, PlusIcon, SearchIcon } from 'lucide-react'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -8,20 +8,32 @@ export const sideBarConfiguration: SideBarProps = {
   title: 'KnowledgeCheckr',
   elements: [
     {
-      label: 'Dashboard',
+      type: 'navigation',
+      label: 'Home',
       href: '/',
-      // icon: <BookOpenIcon className={iconClasses} />,
-      icon: <LayoutDashboard className={cn(iconClasses, 'stroke-[1.7]')} />,
+      icon: <HouseIcon className={cn(iconClasses, 'stroke-[1.7]')} />,
     },
     {
+      type: 'navigation',
+      label: 'Your Checks',
+      href: '/checks',
+      icon: <FolderSearchIcon className={iconClasses} />,
+    },
+    {
+      type: 'navigation',
+      label: 'Explore Checks',
+      href: '/checks',
+      icon: <SearchIcon className={iconClasses} />,
+    },
+    {
+      type: 'separator',
+      classes: 'h-0.5',
+    },
+    {
+      type: 'navigation',
       label: 'Create New Check',
       href: '/checks/create',
-      icon: <BadgePlus className={iconClasses} />,
-    },
-    {
-      label: 'Show Checks',
-      href: '/checks',
-      icon: <List className={iconClasses} />,
+      icon: <PlusIcon className={iconClasses} />,
     },
   ],
 }

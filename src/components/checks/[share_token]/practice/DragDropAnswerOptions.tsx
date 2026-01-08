@@ -79,9 +79,9 @@ function AnswerFeedback({ show, position, correctPosition, isCorrect }: { show: 
   return (
     <div className='drag-drop-feedback-indicators ml-auto flex items-center gap-2'>
       {isCorrect ? (
-        <CheckIcon className='size-4 text-green-500/70' />
+        <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
       ) : (
-        <div className='flex items-center gap-4 text-red-500/70'>
+        <div className='flex items-center gap-4 text-red-600/70 dark:text-red-500/70'>
           <div className='flex items-center gap-1'>
             {Array.from({ length: Math.abs(correctPosition - position) }).map((_, i) => (
               <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPosition - position > 0 && 'rotate-180')} />

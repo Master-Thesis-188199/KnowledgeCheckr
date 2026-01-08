@@ -14,7 +14,7 @@ describe('SessionStorageCache', () => {
 
     cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'check-store', 'Verify that check-store is not cached at the beginning')
 
-    cy.get("input[name='check-name']").type(DUMMY_NAME)
+    cy.get("input[name='name']").type(DUMMY_NAME)
 
     cy.wait(1000) // wait - debounce time before values are cached
     cy.getAllSessionStorage()
@@ -29,7 +29,7 @@ describe('SessionStorageCache', () => {
       })
 
     cy.reload()
-    cy.get("input[name='check-name']").should('have.value', DUMMY_NAME)
+    cy.get("input[name='name']").should('have.value', DUMMY_NAME)
   })
 
   it('Verify that create-store-sate session storage cache is invalidated after cacheDuration', () => {
@@ -38,7 +38,7 @@ describe('SessionStorageCache', () => {
     const CACHE_EXPIRATION_HOURS = 5
 
     cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'check-store', 'Verify that check-store is not cached at the beginning')
-    cy.get("input[name='check-name']").type(DUMMY_NAME)
+    cy.get("input[name='name']").type(DUMMY_NAME)
 
     cy.wait(1000) // wait - debounce time before values are cached
     cy.getAllSessionStorage()

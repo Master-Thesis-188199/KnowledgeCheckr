@@ -24,9 +24,9 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
     <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: preparedCheck, startedAt: new Date() }}>
       <PageHeading title={check.name ?? '<check-name>'} />
 
-      <div className='grid gap-12 md:grid-cols-[1fr_auto] md:gap-[7vw]'>
+      <div className='grid gap-12 @3xl:grid-cols-[1fr_auto] @3xl:gap-[7vw]'>
         <ExamQuestionWrapper />
-        <QuestionNavigationMenu className='order-first md:order-last' />
+        <QuestionNavigationMenu className='order-first @3xl:order-last' />
       </div>
     </ExaminationStoreProvider>
   )

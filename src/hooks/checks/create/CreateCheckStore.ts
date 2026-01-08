@@ -16,6 +16,7 @@ export type CheckActions = {
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
   updateSettings: (settings: Partial<KnowledgeCheck['settings']>) => void
+  updateCheck: (update: Partial<KnowledgeCheck>) => void
 }
 
 export type CheckStore = CheckState & CheckActions
@@ -98,6 +99,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
           }),
         removeQuestion,
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
+        updateCheck: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
       }
     },
   })

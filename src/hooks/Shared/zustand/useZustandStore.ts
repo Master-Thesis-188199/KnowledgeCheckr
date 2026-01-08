@@ -8,7 +8,8 @@ import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } 
 
 export type useStoreCachingOptions<Store extends object> = StoreCachingOptions & {
   expiresAfter?: number
-  discardCache?: (cached: StoreState_fromStore<Store> | null) => boolean
+  discardCache?: (cached: StoreState_fromStore<Store>) => boolean
+  modifyCache?: (cached: StoreState_fromStore<Store>) => StoreState_fromStore<Store> | undefined
 }
 
 interface useStoreProps_WithCache<Store extends object, TInitial = StoreState_fromStore<Store>> {
@@ -51,15 +52,20 @@ export function useZustandStore<TStore extends object, TInitial extends object =
   if (!storeRef.current) {
     const cached = getStoredValue<StoreState_fromStore<TStore>>(rest.options.cacheKey, { expiresAfter: rest.options.expiresAfter })
 
-    const props = (cached ?? initialStoreProps) as TInitial
-
-    //* initialization of store without caching
-    if (rest.options.disableCache || (rest.options.discardCache && rest.options.discardCache(cached))) {
-      storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, options: rest.options })
+    const initStore = (props: TInitial | StoreState_fromStore<TStore> | undefined) => {
+      // initialize store either with the cached-props or the initialStoreProps
+      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options })
       return storeRef.current
     }
 
-    storeRef.current = rest.createStoreFunc({ initialState: props, options: rest.options })
+    // nothing to re-use --> no cache
+    if (!cached) return initStore(initialStoreProps)
+
+    if (rest.options.disableCache) return initStore(initialStoreProps)
+    if (rest.options.discardCache && rest.options.discardCache(cached)) return initStore(initialStoreProps)
+    if (rest.options.modifyCache) return initStore(rest.options.modifyCache(cached))
+
+    return initStore(cached)
   }
 
   return storeRef.current

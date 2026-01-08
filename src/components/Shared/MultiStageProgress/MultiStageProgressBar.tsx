@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
 import Line from '@/src/components/Shared/Line'
 import { Stage, useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 
 export function MultiStageProgressBar({ className }: { className?: string }) {
@@ -75,27 +76,40 @@ function useFilterStages_SmallScreens(stage: Stage['stage']) {
 }
 
 function ProgressRing({ stage, title }: Stage) {
-  const { isFocussed, setStage, isCompleted } = useMultiStageStore((state) => state)
+  const { isFocussed, setStage, isCompleted, enabled, reason } = useMultiStageStore((state) => state)
   const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
 
   return (
-    <li
-      onClick={() => setStage(stage)}
-      data-active={isFocussed(stage)}
-      data-stage-name={title?.toLowerCase()}
-      className={cn(
-        'flex size-5 min-w-5 items-center justify-center rounded-full text-sm text-neutral-200 ring-[1.5px] dark:ring-neutral-300',
-        'hover:cursor-pointer',
-        'relative',
-        !isCompleted(stage) && !isFocussed(stage) && 'opacity-65',
-        isCompleted(stage) && 'dark:ring-blue-80 dark:text-blue-400/80',
-        isFocussed(stage) && 'dark:text-blue-400 dark:ring-blue-400',
-        !showOnSmallScreens && 'hidden @sm:flex',
-      )}
-      aria-label={`Stage ${stage}`}>
-      {stage}
-      <span className={cn('absolute -right-20 -bottom-7 -left-20 text-center opacity-65', isCompleted(stage) && 'opacity-80', isFocussed(stage) && 'opacity-95')}>{title}</span>
-    </li>
+    <Tooltip isDisabled={enabled} showsError content={reason}>
+      <button
+        type='button'
+        disabled={!enabled}
+        onClick={() => setStage(stage)}
+        data-active={isFocussed(stage)}
+        data-stage-name={title?.toLowerCase()}
+        className={cn(
+          'flex size-5 min-w-5 items-center justify-center rounded-full text-sm text-neutral-700 ring-[1.5px] ring-neutral-600 dark:text-neutral-200 dark:ring-neutral-300',
+          'hover:cursor-pointer',
+          'relative',
+          !isCompleted(stage) && !isFocussed(stage) && 'opacity-75 dark:opacity-65',
+          isCompleted(stage) && 'text-blue-500/80 ring-blue-400/80 dark:text-blue-400 dark:ring-blue-400/80',
+          isFocussed(stage) && 'text-blue-500 ring-blue-500 dark:text-blue-400 dark:ring-blue-400',
+          !showOnSmallScreens && 'hidden @sm:flex',
+          'disabled:cursor-not-allowed',
+          isFocussed(stage) && 'disabled:text-red-500/80 disabled:ring-red-500/80 dark:disabled:text-red-400/80 dark:disabled:ring-red-400/80',
+        )}
+        aria-label={`Stage ${stage}`}>
+        {stage}
+        <span
+          className={cn(
+            'absolute -right-12 -bottom-7 -left-12 text-center text-xs opacity-75 @xs:text-sm dark:opacity-65',
+            isCompleted(stage) && 'opacity-80 dark:opacity-80',
+            isFocussed(stage) && 'opacity-95 dark:opacity-95',
+          )}>
+          {title}
+        </span>
+      </button>
+    </Tooltip>
   )
 }
 
@@ -125,9 +139,10 @@ function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
     <Line
       dashed={dashed}
       animateFromDirection={animateFromDirection}
-      animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80', animateFromDirection === 'right' && 'dark:text-neutral-400')}
+      animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80 text-blue-500/80', animateFromDirection === 'right' && 'dark:text-neutral-400 text-neutral-700')}
       className={cn(
-        isCompleted(stage) && 'dark:text-blue-400/80',
+        'text-neutral-400 dark:text-inherit',
+        isCompleted(stage) && 'text-blue-500/80 dark:text-blue-400/80',
         'duration-initial',
         animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]',
         !showOnSmallScreens && 'hidden @sm:flex',

@@ -14,7 +14,7 @@ const CheckStoreContext = createContext<CheckStoreApi | undefined>(undefined)
 export interface CheckStoreProviderProps {
   children: ReactNode
   initialStoreProps?: CheckState
-  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CheckState>, ''>>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CheckStore>, ''>>
 }
 
 export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'check-store' } }: CheckStoreProviderProps) {
