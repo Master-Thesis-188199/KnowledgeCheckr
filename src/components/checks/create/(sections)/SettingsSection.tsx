@@ -127,6 +127,8 @@ export default function SettingsSection() {
                 <option value='01:00' label='60 minutes'></option>
                 <option value='01:30' label='90 minutes'></option>
               </datalist>
+
+              <Field {...baseFieldProps} name='examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
             </div>
           </TabsContentPanel>
           <TabsContentPanel tab='sharing'>
