@@ -1,6 +1,8 @@
 import { describe, expect, it } from '@jest/globals'
 import logger from '@/src/lib/log/Logger'
 
+const DEBUG_LOGS = false
+
 describe('Ensure logger input / output mimics console.log: ', () => {
   let writeSpy: jest.SpyInstance
   const InfoTag = '[INFO]: '
@@ -34,8 +36,8 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     const consoleOutput = writeSpy.mock.calls[0][0]
     const loggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
-    console.log('ConsoleOuptut', consoleOutput)
-    console.log('LoggerOuptut', loggerOutput)
+    if (DEBUG_LOGS) console.log('ConsoleOuptut', consoleOutput)
+    if (DEBUG_LOGS) console.log('LoggerOuptut', loggerOutput)
 
     expect(loggerOutput).toEqual(InfoTag + consoleOutput)
   })
@@ -50,8 +52,8 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     const capturedConsoleOutput = writeSpy.mock.calls[0][0]
     const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
-    console.log('Logger-spy: ', capturedLoggerOutput)
-    console.log('Console-spy: ', capturedConsoleOutput)
+    if (DEBUG_LOGS) console.log('Logger-spy: ', capturedLoggerOutput)
+    if (DEBUG_LOGS) console.log('Console-spy: ', capturedConsoleOutput)
     expect(capturedLoggerOutput).toEqual(InfoTag + capturedConsoleOutput)
   })
 
@@ -65,8 +67,8 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     const capturedConsoleOutput = writeSpy.mock.calls[0][0]
     const capturedLoggerOutput = clearJestAnnotatdLogs(removeColors(writeSpy.mock.calls[1][0]))
 
-    console.log('Logger-spy: ', capturedLoggerOutput)
-    console.log('Console-spy: ', capturedConsoleOutput)
+    if (DEBUG_LOGS) console.log('Logger-spy: ', capturedLoggerOutput)
+    if (DEBUG_LOGS) console.log('Console-spy: ', capturedConsoleOutput)
     expect(capturedLoggerOutput).toEqual(InfoTag + capturedConsoleOutput)
   })
 })
