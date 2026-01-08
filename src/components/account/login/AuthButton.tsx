@@ -33,39 +33,33 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
   const [isLoading, setLoading] = useState(false)
   const { push, refresh } = useRouter()
 
-  const redirectUser = (type: 'successful' | 'erroneous') => {
-    if (type === 'successful') {
-      if (callbackURL) push(callbackURL)
-      else console.warn('[AuthButton]: No callbackUrl defined.')
-    } else {
-      if (errorCallbackURL) push(errorCallbackURL)
-      else console.warn('[AuthButton]: No errorCallbackUrl defined.')
-    }
-  }
-
-  let signIn: () => Promise<Any>
+  let signInAction: () => Promise<Any>
 
   if (props.auth_type === 'anonymous') {
-    signIn = () =>
-      auth_client.signIn
-        .anonymous()
-        .then(() => redirectUser('successful'))
-        .catch(() => redirectUser('erroneous'))
-        .finally(() => refresh()) //* ensure user-avater is loaded
+    signInAction = () =>
+      auth_client.signIn.anonymous({
+        fetchOptions: {
+          onSuccess: () => {
+            if (callbackURL) push(callbackURL)
+            else console.warn('[AuthButton]: No callbackUrl defined.')
+
+            refresh()
+          },
+
+          onError: () => {
+            if (errorCallbackURL) push(errorCallbackURL)
+            else console.warn('[AuthButton]: No errorCallbackUrl defined.')
+
+            refresh()
+          },
+        },
+      })
   } else if (props.auth_type === 'social') {
-    signIn = () =>
-      auth_client.signIn
-        .social({ provider: props.provider, callbackURL, errorCallbackURL })
-        .then(() => redirectUser('successful'))
-        .catch(() => redirectUser('erroneous'))
+    signInAction = () => auth_client.signIn.social({ provider: props.provider, callbackURL, errorCallbackURL })
   } else if (props.auth_type === 'oauth') {
-    signIn = () =>
-      auth_client.signIn
-        .oauth2({ providerId: props.provider, callbackURL, errorCallbackURL })
-        .then(() => redirectUser('successful'))
-        .catch(() => redirectUser('erroneous'))
+    signInAction = () => auth_client.signIn.oauth2({ providerId: props.provider, callbackURL, errorCallbackURL })
   } else {
-    signIn = () => {
+    signInAction = () => {
       console.error('[AuthButton]: Unknown auth_type', props)
       return Promise.reject(new Error('Unknown auth_type'))
     }
@@ -85,7 +79,7 @@ export default function AuthButton({ callbackURL = process.env.NEXT_PUBLIC_BASE_
       onClick={(e) => {
         setLoading(true)
         //* Loading state is not disabled as the authentication call finished immediately. This way the loading-indicator is removed by redirecting / refreshing the page
-        signIn()
+        signInAction()
         props.onClick?.call(null, e)
       }}
       children={

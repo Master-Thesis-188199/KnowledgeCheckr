@@ -1,4 +1,5 @@
 import { VenetianMaskIcon } from 'lucide-react'
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import { redirect, RedirectType } from 'next/navigation'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
@@ -11,15 +12,38 @@ import { GoogleSocialButton } from '@/src/components/Shared/Authentication/Googl
 import Card from '@/src/components/Shared/Card'
 import { getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
-import { getReferer } from '@/src/lib/Shared/getReferer'
+import { getRefererURL } from '@/src/lib/Shared/getRefererURL'
 import { cn } from '@/src/lib/Shared/utils'
+
+/**
+ * This function is used to either return the callbackURL or undefined when no valid callbackURL is found.
+ * @param refererHref The href of the referer that may or may not exist. When null --> no callbackURL will be returned (undefined)
+ * @returns Returns either the refererURL when the currentURL is not not known or the refererURL is different than the currentURL. Otherwise it returns undefined.
+ */
+async function identifyCallbackHref(refererHref?: string | null) {
+  const headersList = await headers()
+  const currentHref = headersList.get('x-current-href')
+
+  if (!refererHref) return undefined
+  if (!currentHref) return refererHref
+
+  const isSameHref = currentHref === refererHref
+
+  return isSameHref ? undefined : refererHref
+}
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
   //? `referer` is passed along when the user switches between signin and signup
   let { type, referer } = await searchParams
   type = type || 'signin'
 
-  const callbackUrl = referer ?? (await getReferer())
+  const refererHref = referer ?? (await getRefererURL())
+
+  // the origin of the request (referer) to which the user shall be redirected || or null when no referer is set or user comes from the same page.
+  const refererCallback = await identifyCallbackHref(refererHref)
+
+  // set callback either to origin-of-signin (referer)  or  redirect to fallback ('/account')
+  const callbackURL = refererCallback ?? '/account'
 
   const { user } = await getServerSession()
   if (user) {
@@ -39,11 +63,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             title={type === 'signup' ? 'Create an account' : 'Welcome back'}
             subTitle={type === 'signup' ? 'Increase your knowledge by creating KnowledgeChecks' : 'Jump right back to where you left of'}
           />
-          {type === 'signup' ? <SignupForm callbackUrl={callbackUrl ?? '/'} /> : <LoginForm callbackUrl={callbackUrl ?? '/'} />}
+          {type === 'signup' ? <SignupForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} /> : <LoginForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} />}
         </div>
 
         <div className='flex flex-col gap-5'>
-          <SocialProviderSection label={type} callbackUrl={callbackUrl ?? undefined} />
+          <SocialProviderSection label={type} callbackUrl={callbackURL} />
 
           <div className='relative'>
             <div className='absolute inset-0 inset-x-12 flex items-center' aria-hidden='true'>
@@ -56,7 +80,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               </p>
             </div>
           </div>
-          <AnonymousSigninButton icon={VenetianMaskIcon} className='mx-auto text-neutral-600 dark:text-neutral-200' callbackURL={callbackUrl ?? undefined} />
+          <AnonymousSigninButton icon={VenetianMaskIcon} className='mx-auto text-neutral-600 dark:text-neutral-200' callbackURL={callbackURL} />
         </div>
       </Card>
     </div>

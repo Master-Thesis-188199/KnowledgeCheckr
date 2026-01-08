@@ -61,6 +61,8 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.signUp(USERNAME, EMAIL, '1234567890')
     cy.signOut()
 
+    cy.visit('/account')
+
     cy.login(EMAIL, '1234567890')
   })
 
