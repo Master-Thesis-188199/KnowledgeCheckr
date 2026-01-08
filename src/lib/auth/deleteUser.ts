@@ -3,6 +3,9 @@ import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_user, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import { BetterAuthUser } from '@/src/lib/auth/server'
+import _logger from '@/src/lib/log/Logger'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 /**
  * This server-action deletes a given user based on the provided id.
@@ -17,10 +20,10 @@ export async function deleteUser({ userId, abortOnExaminationResults }: { userId
   const hasExaminationAttempts = await db.select().from(db_userHasDoneKnowledgeCheck).where(eq(db_userHasDoneKnowledgeCheck.userId, userId))
 
   if (abortOnExaminationResults === true && hasExaminationAttempts.length > 0) {
-    console.warn('Deletion of anonymous user data aborted, because of existing examination-results.')
+    logger.warn('Deletion of anonymous user data aborted, because of existing examination-results.')
     return
   }
 
-  console.log(`Anonymous user data about to be deleted: { userId: ${userId} }`)
+  logger.info(`Anonymous user data about to be deleted: { userId: ${userId} }`)
   await db.delete(db_user).where(eq(db_user.id, userId))
 }

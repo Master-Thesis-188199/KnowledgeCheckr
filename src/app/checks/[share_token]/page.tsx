@@ -18,8 +18,10 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
     notFound()
   }
 
+  const preparedCheck = await prepareExaminationCheck(check)
+
   return (
-    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: prepareExaminationCheck(check), startedAt: new Date() }}>
+    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, knowledgeCheck: preparedCheck, startedAt: new Date() }}>
       <PageHeading title={check.name ?? '<check-name>'} />
 
       <div className='grid gap-12 @3xl:grid-cols-[1fr_auto] @3xl:gap-[7vw]'>

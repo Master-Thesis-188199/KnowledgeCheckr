@@ -4,9 +4,12 @@ import getDatabase from '@/database/Database'
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledgeCheck_id: KnowledgeCheck['id'], categories: (typeof db_category.$inferSelect)[]) {
   await requireAuthentication()
@@ -78,7 +81,7 @@ export async function getKnowledgeCheckQuestionById<ExpectedQuestion extends Que
   const answers = await db.select().from(db_answer).where(eq(db_answer.questionId, question_id)).orderBy(db_answer._position)
 
   const [category] = await db.select({ name: db_category.name }).from(db_category).where(eq(db_category.id, dbQuestion.categoryId)).limit(1)
-  if (category === undefined) console.warn('Category was not found in question retrieval (getKnowledgeCheckQuestionById)')
+  if (category === undefined) logger.warn('Category was not found in question retrieval (getKnowledgeCheckQuestionById)')
 
   const question = {
     id: dbQuestion.id,

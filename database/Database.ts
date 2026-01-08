@@ -1,7 +1,10 @@
 import { drizzle, MySql2Database } from 'drizzle-orm/mysql2'
 import { Connection, createConnection } from 'mysql2/promise'
+import _logger from '@/src/lib/log/Logger'
 import env from '@/src/lib/Shared/Env'
 import { Any } from '@/types'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export type DrizzleDB = MySql2Database
 
@@ -83,7 +86,7 @@ async function getConnection() {
     })
   } else {
     if (!global.connection || !(await isConnectionAlive())) {
-      console.log('Creating new database connection for development environment.')
+      logger.info('Creating new database connection for development environment.')
       global.connection = await createConnection({
         host: env.DATABASE_HOST,
         user: env.DATABASE_USER,

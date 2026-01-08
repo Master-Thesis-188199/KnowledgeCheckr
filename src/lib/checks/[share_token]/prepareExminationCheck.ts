@@ -1,39 +1,16 @@
+'use server'
+
 import shuffle from 'lodash/shuffle'
-import { ExaminationState } from '@/src/hooks/checks/[share_token]/ExaminationStore'
-import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
+import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
-/**
- * This functions initializes the `results` property of the ExaminationStore. This means that it will have the same structure (e.g. indicies) as the question-answers of the respective knowledgeCheck.
- * @param state The examinationState used to access the knowledgeCheck to mimic its structure
- * @returns
- */
-export function initializeExaminationResults(state: ExaminationState) {
-  return Array.from(state.knowledgeCheck.questions).map((question): ExaminationSchema['results'][number] => ({
-    question_id: question.id,
-    answer: Array.from({ length: (question?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i): ExaminationSchema['results'][number]['answer'][number] => {
-      switch (question.type) {
-        case 'single-choice':
-          return { label: question.answers.at(i)!.answer, selected: false }
-
-        case 'multiple-choice':
-          return { label: question.answers.at(i)!.answer, selected: false }
-
-        case 'drag-drop':
-          return { label: question.answers.at(i)!.answer, position: i }
-
-        default:
-          return {}
-      }
-    }),
-  }))
-}
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 /**
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
-export default function prepareExaminationCheck(check: KnowledgeCheck) {
+export default async function prepareExaminationCheck(check: KnowledgeCheck) {
   let questions = check.settings.questionOrder === 'create-order' ? check.questions : shuffleArray(check.questions)
 
   questions = questions
@@ -98,7 +75,7 @@ function hideCorrectness(question: Question): Question {
 
 function shuffleArray<T extends { id: string }>(array: T[], shuffleCount = 0): T[] {
   if (array.length <= 1) {
-    console.warn(`[shuffleArray]: Array of length ${array.length} cannot be shuffled properly. Returning original array.`)
+    logger.warn(`[shuffleArray]: Array of length ${array.length} cannot be shuffled properly. Returning original array.`)
     return array
   }
 
@@ -110,7 +87,7 @@ function shuffleArray<T extends { id: string }>(array: T[], shuffleCount = 0): T
       throw new Error("Shuffling array didn't produce a different order after 5 attempts!")
     }
 
-    console.log('Reshuffling array to avoid same order...')
+    logger.info('Reshuffling array to avoid same order...')
     return shuffleArray(array, shuffleCount + 1)
   }
 

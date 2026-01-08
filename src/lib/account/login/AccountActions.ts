@@ -2,9 +2,12 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/src/lib/auth/server'
+import _logger from '@/src/lib/log/Logger'
 import { LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import { Any } from '@/types'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export type AuthState = {
   success: boolean
@@ -45,7 +48,7 @@ export async function signin(_: AuthState, formData: FormData): Promise<AuthStat
       return { success: false, rootError: 'Wrong e-mail address or password.', values }
     }
 
-    console.error(e)
+    logger.error(e)
     return { success: false, rootError: 'Something went wrong - please try again.', values }
   }
 
@@ -88,7 +91,7 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
       }
     }
 
-    console.error(e)
+    logger.error(e)
     return {
       success: false,
       rootError: 'Could not create your account - please try again later.',

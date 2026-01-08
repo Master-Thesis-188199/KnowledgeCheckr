@@ -7,7 +7,10 @@ import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import _logger from '@/src/lib/log/Logger'
 import { cn } from '@/src/lib/Shared/utils'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default async function PracticePage({ params, searchParams }: { params: Promise<{ share_token: string }>; searchParams?: Promise<{ category?: '_none_' | string }> }) {
   const { share_token } = await params
@@ -30,10 +33,10 @@ export default async function PracticePage({ params, searchParams }: { params: P
     const categoryName = decodeURIComponent(category)
 
     if (categoryName === '_none_') {
-      console.debug('Pre-setting practice questions to be unfiltered.')
+      logger.debug('Pre-setting practice questions to be unfiltered.')
       practiceQuestions = unfilteredQuestions
     } else {
-      console.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
+      logger.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
       practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
     }
   }
