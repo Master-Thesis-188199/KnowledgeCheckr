@@ -1,0 +1,1 @@
+ALTER TABLE `KnowledgeCheck_Settings` ADD `examinationAttemptCount` int DEFAULT 1 NOT NULL;

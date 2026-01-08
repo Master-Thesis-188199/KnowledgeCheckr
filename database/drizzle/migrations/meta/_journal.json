@@ -85,6 +85,13 @@
       "when": 1766159178463,
       "tag": "0011_category-name-per-check-uniqueness",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1767901175460,
+      "tag": "0012_examination-attempt-limit",
+      "breakpoints": true
     }
   ]
 }
