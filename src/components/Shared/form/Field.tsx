@@ -68,6 +68,7 @@ export default function Field<Values extends FieldValues>({
               )}>
               <FormControl>
                 <ShadcnInput
+                  autoComplete={field.name.includes('password') ? 'current-password' : field.name}
                   className='peer hover:cursor-text'
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}

@@ -6,6 +6,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { Controller, type ControllerProps, type FieldPath, type FieldValues, FormProvider, useFormContext, useFormState } from 'react-hook-form'
 import { Label } from '@/components/shadcn/label'
 import { cn } from '@/lib/Shared/utils'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 
 const Form = FormProvider
 
@@ -34,7 +35,9 @@ const useFormField = () => {
     throw new Error('useFormField should be used within <FormField>')
   }
 
-  const { id } = itemContext
+  const { id: fieldId } = itemContext
+
+  const id = fieldId ?? getUUID()
 
   return {
     id,
