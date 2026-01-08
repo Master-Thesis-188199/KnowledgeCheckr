@@ -72,6 +72,7 @@ describe('Check: Drag Drop Question -', () => {
         })
         .should('have.value', answers[i].answer)
         .parent()
+        .parent()
         .find(`input[name$='.position']`)
 
         .invoke('val')
@@ -87,6 +88,7 @@ describe('Check: Drag Drop Question -', () => {
                 return el.value === answers[i].answer
               })
               .should('have.value', answers[i].answer)
+              .parent()
               .parent()
               .find(`button[aria-label='move answer ${direction}']`)
               .click()

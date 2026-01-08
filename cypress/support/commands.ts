@@ -40,6 +40,8 @@ import { Any } from '@/types'
 //   }
 // }
 
+const SignInFallbackCallbackPath = '/account'
+
 Cypress.Commands.add('skip', (message = 'Test skipped using cy.skip()', condition: boolean = true) => {
   if (!condition) return
 
@@ -54,13 +56,25 @@ Cypress.Commands.add('login', (email: string, password: string) => {
     cy.log('Skipping signup because username, email or password is not provided')
   }
 
+  cy.url().then((url) => {
+    const isActualUrl = url.includes(Cypress.env('NEXT_PUBLIC_BASE_URL'))
+    const callbackUrl = isActualUrl ? url : `${Cypress.env('NEXT_PUBLIC_BASE_URL')}${SignInFallbackCallbackPath}`
+
+    cy.wrap(callbackUrl).as('callback')
+  })
+
   cy.visit('/account/login?type=signin')
 
   cy.get('input[name="email"]').filter(':visible').type(email)
   cy.get('input[name="password"]').filter(':visible').type(password)
 
+  cy.intercept('POST', '/account/login?type=signin').as('signin')
   cy.get('button[type="submit"]').filter(':visible').click()
-  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+
+  cy.wait('@signin')
+  cy.get('@callback').then((expectedCallback) => {
+    cy.url().should('equal', expectedCallback)
+  })
 })
 
 Cypress.Commands.add('signUp', (username: string, email: string, password: string) => {
@@ -68,14 +82,26 @@ Cypress.Commands.add('signUp', (username: string, email: string, password: strin
     cy.log('Skipping signup because username, email or password is not provided')
   }
 
+  cy.url().then((url) => {
+    const isActualUrl = url.includes(Cypress.env('NEXT_PUBLIC_BASE_URL'))
+    const callbackUrl = isActualUrl ? url : `${Cypress.env('NEXT_PUBLIC_BASE_URL')}${SignInFallbackCallbackPath}`
+
+    cy.wrap(callbackUrl).as('signup-callback')
+  })
+
   cy.visit('/account/login?type=signup')
 
   cy.get('input[name="name"]').filter(':visible').type(username)
   cy.get('input[name="email"]').filter(':visible').type(email)
   cy.get('input[name="password"]').filter(':visible').type(password)
 
+  cy.intercept('POST', '/account/login?type=signup').as('signup')
   cy.get('button[type="submit"]').filter(':visible').click()
-  cy.url().should('equal', `${Cypress.config('baseUrl')}/`)
+  cy.wait('@signup')
+
+  cy.get('@signup-callback').then((expectedCallback) => {
+    cy.url().should('equal', expectedCallback)
+  })
 })
 
 Cypress.Commands.add('signOut', () => {
@@ -183,6 +209,13 @@ Cypress.Commands.add('insertKnowledgeCheck', (check) => {
 })
 
 Cypress.Commands.add('loginAnonymously', () => {
+  cy.url().then((url) => {
+    const isActualUrl = url.includes(Cypress.env('NEXT_PUBLIC_BASE_URL'))
+    const callbackUrl = isActualUrl ? url : `${Cypress.env('NEXT_PUBLIC_BASE_URL')}${SignInFallbackCallbackPath}`
+
+    cy.wrap(callbackUrl).as('callback')
+  })
+
   cy.visit('/account/login')
 
   cy.intercept('POST', '/api/auth/sign-in/anonymous').as('signin')

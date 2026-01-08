@@ -78,8 +78,8 @@ function verifyOpenCloseEditMenu(
 
   if (editAction_BeforeValidation) editAction_BeforeValidation()
 
-  cy.get('#question-dialog input[id="question"]').should('have.value', question.question)
-  cy.get('#question-dialog input[id="points"]').should('have.value', question.points)
+  cy.get('#question-dialog input[name="question"]').should('have.value', question.question)
+  cy.get('#question-dialog input[name="points"]').should('have.value', question.points)
   cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
 
   if (validateProps.answers && (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop')) {
@@ -189,7 +189,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
     cy.loginAnonymously()
 
     cy.visit('/checks/create')
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('li[data-stage-name="questions"]').should('exist').and('be.visible').click()
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('[data-stage-name="questions"]').should('exist').and('be.visible').click()
 
     for (const question of dummyQuestions) {
       createQuestion(question)

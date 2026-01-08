@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { generateToken } from '@/src/lib/Shared/generateToken'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type CheckState = KnowledgeCheck & {
@@ -15,6 +16,7 @@ export type CheckActions = {
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
   updateSettings: (settings: Partial<KnowledgeCheck['settings']>) => void
+  updateCheck: (update: Partial<KnowledgeCheck>) => void
 }
 
 export type CheckStore = CheckState & CheckActions
@@ -36,7 +38,7 @@ const defaultInitState: CheckState = {
   closeDate: null,
   difficulty: 4,
   openDate: new Date(Date.now()),
-  share_key: null,
+  share_key: generateToken(8),
 
   unsavedChanges: false,
 }
@@ -97,6 +99,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
           }),
         removeQuestion,
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
+        updateCheck: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
       }
     },
   })

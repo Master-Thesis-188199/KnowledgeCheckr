@@ -4,14 +4,24 @@ import MobileSideBar from '@/components/root/Navigation/mobile/MobileSideBar'
 import { SidebarStoreProvider, SidebarStoreProviderProps } from '@/components/root/Navigation/SidebarStoreProvider'
 import ConditionalBreakpointRendering from '@/src/components/Shared/ConditionalBreakpointRendering'
 
+type SidebarSeparator = {
+  type: 'separator'
+  classes?: string
+}
+
+type BasicSidebarElement = {
+  type: 'navigation'
+  label: string
+  icon: ReactNode
+  href?: string
+}
+
+export type SidebarItem = SidebarSeparator | BasicSidebarElement
+
 export interface SideBarProps {
   title: string
   icon?: ReactNode
-  elements: Array<{
-    label: string
-    icon: ReactNode
-    href?: string
-  }>
+  elements: Array<SidebarItem>
 }
 
 export default async function SideBar({ children, initialStoreProps }: { initialStoreProps?: SidebarStoreProviderProps['initialStoreProps']; children: ReactNode }) {

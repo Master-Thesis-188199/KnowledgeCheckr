@@ -6,6 +6,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { Controller, type ControllerProps, type FieldPath, type FieldValues, FormProvider, useFormContext, useFormState } from 'react-hook-form'
 import { Label } from '@/components/shadcn/label'
 import { cn } from '@/lib/Shared/utils'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 
 const Form = FormProvider
 
@@ -34,7 +35,9 @@ const useFormField = () => {
     throw new Error('useFormField should be used within <FormField>')
   }
 
-  const { id } = itemContext
+  const { id: fieldId } = itemContext
+
+  const id = fieldId ?? getUUID()
 
   return {
     id,
@@ -81,7 +84,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
-  const { error, formMessageId } = useFormField()
+  const { error, formMessageId, name } = useFormField()
   const body = error ? String(error?.message ?? '') : props.children
 
   if (!body) {
@@ -89,7 +92,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   }
 
   return (
-    <p data-slot='form-message' id={formMessageId} className={cn('text-destructive text-sm', className)} {...props}>
+    <p data-slot='form-message' id={formMessageId} data-field-error={name} className={cn('text-destructive text-sm', className)} {...props}>
       {body}
     </p>
   )

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { PracticeNavigationNextButton, PracticeNavigationPreviousButton } from '@/src/components/checks/[share_token]/practice/NavigationButtons'
 import { PracticeBreadcrumbs } from '@/src/components/checks/[share_token]/practice/PracticeBreadcrumbs'
 import { PracticeProgress } from '@/src/components/checks/[share_token]/practice/PracticeProgress'
 import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token]/practice/PracticeQuestionNavigation'
@@ -43,12 +44,17 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
       <PageHeading title='Practice' />
 
-      <div className='mx-auto'>
+      <div className='mx-auto w-full max-w-3/4 lg:max-w-1/2'>
         <PracticeQuestionNavigation />
 
         <PracticeProgress />
 
         <RenderPracticeQuestion />
+
+        <div className='flex justify-between'>
+          <PracticeNavigationPreviousButton />
+          <PracticeNavigationNextButton />
+        </div>
       </div>
     </PracticeStoreProvider>
   )

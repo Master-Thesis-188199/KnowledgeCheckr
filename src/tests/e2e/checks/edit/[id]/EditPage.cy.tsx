@@ -15,7 +15,7 @@ describe('Edit KnowledgeCheck page: ', () => {
     cy.loginTestUser()
 
     cy.visit('/checks/create')
-    cy.get('input[name="check-name"]').type('Test Check Title')
+    cy.get('input[name="name"]').type('Test Check Title')
 
     //* Switch to last stage to save check
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()

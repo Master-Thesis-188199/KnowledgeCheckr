@@ -10,7 +10,7 @@ export default async function AppVersion() {
     <div className={twMerge('hidden justify-end', env.SHOW_APP_VERSION && 'flex')}>
       <Link
         href={`https://github.com/Master-Thesis-188199/KnowledgeCheckr/releases/tag/${version}`}
-        className='rounded-md p-1.5 text-xs dark:text-neutral-300/70 dark:hover:bg-neutral-700 dark:hover:text-neutral-300'
+        className='rounded-md p-1.5 text-xs text-neutral-700 hover:bg-neutral-200 hover:text-neutral-600 dark:text-neutral-300/70 dark:hover:bg-neutral-700 dark:hover:text-neutral-300'
         children={version}
       />
     </div>
