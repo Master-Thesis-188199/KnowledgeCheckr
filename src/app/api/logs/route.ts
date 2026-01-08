@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server'
-import { logClient } from '@/src/lib/log/LogAction'
 import _logger from '@/src/lib/log/Logger'
 import { LogSchema } from '@/src/lib/log/type'
 import { Any } from '@/types'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-type LogClientOptions = Parameters<typeof logClient>[0]
 
 export async function POST(req: Request) {
   let json: unknown
