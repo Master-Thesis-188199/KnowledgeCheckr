@@ -1,6 +1,7 @@
 'use client'
 
 import { logClient } from '@/src/lib/log/LogAction'
+import { LoggerOptions } from '@/src/lib/log/type'
 
 type LogClientOptions = Parameters<typeof logClient>[0]
 
@@ -9,10 +10,21 @@ type LogClientOptions = Parameters<typeof logClient>[0]
  * @param context The optional context-prefix that shall be used for all messages.
  */
 export function useLogger(context?: LogClientOptions['context']) {
-  const info = (...message: unknown[]) => logClient({ level: 'info', context }, ...message)
-  const warn = (...message: unknown[]) => logClient({ level: 'warn', context }, ...message)
-  const error = (...message: unknown[]) => logClient({ level: 'error', context }, ...message)
-  const verbose = (...message: unknown[]) => logClient({ level: 'verbose', context }, ...message)
+  const info = (...messages: unknown[]) => sendClientLog({ level: 'info', context, messages })
+  const warn = (...messages: unknown[]) => sendClientLog({ level: 'warn', context, messages })
+  const error = (...messages: unknown[]) => sendClientLog({ level: 'error', context, messages })
+  const verbose = (...messages: unknown[]) => sendClientLog({ level: 'verbose', context, messages })
 
   return { info, warn, error, verbose }
+}
+
+async function sendClientLog(logOptions: LoggerOptions) {
+  try {
+    await fetch('/api/logs', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(logOptions),
+      keepalive: true,
+    })
+  } catch {}
 }
