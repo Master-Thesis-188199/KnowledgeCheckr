@@ -64,6 +64,11 @@ export default function Field<Values extends FieldValues>({
             })
           }
 
+          // auto-support number inputs to use `valueAsNumber`
+          if (props.type === 'number') {
+            return field.onChange({ ...e, target: { ...e.target, value: e.target.valueAsNumber } })
+          }
+
           return field.onChange(e)
         }
 
