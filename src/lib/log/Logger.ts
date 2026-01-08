@@ -38,7 +38,7 @@ const logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize({ level: true }),
         winston.format.printf(({ level, message, timestamp, context, ...rest }) =>
-          formatLogMessage({ show: { context: true, args: true, colorizeArgs: true }, values: { level, message, timestamp, context, ...rest } }),
+          formatLogMessage({ show: { context: true, args: true, colorizeArgs: env.NEXT_PUBLIC_MODE === 'development' }, values: { level, message, timestamp, context, ...rest } }),
         ),
       ),
     }),
