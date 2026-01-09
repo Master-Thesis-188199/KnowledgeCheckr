@@ -6,9 +6,9 @@ const baseSchema = z.object({
   password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
 })
 
-export type LoginSchema = z.infer<typeof baseSchema>
+export type LoginProps = z.infer<typeof baseSchema>
 export const LoginSchema = baseSchema
-const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<LoginSchema>(LoginSchema)
+const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<LoginProps>(LoginSchema)
 export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }
 
 export const SignupSchema = baseSchema.extend({
