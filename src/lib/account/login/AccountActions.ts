@@ -42,8 +42,10 @@ export async function signin(_: LoginAuthState, values: LoginProps): Promise<Log
     return { success: false, fieldErrors, values }
   }
 
+  const { callbackURL, ...data } = parsed.data
+
   try {
-    await auth.api.signInEmail({ body: parsed.data })
+    await auth.api.signInEmail({ body: data })
   } catch (e: Any) {
     if (e?.statusCode === 401) {
       return { success: false, rootError: 'Wrong e-mail address or password.', values }
@@ -53,7 +55,8 @@ export async function signin(_: LoginAuthState, values: LoginProps): Promise<Log
     return { success: false, rootError: 'Something went wrong - please try again.', values }
   }
 
-  redirect(parsed.data.callbackURL ?? '/')
+  // uses form-callback value or the default-value from the `LoginSchema`
+  redirect(callbackURL)
 }
 
 export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {

@@ -4,7 +4,7 @@ import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 const baseSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
-  callbackURL: z.string().optional(),
+  callbackURL: z.string().optional().default('/'),
 })
 
 export type LoginProps = z.infer<typeof baseSchema>
