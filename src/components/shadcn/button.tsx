@@ -22,6 +22,10 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
         ghost: 'enabled:hover:bg-accent enabled:active:ring-2 enabled:active:ring-accent enabled:hover:text-accent-foreground dark:enabled:hover:bg-accent/50 dark:enabled:active:bg-accent/90',
         link: 'text-primary underline-offset-4 enabled:hover:underline',
+        base: cn(
+          'bg-neutral-100/80 dark:bg-neutral-700/40 ring-ring-subtle ring-1',
+          'hover:ring-ring hover:bg-neutral-50/80 active:bg-neutral-200/90 active:ring-ring-focus dark:hover:bg-neutral-700/70 dark:active:bg-neutral-700/90 ',
+        ),
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
