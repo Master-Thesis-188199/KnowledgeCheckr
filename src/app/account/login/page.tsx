@@ -24,12 +24,17 @@ async function identifyCallbackHref(refererHref?: string | null) {
   const headersList = await headers()
   const currentHref = headersList.get('x-current-href')
 
-  if (!refererHref) return undefined
-  if (!currentHref) return refererHref
+  if (!refererHref || !URL.parse(refererHref, env.NEXT_PUBLIC_BASE_URL)) return undefined
+  const refererUrl = URL.parse(refererHref, env.NEXT_PUBLIC_BASE_URL)!
+
+  // external referer
+  if (refererUrl.origin !== env.NEXT_PUBLIC_BASE_URL) return undefined
+
+  if (!currentHref || !URL.parse(currentHref)) return refererUrl.pathname
 
   const isSameHref = currentHref === refererHref
 
-  return isSameHref ? undefined : refererHref
+  return isSameHref ? undefined : refererUrl.pathname
 }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ type: 'signup' | 'signin'; referer?: string }> }) {
