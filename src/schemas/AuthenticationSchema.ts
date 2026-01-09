@@ -15,6 +15,6 @@ export { instantiateLoginProps, safeParseLoginProps, validateLoginProps }
 export const SignupSchema = baseSchema.extend({
   name: z.string().trim().min(1, { message: 'The name must be at least 1 characters long.' }),
 })
-export type SignupSchema = z.infer<typeof SignupSchema>
-const { validate: validateSignup, instantiate: instantiateSignup, safeParse: safeParseSignup } = schemaUtilities<SignupSchema>(SignupSchema)
-export { instantiateSignup, safeParseSignup, validateSignup }
+export type SignupProps = z.infer<typeof SignupSchema>
+const { validate: validateSignupProps, instantiate: instantiateSignupProps, safeParse: safeParseSignupProps } = schemaUtilities<SignupProps>(SignupSchema)
+export { instantiateSignupProps, safeParseSignupProps, validateSignupProps }
