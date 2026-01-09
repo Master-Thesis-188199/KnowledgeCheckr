@@ -14,7 +14,7 @@ import { SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { signupAction } from '../../../lib/account/login/AccountActions'
 
 export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const { form, runServerValidation, state } = useRHF(
+  const { form, runServerValidation, state, isServerValidationPending } = useRHF(
     SignupSchema,
     {
       delayError: 150,
@@ -85,7 +85,7 @@ export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callba
         <div className='mt-4 flex flex-col items-center justify-center gap-3'>
           <Button
             variant='base'
-            isLoading={isLoading || isValidating || isSubmitting || isPending}
+            isLoading={isLoading || isValidating || isSubmitting || isServerValidationPending}
             disabled={!isValid}
             data-auth-provider='credential'
             type='submit'
