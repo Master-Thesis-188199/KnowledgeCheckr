@@ -1,82 +1,64 @@
-'use client'
-
-import { useActionState, useCallback, useTransition } from 'react'
+import { useActionState, useCallback, useMemo, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { DefaultValues, useForm, UseFormProps } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { RHFBaseReturn, RHFServerAction, RHFServerState, RHFWithServerReturn, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
+import { buildBaseReturn, buildDefaultValues, createNoopServerAction, isServerAction } from '@/src/hooks/Shared/form/react-hook-form/utilts'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 
-type ServerActionState<TSchema extends z.ZodSchema> = {
-  success: boolean
-  fieldErrors?: { [key in keyof z.infer<TSchema>]?: string[] }
-  rootError?: string
-  values?: Partial<z.infer<TSchema>>
-}
-type ServerValidationAction<TSchema extends z.ZodSchema> = (state: ServerActionState<TSchema>, data: z.infer<TSchema>) => Promise<ServerActionState<TSchema>>
-
-type UseRHFOptions<TSchema extends z.ZodSchema> = {
-  serverAction?: ServerValidationAction<TSchema>
-}
-type UseRHFBaseReturn<TSchema extends z.ZodSchema> = {
-  form: ReturnType<typeof useForm<z.infer<TSchema>>>
-  descriptions: ReturnType<typeof extractDescriptionMap>
-  baseFieldProps: {
-    form: ReturnType<typeof useForm<z.infer<TSchema>>>
-    descriptions: ReturnType<typeof extractDescriptionMap>
-  }
-}
-
-type UseRHFWithServerReturn<TSchema extends z.ZodSchema> = UseRHFBaseReturn<TSchema> & {
-  callServerAction: (values: z.infer<TSchema>) => void
-  state: ServerActionState<TSchema>
-}
-
-// prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: Omit<UseFormProps<z.infer<TSchema>>, 'resolver'>): UseRHFBaseReturn<TSchema>
-// prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps: Omit<UseFormProps<z.infer<TSchema>>, 'resolver'> | undefined, options: UseRHFOptions<TSchema>): UseRHFWithServerReturn<TSchema>
+const INITIAL_SERVER_STATE = { success: false } as const
 
 /**
- * This hook is used to combine the initialization of a react-hook-form and the retrieval of the schema descriptions into one.
- * @param schema The schema used to validate the form and to retrieve its respective fields descriptions.
- * @param formProps The properties used to configure the react-hook-form form.
- * @returns The created react-hook-form form instance, the retrieved descriptions and a object `baseFieldProps` which combines both the `form` and `descriptions` to easily pass them along to `Field` components.
+ * Internal hook that encapsulates all server-action/useActionState wiring.
+ * Keeps `useRHF` body focused on "schema + RHF init + return shape".
  */
-export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: {} & Omit<UseFormProps<z.infer<TSchema>>, 'resolver'>, options?: UseRHFOptions<TSchema>) {
-  const hasServerValidation = typeof options?.serverAction === 'function'
-  const noopServerValidation: ServerValidationAction<TSchema> = async (prevState) => prevState
-  const initialState: ServerActionState<TSchema> = { success: false }
+function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOptions<TSchema>) {
+  const serverAction = options?.serverAction
+  const hasServerValidation = isServerAction(serverAction)
 
-  const [state, formAction] = useActionState((options?.serverAction ?? noopServerValidation) as ServerValidationAction<TSchema>, initialState)
-  const [isPending, startTransition] = useTransition()
+  // Hooks must not be conditional; always provide an action function.
+  const actionForUseActionState = (serverAction ?? createNoopServerAction<TSchema>()) as RHFServerAction<TSchema>
 
-  const descriptions = extractDescriptionMap(schema)
-  const form = useForm<z.infer<TSchema>>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      ...(state.values ?? ({} as DefaultValues<TSchema>)),
-      ...formProps?.defaultValues,
-    },
-    ...formProps,
-  })
+  const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, INITIAL_SERVER_STATE)
+
+  const [, startTransition] = useTransition()
 
   const callServerAction = useCallback(
     (values: z.infer<TSchema>) => {
       if (!hasServerValidation) return
       startTransition(() => {
-        formAction(values)
+        dispatchServerAction(values)
       })
     },
-    [hasServerValidation, formAction, startTransition],
+    [hasServerValidation, dispatchServerAction, startTransition],
   )
 
-  const base = {
-    form,
-    descriptions,
-    baseFieldProps: { form, descriptions },
-  } as const
+  return { hasServerValidation, serverState, callServerAction }
+}
+
+// prettier-ignore
+export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps?: UseRHFFormProps<TSchema>): RHFBaseReturn<TSchema>
+
+// prettier-ignore
+export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps: UseRHFFormProps<TSchema> | undefined, options: UseRHFOptions<TSchema>): RHFWithServerReturn<TSchema>
+
+/**
+ * Combines react-hook-form initialization with Zod schema validation + schema descriptions.
+ * Optionally wires up a Next.js server action (useActionState) for server-side validation.
+ */
+export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
+  const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
+  const { hasServerValidation, serverState, callServerAction } = useServerValidation<TSchema>(options)
+
+  const form = useForm<z.infer<TSchema>>({
+    resolver: zodResolver(schema),
+    defaultValues: buildDefaultValues(serverState, formProps),
+    ...formProps,
+  })
+
+  const base = buildBaseReturn(form, descriptions)
 
   if (!hasServerValidation) return base
 
-  return { ...base, callServerAction, state }
+  return { ...base, callServerAction, state: serverState }
 }
