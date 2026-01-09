@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { RHFBaseReturn, RHFServerAction, RHFServerState, RHFSeverReturn, RHFWithServerReturn, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { buildBaseReturn, buildDefaultValues, createNoopServerAction, isServerAction } from '@/src/hooks/Shared/form/react-hook-form/utilts'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
+import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 const INITIAL_SERVER_STATE = { success: false } as const
 
@@ -49,11 +50,16 @@ export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, fo
 export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
   const { hasServerValidation, ...serverReturnProps } = useServerValidation<TSchema>(options)
+  const { instantiate } = schemaUtilities<z.infer<TSchema>>(schema)
 
   const form = useForm<z.infer<TSchema>>({
     resolver: zodResolver(schema),
-    defaultValues: buildDefaultValues(serverReturnProps.state, formProps),
     ...formProps,
+    defaultValues: {
+      ...instantiate({ stripDefaultValues: true }), // instantiates each prop with e.g. an empty string so that they are not undefined
+      ...buildDefaultValues(serverReturnProps.state, formProps),
+      ...formProps?.defaultValues,
+    },
   })
 
   const base = buildBaseReturn(form, descriptions)
