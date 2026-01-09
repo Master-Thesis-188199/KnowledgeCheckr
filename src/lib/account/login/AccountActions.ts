@@ -32,7 +32,7 @@ export type LoginAuthState = {
   values?: Partial<LoginProps>
 }
 
-export async function signin(_: LoginAuthState, values: LoginProps): Promise<LoginAuthState> {
+export async function loginAction(_: LoginAuthState, values: LoginProps): Promise<LoginAuthState> {
   'use server'
 
   const parsed = LoginSchema.safeParse(values)

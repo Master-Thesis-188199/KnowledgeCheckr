@@ -11,10 +11,10 @@ import Field from '@/src/components/Shared/form/Field'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { cn } from '@/src/lib/Shared/utils'
 import { LoginProps, LoginSchema } from '@/src/schemas/AuthenticationSchema'
-import { signin } from '../../../lib/account/login/AccountActions'
+import { loginAction } from '../../../lib/account/login/AccountActions'
 
 export default function LoginForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const [state, formAction] = useActionState(signin, { success: false })
+  const [state, formAction] = useActionState(loginAction, { success: false })
   const [isPending, start] = useTransition()
 
   const form = useForm<LoginProps>({
