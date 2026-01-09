@@ -23,7 +23,7 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
 
   const [, startTransition] = useTransition()
 
-  const callServerAction = useCallback(
+  const runServerValidation = useCallback(
     (values: z.infer<TSchema>) => {
       if (!hasServerValidation) return
       startTransition(() => {
@@ -33,7 +33,7 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
     [hasServerValidation, dispatchServerAction, startTransition],
   )
 
-  return { hasServerValidation, serverState, callServerAction }
+  return { hasServerValidation, serverState, runServerValidation }
 }
 
 // prettier-ignore
@@ -48,7 +48,7 @@ export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, fo
  */
 export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
-  const { hasServerValidation, serverState, callServerAction } = useServerValidation<TSchema>(options)
+  const { hasServerValidation, serverState, runServerValidation } = useServerValidation<TSchema>(options)
 
   const form = useForm<z.infer<TSchema>>({
     resolver: zodResolver(schema),
@@ -60,5 +60,5 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   if (!hasServerValidation) return base
 
-  return { ...base, callServerAction, state: serverState }
+  return { ...base, runServerValidation, state: serverState }
 }

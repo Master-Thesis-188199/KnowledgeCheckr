@@ -27,6 +27,6 @@ export type RHFBaseReturn<TSchema extends z.ZodSchema> = {
 }
 
 export type RHFWithServerReturn<TSchema extends z.ZodSchema> = RHFBaseReturn<TSchema> & {
-  callServerAction: (values: z.infer<TSchema>) => void
+  runServerValidation: (values: z.infer<TSchema>) => void
   state: RHFServerState<TSchema>
 }
