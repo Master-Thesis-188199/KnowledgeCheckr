@@ -21,7 +21,7 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
 
   const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, INITIAL_SERVER_STATE)
 
-  const [, startTransition] = useTransition()
+  const [isServerValidationPending, startTransition] = useTransition()
 
   const runServerValidation = useCallback(
     (values: z.infer<TSchema>) => {
@@ -33,7 +33,7 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
     [hasServerValidation, dispatchServerAction, startTransition],
   )
 
-  return { hasServerValidation, state: serverState, runServerValidation }
+  return { hasServerValidation, state: serverState, runServerValidation, isServerValidationPending }
 }
 
 // prettier-ignore
