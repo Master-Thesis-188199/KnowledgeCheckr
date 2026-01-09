@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/src/lib/auth/server'
 import _logger from '@/src/lib/log/Logger'
-import { LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import { LoginProps, LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import { Any } from '@/types'
 
@@ -25,14 +25,15 @@ export type AuthState = {
   }
 }
 
-export async function signin(_: AuthState, formData: FormData): Promise<AuthState> {
-  'use server'
+export type LoginAuthState = {
+  success: boolean
+  fieldErrors?: { [key in keyof LoginProps]?: string[] }
+  rootError?: string
+  values?: Partial<LoginProps>
+}
 
-  const values = {
-    email: formData.get('email')?.toString(),
-    password: formData.get('password')?.toString(),
-    callbackUrl: formData.get('callbackUrl')!.toString(),
-  }
+export async function signin(_: LoginAuthState, values: LoginProps): Promise<LoginAuthState> {
+  'use server'
 
   const parsed = LoginSchema.safeParse(values)
 
@@ -52,7 +53,7 @@ export async function signin(_: AuthState, formData: FormData): Promise<AuthStat
     return { success: false, rootError: 'Something went wrong - please try again.', values }
   }
 
-  redirect(values.callbackUrl ?? '/')
+  redirect(parsed.data.callbackURL ?? '/')
 }
 
 export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {
