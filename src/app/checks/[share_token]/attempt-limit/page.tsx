@@ -1,6 +1,6 @@
 import PageHeading from '@/src/components/Shared/PageHeading'
 
-export default async function ExamAttemptLimitPage({ searchParams }: { searchParams: Promise<{ attemptLimit?: number }> }) {
+export default async function ExamAttemptLimitPage({ searchParams }: { searchParams: Promise<{ attemptLimit?: string }> }) {
   const { attemptLimit } = await searchParams
 
   return (
