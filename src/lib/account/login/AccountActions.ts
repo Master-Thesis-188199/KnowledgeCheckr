@@ -50,7 +50,7 @@ export async function loginAction(_: LoginAuthState, values: LoginProps): Promis
   redirect(callbackURL)
 }
 
-export async function signup(_: SignupAuthState, values: SignupProps): Promise<SignupAuthState> {
+export async function signupAction(_: SignupAuthState, values: SignupProps): Promise<SignupAuthState> {
   'use server'
 
   const parsed = SignupSchema.safeParse(values)

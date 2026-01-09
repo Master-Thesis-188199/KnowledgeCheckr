@@ -11,10 +11,10 @@ import Field from '@/src/components/Shared/form/Field'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { cn } from '@/src/lib/Shared/utils'
 import { SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
-import { signup } from '../../../lib/account/login/AccountActions'
+import { signupAction } from '../../../lib/account/login/AccountActions'
 
 export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const [state, formAction] = useActionState(signup, { success: false })
+  const [state, formAction] = useActionState(signupAction, { success: false })
   const [isPending, start] = useTransition()
 
   const form = useForm<SignupProps>({
