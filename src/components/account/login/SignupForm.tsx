@@ -1,42 +1,38 @@
 /* app/account/login/SignupForm.tsx */
 'use client'
 
-import { useActionState, useEffect, useRef, useTransition } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { Form } from '@/src/components/shadcn/form'
 import Field from '@/src/components/Shared/form/Field'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { signupAction } from '../../../lib/account/login/AccountActions'
 
 export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const [state, formAction] = useActionState(signupAction, { success: false })
-  const [isPending, start] = useTransition()
-
-  const form = useForm<SignupProps>({
-    resolver: zodResolver(SignupSchema),
-    delayError: 150,
-    mode: 'onChange',
-    defaultValues: {
-      name: state.values?.name ?? '',
-      email: state.values?.email ?? '',
-      password: state.values?.password ?? '',
-      callbackURL: callbackUrl,
+  const { form, runServerValidation, state } = useRHF(
+    SignupSchema,
+    {
+      delayError: 150,
+      mode: 'onChange',
+      defaultValues: {
+        callbackURL: callbackUrl,
+      },
     },
-  })
+    {
+      serverAction: signupAction,
+    },
+  )
 
   // prettier-ignore
   const { setError, formState: { errors, isValid }, reset, handleSubmit } = form
 
   const onSubmit = (formData: SignupProps) => {
     console.log(formData.callbackURL)
-    start(() => {
-      formAction(formData)
-    })
+    runServerValidation(formData)
   }
 
   useEffect(() => {
