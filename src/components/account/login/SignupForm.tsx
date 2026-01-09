@@ -1,25 +1,23 @@
 /* app/account/login/SignupForm.tsx */
 'use client'
 
-import { useActionState, useEffect, useRef } from 'react'
+import { useActionState, useEffect, useRef, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { z } from 'zod'
 import { Form } from '@/src/components/shadcn/form'
 import Field from '@/src/components/Shared/form/Field'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { cn } from '@/src/lib/Shared/utils'
-import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import { SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { signup } from '../../../lib/account/login/AccountActions'
 
-type FormValues = z.infer<typeof SignupSchema>
-
 export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const [state, formAction] = useActionState(signup, { success: false, values: { callbackUrl: undefined } })
+  const [state, formAction] = useActionState(signup, { success: false })
+  const [isPending, start] = useTransition()
 
-  const form = useForm<FormValues>({
+  const form = useForm<SignupProps>({
     resolver: zodResolver(SignupSchema),
     delayError: 150,
     mode: 'onChange',
@@ -27,17 +25,26 @@ export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callba
       name: state.values?.name ?? '',
       email: state.values?.email ?? '',
       password: state.values?.password ?? '',
+      callbackURL: callbackUrl,
     },
   })
 
   // prettier-ignore
-  const { trigger, setError, formState: { errors, isValid }, reset } = form
+  const { setError, formState: { errors, isValid }, reset, handleSubmit } = form
+
+  const onSubmit = (formData: SignupProps) => {
+    console.log(formData.callbackURL)
+    start(() => {
+      formAction(formData)
+    })
+  }
 
   useEffect(() => {
     if (state.fieldErrors) {
-      Object.entries(state.fieldErrors).forEach(([key, msgs]) => {
+      Object.entries(state.fieldErrors).forEach(([_key, msgs]) => {
+        const key = _key as keyof SignupProps
         if (msgs?.length) {
-          setError(key as keyof FormValues, { type: 'server', message: msgs[0] })
+          setError(key, { type: 'server', message: msgs[0] })
         }
       })
     }
@@ -67,16 +74,8 @@ export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callba
 
   return (
     <Form {...form}>
-      <form
-        id='signup-form'
-        noValidate
-        action={formAction}
-        onSubmit={async (e) => {
-          const ok = await trigger()
-          if (!ok) e.preventDefault()
-        }}
-        className='flex flex-col gap-3'>
-        <input className='hidden' name='callbackUrl' readOnly value={callbackUrl} />
+      <form id='signup-form' noValidate onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+        <Field form={form} name='callbackURL' className='hidden' containerClassname='hidden' readOnly showLabel={false} />
 
         <div className='grid items-baseline justify-baseline gap-3 p-2 *:odd:mt-4 *:odd:first:mt-0'>
           <Field form={form} label='Username' name='name' placeholder='your username' type='text' />

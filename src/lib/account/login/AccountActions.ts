@@ -3,26 +3,17 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/src/lib/auth/server'
 import _logger from '@/src/lib/log/Logger'
-import { LoginProps, LoginSchema, SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import { LoginProps, LoginSchema, SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import { Any } from '@/types'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export type AuthState = {
+export type SignupAuthState = {
   success: boolean
-  fieldErrors?: {
-    email?: string[]
-    password?: string[]
-    name?: string[]
-  }
+  fieldErrors?: { [key in keyof SignupProps]?: string[] }
   rootError?: string
-  values?: {
-    email?: string
-    password?: string
-    name?: string
-    callbackUrl: string | undefined
-  }
+  values?: Partial<SignupProps>
 }
 
 export type LoginAuthState = {
@@ -59,15 +50,8 @@ export async function loginAction(_: LoginAuthState, values: LoginProps): Promis
   redirect(callbackURL)
 }
 
-export async function signup(_: AuthState, formData: FormData): Promise<AuthState> {
+export async function signup(_: SignupAuthState, values: SignupProps): Promise<SignupAuthState> {
   'use server'
-
-  const values = {
-    name: formData.get('name')?.toString(),
-    email: formData.get('email')?.toString(),
-    password: formData.get('password')?.toString(),
-    callbackUrl: formData.get('callbackUrl')!.toString(),
-  }
 
   const parsed = SignupSchema.safeParse(values)
 
@@ -76,8 +60,10 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
     return { success: false, fieldErrors, values }
   }
 
+  const { callbackURL, ...data } = parsed.data
+
   try {
-    await auth.api.signUpEmail({ body: parsed.data })
+    await auth.api.signUpEmail({ body: data })
   } catch (e: Any) {
     if (e?.statusCode === 409) {
       return {
@@ -103,5 +89,5 @@ export async function signup(_: AuthState, formData: FormData): Promise<AuthStat
     }
   }
 
-  redirect(values.callbackUrl ?? '/')
+  redirect(callbackURL ?? '/')
 }
