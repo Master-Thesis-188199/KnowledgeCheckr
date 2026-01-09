@@ -1,32 +1,30 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useTransition } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
 import Field from '@/src/components/Shared/form/Field'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { LoginProps, LoginSchema } from '@/src/schemas/AuthenticationSchema'
 import { loginAction } from '../../../lib/account/login/AccountActions'
 
 export default function LoginForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
-  const [state, formAction] = useActionState(loginAction, { success: false })
-  const [isPending, start] = useTransition()
-
-  const form = useForm<LoginProps>({
-    resolver: zodResolver(LoginSchema),
-    mode: 'onChange',
-    delayError: 150,
-    defaultValues: {
-      email: state.values?.email,
-      password: state.values?.password,
-      callbackURL: callbackUrl,
+  const { form, state, runServerValidation, isServerValidationPending } = useRHF(
+    LoginSchema,
+    {
+      mode: 'onChange',
+      delayError: 150,
+      defaultValues: {
+        callbackURL: callbackUrl,
+      },
     },
-  })
+    { serverAction: loginAction },
+  )
+
   const {
     setError,
     formState: { errors, isValid, isLoading, isSubmitting, isValidating },
@@ -36,9 +34,7 @@ export default function LoginForm({ callbackUrl, refererCallbackUrl }: { callbac
 
   const onSubmit = (formData: LoginProps) => {
     console.log(formData.callbackURL)
-    start(() => {
-      formAction(formData)
-    })
+    runServerValidation(formData)
   }
 
   useEffect(() => {
@@ -86,7 +82,7 @@ export default function LoginForm({ callbackUrl, refererCallbackUrl }: { callbac
         <div className='mt-4 flex flex-col items-center justify-center gap-3'>
           <Button
             variant='base'
-            isLoading={isLoading || isValidating || isSubmitting || isPending}
+            isLoading={isLoading || isValidating || isSubmitting || isServerValidationPending}
             disabled={!isValid}
             data-auth-provider='credential'
             type='submit'
