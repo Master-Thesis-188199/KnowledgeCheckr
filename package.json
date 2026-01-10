@@ -32,7 +32,7 @@
     "test": "yarn build-start:instrumented && npm run test:component && npm run test:e2e && yarn de-instrument-code && yarn jest && yarn test:cleanup-test-data ",
     "test:parallel": "yarn build-start:instrumented && cypress-parallel -s test:e2e -t 8 -d 'src/tests/e2e/**/*.tsx' && yarn test:terminate-server && cypress-parallel -s test:components -t 8 -d 'src/tests/components/**/*.tsx' && yarn jest && yarn test:cleanup-test-data",
     "test:terminate-server": "kill -9 $(lsof -ti:3000)",
-    "test:cleanup-test-data": "tsx database/cleanup/cleanup-test-data.ts",
+    "test:cleanup-test-data": "tsx --conditions=react-server database/cleanup/cleanup-test-data.ts",
     "-------- test scripts (end) --------": "--------",
     "cy:open": "yarn instrument-code && next dev & cypress open --config retries=0",
     "production": "yarn build-start",
