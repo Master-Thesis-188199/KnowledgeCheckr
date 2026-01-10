@@ -26,10 +26,10 @@ export type RHFBaseReturn<TSchema extends z.ZodSchema> = {
   }
 }
 
-export type RHFSeverReturn<TSchema extends z.ZodSchema> = {
+export type RHFServerReturn<TSchema extends z.ZodSchema> = {
   runServerValidation: (values: z.infer<TSchema>) => void
   state: RHFServerState<TSchema>
   isServerValidationPending: boolean
 }
 
-export type RHFWithServerReturn<TSchema extends z.ZodSchema> = RHFBaseReturn<TSchema> & RHFSeverReturn<TSchema>
+export type RHFWithServerReturn<TSchema extends z.ZodSchema> = RHFBaseReturn<TSchema> & RHFServerReturn<TSchema>
