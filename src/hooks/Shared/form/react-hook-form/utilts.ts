@@ -48,12 +48,8 @@ export function useServerValidationResults<TSchema extends z.ZodSchema>(
 
         if (!msgs) return
 
-        for (const msg of msgs) {
-          if (msg.length === 0) continue
-
-          // @ts-expect-error Expect key-of schema object not to satisfy `FieldPath` type
-          setError(key, { type: 'server', message: msg })
-        }
+        // @ts-expect-error Expect key-of schema object not to satisfy `FieldPath` type
+        setError(key, { type: 'server', message: msgs.join(' & ') })
       })
     }
 
