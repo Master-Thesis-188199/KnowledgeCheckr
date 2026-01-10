@@ -47,6 +47,7 @@ function Button({
   size,
   asChild = false,
   isLoading,
+  children,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
@@ -58,17 +59,10 @@ function Button({
   const LoadingIndicator = <LoaderCircleIcon className='size-4 animate-spin' />
 
   return (
-    <Comp
-      data-slot='button'
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-      children={
-        <>
-          {isLoading ? LoadingIndicator : null}
-          {props.children}
-        </>
-      }
-    />
+    <Comp data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props}>
+      {isLoading ? LoadingIndicator : null}
+      {children}
+    </Comp>
   )
 }
 
