@@ -235,5 +235,9 @@ Cypress.on('uncaught:exception', (err) => {
     return false
   }
 
+  if (err.message.toLowerCase().includes("Failed to execute 'measure' on 'Performance'".toLowerCase())) {
+    return false
+  }
+
   throw err
 })

@@ -17,6 +17,7 @@ export interface SchemaOptionalProps {
   instantiate_Optional_Objects?: boolean
   instantiate_Nullable_Objects?: boolean
   stripDefaultValues?: boolean
+  generateRandomNumbers?: boolean
   overrideArraySize?: number
 }
 
@@ -26,7 +27,13 @@ export interface SchemaOptionalProps {
  */
 export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes>(
   schema: Schema,
-  options: SchemaOptionalProps = { instantiate_Optional_PrimitiveProps: true, instantiate_Optional_Objects: true, instantiate_Nullable_PrimitiveProps: true, instantiate_Nullable_Objects: true },
+  options: SchemaOptionalProps = {
+    instantiate_Optional_PrimitiveProps: true,
+    instantiate_Optional_Objects: true,
+    instantiate_Nullable_PrimitiveProps: true,
+    instantiate_Nullable_Objects: true,
+    generateRandomNumbers: true,
+  },
 ): z.TypeOf<Schema> {
   if (options.instantiate_Optional_PrimitiveProps === undefined) options.instantiate_Optional_PrimitiveProps = true
 
@@ -100,7 +107,11 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
         if (check.kind === 'max') numberConstraints.max = check.value - (check.inclusive ? 0 : 1)
       })
 
-      return Math.floor(((Math.random() * 100) % (numberConstraints.max - numberConstraints.min)) + numberConstraints.min) as z.TypeOf<Schema>
+      if (!options.generateRandomNumbers) {
+        return numberConstraints.min
+      }
+
+      return Math.floor(((Math.random() * 100) % Math.abs(numberConstraints.max - numberConstraints.min)) + numberConstraints.min) as z.TypeOf<Schema>
 
     case z.ZodFirstPartyTypeKind.ZodBoolean:
       return false
