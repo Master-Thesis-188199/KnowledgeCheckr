@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { RHFBaseReturn, RHFServerAction, RHFServerState, RHFSeverReturn, RHFWithServerReturn, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
-import { buildBaseReturn, buildDefaultValues, createNoopServerAction, isServerAction } from '@/src/hooks/Shared/form/react-hook-form/utilts'
+import { buildBaseReturn, buildDefaultValues, createNoopServerAction, isServerAction, useServerValidationResults } from '@/src/hooks/Shared/form/react-hook-form/utilts'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
@@ -63,6 +63,8 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
   })
 
   const base = buildBaseReturn(form, descriptions)
+
+  useServerValidationResults(hasServerValidation, serverReturnProps.state, { setError: form.setError, reset: form.reset })
 
   if (!hasServerValidation) return base
 
