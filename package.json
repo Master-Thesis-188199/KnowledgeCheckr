@@ -34,7 +34,7 @@
     "test:terminate-server": "kill -9 $(lsof -ti:3000)",
     "test:cleanup-test-data": "tsx database/cleanup/cleanup-test-data.ts",
     "-------- test scripts (end) --------": "--------",
-    "cy:open": "yarn instrument-code && next dev & cypress open",
+    "cy:open": "yarn instrument-code && next dev & cypress open --config retries=0",
     "production": "yarn build-start",
     "validateEnvironment": "ts-node -P tsconfig.env.json src/lib/Shared/Env.ts",
     "prepare": "husky install",
