@@ -59,11 +59,11 @@ export function useServerValidationResults<TSchema extends z.ZodSchema>(
     if (state.rootError) {
       setError('root', { type: 'server', message: state.rootError })
     }
-  }, [state.fieldErrors, state.rootError, setError])
+  }, [state.fieldErrors, state.rootError, setError, hasServerValidation])
 
   useEffect(() => {
     if (!hasServerValidation) return
 
     if (state.success) reset()
-  }, [state.success, reset])
+  }, [state.success, reset, hasServerValidation])
 }
