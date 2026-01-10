@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import Link from 'next/link'
 import { z } from 'zod'
 import { Button } from '@/src/components/shadcn/button'
@@ -26,7 +25,7 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
   refererCallbackUrl?: string
   renderFields: (args: { form: ReturnType<typeof useRHF<Schema>>['form'] }) => React.ReactNode
 }) {
-  const { form, runServerValidation, isServerValidationPending, state } = useRHF<Schema>(
+  const { form, runServerValidation, isServerValidationPending } = useRHF<Schema>(
     schema,
     {
       mode: 'onChange',
@@ -39,30 +38,9 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
   const {
     handleSubmit,
     formState: { isValid, isLoading, isSubmitting, isValidating, errors },
-    setError,
-    reset,
   } = form
 
   const onSubmit = (data: z.infer<Schema>) => runServerValidation(data)
-
-  useEffect(() => {
-    if (state.fieldErrors) {
-      Object.entries(state.fieldErrors).forEach(([_key, msgs]) => {
-        const key = _key as z.infer<Schema>
-        if (msgs?.length) {
-          setError(key, { type: 'server', message: msgs[0] })
-        }
-      })
-    }
-
-    if (state.rootError) {
-      setError('root', { type: 'server', message: state.rootError })
-    }
-  }, [state.fieldErrors, state.rootError, setError])
-
-  useEffect(() => {
-    if (state.success) reset()
-  }, [state.success, reset])
 
   return (
     <Form {...form}>
