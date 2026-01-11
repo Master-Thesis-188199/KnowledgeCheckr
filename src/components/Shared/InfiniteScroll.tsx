@@ -42,28 +42,51 @@ export type InfinityScrollFetcherProps = {
   getItems: (offset: number) => Promise<unknown[]>
   children: React.ReactNode
   enabled?: boolean
+  suspensionTimeout?: number
 }
 
-export function InfinityScrollFetcher({ children, getItems, enabled }: InfinityScrollFetcherProps) {
+const DEFAULT_SUSPENSION_TIMEOUT = 10 * 1000
+
+export function InfinityScrollFetcher({ children, getItems, enabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT }: InfinityScrollFetcherProps) {
   const { addItems, items } = useInfiniteScrollContext()
-  const [status, setStatus] = useState<'done' | 'pending' | 'error'>('pending')
+  const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
+
+  useEffect(() => {
+    if (status !== 'suspended') return
+
+    const timeout = setTimeout(() => {
+      console.debug('Revoked infinity-scroll fetch-suspension')
+      setStatus('hidden')
+    }, suspensionTimeout)
+
+    return () => clearTimeout(timeout)
+  }, [status])
 
   useEffect(() => {
     if (!enabled) return
     if (!ref.current) return
     if (!inView) return
+    if (status === 'suspended') {
+      console.debug('[InfinityFetcher] Fetching currently suspended, aborting...')
+      return
+    }
 
-    console.debug('Infinite Scroll - fetching new items...', getItems(10))
+    console.debug('Infinite Scroll - fetching new items...')
     setStatus('pending')
     getItems(items.length)
       .then((checks) => {
+        if (checks.length === 0) {
+          console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
+          return setStatus('suspended')
+        }
+
         console.debug(`Fetched ... ${checks.length} new items..`)
-        return checks
+
+        addItems(checks)
+        setStatus('hidden')
       })
-      .then(addItems)
-      .then(() => setStatus('done'))
       .catch((e) => {
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
