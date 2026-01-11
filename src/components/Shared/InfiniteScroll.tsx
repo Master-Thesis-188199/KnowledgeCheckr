@@ -63,7 +63,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
     }, suspensionTimeout)
 
     return () => clearTimeout(timeout)
-  }, [status])
+  }, [status, suspensionTimeout])
 
   useEffect(() => {
     if (!enabled) return
@@ -75,6 +75,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
     }
 
     console.debug('Infinite Scroll - fetching new items...')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus('pending')
     getItems(items.length)
       .then((checks) => {
@@ -92,8 +93,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
-    // eslint-disable-next-line react-hooks/refs
-  }, [ref.current, inView, enabled])
+  }, [inView, enabled, getItems, addItems])
 
   return (
     <>
