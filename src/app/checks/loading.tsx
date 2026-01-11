@@ -32,12 +32,10 @@ function KnowledgeCheckCardSkeleton() {
         <button
           disabled
           aria-label='share KnowledgeCheck'
-          className={cn(
-            'group rounded-md p-1.5 text-neutral-600 ring-neutral-400 enabled:hover:cursor-pointer enabled:hover:ring-1 disabled:cursor-not-allowed disabled:text-neutral-400 dark:text-neutral-400 dark:ring-neutral-500 disabled:dark:text-neutral-500',
-          )}>
+          className={cn('group rounded-md p-1.5 text-neutral-600 disabled:cursor-not-allowed disabled:text-neutral-400 dark:text-neutral-400 disabled:dark:text-neutral-500')}>
           <Share2Icon className='size-4.5 group-active:stroke-3' />
         </button>
-        <Button variant='ghost' size='icon' disabled className='hover:ring-ring-hover h-auto w-auto px-1 py-0.5 hover:ring-1'>
+        <Button variant='ghost' size='icon' disabled className='h-auto w-auto px-1 py-0.5'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </div>
