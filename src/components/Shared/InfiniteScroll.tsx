@@ -100,6 +100,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
       <div ref={ref} className='h-1' />
 
       <SmoothPresenceTransition
+        id='infinity-fetcher-loading-indicator'
         active={status === 'pending'}
         presenceTiming={{ minVisibleMs: 550 }}
         initial={{ opacity: 0, height: 0 }}
