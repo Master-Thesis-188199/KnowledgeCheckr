@@ -28,6 +28,8 @@ html[data-theme='dark'] {
   --input: color-mix(in oklab, var(--color-neutral-700) 29%, var(--color-neutral-800));
   --input-ring: color-mix(in oklab, var(--color-neutral-500) 50%, var(--color-neutral-600));
 
+  --accent: var(--color-neutral-600);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -37,7 +39,6 @@ html[data-theme='dark'] {
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -83,6 +84,8 @@ html[data-theme='dark'] {
   --input: color-mix(in oklab, var(--color-neutral-100) 90%, transparent);
   --input-ring: var(--color-neutral-400);
 
+  --accent: var(--color-neutral-300);
+
   --card: oklch(0.205 0 0);
   --radius: 0.625rem;
   --card: oklch(1 0 0);
@@ -94,7 +97,6 @@ html[data-theme='dark'] {
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
