@@ -1,0 +1,1 @@
+ALTER TABLE `KnowledgeCheck_Settings` ADD `shareAccessibility` int DEFAULT 0 NOT NULL;

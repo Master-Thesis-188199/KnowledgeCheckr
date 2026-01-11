@@ -162,6 +162,9 @@ export const db_knowledgeCheckSettings = mysqlTable(
     answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.answerOrder._def.defaultValue()),
     examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examTimeFrameSeconds._def.defaultValue()),
     examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examinationAttemptCount._def.defaultValue()),
+    shareAccessibility: int()
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
