@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { HTMLProps, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionProps } from 'motion/react'
 
 type TimeoutHandle = ReturnType<typeof window.setTimeout>
@@ -80,13 +80,14 @@ export function usePresenceTiming(active: boolean, { showDelayMs = 0, minVisible
   return present
 }
 
-export type PresenceTransitionProps = MotionProps & {
-  active: boolean
-  presenceTiming?: PresenceTimingOptions
+export type PresenceTransitionProps = HTMLProps<HTMLDivElement> &
+  MotionProps & {
+    active: boolean
+    presenceTiming?: PresenceTimingOptions
 
-  className?: string
-  children: React.ReactNode
-}
+    className?: string
+    children: React.ReactNode
+  }
 
 /**
  * Generic mount/unmount animation with optional gating (min-animation time and/or show-delay)
@@ -101,14 +102,14 @@ export default function SmoothPresenceTransition({
   animate = { opacity: 1 },
   exit = { opacity: 0 },
 
-  ...motionProps
+  ...props
 }: PresenceTransitionProps) {
   const showPresence = usePresenceTiming(active, presenceTiming)
 
   return (
     <AnimatePresence initial={false}>
       {showPresence && (
-        <motion.div key='presence' className={className} transition={transition} initial={initial} animate={animate} exit={exit} {...motionProps}>
+        <motion.div key='presence' className={className} transition={transition} initial={initial} animate={animate} exit={exit} {...props}>
           {children}
         </motion.div>
       )}
