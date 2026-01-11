@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "semantic-release": "semantic-release",
+    "predev": "yarn de-instrument-code",
     "dev": "next dev --turbopack",
     "-------- build & start --------": "--------",
     "instrument-code": "cp ./config/.babelrc.json .babelrc.json",
