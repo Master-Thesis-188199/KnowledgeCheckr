@@ -15,7 +15,7 @@ export default function InfiniteKnowledgeCheckGrid({ initialItems, fetchNewItems
         <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
       </div>
 
-      <InfinityScrollFetcher getItems={fetchNewItems} enabled={initialItems.length > 0} loadingLabel={'Loading more checks...'} />
+      <InfinityScrollFetcher getItems={fetchNewItems} disabled={initialItems.length === 0} loadingLabel={'Loading more checks...'} />
     </InfiniteScrollProvider>
   )
 }

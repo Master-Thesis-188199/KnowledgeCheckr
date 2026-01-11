@@ -13,7 +13,6 @@ describe('InfinityScroll Suite: ', () => {
 
         <InfinityScrollFetcher
           loadingLabel='Loading...'
-          enabled
           getItems={(offset) =>
             new Promise((resolve) =>
               setTimeout(() => {

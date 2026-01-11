@@ -41,14 +41,14 @@ export function useInfiniteScrollContext<TElement>() {
 
 export type InfinityScrollFetcherProps = {
   getItems: (offset: number) => Promise<unknown[]>
-  enabled?: boolean
+  disabled?: boolean
   suspensionTimeout?: number
   loadingLabel?: string
 }
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT, loadingLabel }: InfinityScrollFetcherProps) {
+export function InfinityScrollFetcher({ getItems, disabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT, loadingLabel }: InfinityScrollFetcherProps) {
   const { addItems, items } = useInfiniteScrollContext()
   const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
@@ -68,7 +68,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
   useEffect(() => {
     let aborted = false
 
-    if (!enabled) return
+    if (disabled) return
     if (!ref.current) return
     if (!inView) return
     if (status === 'suspended') {
@@ -102,7 +102,7 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
       aborted = true
       setStatus('hidden')
     }
-  }, [inView, enabled, getItems, addItems])
+  }, [inView, disabled, getItems, addItems])
 
   return (
     <>
