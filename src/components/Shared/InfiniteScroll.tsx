@@ -38,7 +38,12 @@ export function useInfiniteScrollContext<TElement>() {
   return context as InfiniteScrollContext<TElement>
 }
 
-export function InfinityScrollFetcher({ children, getItems }: { getItems: (offset: number) => Promise<unknown[]>; children: React.ReactNode }) {
+export type InfinityScrollFetcherProps = {
+  getItems: (offset: number) => Promise<unknown[]>
+  children: React.ReactNode
+}
+
+export function InfinityScrollFetcher({ children, getItems }: InfinityScrollFetcherProps) {
   const { addItems, items } = useInfiniteScrollContext()
   const [status, setStatus] = useState<'done' | 'pending' | 'error'>('pending')
   const ref = useRef(null)
