@@ -2,7 +2,8 @@
 import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
-import { cn } from '@/src/lib/Shared/utils'
+import { LoaderCircleIcon } from 'lucide-react'
+import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import { Any } from '@/types'
 
 interface InfiniteScrollContext<T = Any> {
@@ -40,14 +41,14 @@ export function useInfiniteScrollContext<TElement>() {
 
 export type InfinityScrollFetcherProps = {
   getItems: (offset: number) => Promise<unknown[]>
-  children: React.ReactNode
   enabled?: boolean
   suspensionTimeout?: number
+  loadingLabel?: string
 }
 
-const DEFAULT_SUSPENSION_TIMEOUT = 10 * 1000
+const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-export function InfinityScrollFetcher({ children, getItems, enabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT }: InfinityScrollFetcherProps) {
+export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT, loadingLabel }: InfinityScrollFetcherProps) {
   const { addItems, items } = useInfiniteScrollContext()
   const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
@@ -95,9 +96,21 @@ export function InfinityScrollFetcher({ children, getItems, enabled, suspensionT
   }, [ref.current, inView, enabled])
 
   return (
-    <div ref={ref} className={cn(status === 'pending' ? '' : 'opacity-0')}>
-      {children}
-    </div>
+    <>
+      <div ref={ref} className='h-1' />
+
+      <SmoothPresenceTransition
+        active={status === 'pending'}
+        presenceTiming={{ minVisibleMs: 550 }}
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 'auto' }}
+        exit={{ opacity: 0, height: 0, margin: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className='mt-8 flex justify-center gap-2'>
+        <LoaderCircleIcon className='animate-spin' />
+        {loadingLabel ?? 'Loading...'}
+      </SmoothPresenceTransition>
+    </>
   )
 }
 
