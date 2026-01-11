@@ -66,6 +66,8 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
   }, [status, suspensionTimeout])
 
   useEffect(() => {
+    let aborted = false
+
     if (!enabled) return
     if (!ref.current) return
     if (!inView) return
@@ -79,6 +81,8 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
     setStatus('pending')
     getItems(items.length)
       .then((checks) => {
+        if (aborted) return
+
         if (checks.length === 0) {
           console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
           return setStatus('suspended')
@@ -93,6 +97,11 @@ export function InfinityScrollFetcher({ getItems, enabled, suspensionTimeout = D
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
+
+    return () => {
+      aborted = true
+      setStatus('hidden')
+    }
   }, [inView, enabled, getItems, addItems])
 
   return (
