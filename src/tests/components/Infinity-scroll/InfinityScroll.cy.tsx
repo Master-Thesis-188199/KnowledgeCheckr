@@ -11,15 +11,23 @@ describe('InfinityScroll Suite: ', () => {
           <InfinityScrollRenderer<Any> component={ExemplaryComponent} />
         </div>
 
-        <InfinityScrollFetcher getItems={(offset) => Promise.resolve(Array.from({ length: 10 }, (_, i) => `Item ${i + offset + 1}`))}>
-          <div className='loading-indicator'>Loading...</div>
-        </InfinityScrollFetcher>
+        <InfinityScrollFetcher
+          loadingLabel='Loading...'
+          getItems={(offset) =>
+            new Promise((resolve) =>
+              setTimeout(() => {
+                resolve(Array.from({ length: 10 }, (_, i) => `Item ${i + offset + 1}`))
+              }, 100),
+            )
+          }
+        />
       </InfiniteScrollProvider>,
     )
 
     cy.get('.item').should('have.length', 10)
-    cy.scrollTo('bottom').get('.loading-indicator').should('be.visible')
-    cy.get('.item').should('have.length', 20).get('.loading-indicator').should('not.be.visible')
+    cy.scrollTo('bottom').get('#infinity-fetcher-loading-indicator').should('be.visible')
+    cy.get('.item').should('have.length', 20)
+    cy.get('#infinity-fetcher-loading-indicator').should('not.exist')
   })
 })
 
