@@ -15,7 +15,7 @@ export default function InfiniteKnowledgeCheckGrid({ initialItems, fetchNewItems
       <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
         <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
       </div>
-      <InfinityScrollFetcher getItems={fetchNewItems}>
+      <InfinityScrollFetcher getItems={fetchNewItems} enabled={initialItems.length > 0}>
         <div className='mt-8 flex justify-center gap-2'>
           <LoaderCircleIcon className='animate-spin' />
           Loading...

@@ -41,15 +41,17 @@ export function useInfiniteScrollContext<TElement>() {
 export type InfinityScrollFetcherProps = {
   getItems: (offset: number) => Promise<unknown[]>
   children: React.ReactNode
+  enabled?: boolean
 }
 
-export function InfinityScrollFetcher({ children, getItems }: InfinityScrollFetcherProps) {
+export function InfinityScrollFetcher({ children, getItems, enabled }: InfinityScrollFetcherProps) {
   const { addItems, items } = useInfiniteScrollContext()
   const [status, setStatus] = useState<'done' | 'pending' | 'error'>('pending')
   const ref = useRef(null)
   const inView = useInView(ref)
 
   useEffect(() => {
+    if (!enabled) return
     if (!ref.current) return
     if (!inView) return
 
@@ -67,7 +69,7 @@ export function InfinityScrollFetcher({ children, getItems }: InfinityScrollFetc
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
     // eslint-disable-next-line react-hooks/refs
-  }, [ref.current, inView])
+  }, [ref.current, inView, enabled])
 
   return (
     <div ref={ref} className={cn(status === 'pending' ? '' : 'opacity-0')}>
