@@ -5,7 +5,6 @@ import { GenericBreadcrumb } from '@/src/components/Shared/Breadcrumb/GenericBre
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 
 export default async function LoadingChecksPage() {
@@ -18,8 +17,8 @@ export default async function LoadingChecksPage() {
       <PageHeading title='Your Checks' showBreadcrumbs={false} />
 
       <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-        {dummyChecks.map(() => (
-          <KnowledgeCheckCardSkeleton key={getUUID()} />
+        {dummyChecks.map((_, i) => (
+          <KnowledgeCheckCardSkeleton key={i} />
         ))}
       </div>
     </div>
