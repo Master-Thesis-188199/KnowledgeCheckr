@@ -9,18 +9,13 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
-  const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = undefined
-  // {
-  //   // limit: 1,
-  //   // filter: {
-  //   //   name: {
-  //   //     value: '1',
-  //   //     op: 'startsWith',
-  //   //   },
-  //   // },
-  // }
+  const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = [
+    {
+      limit: 2,
+    },
+  ]
 
-  const checks = await getPublicKnowledgeChecks(props)
+  const checks = await getPublicKnowledgeChecks.apply(null, props)
 
   return (
     <>
@@ -56,7 +51,7 @@ export default async function BrowseChecksPage() {
           <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
         </div>
 
-        <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} loadingLabel={'Loading more checks...'} />
+        <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} fetchProps={props} loadingLabel={'Loading more checks...'} />
       </InfiniteScrollProvider>
     </>
   )
