@@ -53,7 +53,7 @@ type MissingOptionsLastError<T extends Any> = T & {
 type IsOptionsLike<T> = [NonNullable<T>] extends [DatabaseOptions] ? true : false
 
 // Validate last param (required or optional) is Options-like
-type RequireOptionsLast<F extends (...args: Any[]) => Any> =
+export type RequireOptionsLast<F extends (...args: Any[]) => Any> =
   Parameters<F> extends [...infer _Head, infer Last]
     ? IsOptionsLike<NonNullable<Last>> extends true
       ? object // ok
