@@ -39,8 +39,9 @@ export function useInfiniteScrollContext<TElement>() {
   return context as InfiniteScrollContext<TElement>
 }
 
-export type InfinityScrollFetcherProps = {
-  getItems: (offset: number) => Promise<unknown[]>
+export type InfinityScrollFetcherProps<TFunc extends (...args: Any[]) => Promise<Any>> = {
+  fetchProps?: Partial<Parameters<TFunc>['0']> & { offset?: number }
+  fetchItems: TFunc
   disabled?: boolean
   suspensionTimeout?: number
   loadingLabel?: string
@@ -48,8 +49,14 @@ export type InfinityScrollFetcherProps = {
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-export function InfinityScrollFetcher({ getItems, disabled, suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT, loadingLabel }: InfinityScrollFetcherProps) {
-  const { addItems, items } = useInfiniteScrollContext()
+export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any>, TItem extends Awaited<ReturnType<TFunc>>[number]>({
+  fetchItems,
+  fetchProps,
+  disabled,
+  suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
+  loadingLabel,
+}: InfinityScrollFetcherProps<TFunc>) {
+  const { addItems, items } = useInfiniteScrollContext<TItem>()
   const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
@@ -76,24 +83,25 @@ export function InfinityScrollFetcher({ getItems, disabled, suspensionTimeout = 
       return
     }
 
-    console.debug('Infinite Scroll - fetching new items...')
+    const funcArgs: NonNullable<typeof fetchProps> = { ...fetchProps, offset: fetchProps?.offset ?? items.length }
+    console.debug('Infinite Scroll - fetching new items... with ', funcArgs)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus('pending')
-    getItems(items.length)
-      .then((checks) => {
+    fetchItems(funcArgs)
+      .then((newItems: TItem) => {
         if (aborted) return
 
-        if (checks.length === 0) {
+        if (newItems.length === 0) {
           console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
           return setStatus('suspended')
         }
 
-        console.debug(`Fetched ... ${checks.length} new items..`)
+        console.debug(`Fetched ... ${newItems.length} new items..`)
 
-        addItems(checks)
+        addItems(newItems)
         setStatus('hidden')
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         setStatus('error')
         console.error('[InfinityScroll]: Failed to fetch new items', e)
       })
@@ -103,7 +111,7 @@ export function InfinityScrollFetcher({ getItems, disabled, suspensionTimeout = 
       // disable pending state when fetch is aborted
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
-  }, [inView, disabled, getItems, addItems])
+  }, [inView, disabled, fetchItems, fetchProps, addItems])
 
   return (
     <>
