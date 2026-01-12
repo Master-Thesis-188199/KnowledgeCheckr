@@ -64,7 +64,7 @@ export type InfinityScrollFetcherProps<F extends (...args: Any[]) => Promise<Any
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
 export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any[]>>({
-  fetchItems,
+  fetchItems: getItems,
   fetchProps,
   disabled,
   suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
@@ -86,12 +86,9 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
     return () => clearTimeout(timeout)
   }, [status, suspensionTimeout])
 
-  useEffect(() => {
+  const fetchItems = useCallback(() => {
     let aborted = false
 
-    if (disabled) return
-    if (!ref.current) return
-    if (!inView) return
     if (status === 'suspended') {
       console.debug('[InfinityFetcher] Fetching currently suspended, aborting...')
       return
@@ -112,7 +109,7 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
 
     setStatus('pending')
 
-    fetchItems
+    getItems
       .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
       .then((newItems: unknown[]) => {
         if (aborted) return
@@ -137,7 +134,15 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       // disable pending state when fetch is aborted
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
-  }, [inView, disabled, fetchItems, fetchProps, addItems, items.length])
+  }, [getItems, fetchProps, addItems, items.length])
+
+  useEffect(() => {
+    if (disabled) return
+    if (!ref.current) return
+    if (!inView) return
+
+    fetchItems()
+  }, [inView, disabled, getItems, fetchProps, addItems, items.length])
 
   return (
     <>
