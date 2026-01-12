@@ -3,6 +3,7 @@ import { ComponentType, createContext, useCallback, useContext, useEffect, useRe
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
+import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import { Any } from '@/types'
 
@@ -38,10 +39,24 @@ export function useInfiniteScrollContext<TElement>() {
 
   return context as InfiniteScrollContext<TElement>
 }
+export type AsyncItemsFn = (...args: Any[]) => Promise<readonly Any[]>
 
-export type InfinityScrollFetcherProps<TFunc extends (...args: Any[]) => Promise<Any>> = {
-  fetchProps?: Partial<Parameters<TFunc>['0']> & { offset?: number }
-  fetchItems: TFunc
+// Enforce: last param exists, is assignable to DatabaseOptions, and is REQUIRED
+export type EnforceLastDbOptions<TFunc extends AsyncItemsFn> =
+  Parameters<TFunc> extends [...infer _Rest, infer Last] ? (Last extends DatabaseOptions ? (undefined extends Last ? never : TFunc) : never) : never
+
+// Ergonomic fetchProps:
+// - 1 arg (options only): object
+// - 2+ args: tuple ending in options
+export type FetchPropsFor<TFunc extends AsyncItemsFn> =
+  Parameters<TFunc> extends [infer Opts extends DatabaseOptions] ? Partial<Opts> : Parameters<TFunc> extends [...infer Rest, infer Opts extends DatabaseOptions] ? [...Rest, Partial<Opts>] : never
+
+// Extract array element type safely
+type ElementOf<T> = T extends readonly (infer U)[] ? U : never
+
+export type InfinityScrollFetcherProps<TFunc extends AsyncItemsFn> = {
+  fetchItems: EnforceLastDbOptions<TFunc>
+  fetchProps?: FetchPropsFor<EnforceLastDbOptions<TFunc>>
   disabled?: boolean
   suspensionTimeout?: number
   loadingLabel?: string
@@ -49,7 +64,7 @@ export type InfinityScrollFetcherProps<TFunc extends (...args: Any[]) => Promise
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any>, TItem extends Awaited<ReturnType<TFunc>>[number]>({
+export function InfinityScrollFetcher<TFunc extends AsyncItemsFn, TEnforced extends EnforceLastDbOptions<TFunc> = EnforceLastDbOptions<TFunc>, TItem = ElementOf<Awaited<ReturnType<TEnforced>>>>({
   fetchItems,
   fetchProps,
   disabled,

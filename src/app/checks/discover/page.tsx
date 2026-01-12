@@ -1,18 +1,32 @@
 import { FilterIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
-import { getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
-import InfiniteKnowledgeCheckGrid from '@/src/components/checks/RenderInfiniteChecks'
+import { getKnowledgeChecksByOwner, getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
+import { DatabaseOptions } from '@/database/knowledgeCheck/type'
+import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
 import { Button } from '@/src/components/shadcn/button'
 import { Input } from '@/src/components/shadcn/input'
-import { InfinityScrollFetcherProps } from '@/src/components/Shared/InfiniteScroll'
+import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Any } from '@/types'
 
 export default async function BrowseChecksPage() {
-  const filter: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = {
-    limit: 1,
-  }
+  get(getPublicOptions)
+  get(getPublic)
+  // get(getKnowledgeCheckSettingsById)
+  get(getKnowledgeChecksByOwner)
+  const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = undefined
+  // {
+  //   // limit: 1,
+  //   // filter: {
+  //   //   name: {
+  //   //     value: '1',
+  //   //     op: 'startsWith',
+  //   //   },
+  //   // },
+  // }
 
-  const checks = await getPublicKnowledgeChecks(filter)
+  const checks = await getPublicKnowledgeChecks(props)
 
   return (
     <>
@@ -43,7 +57,33 @@ export default async function BrowseChecksPage() {
           </Link>
         </div>
       </div>
-      <InfiniteKnowledgeCheckGrid initialItems={[]} fetchItems={getPublicKnowledgeChecks} fetchProps={filter} />
+      <InfiniteScrollProvider initialItems={checks}>
+        <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
+          <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
+        </div>
+
+        <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} loadingLabel={'Loading more checks...'} />
+      </InfiniteScrollProvider>
     </>
   )
+}
+
+type Options = { limit?: number; offset?: number }
+type MissingOptionsLastError<T extends (...args: Any[]) => Any> = T & {
+  __error__: 'Function must have `Options` as its LAST parameter'
+}
+
+// Keep F only if its last parameter is Options
+type HasOptionsLast<F extends (...args: Any[]) => Any> = Parameters<F> extends [...infer _Head, Options] ? F : MissingOptionsLastError<F>
+
+function get<F extends (...args: Any[]) => Any>(func: HasOptionsLast<F>) {
+  // optional: preserve the exact call signature
+  return (...args: Parameters<F>): ReturnType<F> => func(...args)
+}
+
+async function getPublicOptions({ limit = 10, offset = 0 }: DatabaseOptions) {
+  return Promise.resolve(instantiateKnowledgeCheck())
+}
+async function getPublic(userId: string, { limit = 10, offset = 0 }: DatabaseOptions) {
+  return Promise.resolve(instantiateKnowledgeCheck())
 }
