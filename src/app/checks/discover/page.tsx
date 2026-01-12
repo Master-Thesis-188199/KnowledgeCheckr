@@ -1,20 +1,14 @@
 import { FilterIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
-import { getKnowledgeChecksByOwner, getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
-import { DatabaseOptions } from '@/database/knowledgeCheck/type'
+import { getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
 import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
 import { Button } from '@/src/components/shadcn/button'
 import { Input } from '@/src/components/shadcn/input'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { Any } from '@/types'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
-  get(getPublicOptions)
-  get(getPublic)
-  // get(getKnowledgeCheckSettingsById)
-  get(getKnowledgeChecksByOwner)
   const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = undefined
   // {
   //   // limit: 1,
@@ -66,24 +60,4 @@ export default async function BrowseChecksPage() {
       </InfiniteScrollProvider>
     </>
   )
-}
-
-type Options = { limit?: number; offset?: number }
-type MissingOptionsLastError<T extends (...args: Any[]) => Any> = T & {
-  __error__: 'Function must have `Options` as its LAST parameter'
-}
-
-// Keep F only if its last parameter is Options
-type HasOptionsLast<F extends (...args: Any[]) => Any> = Parameters<F> extends [...infer _Head, Options] ? F : MissingOptionsLastError<F>
-
-function get<F extends (...args: Any[]) => Any>(func: HasOptionsLast<F>) {
-  // optional: preserve the exact call signature
-  return (...args: Parameters<F>): ReturnType<F> => func(...args)
-}
-
-async function getPublicOptions({ limit = 10, offset = 0 }: DatabaseOptions) {
-  return Promise.resolve(instantiateKnowledgeCheck())
-}
-async function getPublic(userId: string, { limit = 10, offset = 0 }: DatabaseOptions) {
-  return Promise.resolve(instantiateKnowledgeCheck())
 }
