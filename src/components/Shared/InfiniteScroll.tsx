@@ -3,7 +3,7 @@ import { ComponentType, createContext, useCallback, useContext, useEffect, useRe
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
-import { DatabaseOptions } from '@/database/knowledgeCheck/type'
+import { DatabaseOptions, RequireOptionsLast } from '@/database/knowledgeCheck/type'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import { Any } from '@/types'
 
@@ -52,11 +52,10 @@ export type FetchPropsFor<TFunc extends AsyncItemsFn> =
   Parameters<TFunc> extends [infer Opts extends DatabaseOptions] ? Partial<Opts> : Parameters<TFunc> extends [...infer Rest, infer Opts extends DatabaseOptions] ? [...Rest, Partial<Opts>] : never
 
 // Extract array element type safely
-type ElementOf<T> = T extends readonly (infer U)[] ? U : never
 
-export type InfinityScrollFetcherProps<TFunc extends AsyncItemsFn> = {
-  fetchItems: EnforceLastDbOptions<TFunc>
-  fetchProps?: FetchPropsFor<EnforceLastDbOptions<TFunc>>
+export type InfinityScrollFetcherProps<F extends (...args: Any[]) => Promise<Any[]>> = {
+  fetchProps?: Parameters<F>
+  fetchItems: F & RequireOptionsLast<F>
   disabled?: boolean
   suspensionTimeout?: number
   loadingLabel?: string
@@ -64,14 +63,14 @@ export type InfinityScrollFetcherProps<TFunc extends AsyncItemsFn> = {
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-export function InfinityScrollFetcher<TFunc extends AsyncItemsFn, TEnforced extends EnforceLastDbOptions<TFunc> = EnforceLastDbOptions<TFunc>, TItem = ElementOf<Awaited<ReturnType<TEnforced>>>>({
+export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any[]>>({
   fetchItems,
   fetchProps,
   disabled,
   suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
   loadingLabel,
 }: InfinityScrollFetcherProps<TFunc>) {
-  const { addItems, items } = useInfiniteScrollContext<TItem>()
+  const { addItems, items } = useInfiniteScrollContext<unknown>()
   const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
@@ -98,12 +97,24 @@ export function InfinityScrollFetcher<TFunc extends AsyncItemsFn, TEnforced exte
       return
     }
 
-    const funcArgs: NonNullable<typeof fetchProps> = { ...fetchProps, offset: fetchProps?.offset ?? items.length }
-    console.debug('Infinite Scroll - fetching new items... with ', funcArgs)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    //* Modify / Append offset to optional function-arguments
+    const funcArgs = fetchProps ?? ([{ offset: items.length }] as [DatabaseOptions])
+    if (funcArgs !== undefined) {
+      // override / append offset
+      const dbOptions = { ...fetchProps!.at(-1), offset: items.length } as DatabaseOptions
+
+      // Expect "Error: This value cannot be modified"
+      // eslint-disable-next-line react-hooks/immutability
+      funcArgs[funcArgs!.length - 1] = dbOptions
+    }
+
+    console.debug('Infinite Scroll - fetching new items...')
+
     setStatus('pending')
-    fetchItems(funcArgs)
-      .then((newItems: TItem) => {
+
+    fetchItems
+      .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
+      .then((newItems: unknown[]) => {
         if (aborted) return
 
         if (newItems.length === 0) {
