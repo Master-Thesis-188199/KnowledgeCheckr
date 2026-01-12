@@ -1,4 +1,5 @@
 import { getKnowledgeChecksByOwner, getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
+import getKnowledgeCheckSettingsById from '@/database/knowledgeCheck/settings/select'
 import { Any } from '@/types'
 
 export interface DbKnowledgeCheck {
@@ -40,22 +41,23 @@ get(getPublic)
 //@ts-expect-error Expect to detect missing options...
 get(getPublicNoOptions)
 get(getKnowledgeChecksByOwner)
+//@ts-expect-error Expect to detect missing options...
+get(getKnowledgeCheckSettingsById)
 get(getPublic3)
 get(getPublicOptionalOptions)
 
-type Options = { limit?: number; offset?: number }
 type MissingOptionsLastError<T extends Any> = T & {
   __error__: 'Function must have `Options` as its LAST parameter'
 }
 
-type IsOptionsLike<T> = T extends { limit?: infer L; offset?: infer O } ? ([L] extends [number | undefined] ? ([O] extends [number | undefined] ? true : false) : false) : false
+type IsOptionsLike<T> = [NonNullable<T>] extends [DatabaseOptions] ? true : false
 
 // Validate last param (required or optional) is Options-like
 type RequireOptionsLast<F extends (...args: Any[]) => Any> =
   Parameters<F> extends [...infer _Head, infer Last]
     ? IsOptionsLike<NonNullable<Last>> extends true
       ? object // ok
-      : MissingOptionsLastError<Parameters<F>>
+      : MissingOptionsLastError<unknown>
     : MissingOptionsLastError<Any>
 
 function get<F extends (...args: Any[]) => Any>(func: F & RequireOptionsLast<F>) {
