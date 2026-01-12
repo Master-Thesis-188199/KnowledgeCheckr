@@ -1,5 +1,5 @@
 'use client'
-import { ComponentType, createContext, useContext, useEffect, useRef, useState } from 'react'
+import { ComponentType, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
@@ -25,7 +25,7 @@ export function InfiniteScrollProvider<TElement>({ initialItems, children }: { c
     setItems(initialItems)
   }, [initialItems])
 
-  const addItems: InfiniteScrollContext<TElement>['addItems'] = (items) => setItems((prev) => prev.concat(items))
+  const addItems: InfiniteScrollContext<TElement>['addItems'] = useCallback((items) => setItems((prev) => prev.concat(items)), [])
   const reset = () => setItems(initialItems)
 
   return <InfiniteScrollContext.Provider value={{ items, setItems, addItems, reset }}>{children}</InfiniteScrollContext.Provider>
