@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getKnowledgeChecksByOwner } from '@/database/knowledgeCheck/select'
+import InfiniteKnowledgeCheckGrid from '@/src/components/checks/RenderInfiniteChecks'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
@@ -20,14 +21,7 @@ export default async function ChecksPage() {
         </div>
       )}
 
-      {/* <InfiniteKnowledgeCheckGrid initialItems={checks} fetchItems={getKnowledgeChecksByOwner} fetchProps={['', {}]} /> */}
+      <InfiniteKnowledgeCheckGrid initialItems={checks} fetchItems={getKnowledgeChecksByOwner} fetchProps={[user.id, { limit: 10 }]} />
     </>
   )
-}
-
-async function fetchItems(offset: number) {
-  'use server'
-  const { user } = await requireAuthentication()
-
-  return await getKnowledgeChecksByOwner(user.id, { offset })
 }
