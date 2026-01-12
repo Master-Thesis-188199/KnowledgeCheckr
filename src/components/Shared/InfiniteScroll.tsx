@@ -111,7 +111,7 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       // disable pending state when fetch is aborted
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
-  }, [inView, disabled, fetchItems, fetchProps, addItems])
+  }, [inView, disabled, fetchItems, fetchProps, addItems, items.length])
 
   return (
     <>
