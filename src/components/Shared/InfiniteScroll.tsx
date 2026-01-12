@@ -103,7 +103,7 @@ export function InfinityScrollFetcher({ getItems, disabled, suspensionTimeout = 
       // disable pending state when fetch is aborted
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
-  }, [inView, disabled, getItems, addItems])
+  }, [inView, disabled, getItems, addItems, items.length])
 
   return (
     <>
