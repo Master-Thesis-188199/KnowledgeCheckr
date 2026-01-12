@@ -70,10 +70,11 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
   loadingLabel,
 }: InfinityScrollFetcherProps<TFunc>) {
-  const { addItems, items } = useInfiniteScrollContext<unknown>()
+  const { addItems, items, setItems } = useInfiniteScrollContext<unknown>()
   const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
+  const refProps = useRef(fetchProps)
 
   useEffect(() => {
     if (status !== 'suspended') return
@@ -135,6 +136,13 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
   }, [getItems, fetchProps, addItems, items.length])
+
+  useEffect(() => {
+    if (refProps.current === fetchProps) return
+    console.debug('Filter props have changed, resesting infinity items.')
+    setItems([])
+    fetchItems()
+  }, [fetchProps])
 
   useEffect(() => {
     if (disabled) return
