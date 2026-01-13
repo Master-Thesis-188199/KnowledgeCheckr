@@ -71,7 +71,7 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   loadingLabel,
 }: InfinityScrollFetcherProps<TFunc>) {
   const { addItems, items, setItems } = useInfiniteScrollContext<unknown>()
-  const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error'>('hidden')
+  const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error' | 'reset'>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
   const refProps = useRef(fetchProps)
@@ -87,8 +87,68 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
     return () => clearTimeout(timeout)
   }, [status, suspensionTimeout])
 
-  const fetchItems = useCallback(() => {
+  useEffect(() => {
     let aborted = false
+
+    if (isEqual(refProps.current, fetchProps)) return
+    console.debug('----------')
+    console.debug('Filter props have changed, resesting infinity items.')
+    setStatus('reset')
+
+    if (disabled) return
+    if (!ref.current) return
+
+    //* Modify / Append offset to optional function-arguments
+    const funcArgs = fetchProps ?? ([{ offset: 0 }] as [DatabaseOptions])
+    if (funcArgs !== undefined) {
+      // override / append offset
+      const dbOptions = { ...fetchProps!.at(-1), offset: 0 } as DatabaseOptions
+
+      // Expect "Error: This value cannot be modified"
+      // eslint-disable-next-line react-hooks/immutability
+      funcArgs[funcArgs!.length - 1] = dbOptions
+    }
+
+    setStatus('pending')
+
+    getItems
+      .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
+      .then((newItems: unknown[]) => {
+        if (aborted) return
+
+        if (newItems.length === 0) {
+          console.warn('InfinityFetcher now temporarily suspended, because no new items exist.', funcArgs)
+          return setStatus('suspended')
+        }
+
+        console.debug(`Fetched ... ${newItems.length} new items..`)
+
+        setItems(newItems)
+        setStatus('hidden')
+      })
+      .catch((e: unknown) => {
+        setStatus('error')
+        console.error('[InfinityScroll]: Failed to fetch new items', e)
+      })
+
+    refProps.current = fetchProps
+
+    return () => {
+      // gets called twice per load --> first fetch is made  -> adds Item --> trigers re-render --> triggers abortion of secondary fetch-request caused by re-render
+      aborted = true
+      // disable pending state when fetch is aborted
+      setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
+    }
+  }, [fetchProps])
+
+  useEffect(() => {
+    let aborted = false
+    if (status === 'reset' || status === 'pending') return
+
+    // if (items.length === 0) return
+    if (disabled) return
+    if (!ref.current) return
+    if (!inView) return
 
     if (status === 'suspended') {
       console.debug('[InfinityFetcher] Fetching currently suspended, aborting...')
@@ -105,8 +165,6 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       // eslint-disable-next-line react-hooks/immutability
       funcArgs[funcArgs!.length - 1] = dbOptions
     }
-
-    console.debug('Infinite Scroll - fetching new items...')
 
     setStatus('pending')
 
@@ -131,25 +189,11 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       })
 
     return () => {
+      // gets called twice per load --> first fetch is made  -> adds Item --> trigers re-render --> triggers abortion of secondary fetch-request caused by re-render
       aborted = true
       // disable pending state when fetch is aborted
       setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
     }
-  }, [getItems, fetchProps, addItems, items.length])
-
-  useEffect(() => {
-    if (refProps.current === fetchProps) return
-    console.debug('Filter props have changed, resesting infinity items.')
-    setItems([])
-    fetchItems()
-  }, [fetchProps])
-
-  useEffect(() => {
-    if (disabled) return
-    if (!ref.current) return
-    if (!inView) return
-
-    fetchItems()
   }, [inView, disabled, getItems, fetchProps, addItems, items.length])
 
   return (
