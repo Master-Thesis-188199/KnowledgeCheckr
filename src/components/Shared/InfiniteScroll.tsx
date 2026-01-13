@@ -1,5 +1,6 @@
+/* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
 'use client'
-import { ComponentType, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { ComponentType, createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
@@ -50,18 +51,22 @@ export type InfinityScrollFetcherProps<F extends (...args: Any[]) => Promise<Any
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
+type FetchStatus = 'hidden' | 'suspended' | 'pending' | 'error' | 'reset'
+
 export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any[]>>({
-  fetchItems: getItems,
+  fetchItems,
   fetchProps,
   disabled,
   suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
   loadingLabel,
 }: InfinityScrollFetcherProps<TFunc>) {
-  const { addItems, items, setItems } = useInfiniteScrollContext<unknown>()
-  const [status, setStatus] = useState<'hidden' | 'suspended' | 'pending' | 'error' | 'reset'>('hidden')
+  const { items } = useInfiniteScrollContext<unknown>()
+  const [status, setStatus] = useState<FetchStatus>('hidden')
   const ref = useRef(null)
   const inView = useInView(ref)
   const refProps = useRef(fetchProps)
+
+  const getItems = useFetchAction({ fetchItems, fetchProps, disabled, setStatus, status })
 
   useEffect(() => {
     if (status !== 'suspended') return
@@ -75,61 +80,16 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   }, [status, suspensionTimeout])
 
   useEffect(() => {
-    let aborted = false
-
     if (isEqual(refProps.current, fetchProps)) return
     console.debug('----------')
     console.debug('Filter props have changed, resesting infinity items.')
-    setStatus('reset')
 
-    if (disabled) return
-    if (!ref.current) return
-
-    //* Modify / Append offset to optional function-arguments
-    const funcArgs = fetchProps ?? ([{ offset: 0 }] as [DatabaseOptions])
-    if (funcArgs !== undefined) {
-      // override / append offset
-      const dbOptions = { ...fetchProps!.at(-1), offset: 0 } as DatabaseOptions
-
-      // Expect "Error: This value cannot be modified"
-      // eslint-disable-next-line react-hooks/immutability
-      funcArgs[funcArgs!.length - 1] = dbOptions
-    }
-
-    setStatus('pending')
-
-    getItems
-      .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
-      .then((newItems: unknown[]) => {
-        if (aborted) return
-
-        if (newItems.length === 0) {
-          console.warn('InfinityFetcher now temporarily suspended, because no new items exist.', funcArgs)
-          return setStatus('suspended')
-        }
-
-        console.debug(`Fetched ... ${newItems.length} new items..`)
-
-        setItems(newItems)
-        setStatus('hidden')
-      })
-      .catch((e: unknown) => {
-        setStatus('error')
-        console.error('[InfinityScroll]: Failed to fetch new items', e)
-      })
+    getItems(0, 'replace')
 
     refProps.current = fetchProps
-
-    return () => {
-      // gets called twice per load --> first fetch is made  -> adds Item --> trigers re-render --> triggers abortion of secondary fetch-request caused by re-render
-      aborted = true
-      // disable pending state when fetch is aborted
-      setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
-    }
   }, [fetchProps])
 
   useEffect(() => {
-    let aborted = false
     if (status === 'reset' || status === 'pending') return
 
     // if (items.length === 0) return
@@ -142,46 +102,8 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
       return
     }
 
-    //* Modify / Append offset to optional function-arguments
-    const funcArgs = fetchProps ?? ([{ offset: items.length }] as [DatabaseOptions])
-    if (funcArgs !== undefined) {
-      // override / append offset
-      const dbOptions = { ...fetchProps!.at(-1), offset: items.length } as DatabaseOptions
-
-      // Expect "Error: This value cannot be modified"
-      // eslint-disable-next-line react-hooks/immutability
-      funcArgs[funcArgs!.length - 1] = dbOptions
-    }
-
-    setStatus('pending')
-
-    getItems
-      .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
-      .then((newItems: unknown[]) => {
-        if (aborted) return
-
-        if (newItems.length === 0) {
-          console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
-          return setStatus('suspended')
-        }
-
-        console.debug(`Fetched ... ${newItems.length} new items..`)
-
-        addItems(newItems)
-        setStatus('hidden')
-      })
-      .catch((e: unknown) => {
-        setStatus('error')
-        console.error('[InfinityScroll]: Failed to fetch new items', e)
-      })
-
-    return () => {
-      // gets called twice per load --> first fetch is made  -> adds Item --> trigers re-render --> triggers abortion of secondary fetch-request caused by re-render
-      aborted = true
-      // disable pending state when fetch is aborted
-      setStatus((prev) => (prev === 'pending' ? 'hidden' : prev))
-    }
-  }, [inView, disabled, getItems, fetchProps, addItems, items.length])
+    getItems(items.length, 'append')
+  }, [inView, disabled, fetchItems, fetchProps, items.length])
 
   return (
     <>
@@ -207,4 +129,63 @@ export function InfinityScrollRenderer<TItem>({ component: Component }: { compon
   const { items } = useInfiniteScrollContext<TItem>()
 
   return items.map((args, index) => <Component key={index} {...args} />)
+}
+
+function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
+  fetchItems,
+  fetchProps,
+  disabled,
+  status,
+  setStatus,
+}: Pick<InfinityScrollFetcherProps<TFunc>, 'disabled' | 'fetchItems' | 'fetchProps'> & {
+  setStatus: Dispatch<SetStateAction<FetchStatus>>
+  status: FetchStatus
+}) {
+  const { addItems, setItems } = useInfiniteScrollContext<unknown>()
+
+  const gatherItems = useCallback(
+    async (offset: number, operation: 'append' | 'replace' = 'append') => {
+      if (disabled) return
+      if (status === 'pending') return
+
+      //* Modify / Append offset to optional function-arguments
+      const funcArgs = fetchProps ?? ([{ offset }] as [DatabaseOptions])
+      if (funcArgs !== undefined) {
+        // override / append offset
+        const dbOptions = { ...fetchProps!.at(-1), offset } as DatabaseOptions
+
+        // Expect "Error: This value cannot be modified"
+        // eslint-disable-next-line react-hooks/immutability
+        funcArgs[funcArgs!.length - 1] = dbOptions
+      }
+
+      setStatus('pending')
+
+      return fetchItems
+        .apply(null, funcArgs) // --> pass along the function-arguments with the modified / appended offset
+        .then((newItems: unknown[]) => {
+          if (newItems.length === 0 && operation === 'append') {
+            console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
+            return setStatus('suspended')
+          } else if (newItems.length === 0 && operation === 'replace') {
+            console.warn('Filters did not yield any results')
+            setItems([])
+            return setStatus('suspended')
+          }
+
+          console.debug(`Fetched ... ${newItems.length} new items..`, ...funcArgs)
+
+          if (operation === 'append') addItems(newItems)
+          else setItems(newItems)
+          setStatus('hidden')
+        })
+        .catch((e: unknown) => {
+          setStatus('error')
+          console.error('[InfinityScroll]: Failed to fetch new items', e)
+        })
+    },
+    [fetchItems, fetchProps, disabled],
+  )
+
+  return gatherItems
 }
