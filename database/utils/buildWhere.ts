@@ -5,7 +5,7 @@ type NullOps = { op: 'isNull' } | { op: 'isNotNull' }
 
 type InOps<T> = { op: 'in'; value: T[] }
 
-type StringOps =
+export type StringOps =
   | { op: 'eq'; value: string }
   | { op: 'contains'; value: string }
   | { op: 'startsWith'; value: string }
