@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { and, between, eq, gt, gte, ilike, inArray, isNotNull, isNull, like, lt, lte, or, type SQL } from 'drizzle-orm'
+import { and, between, eq, gt, gte, inArray, isNotNull, isNull, like, lt, lte, or, type SQL } from 'drizzle-orm'
 
 type NullOps = { op: 'isNull' } | { op: 'isNotNull' }
 
@@ -7,10 +7,10 @@ type InOps<T> = { op: 'in'; value: T[] }
 
 type StringOps =
   | { op: 'eq'; value: string }
-  | { op: 'contains'; value: string; caseInsensitive?: boolean }
-  | { op: 'startsWith'; value: string; caseInsensitive?: boolean }
-  | { op: 'endsWith'; value: string; caseInsensitive?: boolean }
-  | { op: 'like'; value: string; caseInsensitive?: boolean } // raw LIKE pattern e.g. "%foo_"
+  | { op: 'contains'; value: string }
+  | { op: 'startsWith'; value: string }
+  | { op: 'endsWith'; value: string }
+  | { op: 'like'; value: string } // raw LIKE pattern e.g. "%foo_"
   | InOps<string>
   | NullOps
 
@@ -107,27 +107,27 @@ export default function buildWhere<TTable extends { $inferSelect: any }>(table: 
       case 'contains': {
         const v = escapeLikeLiteral((f as any).value)
         const pattern = `%${v}%`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(like(col, pattern))
         break
       }
 
       case 'startsWith': {
         const v = escapeLikeLiteral((f as any).value)
         const pattern = `${v}%`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(like(col, pattern))
         break
       }
 
       case 'endsWith': {
         const v = escapeLikeLiteral((f as any).value)
         const pattern = `%${v}`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(like(col, pattern))
         break
       }
 
       case 'like': {
         const pattern = (f as any).value
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(like(col, pattern))
         break
       }
 
