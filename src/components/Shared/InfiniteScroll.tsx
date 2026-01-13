@@ -39,19 +39,6 @@ export function useInfiniteScrollContext<TElement>() {
 
   return context as InfiniteScrollContext<TElement>
 }
-export type AsyncItemsFn = (...args: Any[]) => Promise<readonly Any[]>
-
-// Enforce: last param exists, is assignable to DatabaseOptions, and is REQUIRED
-export type EnforceLastDbOptions<TFunc extends AsyncItemsFn> =
-  Parameters<TFunc> extends [...infer _Rest, infer Last] ? (Last extends DatabaseOptions ? (undefined extends Last ? never : TFunc) : never) : never
-
-// Ergonomic fetchProps:
-// - 1 arg (options only): object
-// - 2+ args: tuple ending in options
-export type FetchPropsFor<TFunc extends AsyncItemsFn> =
-  Parameters<TFunc> extends [infer Opts extends DatabaseOptions] ? Partial<Opts> : Parameters<TFunc> extends [...infer Rest, infer Opts extends DatabaseOptions] ? [...Rest, Partial<Opts>] : never
-
-// Extract array element type safely
 
 export type InfinityScrollFetcherProps<F extends (...args: Any[]) => Promise<Any[]>> = {
   fetchProps?: Parameters<F>
