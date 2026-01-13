@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { ChangeEvent, useCallback, useState } from 'react'
 import isEqual from 'lodash/isEqual'
 import { CaseSensitiveIcon, FilterIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/src/components/shadcn/input-group'
 import { Toggle } from '@/src/components/shadcn/toggle'
 import Tooltip from '@/src/components/Shared/Tooltip'
+import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 
 export function DiscoverFilterFields() {
   const { filter, setFuncProps } = useDiscoverFilterOptionsContext()
@@ -38,6 +39,17 @@ export function DiscoverFilterFields() {
     [filter, setFuncProps, isCaseSensitive],
   )
 
+  const onFilterValueChange = useCallback(
+    () =>
+      ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+        setNameFilterValue(value.trim() ? value : undefined)
+        updateFilter(selectedFilterOperand, value)
+      },
+    [selectedFilterOperand, setNameFilterValue, updateFilter],
+  )
+
+  const debounceOnFilterValueChange = useCallback(() => debounceFunction(onFilterValueChange, 250), [onFilterValueChange])
+
   return (
     <div className='mb-4 flex flex-col gap-4'>
       <div className='flex justify-between'>
@@ -45,10 +57,7 @@ export function DiscoverFilterFields() {
           <InputGroupInput
             placeholder='Filter by name'
             defaultValue={filter?.name && filter.name.op !== 'isNotNull' && filter.name.op !== 'isNull' ? filter.name?.value : ''}
-            onChange={({ target: { value } }) => {
-              setNameFilterValue(value.trim() ? value : undefined)
-              updateFilter(selectedFilterOperand, value)
-            }}
+            onChange={debounceOnFilterValueChange}
           />
           <InputGroupAddon>
             <FilterIcon />
