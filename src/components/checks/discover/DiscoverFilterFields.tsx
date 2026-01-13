@@ -17,7 +17,7 @@ export function DiscoverFilterFields() {
         defaultValue={filter?.name && filter.name.op !== 'isNotNull' && filter.name.op !== 'isNull' ? filter.name?.value : ''}
         onChange={(e) => {
           setFuncProps((prev) => {
-            const filters = { name: { value: e.target.value, op: 'like' } }
+            const filters: typeof filter = { name: { value: e.target.value, op: 'startsWith' } }
 
             const update = {
               ...prev,
