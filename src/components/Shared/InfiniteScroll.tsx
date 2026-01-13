@@ -97,9 +97,9 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
 
     const interval = setInterval(() => {
       console.debug('Fetching..')
-      getItems(items.length, 'append').then(() => {
-        // when retrieved itemSize === 0 --> items is set to [], thus when no new items are available --> cancel interval
-        if (items.length === 0) clearInterval(interval)
+      getItems(items.length, 'append').then((state) => {
+        // when no items where either fetched (failure) or the execution was 'cancelled' --> stop fetch-interval
+        if (state !== 'success') return clearInterval(interval)
       })
     }, 500)
 
@@ -146,8 +146,8 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
 
   const gatherItems = useCallback(
     async (offset: number, operation: 'append' | 'replace' = 'append') => {
-      if (disabled) return
-      if (status === 'pending') return
+      if (disabled) return 'cancelled' as const
+      if (status === 'pending') return 'cancelled' as const
 
       //* Modify / Append offset to optional function-arguments
       const funcArgs = fetchProps ?? ([{ offset }] as [DatabaseOptions])
@@ -167,11 +167,13 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
         .then((newItems: unknown[]) => {
           if (newItems.length === 0 && operation === 'append') {
             console.warn('InfinityFetcher now temporarily suspended, because no new items exist.')
-            return setStatus('suspended')
+            setStatus('suspended')
+            return 'cancelled' as const
           } else if (newItems.length === 0 && operation === 'replace') {
             console.warn('Filters did not yield any results')
             setItems([])
-            return setStatus('suspended')
+            setStatus('suspended')
+            return 'failure' as const
           }
 
           console.debug(`Fetched ... ${newItems.length} new items..`, ...funcArgs)
@@ -179,10 +181,12 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
           if (operation === 'append') addItems(newItems)
           else setItems(newItems)
           setStatus('hidden')
+          return 'success' as const
         })
         .catch((e: unknown) => {
           setStatus('error')
           console.error('[InfinityScroll]: Failed to fetch new items', e)
+          return 'failure' as const
         })
     },
     [fetchItems, fetchProps, disabled],
