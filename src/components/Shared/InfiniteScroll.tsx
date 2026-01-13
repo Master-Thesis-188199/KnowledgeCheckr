@@ -51,7 +51,7 @@ export type InfinityScrollFetcherProps<F extends (...args: Any[]) => Promise<Any
 
 const DEFAULT_SUSPENSION_TIMEOUT = 30 * 1000
 
-type FetchStatus = 'hidden' | 'suspended' | 'pending' | 'error' | 'reset'
+type FetchStatus = 'hidden' | 'suspended' | 'pending' | 'error' | 'reset' | 'wait'
 
 export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<Any[]>>({
   fetchItems,
@@ -60,6 +60,9 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   suspensionTimeout = DEFAULT_SUSPENSION_TIMEOUT,
   loadingLabel,
 }: InfinityScrollFetcherProps<TFunc>) {
+  //* the time that has to pass until another another infinity-fetch request can be started  (prevents immediate re-executions of useEffects, e.g. when items.length changes)
+  const FETCH_INIT_DEBOUNCE_TIME = 250
+
   const { items } = useInfiniteScrollContext<unknown>()
   const [status, setStatus] = useState<FetchStatus>('hidden')
   const ref = useRef(null)
@@ -80,6 +83,17 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   }, [status, suspensionTimeout])
 
   useEffect(() => {
+    if (status !== 'wait') return
+
+    const timeout = setTimeout(() => {
+      console.debug(`Waited ${FETCH_INIT_DEBOUNCE_TIME / 1000} to debounce state-changes before continuing to start fetches.`)
+      setStatus('hidden')
+    }, FETCH_INIT_DEBOUNCE_TIME)
+
+    return () => clearTimeout(timeout)
+  }, [status, FETCH_INIT_DEBOUNCE_TIME])
+
+  useEffect(() => {
     if (isEqual(refProps.current, fetchProps)) return
     console.debug('----------')
     console.debug('Filter props have changed, resesting infinity items.')
@@ -95,16 +109,20 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
     // when items were reset --> filters did not match any element, then don't start a new interval but listen for `fetchProp` changes (resets)
     if (items.length === 0) return
 
-    const interval = setInterval(() => {
-      console.debug('Fetching..')
-      getItems(items.length, 'append').then((state) => {
-        // when no items where either fetched (failure) or the execution was 'cancelled' --> stop fetch-interval
-        if (state !== 'success') return clearInterval(interval)
-      })
-    }, 500)
+    // since we listen to status-changes --> we want to only initiate fetching when we are ready (status === "hidden")
+    // this way when fetch-request is done --> status set to 'wait' --> triggers state change after `250ms` back to 'hidden' --> causing effect to re-execute
+    // --> eliminates immediate re-executions of fetch-requests because of `items.length` changes
+    if (status !== 'hidden') return
 
-    return () => clearInterval(interval)
-  }, [inView, disabled, items.length])
+    const interval = scheduleInterval(getItems, [items.length, 'append'], 500, (state) => {
+      // when no items where either fetched (failure) or the execution was 'cancelled' --> stop fetch-interval
+      if (state !== 'success') return clearInterval(interval)
+    })
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [inView, disabled, items.length, status])
 
   return (
     <>
@@ -180,7 +198,8 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
 
           if (operation === 'append') addItems(newItems)
           else setItems(newItems)
-          setStatus('hidden')
+
+          setStatus('wait')
           return 'success' as const
         })
         .catch((e: unknown) => {
@@ -193,4 +212,22 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
   )
 
   return gatherItems
+}
+
+/**
+ * This utility function essentially schedules an interval for a given function but also executes the function right-away and not just after the interval-time has first passed.
+ * @param func The function to continuously execute
+ * @param props The props that are passed to the function when executed
+ * @param interval The interval in which the function is to be executed
+ * @param callback The callback that is executed with the result of the function
+ * @returns An interval handle to clear the interval.
+ */
+function scheduleInterval<T extends (...args: Any[]) => Promise<Any>>(func: T, props: Parameters<T>, interval: number, callback: (response: Awaited<ReturnType<T>>) => void) {
+  func(...props).then(callback)
+
+  const intervalHandle = setInterval(() => {
+    func(...props).then(callback)
+  }, interval)
+
+  return intervalHandle
 }
