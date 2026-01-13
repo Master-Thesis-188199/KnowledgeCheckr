@@ -108,14 +108,10 @@ export function DiscoverFilterFields() {
         </InputGroup>
 
         <div className='flex gap-4'>
-          <Button variant='base' disabled>
-            <FilterIcon className='size-4' />
-            Filter
-          </Button>
           <Link href='/checks/create'>
             <Button>
               <PlusIcon className='size-5' />
-              Create Check
+              Create your own Check
             </Button>
           </Link>
         </div>
