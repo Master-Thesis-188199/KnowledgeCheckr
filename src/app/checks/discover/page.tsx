@@ -1,24 +1,24 @@
-import { FilterIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 import { getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
+import DiscoverDynamicFilterFetcher from '@/src/components/checks/discover/DiscoverDynamicFilterFetcher'
+import { DiscoverFilterFields } from '@/src/components/checks/discover/DiscoverFilterFields'
+import DiscoverFilterOptionsContext from '@/src/components/checks/discover/DiscoverFilterOptionsProvider'
 import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
-import { Button } from '@/src/components/shadcn/button'
-import { Input } from '@/src/components/shadcn/input'
-import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
+import { InfiniteScrollProvider, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
   const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = [
     {
-      limit: 2,
+      limit: 10,
     },
   ]
 
   const checks = await getPublicKnowledgeChecks.apply(null, props)
 
   return (
-    <>
+    <DiscoverFilterOptionsContext defaultProps={props[0]}>
       <PageHeading title='Explore new Checks' />
 
       {checks.length === 0 && (
@@ -30,29 +30,15 @@ export default async function BrowseChecksPage() {
           .
         </div>
       )}
-      <div className='mb-4 flex justify-between'>
-        <Input placeholder='Search for a specific KnowledgeCheck by name' className='max-w-xl flex-1' />
+      <DiscoverFilterFields />
 
-        <div className='flex gap-4'>
-          <Button variant='base'>
-            <FilterIcon className='size-4' />
-            Filter
-          </Button>
-          <Link href='/checks/create'>
-            <Button>
-              <PlusIcon className='size-5' />
-              Create Check
-            </Button>
-          </Link>
-        </div>
-      </div>
       <InfiniteScrollProvider initialItems={checks}>
         <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
           <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
         </div>
 
-        <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} fetchProps={props} loadingLabel={'Loading more checks...'} />
+        <DiscoverDynamicFilterFetcher />
       </InfiniteScrollProvider>
-    </>
+    </DiscoverFilterOptionsContext>
   )
 }
