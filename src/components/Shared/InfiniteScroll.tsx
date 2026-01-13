@@ -90,20 +90,21 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
   }, [fetchProps])
 
   useEffect(() => {
-    if (status === 'reset' || status === 'pending') return
-
-    // if (items.length === 0) return
     if (disabled) return
-    if (!ref.current) return
     if (!inView) return
+    // when items were reset --> filters did not match any element, then don't start a new interval but listen for `fetchProp` changes (resets)
+    if (items.length === 0) return
 
-    if (status === 'suspended') {
-      console.debug('[InfinityFetcher] Fetching currently suspended, aborting...')
-      return
-    }
+    const interval = setInterval(() => {
+      console.debug('Fetching..')
+      getItems(items.length, 'append').then(() => {
+        // when retrieved itemSize === 0 --> items is set to [], thus when no new items are available --> cancel interval
+        if (items.length === 0) clearInterval(interval)
+      })
+    }, 500)
 
-    getItems(items.length, 'append')
-  }, [inView, disabled, fetchItems, fetchProps, items.length])
+    return () => clearInterval(interval)
+  }, [inView, disabled, items.length])
 
   return (
     <>
