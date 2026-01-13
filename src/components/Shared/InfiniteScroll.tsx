@@ -130,7 +130,7 @@ export function InfinityScrollFetcher<TFunc extends (...args: Any[]) => Promise<
 
       <SmoothPresenceTransition
         id='infinity-fetcher-loading-indicator'
-        active={status === 'pending'}
+        active={status === 'pending' || status === 'wait'}
         presenceTiming={{ minVisibleMs: 550 }}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: 'auto' }}
