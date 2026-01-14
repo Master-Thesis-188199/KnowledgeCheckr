@@ -12,14 +12,15 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
   return (
     <Card
-      as={motion.a}
+      as={motion.div}
+      data-knowledge-check-id={check.id}
+      disableInteractions
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      href={`/checks/edit/${check.id}`}
-      className={cn('group relative flex h-full flex-col justify-between gap-10')}>
+      className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
-        <KnowledgeCheckMenu id={check.id} questions={check.questions} share_key={check.share_key} />
+        <KnowledgeCheckMenu id={check.id} questions={check.questions} share_key={check.share_key} owner_id={check.owner_id!} />
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />

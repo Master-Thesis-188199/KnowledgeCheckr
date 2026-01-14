@@ -25,6 +25,9 @@ describe('Edit KnowledgeCheck page: ', () => {
     cy.wait(750)
     cy.visit('/checks')
 
-    cy.get("main * a[href^='/checks/edit/']").first().click()
+    cy.get(`[data-slot="generic-card"]`).first().should('exist').and('be.visible').find('button[data-slot="dropdown-menu-trigger"]').click()
+    cy.get(`[data-slot="generic-card"]`).first().find('button[data-slot="dropdown-menu-trigger"]').should('have.attr', 'data-state', 'open')
+
+    cy.get('[data-slot="dropdown-menu-content"]').should('exist').find("a[href^='/checks/edit/']").should('exist')
   })
 })
