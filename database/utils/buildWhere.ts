@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { and, between, eq, gt, gte, ilike, inArray, isNotNull, isNull, like, lt, lte, or, type SQL } from 'drizzle-orm'
+import { and, between, eq, gt, gte, inArray, isNotNull, isNull, like, lt, lte, or, type SQL, sql } from 'drizzle-orm'
 
 type NullOps = { op: 'isNull' } | { op: 'isNotNull' }
 
 type InOps<T> = { op: 'in'; value: T[] }
 
-type StringOps =
+export type StringOps =
   | { op: 'eq'; value: string }
-  | { op: 'contains'; value: string; caseInsensitive?: boolean }
-  | { op: 'startsWith'; value: string; caseInsensitive?: boolean }
-  | { op: 'endsWith'; value: string; caseInsensitive?: boolean }
-  | { op: 'like'; value: string; caseInsensitive?: boolean } // raw LIKE pattern e.g. "%foo_"
+  | { op: 'contains'; value: string; ignoreCasing?: boolean }
+  | { op: 'startsWith'; value: string; ignoreCasing?: boolean }
+  | { op: 'endsWith'; value: string; ignoreCasing?: boolean }
+  | { op: 'like'; value: string; ignoreCasing?: boolean } // raw LIKE pattern e.g. "%foo_"
   | InOps<string>
   | NullOps
 
@@ -105,29 +105,34 @@ export default function buildWhere<TTable extends { $inferSelect: any }>(table: 
         break
 
       case 'contains': {
-        const v = escapeLikeLiteral((f as any).value)
+        const option = f as Extract<StringOps, { op: 'contains' }>
+        const v = escapeLikeLiteral(option.value)
         const pattern = `%${v}%`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        //* by default like when using %<string>% mysql ignores the strings casing...
+        clauses.push(option.ignoreCasing ? like(col, pattern) : sql`${col} like ${pattern} COLLATE utf8mb4_0900_as_cs`)
         break
       }
 
       case 'startsWith': {
-        const v = escapeLikeLiteral((f as any).value)
+        const option = f as Extract<StringOps, { op: 'startsWith' }>
+        const v = escapeLikeLiteral(option.value)
         const pattern = `${v}%`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(option.ignoreCasing ? like(col, pattern) : sql`${col} like ${pattern} COLLATE utf8mb4_0900_as_cs`)
         break
       }
 
       case 'endsWith': {
-        const v = escapeLikeLiteral((f as any).value)
+        const option = f as Extract<StringOps, { op: 'endsWith' }>
+        const v = escapeLikeLiteral(option.value)
         const pattern = `%${v}`
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        clauses.push(option.ignoreCasing ? like(col, pattern) : sql`${col} like ${pattern} COLLATE utf8mb4_0900_as_cs`)
         break
       }
 
       case 'like': {
-        const pattern = (f as any).value
-        clauses.push((f as any).caseInsensitive ? ilike(col, pattern) : like(col, pattern))
+        const option = f as Extract<StringOps, { op: 'like' }>
+        const pattern = option.value
+        clauses.push(option.ignoreCasing ? like(col, pattern) : sql`${col} like ${pattern} COLLATE utf8mb4_0900_as_cs`)
         break
       }
 

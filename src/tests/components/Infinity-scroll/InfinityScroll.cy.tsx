@@ -1,3 +1,4 @@
+import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import { Any } from '@/types'
 
@@ -11,25 +12,25 @@ describe('InfinityScroll Suite: ', () => {
           <InfinityScrollRenderer<Any> component={ExemplaryComponent} />
         </div>
 
-        <InfinityScrollFetcher
-          loadingLabel='Loading...'
-          getItems={(offset) =>
-            new Promise((resolve) =>
-              setTimeout(() => {
-                resolve(Array.from({ length: 10 }, (_, i) => `Item ${i + offset + 1}`))
-              }, 100),
-            )
-          }
-        />
+        <InfinityScrollFetcher loadingLabel='Loading...' fetchItems={fetchItemsServer} fetchProps={[{ limit: 10 }]} />
       </InfiniteScrollProvider>,
     )
 
     cy.get('.item').should('have.length', 10)
-    cy.scrollTo('bottom').get('#infinity-fetcher-loading-indicator').should('be.visible')
+    cy.scrollTo('bottom')
+    cy.get('#infinity-fetcher-loading-indicator').should('be.visible')
     cy.get('.item').should('have.length', 20)
     cy.get('#infinity-fetcher-loading-indicator').should('not.exist')
   })
 })
+
+async function fetchItemsServer({ offset = 0, limit = 10 }: {} & DatabaseOptions) {
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      resolve(Array.from({ length: limit }, (_, i) => `Item ${i + offset + 1}`))
+    }, 200),
+  )
+}
 
 function ExemplaryComponent() {
   return <div className='item h-12'>Example</div>

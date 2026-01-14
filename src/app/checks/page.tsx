@@ -21,14 +21,7 @@ export default async function ChecksPage() {
         </div>
       )}
 
-      <InfiniteKnowledgeCheckGrid initialItems={checks} fetchNewItems={fetchItems} />
+      <InfiniteKnowledgeCheckGrid initialItems={checks} fetchItems={getKnowledgeChecksByOwner} fetchProps={[user.id, { limit: 10 }]} />
     </>
   )
-}
-
-async function fetchItems(offset: number) {
-  'use server'
-  const { user } = await requireAuthentication()
-
-  return await getKnowledgeChecksByOwner(user.id, { offset })
 }
