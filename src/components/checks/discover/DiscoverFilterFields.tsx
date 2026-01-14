@@ -87,7 +87,7 @@ export function DiscoverFilterFields() {
             </DropdownMenu>
             <Tooltip offset={12} placement='right' size='sm' content={isCaseSensitive ? 'filter is case-sensitive' : 'ignoring casing when filtering'}>
               <Toggle
-                aria-label='Toggle bookmark'
+                aria-label='Toggle Case Sensitivity'
                 size='xs'
                 onPressedChange={(pressed) => {
                   setIsCaseSensitive(pressed)
