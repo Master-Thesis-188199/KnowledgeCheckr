@@ -19,7 +19,7 @@ export function DiscoverFilterFields() {
   const filterOperands = ['contains' as const, 'startsWith' as const, 'endsWith' as const, 'eq' as const]
   const [selectedFilterOperand, setFilterOperand] = useState<(typeof filterOperands)[number]>('startsWith')
   const [nameFilterValue, setNameFilterValue] = useState<string | undefined>(undefined)
-  const [isCaseSensitive, setIsCaseSensitive] = useState(true)
+  const [isCaseSensitive, setIsCaseSensitive] = useState(false)
 
   const updateFilter = useCallback(
     (op: typeof selectedFilterOperand, value?: Extract<StringOps, { op: 'contains' }>['value'], caseSensitive: boolean = isCaseSensitive) => {
