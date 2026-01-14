@@ -11,12 +11,7 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
   return (
-    <Card
-      as={motion.a}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      href={`/checks/edit/${check.id}`}
-      className={cn('group relative flex h-full flex-col justify-between gap-10')}>
+    <Card as={motion.div} disableInteractions initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
         <KnowledgeCheckMenu id={check.id} questions={check.questions} share_key={check.share_key} owner_id={check.owner_id!} />
