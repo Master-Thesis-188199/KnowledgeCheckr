@@ -9,7 +9,7 @@ type DiscoverFilterContextProps = Props & {
   setFuncProps: Dispatch<SetStateAction<Props>>
 }
 
-const Context = createContext({} as DiscoverFilterContextProps)
+const Context = createContext<DiscoverFilterContextProps | null>(null)
 
 export default function DiscoverFilterOptionsContext({ defaultProps, children }: { defaultProps?: Partial<DiscoverFilterContextProps>; children: React.ReactNode }) {
   const [funcProps, setFuncProps] = useState<Props>({ ...defaultProps })
