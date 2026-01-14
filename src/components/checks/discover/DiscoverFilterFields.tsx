@@ -22,8 +22,8 @@ export function DiscoverFilterFields() {
   const [isCaseSensitive, setIsCaseSensitive] = useState(true)
 
   const updateFilter = useCallback(
-    (op: typeof selectedFilterOperand, value?: Extract<StringOps, { op: 'contains' }>['value']) => {
-      const filters: typeof filter = value?.trim() ? { name: { value, op, ignoreCasing: !isCaseSensitive } } : undefined
+    (op: typeof selectedFilterOperand, value?: Extract<StringOps, { op: 'contains' }>['value'], caseSensitive: boolean = isCaseSensitive) => {
+      const filters: typeof filter = value?.trim() ? { name: { value, op, ignoreCasing: !caseSensitive } } : undefined
 
       if (filter === filters || isEqual(filter, filters)) return console.log('aborting props update, equal...')
 
@@ -91,7 +91,7 @@ export function DiscoverFilterFields() {
                 size='xs'
                 onPressedChange={(pressed) => {
                   setIsCaseSensitive(pressed)
-                  updateFilter(selectedFilterOperand, nameFilterValue)
+                  updateFilter(selectedFilterOperand, nameFilterValue, pressed)
                 }}
                 defaultPressed={isCaseSensitive}
                 variant='outline'
