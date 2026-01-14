@@ -167,15 +167,17 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
       if (disabled) return 'cancelled' as const
       if (status === 'pending') return 'cancelled' as const
 
-      //* Modify / Append offset to optional function-arguments
-      const funcArgs = fetchProps ?? ([{ offset }] as [DatabaseOptions])
-      if (funcArgs !== undefined) {
-        // override / append offset
-        const dbOptions = { ...fetchProps!.at(-1), offset } as DatabaseOptions
+      let funcArgs: Parameters<TFunc>
+      if (fetchProps) {
+        // clone to modify without mutating original `fetchProps`
+        funcArgs = [...fetchProps] as Parameters<TFunc>
 
-        // Expect "Error: This value cannot be modified"
-        // eslint-disable-next-line react-hooks/immutability
-        funcArgs[funcArgs!.length - 1] = dbOptions
+        // override offset (we know that the `DatabaseOptions` arg must be last arg to satisfy the `fetchItems` type constraint)
+        const dbOptions = { ...funcArgs.at(-1), offset } as DatabaseOptions
+        funcArgs[funcArgs.length - 1] = dbOptions
+      } else {
+        // when no `fetchProps` are given --> assume that function takes in just `DatabaseOptions` as first arg
+        funcArgs = [{ offset }] as Parameters<TFunc>
       }
 
       setStatus('pending')
