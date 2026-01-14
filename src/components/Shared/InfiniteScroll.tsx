@@ -210,7 +210,7 @@ function useFetchAction<TFunc extends (...args: Any[]) => Promise<Any[]>>({
           return 'failure' as const
         })
     },
-    [fetchItems, fetchProps, disabled, status],
+    [fetchItems, fetchProps, disabled, status, setStatus, setItems, addItems],
   )
 
   return gatherItems
