@@ -133,7 +133,10 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id 
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled={!isOwner && !isContributor}>
+          <DropdownMenuItem
+            disabled={!isOwner && !isContributor}
+            enableTooltip={!isOwner && !isContributor}
+            tooltipOptions={{ ...baseTooltipOptions, content: 'You are not allowed to edit this check!' }}>
             <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
               Edit KnowledgeCheck
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
