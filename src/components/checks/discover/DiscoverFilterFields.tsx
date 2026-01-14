@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useCallback, useState } from 'react'
+import { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import isEqual from 'lodash/isEqual'
 import { CaseSensitiveIcon, FilterIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -39,16 +39,14 @@ export function DiscoverFilterFields() {
     [filter, setFuncProps, isCaseSensitive],
   )
 
-  const onFilterValueChange = useCallback(
+  const debounceOnFilterValueChange = useMemo(
     () =>
-      ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      debounceFunction(({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
         setNameFilterValue(value.trim() ? value : undefined)
         updateFilter(selectedFilterOperand, value)
-      },
+      }, 250),
     [selectedFilterOperand, setNameFilterValue, updateFilter],
   )
-
-  const debounceOnFilterValueChange = useCallback(() => debounceFunction(onFilterValueChange, 250), [onFilterValueChange])
 
   return (
     <div className='mb-4 flex flex-col gap-4'>
