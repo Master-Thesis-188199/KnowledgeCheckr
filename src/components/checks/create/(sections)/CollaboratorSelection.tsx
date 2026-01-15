@@ -45,9 +45,9 @@ export default function CollaboratorSelection() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='input' role='combobox' aria-expanded={open} className='w-auto justify-between'>
+        <Button variant='input' role='combobox' aria-expanded={open} className='text-muted-foreground w-auto justify-between'>
           <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? 'Add contributors' : selectedCollaborators.map((s) => s.name).join(', ')}</span>
-          {selectedCollaborators.length > 0 && <span>({selectedCollaborators.length})</span>}
+          {selectedCollaborators.length > 0 && <span className='text-neutral-500 dark:text-neutral-400'>({selectedCollaborators.length})</span>}
           <ChevronsUpDown className='opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -75,8 +75,10 @@ export default function CollaboratorSelection() {
             }}
           />
           <CommandList>
-            {selectionStatus === 'require-min-input' && <CommandEmpty className='py-4 text-center text-sm dark:text-neutral-300/80'>You provide at least 3 characters to find matches</CommandEmpty>}
-            {selectionStatus === 'no-matches-found' && <CommandEmpty className='py-4 text-center text-sm dark:text-neutral-300/80'>No matching users found. </CommandEmpty>}
+            {selectionStatus === 'require-min-input' && (
+              <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>You must provide at least 3 characters to find matches</CommandEmpty>
+            )}
+            {selectionStatus === 'no-matches-found' && <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>No matching users found. </CommandEmpty>}
 
             {selectionStatus === 'loading' && (
               <CommandLoading className='flex min-h-10 items-center justify-center py-4 text-sm text-neutral-600 *:flex *:items-center *:gap-2 dark:text-neutral-300'>
