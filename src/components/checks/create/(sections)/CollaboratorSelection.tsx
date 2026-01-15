@@ -32,7 +32,7 @@ export default function CollaboratorSelection() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='outline' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
+        <Button variant='input' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
           <span className='truncate'>{selection.length === 0 ? 'Add contributors' : <>{selection.slice(0, MAX_SELECTION_DISPLAY).join(',')}</>}</span>
           <span>{selection.length > MAX_SELECTION_DISPLAY && `and ${selection.length - MAX_SELECTION_DISPLAY} more`}</span>
           <ChevronsUpDown className='opacity-50' />
