@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import { insertQuestionCategories } from '@/database/knowledgeCheck/catagories/insert'
+import { insertCollaboratorsToKnowledgeCheck } from '@/database/knowledgeCheck/collaborators/insert'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
@@ -36,6 +37,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
+      await insertCollaboratorsToKnowledgeCheck(transaction, check.id, check.collaborators)
       await insertKnowledgeCheckSettings(transaction, check)
       const categories = await insertQuestionCategories(transaction, id, check.questionCategories)
       const questionsWithCategoryIds = check.questions.map((q) => {
