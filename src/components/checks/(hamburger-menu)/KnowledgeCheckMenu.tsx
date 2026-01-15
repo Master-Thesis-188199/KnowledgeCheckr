@@ -24,11 +24,16 @@ import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { TooltipProps } from '@/src/components/Shared/Tooltip'
+import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
-export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id'>) {
+export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id }: {} & Required<Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id' | 'owner_id'>>) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { data } = useSession()
+
+  const isOwner = owner_id === data?.user.id
+  const isContributor = false
 
   const router = useRouter()
   const hasQuestions = questions.length > 0
@@ -128,7 +133,10 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={!isOwner && !isContributor}
+            enableTooltip={!isOwner && !isContributor}
+            tooltipOptions={{ ...baseTooltipOptions, content: 'You are not allowed to edit this check!' }}>
             <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
               Edit KnowledgeCheck
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
@@ -160,7 +168,16 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 toast('Removing share-token was unsuccessful!', { type: 'error' })
               })
           }>
-          <DropdownMenuItem disabled={share_key === null} onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
+          <DropdownMenuItem
+            disabled={share_key === null || (!isOwner && !isContributor)}
+            enableTooltip={share_key === null || (!isOwner && !isContributor)}
+            tooltipOptions={{
+              ...baseTooltipOptions,
+              content: share_key === null ? 'There is no share-key associated to this check!' : !isOwner && !isContributor ? 'You are not allowed to perform this action!' : undefined,
+            }}
+            onSelect={(e) => e.preventDefault()}
+            variant='destructive'
+            className='justify-between'>
             Remove Share Token
             <Share2Icon />
           </DropdownMenuItem>
@@ -183,7 +200,16 @@ export default function KnowledgeCheckMenu({ id, questions, share_key }: {} & Pi
                 toast('Removing knowledgeCheck was unsuccessful!', { type: 'error' })
               })
           }}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant='destructive' className='justify-between'>
+          <DropdownMenuItem
+            disabled={!isOwner}
+            enableTooltip={!isOwner}
+            tooltipOptions={{
+              ...baseTooltipOptions,
+              content: 'You are not allowed to perform this action!',
+            }}
+            onSelect={(e) => e.preventDefault()}
+            variant='destructive'
+            className='justify-between'>
             Delete KnowledgeCheck
             <TrashIcon />
           </DropdownMenuItem>

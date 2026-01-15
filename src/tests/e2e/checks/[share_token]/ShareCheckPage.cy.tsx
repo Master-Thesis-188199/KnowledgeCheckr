@@ -39,10 +39,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
       },
     })
 
-    cy.get("a[href='/checks/edit/" + dummyCheck.id + "']").should('exist')
-    cy.get("a[href='/checks/edit/" + dummyCheck.id + "'] button[aria-label='share KnowledgeCheck']")
-      .should('exist')
-      .click()
+    cy.get(`[data-slot="generic-card"][data-knowledge-check-id="${dummyCheck.id}"]`).should('exist').and('be.visible').find("button[aria-label='share KnowledgeCheck']").should('exist').click()
 
     cy.get('@share-token-copied-to-clipboard').should('have.been.calledOnce')
     cy.get('@share-token-copied-to-clipboard')
