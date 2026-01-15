@@ -63,7 +63,7 @@ export const knowledgeCheckRelations = relations(db_knowledgeCheck, ({ one, many
     fields: [db_knowledgeCheck.owner_id],
     references: [db_user.id],
   }),
-  knowledgeCheckSettings: many(db_knowledgeCheckSettings),
+  knowledgeCheckSettings: one(db_knowledgeCheckSettings),
   questions: many(db_question),
   userContributesToKnowledgeChecks: many(db_userContributesToKnowledgeCheck),
   userHasDoneKnowledgeChecks: many(db_userHasDoneKnowledgeCheck),
