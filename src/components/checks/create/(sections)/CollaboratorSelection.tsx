@@ -6,6 +6,7 @@ import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react'
 import { Button } from '@/components/shadcn/button'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/shadcn/command'
 import { useCollaboratorContext } from '@/src/components/checks/create/(sections)/CollaboratorProvider'
+import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -18,11 +19,17 @@ export default function CollaboratorSelection() {
   const MAX_SELECTION_DISPLAY = 1
 
   const { users } = useCollaboratorContext()
-  const [selectionStatus, setSelectionStatus] = useState<'require-min-input' | 'no-matches-found' | 'ok' | 'loading'>('require-min-input')
-
   const [open, setOpen] = useState(false)
-  const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>([])
+
+  const { collaborators: collaboratorIds, updateCollaborators } = useCheckStore((store) => store)
+  const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>(users.filter((u) => collaboratorIds.includes(u.id)).map((u) => ({ id: u.id, name: u.name })))
+
+  const [selectionStatus, setSelectionStatus] = useState<'require-min-input' | 'no-matches-found' | 'ok' | 'loading'>('require-min-input')
   const [shownUsers, setShownUsers] = useState<CollaboratorItem[]>([])
+
+  useEffect(() => {
+    updateCollaborators(selectedCollaborators.map((c) => c.id))
+  }, [selectedCollaborators, updateCollaborators])
 
   const updateSelection = useCallback(
     (selection: CollaboratorItem) => setSelectedCollaborators((prev) => (prev.includes(selection) ? prev.filter((ps) => ps !== selection) : prev.concat([selection]))),
