@@ -3,12 +3,19 @@ import getDatabase from '@/database/Database'
 import { db_knowledgeCheck, DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
-import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 //* joins the knowledgeCheck table with the following tables and aggregates the results: `Settings`, `Questions`, `Answers` and `Category`
 const knowledgeCheckWithAllConfig = {
+  categories: {
+    columns: {
+      knowledgecheckId: false,
+    },
+  },
+
   knowledgeCheckSettings: {
     columns: {
       knowledgecheckId: false,
@@ -55,12 +62,18 @@ export async function getKnowledgeCheck({ filter, limit = 10, offset }: { filter
   return checks.map(parseCheck)
 }
 
-function parseCheck({ questions, knowledgeCheckSettings: settings, ...check }: KnowledgeCheckWithAll): KnowledgeCheck | undefined {
-  return safeParseKnowledgeCheck({
+function parseCheck({ questions, knowledgeCheckSettings: settings, categories, ...check }: KnowledgeCheckWithAll) {
+  return validateKnowledgeCheck({
     ...check,
     questions: questions.map(parseQuestion),
-    settings: settings,
-  }).data
+    questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
+      id: c.id,
+      name: c.name,
+      skipOnMissingPrequisite: false,
+      prequisiteCategoryId: c.prequisiteCategoryId ?? undefined,
+    })),
+    settings: parseSetting(settings),
+  })
 }
 
 function parseQuestion({ category, answers, ...question }: KnowledgeCheckWithAll['questions'][number]): Question {
@@ -101,4 +114,16 @@ function parseAnswers(
         })),
       }
   }
+}
+
+function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): KnowledgeCheckSettings {
+  // if (!setting) return instantiateKnowledgeCheckSettings()
+  // {
+  //     ...setting,
+  //     // allowFreeNavigation: setting.allowAnonymous === 1,
+  //     // shareAccessibility: setting.shareAccessibility === 1,
+  //     // allowAnonymous: setting.allowAnonymous === 1,
+  //   }
+
+  return safeParseKnowledgeCheckSettings(setting).data ?? instantiateKnowledgeCheckSettings()
 }
