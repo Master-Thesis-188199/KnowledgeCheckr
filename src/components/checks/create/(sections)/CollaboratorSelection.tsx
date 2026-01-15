@@ -9,6 +9,11 @@ import { useCollaboratorContext } from '@/src/components/checks/create/(sections
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { cn } from '@/src/lib/Shared/utils'
 
+type CollaboratorItem = {
+  id: string
+  name: string
+}
+
 export default function CollaboratorSelection() {
   const MAX_SELECTION_DISPLAY = 1
 
@@ -16,25 +21,39 @@ export default function CollaboratorSelection() {
   const [selectionStatus, setSelectionStatus] = useState<'require-min-input' | 'no-matches-found' | 'ok' | 'loading'>('require-min-input')
 
   const [open, setOpen] = useState(false)
-  const [selection, setSelection] = useState<string[]>([])
-  const [items, setItems] = useState<string[]>([])
+  const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>([])
+  const [shownUsers, setShownUsers] = useState<CollaboratorItem[]>([])
 
-  const updateSelection = useCallback((selection: string) => setSelection((prev) => (prev.includes(selection) ? prev.filter((ps) => ps !== selection) : prev.concat([selection]))), [setSelection])
-  const isSelected = (selected: string) => selection.includes(selected)
+  const updateSelection = useCallback(
+    (selection: CollaboratorItem) => setSelectedCollaborators((prev) => (prev.includes(selection) ? prev.filter((ps) => ps !== selection) : prev.concat([selection]))),
+    [setSelectedCollaborators],
+  )
+  const isSelected = (selected: CollaboratorItem) => selectedCollaborators.find((s) => s.id === selected.id)
 
   useEffect(() => {
     if (open) return
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setItems(selection) // clear un-selected user-information from command-list
+    setShownUsers(selectedCollaborators) // clear un-selected user-information from command-list
   }, [open])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='input' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
-          <span className='truncate'>{selection.length === 0 ? 'Add contributors' : <>{selection.slice(0, MAX_SELECTION_DISPLAY).join(',')}</>}</span>
-          <span>{selection.length > MAX_SELECTION_DISPLAY && `and ${selection.length - MAX_SELECTION_DISPLAY} more`}</span>
+          <span className='truncate'>
+            {selectedCollaborators.length === 0 ? (
+              'Add contributors'
+            ) : (
+              <>
+                {selectedCollaborators
+                  .slice(0, MAX_SELECTION_DISPLAY)
+                  .map((s) => s.name)
+                  .join(',')}
+              </>
+            )}
+          </span>
+          <span>{selectedCollaborators.length > MAX_SELECTION_DISPLAY && `and ${selectedCollaborators.length - MAX_SELECTION_DISPLAY} more`}</span>
           <ChevronsUpDown className='opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -46,17 +65,17 @@ export default function CollaboratorSelection() {
             onValueChange={async (search) => {
               if (search.length < 3) {
                 setSelectionStatus('require-min-input')
-                setItems(selection)
+                setShownUsers(selectedCollaborators)
                 return
               }
               setSelectionStatus('loading')
 
-              const matches = users.filter((user) => !selection.includes(user.name) && user.name.toLowerCase().includes(search.toLowerCase()))
+              const matches = users.filter((user) => !selectedCollaborators.find((s) => s.id === user.id) && user.name.toLowerCase().includes(search.toLowerCase()))
+              if (matches.length === 0) return setSelectionStatus('no-matches-found')
+
               // console.log(`Found ${matches.length} matching users...`, matches)
 
-              setItems(selection.concat(matches.map((user) => user.name)))
-
-              if (matches.length === 0) return setSelectionStatus('no-matches-found')
+              setShownUsers(selectedCollaborators.concat(matches.map((u) => ({ name: u.name, id: u.id }))))
 
               setSelectionStatus('ok')
             }}
@@ -71,15 +90,16 @@ export default function CollaboratorSelection() {
                 Loading more users
               </CommandLoading>
             )}
-            {items.map((item) => {
+
+            {shownUsers.map((item) => {
               return (
                 <CommandItem
-                  key={`word-${item}`}
-                  value={item}
-                  onSelect={(currentValue) => {
-                    updateSelection(currentValue)
+                  key={`user-${item.id}`}
+                  value={item.name}
+                  onSelect={() => {
+                    updateSelection(item)
                   }}>
-                  {item}
+                  {item.name}
                   <Check className={cn('ml-auto', isSelected(item) ? 'opacity-100' : 'opacity-0')} />
                 </CommandItem>
               )
