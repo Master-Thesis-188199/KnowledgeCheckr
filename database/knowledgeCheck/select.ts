@@ -1,13 +1,9 @@
 'use server'
 
 import { User } from 'better-auth'
-import { and, desc, eq } from 'drizzle-orm'
-import getDatabase from '@/database/Database'
-import { db_category, db_knowledgeCheck, db_knowledgeCheckSettings } from '@/database/drizzle/schema'
-import { getCategoriesByCheckId } from '@/database/knowledgeCheck/catagories/select'
-import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
-import getKnowledgeCheckSettingsById from '@/database/knowledgeCheck/settings/select'
-import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
+import { db_category, db_knowledgeCheck } from '@/database/drizzle/schema'
+import { getKnowledgeCheck } from '@/database/knowledgeCheck/query'
+import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -16,59 +12,46 @@ import { Question } from '@/src/schemas/QuestionSchema'
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
-  const db = await getDatabase()
-  const checks: KnowledgeCheck[] = []
-
-  const knowledgeChecks = await db
-    .select()
-    .from(db_knowledgeCheck)
-    .where(eq(db_knowledgeCheck.owner_id, user_id))
-    .offset(offset)
-    .limit(limit > 100 ? 100 : limit)
-    .orderBy(desc(db_knowledgeCheck.updatedAt))
-
-  for (const knowledgeCheck of knowledgeChecks) {
-    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
-    const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
-    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
-    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
-
-    checks.push(parsedKnowledgeCheck)
-  }
+  const checks = await getKnowledgeCheck({
+    limit,
+    offset,
+    filter: {
+      owner_id: {
+        value: user_id,
+        op: 'eq',
+      },
+    },
+  })
 
   return checks
 }
 
-export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck | null> {
+export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck> {
   await requireAuthentication()
 
-  const db = await getDatabase()
-  const checks: KnowledgeCheck[] = []
+  const [check] = await getKnowledgeCheck({
+    limit: 1,
+    filter: {
+      id: {
+        value: id,
+        op: 'eq',
+      },
+    },
+  })
 
-  const knowledgeChecks = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, id))
-
-  for (const knowledgeCheck of knowledgeChecks) {
-    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
-    const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
-    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
-    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
-
-    checks.push(parsedKnowledgeCheck)
-  }
-
-  return checks?.at(0) || null
+  return check
 }
 
 export async function getKnowledgeCheckByShareToken(token: string) {
-  const db = await getDatabase()
-
-  const [rawCheck] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.share_key, token)).limit(1)
-  if (!rawCheck) return null
-
-  const categories = await getCategoriesByCheckId(rawCheck.id)
-  const settings = await getKnowledgeCheckSettingsById(rawCheck.id)
-  const questions = await getKnowledgeCheckQuestions(db, rawCheck.id, categories)
-  const check = parseKnowledgeCheck(rawCheck, questions, settings, categories)
+  const [check] = await getKnowledgeCheck({
+    limit: 1,
+    filter: {
+      share_key: {
+        value: token,
+        op: 'eq',
+      },
+    },
+  })
 
   return check
 }
@@ -105,28 +88,13 @@ function parseKnowledgeCheck(
 export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
   await requireAuthentication()
 
-  const db = await getDatabase()
-  const checks: KnowledgeCheck[] = []
+  const checks = await getKnowledgeCheck({
+    limit,
+    offset,
+    filter,
+  })
 
-  const filters = buildWhere(db_knowledgeCheck, filter)
+  const accessibleChecks = checks.filter((c) => c.settings.shareAccessibility)
 
-  const knowledgeChecks = await db
-    .select()
-    .from(db_knowledgeCheck)
-    .innerJoin(db_knowledgeCheckSettings, eq(db_knowledgeCheck.id, db_knowledgeCheckSettings.knowledgecheckId))
-    .where(and(eq(db_knowledgeCheckSettings.shareAccessibility, 1), filters))
-    .offset(offset)
-    .limit(limit > 100 ? 100 : limit)
-    .orderBy(desc(db_knowledgeCheck.updatedAt))
-
-  for (const { KnowledgeCheck: knowledgeCheck } of knowledgeChecks) {
-    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
-    const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
-    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
-    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
-
-    checks.push(parsedKnowledgeCheck)
-  }
-
-  return checks
+  return accessibleChecks
 }
