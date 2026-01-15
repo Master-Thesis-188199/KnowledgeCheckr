@@ -13,10 +13,10 @@ export default function CollaboratorSelection() {
   const MAX_SELECTION_DISPLAY = 1
 
   const { users } = useCollaboratorContext()
+  const [selectionStatus, setSelectionStatus] = useState<'require-min-input' | 'no-matches-found' | 'ok' | 'loading'>('require-min-input')
 
   const [open, setOpen] = useState(false)
   const [selection, setSelection] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
   const [items, setItems] = useState<string[]>([])
 
   const updateSelection = useCallback((selection: string) => setSelection((prev) => (prev.includes(selection) ? prev.filter((ps) => ps !== selection) : prev.concat([selection]))), [setSelection])
@@ -44,20 +44,28 @@ export default function CollaboratorSelection() {
             placeholder='Search users...'
             className='h-9'
             onValueChange={async (search) => {
-              if (search.length < 3) return setItems(selection)
-              setLoading(true)
+              if (search.length < 3) {
+                setSelectionStatus('require-min-input')
+                setItems(selection)
+                return
+              }
+              setSelectionStatus('loading')
 
               const matches = users.filter((user) => !selection.includes(user.name) && user.name.toLowerCase().includes(search.toLowerCase()))
               // console.log(`Found ${matches.length} matching users...`, matches)
 
               setItems(selection.concat(matches.map((user) => user.name)))
-              setLoading(false)
+
+              if (matches.length === 0) return setSelectionStatus('no-matches-found')
+
+              setSelectionStatus('ok')
             }}
           />
           <CommandList>
-            {!loading && <CommandEmpty className='py-4 text-center text-sm dark:text-neutral-300/80'>You provide at least 3 characters to find matches</CommandEmpty>}
+            {selectionStatus === 'require-min-input' && <CommandEmpty className='py-4 text-center text-sm dark:text-neutral-300/80'>You provide at least 3 characters to find matches</CommandEmpty>}
+            {selectionStatus === 'no-matches-found' && <CommandEmpty className='py-4 text-center text-sm dark:text-neutral-300/80'>No matching users found. </CommandEmpty>}
 
-            {loading && (
+            {selectionStatus === 'loading' && (
               <CommandLoading className='flex min-h-10 items-center justify-center py-4 text-sm text-neutral-600 *:flex *:items-center *:gap-2 dark:text-neutral-300'>
                 <LoaderCircle className='size-5 animate-spin' />
                 Loading more users
