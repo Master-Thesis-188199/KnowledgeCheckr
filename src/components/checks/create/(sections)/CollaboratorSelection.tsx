@@ -16,8 +16,6 @@ type CollaboratorItem = {
 }
 
 export default function CollaboratorSelection() {
-  const MAX_SELECTION_DISPLAY = 1
-
   const { users } = useCollaboratorContext()
   const [open, setOpen] = useState(false)
 
@@ -47,24 +45,13 @@ export default function CollaboratorSelection() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='input' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
-          <span className='truncate'>
-            {selectedCollaborators.length === 0 ? (
-              'Add contributors'
-            ) : (
-              <>
-                {selectedCollaborators
-                  .slice(0, MAX_SELECTION_DISPLAY)
-                  .map((s) => s.name)
-                  .join(',')}
-              </>
-            )}
-          </span>
-          <span>{selectedCollaborators.length > MAX_SELECTION_DISPLAY && `and ${selectedCollaborators.length - MAX_SELECTION_DISPLAY} more`}</span>
+        <Button variant='input' role='combobox' aria-expanded={open} className='w-auto justify-between'>
+          <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? 'Add contributors' : selectedCollaborators.map((s) => s.name).join(', ')}</span>
+          {selectedCollaborators.length > 0 && <span>({selectedCollaborators.length})</span>}
           <ChevronsUpDown className='opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[200px] p-0'>
+      <PopoverContent className='auto-popover-content-width p-0'>
         <Command loop>
           <CommandInput
             placeholder='Search users...'
