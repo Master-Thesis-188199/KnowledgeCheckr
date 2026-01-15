@@ -78,6 +78,7 @@ function parseKnowledgeCheck(
   questions: Question[],
   settings: KnowledgeCheckSettings,
   categories: (typeof db_category.$inferSelect)[],
+  collaborators: Array<string> = [],
 ): KnowledgeCheck {
   return {
     id: knowledgeCheck.id,
@@ -98,6 +99,7 @@ function parseKnowledgeCheck(
     createdAt: new Date(Date.parse(knowledgeCheck.createdAt)),
     updatedAt: new Date(Date.parse(knowledgeCheck.updatedAt)),
     owner_id: knowledgeCheck.owner_id,
+    collaborators,
     settings,
   }
 }
