@@ -15,6 +15,7 @@ export default async function insertKnowledgeCheckSettings(db: DrizzleDB, { id, 
       ...settings,
       allowAnonymous: settings.allowAnonymous ? 1 : 0,
       allowFreeNavigation: settings.allowFreeNavigation ? 1 : 0,
+      shareAccessibility: settings.shareAccessibility ? 1 : 0,
     })
     .$returningId()
 

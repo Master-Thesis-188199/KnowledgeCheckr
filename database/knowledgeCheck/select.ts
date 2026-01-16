@@ -1,12 +1,13 @@
 'use server'
 
 import { User } from 'better-auth'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
-import { db_category, db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_category, db_knowledgeCheck, db_knowledgeCheckSettings } from '@/database/drizzle/schema'
 import { getCategoriesByCheckId } from '@/database/knowledgeCheck/catagories/select'
 import getKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/select'
 import getKnowledgeCheckSettingsById from '@/database/knowledgeCheck/settings/select'
+import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -99,4 +100,33 @@ function parseKnowledgeCheck(
     owner_id: knowledgeCheck.owner_id,
     settings,
   }
+}
+
+export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
+  await requireAuthentication()
+
+  const db = await getDatabase()
+  const checks: KnowledgeCheck[] = []
+
+  const filters = buildWhere(db_knowledgeCheck, filter)
+
+  const knowledgeChecks = await db
+    .select()
+    .from(db_knowledgeCheck)
+    .innerJoin(db_knowledgeCheckSettings, eq(db_knowledgeCheck.id, db_knowledgeCheckSettings.knowledgecheckId))
+    .where(and(eq(db_knowledgeCheckSettings.shareAccessibility, 1), filters))
+    .offset(offset)
+    .limit(limit > 100 ? 100 : limit)
+    .orderBy(desc(db_knowledgeCheck.updatedAt))
+
+  for (const { KnowledgeCheck: knowledgeCheck } of knowledgeChecks) {
+    const categories = await getCategoriesByCheckId(knowledgeCheck.id)
+    const settings = await getKnowledgeCheckSettingsById(knowledgeCheck.id)
+    const questions = await getKnowledgeCheckQuestions(db, knowledgeCheck.id, categories)
+    const parsedKnowledgeCheck = parseKnowledgeCheck(knowledgeCheck, questions, settings, categories)
+
+    checks.push(parsedKnowledgeCheck)
+  }
+
+  return checks
 }
