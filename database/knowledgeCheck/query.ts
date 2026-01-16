@@ -117,13 +117,8 @@ function parseAnswers(
 }
 
 function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): KnowledgeCheckSettings {
-  // if (!setting) return instantiateKnowledgeCheckSettings()
-  // {
-  //     ...setting,
-  //     // allowFreeNavigation: setting.allowAnonymous === 1,
-  //     // shareAccessibility: setting.shareAccessibility === 1,
-  //     // allowAnonymous: setting.allowAnonymous === 1,
-  //   }
+  const result = safeParseKnowledgeCheckSettings(setting)
+  if (result.error && setting !== null) console.error('Failed to parse existing setting', setting, 'because of', result.error)
 
-  return safeParseKnowledgeCheckSettings(setting).data ?? instantiateKnowledgeCheckSettings()
+  return result.data ?? instantiateKnowledgeCheckSettings()
 }
