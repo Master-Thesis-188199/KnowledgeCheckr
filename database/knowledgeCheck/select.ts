@@ -15,7 +15,7 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
   const checks = await getKnowledgeCheck({
     limit,
     offset,
-    filter: {
+    baseFilter: {
       owner_id: {
         value: user_id,
         op: 'eq',
@@ -31,7 +31,7 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
 
   const [check] = await getKnowledgeCheck({
     limit: 1,
-    filter: {
+    baseFilter: {
       id: {
         value: id,
         op: 'eq',
@@ -45,7 +45,7 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
 export async function getKnowledgeCheckByShareToken(token: string) {
   const [check] = await getKnowledgeCheck({
     limit: 1,
-    filter: {
+    baseFilter: {
       share_key: {
         value: token,
         op: 'eq',
@@ -93,10 +93,8 @@ export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter 
   const checks = await getKnowledgeCheck({
     limit,
     offset,
-    filter,
+    baseFilter: filter,
   })
 
-  const accessibleChecks = checks.filter((c) => c.settings.shareAccessibility)
-
-  return accessibleChecks
+  return checks
 }
