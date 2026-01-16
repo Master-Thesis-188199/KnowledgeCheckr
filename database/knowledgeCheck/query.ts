@@ -30,6 +30,9 @@ const knowledgeCheckWithAllConfig = {
     with: {
       answers: {
         orderBy: (a, { asc }) => [asc(a._position)],
+        columns: {
+          questionId: false,
+        },
       },
       category: {
         columns: {
