@@ -1,7 +1,8 @@
-import { BuildQueryResult, DBQueryConfig, eq, ExtractTablesWithRelations, SQL, sql } from 'drizzle-orm'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { and, BuildQueryResult, DBQueryConfig, eq, ExtractTablesWithRelations, SQL, sql } from 'drizzle-orm'
 import { alias } from 'drizzle-orm/mysql-core'
-import getDatabase from '@/database/Database'
-import { db_knowledgeCheck, db_knowledgeCheckSettings, DrizzleSchema } from '@/database/drizzle'
+import getDatabase, { DrizzleDB } from '@/database/Database'
+import { db_answer, db_category, db_knowledgeCheck, db_knowledgeCheckSettings, db_question, DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import _logger from '@/src/lib/log/Logger'
@@ -50,38 +51,11 @@ type KnowledgeCheckTableConfig = Tables['db_knowledgeCheck']
 
 export type KnowledgeCheckWithAll = BuildQueryResult<Tables, KnowledgeCheckTableConfig, { with: typeof knowledgeCheckWithAllConfig }>
 
-export async function getKnowledgeCheck({
-  filter,
-  limit = 10,
-  offset,
-  settingsFilter,
-}: { filter?: TableFilters<typeof db_knowledgeCheck>; settingsFilter?: TableFilters<typeof db_knowledgeCheckSettings> } & DatabaseOptions = {}) {
+export async function getKnowledgeCheck({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}) {
   const db = await getDatabase()
 
   const checks = await db.query.db_knowledgeCheck.findMany({
-    where: (kc, { and }) => {
-      const clauses: SQL[] = []
-
-      const rootWhere = buildWhere(db_knowledgeCheck, filter)
-      if (rootWhere) clauses.push(rootWhere)
-
-      if (settingsFilter) {
-        const kcs = alias(db_knowledgeCheckSettings, 'kcs')
-        const settingsWhere = buildWhere(kcs, settingsFilter)
-
-        if (settingsWhere) {
-          const sub = db
-            .select({ one: sql`1` })
-            .from(kcs)
-            .where(and(eq(kcs.knowledgecheckId, kc.id), settingsWhere))
-          logger.info(sub.toSQL())
-
-          clauses.push(sql`exists (${sub})`)
-        }
-      }
-
-      return clauses.length ? and(...clauses) : undefined
-    },
+    where: buildKnowledgeCheckWhere(db, filterBundle),
     with: knowledgeCheckWithAllConfig,
     orderBy: (kc, { desc }) => [desc(kc.updatedAt)],
     limit: limit,
@@ -155,4 +129,105 @@ function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']):
   //   }
 
   return safeParseKnowledgeCheckSettings(setting).data ?? instantiateKnowledgeCheckSettings()
+}
+
+type KnowledgeCheckFilterBundle = {
+  baseFilter?: TableFilters<typeof db_knowledgeCheck>
+  settingsFilter?: TableFilters<typeof db_knowledgeCheckSettings>
+  categoriesFilter?: TableFilters<typeof db_category>
+  questionsFilter?: TableFilters<typeof db_question>
+  answersFilter?: TableFilters<typeof db_answer>
+}
+
+function existsByFk<TTable extends { $inferSelect: any }>(
+  db: DrizzleDB,
+  opts: {
+    childTable: TTable
+    aliasName: string
+    childFk: (t: any) => any
+    parentPk: any
+    filter?: TableFilters<TTable>
+  },
+): SQL | undefined {
+  if (!opts.filter) return undefined
+
+  const t = alias(opts.childTable as any, opts.aliasName)
+  const w = buildWhere(t, opts.filter)
+  if (!w) return undefined
+
+  const sub = db
+    .select({ one: sql`1` })
+    //@ts-ignore
+    .from(t)
+    .where(and(eq(opts.childFk(t), opts.parentPk), w))
+
+  return sql`exists (${sub})`
+}
+
+function existsAnswerForKnowledgeCheck(db: any, kcId: any, answerFilter?: TableFilters<typeof db_answer>, questionFilter?: TableFilters<typeof db_question>): SQL | undefined {
+  if (!answerFilter && !questionFilter) return undefined
+
+  const a = alias(db_answer, 'a')
+  const q = alias(db_question, 'q')
+
+  const clauses: SQL[] = [eq(q.knowledgecheckId, kcId), eq(a.questionId, q.id)]
+
+  if (answerFilter) {
+    const aw = buildWhere(a, answerFilter)
+    if (aw) clauses.push(aw)
+  }
+
+  if (questionFilter) {
+    const qw = buildWhere(q, questionFilter)
+    if (qw) clauses.push(qw)
+  }
+
+  const sub = db
+    .select({ one: sql`1` })
+    .from(a)
+    .innerJoin(q, eq(a.questionId, q.id))
+    .where(and(...clauses))
+
+  return sql`exists (${sub})`
+}
+
+export function buildKnowledgeCheckWhere(db: any, filters?: KnowledgeCheckFilterBundle) {
+  return (kc: typeof db_knowledgeCheck.$inferSelect extends never ? any : any, { and }: any) => {
+    const clauses: SQL[] = []
+
+    const rootWhere = buildWhere(db_knowledgeCheck, filters?.baseFilter)
+    if (rootWhere) clauses.push(rootWhere)
+
+    const settingsExists = existsByFk(db, {
+      childTable: db_knowledgeCheckSettings,
+      aliasName: 'kcs',
+      childFk: (t) => t.knowledgecheckId,
+      parentPk: kc.id,
+      filter: filters?.settingsFilter,
+    })
+    if (settingsExists) clauses.push(settingsExists)
+
+    const categoriesExists = existsByFk(db, {
+      childTable: db_category,
+      aliasName: 'c',
+      childFk: (t) => t.knowledgecheckId,
+      parentPk: kc.id,
+      filter: filters?.categoriesFilter,
+    })
+    if (categoriesExists) clauses.push(categoriesExists)
+
+    const questionsExists = existsByFk(db, {
+      childTable: db_question,
+      aliasName: 'q',
+      childFk: (t) => t.knowledgecheckId,
+      parentPk: kc.id,
+      filter: filters?.questionsFilter,
+    })
+    if (questionsExists) clauses.push(questionsExists)
+
+    const answersExists = existsAnswerForKnowledgeCheck(db, kc.id, filters?.answersFilter, filters?.questionsFilter)
+    if (answersExists) clauses.push(answersExists)
+
+    return clauses.length ? and(...clauses) : undefined
+  }
 }
