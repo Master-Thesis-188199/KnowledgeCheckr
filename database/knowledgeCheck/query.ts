@@ -103,7 +103,7 @@ function parseAnswers(
       }
 
     case 'open-question':
-      return { expectation: answers.join('. ') }
+      return { expectation: answers.at(0)?.answer }
 
     case 'drag-drop':
       return {
