@@ -1,10 +1,8 @@
-import { and, AnyColumn, BuildQueryResult, DBQueryConfig, eq, ExtractTablesWithRelations, SQL, sql } from 'drizzle-orm'
-import { alias } from 'drizzle-orm/mysql-core'
-import getDatabase, { DrizzleDB } from '@/database/Database'
-import { db_answer, db_question, DrizzleSchema } from '@/database/drizzle'
+import { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
+import getDatabase from '@/database/Database'
+import { DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
-import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -129,38 +127,4 @@ function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']):
   //   }
 
   return safeParseKnowledgeCheckSettings(setting).data ?? instantiateKnowledgeCheckSettings()
-}
-
-type ColumnLike = AnyColumn
-
-export function existsAnswerForKnowledgeCheck(
-  db: DrizzleDB,
-  kcId: ColumnLike, // usually kc.id
-  answerFilter?: TableFilters<typeof db_answer>,
-  questionFilter?: TableFilters<typeof db_question>,
-): SQL | undefined {
-  if (!answerFilter && !questionFilter) return undefined
-
-  const a = alias(db_answer, 'a')
-  const q = alias(db_question, 'q')
-
-  const clauses: SQL[] = [eq(q.knowledgecheckId, kcId), eq(a.questionId, q.id)]
-
-  if (answerFilter) {
-    const aw = buildWhere(a, answerFilter)
-    if (aw) clauses.push(aw)
-  }
-
-  if (questionFilter) {
-    const qw = buildWhere(q, questionFilter)
-    if (qw) clauses.push(qw)
-  }
-
-  const sub = db
-    .select({ one: sql`1` })
-    .from(a)
-    .innerJoin(q, eq(a.questionId, q.id))
-    .where(and(...clauses))
-
-  return sql`exists (${sub})`
 }
