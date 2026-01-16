@@ -3,7 +3,7 @@ import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
-import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
@@ -51,7 +51,7 @@ type KnowledgeCheckTableConfig = Tables['db_knowledgeCheck']
 
 export type KnowledgeCheckWithAll = BuildQueryResult<Tables, KnowledgeCheckTableConfig, { with: typeof knowledgeCheckWithAllConfig }>
 
-export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}) {
+export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}): Promise<KnowledgeCheck[]> {
   const db = await getDatabase()
 
   const checks = await db.query.db_knowledgeCheck.findMany({
@@ -62,11 +62,11 @@ export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }
     offset,
   })
 
-  return checks.map(parseCheck)
+  return checks.map(parseCheck).filter((check) => check !== null)
 }
 
-function parseCheck({ questions, knowledgeCheckSettings: settings, categories, ...check }: KnowledgeCheckWithAll) {
-  return validateKnowledgeCheck({
+function parseCheck({ questions, knowledgeCheckSettings: settings, categories, ...check }: KnowledgeCheckWithAll): KnowledgeCheck | null {
+  const result = safeParseKnowledgeCheck({
     ...check,
     questions: questions.map(parseQuestion),
     questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
@@ -77,6 +77,12 @@ function parseCheck({ questions, knowledgeCheckSettings: settings, categories, .
     })),
     settings: parseSetting(settings),
   })
+
+  if (!result.success) {
+    console.error(`Failed to parse knowledgeCheck instance ${check.id} because: `, result.error)
+  }
+
+  return result.data ?? null
 }
 
 function parseQuestion({ category, answers, ...question }: KnowledgeCheckWithAll['questions'][number]): Question {
