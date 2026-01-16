@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { and, AnyColumn, BuildQueryResult, DBQueryConfig, eq, ExtractTablesWithRelations, SQL, sql } from 'drizzle-orm'
-import { alias, AnyMySqlTable, BuildAliasTable, MySqlColumn } from 'drizzle-orm/mysql-core'
+import { alias } from 'drizzle-orm/mysql-core'
 import getDatabase, { DrizzleDB } from '@/database/Database'
 import { db_answer, db_question, DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
@@ -133,29 +132,6 @@ function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']):
 }
 
 type ColumnLike = AnyColumn
-export function existsByFk<TChild extends AnyMySqlTable, TChildFk extends MySqlColumn<any>, TParentPk extends ColumnLike>(
-  db: DrizzleDB,
-  opts: {
-    childTable: TChild
-    aliasName: string
-    childFk: (t: BuildAliasTable<TChild, string>) => TChildFk
-    parentPk: TParentPk
-    filter?: TableFilters<TChild>
-  },
-): SQL | undefined {
-  if (!opts.filter) return undefined
-
-  const t = alias(opts.childTable, opts.aliasName)
-  const w = buildWhere(t as TChild, opts.filter)
-  if (!w) return undefined
-
-  const sub = db
-    .select({ one: sql`1` })
-    .from(t)
-    .where(and(eq(opts.childFk(t), opts.parentPk), w))
-
-  return sql`exists (${sub})`
-}
 
 export function existsAnswerForKnowledgeCheck(
   db: DrizzleDB,
