@@ -2,7 +2,7 @@
 
 import { User } from 'better-auth'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
-import { getKnowledgeCheck } from '@/database/knowledgeCheck/query'
+import { getKnowledgeChecks } from '@/database/knowledgeCheck/query'
 import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -10,7 +10,7 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
-  const checks = await getKnowledgeCheck({
+  const checks = await getKnowledgeChecks({
     limit,
     offset,
     baseFilter: {
@@ -27,7 +27,7 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
 export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck> {
   await requireAuthentication()
 
-  const [check] = await getKnowledgeCheck({
+  const [check] = await getKnowledgeChecks({
     limit: 1,
     baseFilter: {
       id: {
@@ -41,7 +41,7 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
 }
 
 export async function getKnowledgeCheckByShareToken(token: string) {
-  const [check] = await getKnowledgeCheck({
+  const [check] = await getKnowledgeChecks({
     limit: 1,
     baseFilter: {
       share_key: {
@@ -57,7 +57,7 @@ export async function getKnowledgeCheckByShareToken(token: string) {
 export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
   await requireAuthentication()
 
-  const checks = await getKnowledgeCheck({
+  const checks = await getKnowledgeChecks({
     limit,
     offset,
     baseFilter: filter,
