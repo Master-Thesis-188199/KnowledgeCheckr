@@ -10,6 +10,11 @@ import { Any } from '@/types'
 
 //* joins the knowledgeCheck table with the following tables and aggregates the results: `Settings`, `Questions`, `Answers` and `Category`
 const knowledgeCheckWithAllConfig = {
+  userContributesToKnowledgeChecks: {
+    columns: {
+      knowledgecheckId: false,
+    },
+  },
   categories: {
     columns: {
       knowledgecheckId: false,
@@ -65,9 +70,10 @@ export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }
   return checks.map(parseCheck).filter((check) => check !== null)
 }
 
-function parseCheck({ questions, knowledgeCheckSettings: settings, categories, ...check }: KnowledgeCheckWithAll): KnowledgeCheck | null {
+function parseCheck({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: KnowledgeCheckWithAll): KnowledgeCheck | null {
   const result = safeParseKnowledgeCheck({
     ...check,
+    collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
     questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
       id: c.id,
