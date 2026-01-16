@@ -2,8 +2,9 @@
 import { and, AnyColumn, BuildQueryResult, DBQueryConfig, eq, ExtractTablesWithRelations, SQL, sql } from 'drizzle-orm'
 import { alias, AnyMySqlTable, BuildAliasTable, MySqlColumn } from 'drizzle-orm/mysql-core'
 import getDatabase, { DrizzleDB } from '@/database/Database'
-import { db_answer, db_category, db_knowledgeCheck, db_knowledgeCheckSettings, db_question, DrizzleSchema } from '@/database/drizzle'
+import { db_answer, db_question, DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
+import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -131,15 +132,8 @@ function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']):
   return safeParseKnowledgeCheckSettings(setting).data ?? instantiateKnowledgeCheckSettings()
 }
 
-type KnowledgeCheckFilterBundle = {
-  baseFilter?: TableFilters<typeof db_knowledgeCheck>
-  settingsFilter?: TableFilters<typeof db_knowledgeCheckSettings>
-  categoriesFilter?: TableFilters<typeof db_category>
-  questionsFilter?: TableFilters<typeof db_question>
-  answersFilter?: TableFilters<typeof db_answer>
-}
 type ColumnLike = AnyColumn
-function existsByFk<TChild extends AnyMySqlTable, TChildFk extends MySqlColumn<any>, TParentPk extends ColumnLike>(
+export function existsByFk<TChild extends AnyMySqlTable, TChildFk extends MySqlColumn<any>, TParentPk extends ColumnLike>(
   db: DrizzleDB,
   opts: {
     childTable: TChild
@@ -163,7 +157,7 @@ function existsByFk<TChild extends AnyMySqlTable, TChildFk extends MySqlColumn<a
   return sql`exists (${sub})`
 }
 
-function existsAnswerForKnowledgeCheck(
+export function existsAnswerForKnowledgeCheck(
   db: DrizzleDB,
   kcId: ColumnLike, // usually kc.id
   answerFilter?: TableFilters<typeof db_answer>,
@@ -193,47 +187,4 @@ function existsAnswerForKnowledgeCheck(
     .where(and(...clauses))
 
   return sql`exists (${sub})`
-}
-type KCFindManyArg = NonNullable<Parameters<DrizzleDB['query']['db_knowledgeCheck']['findMany']>[0]>
-type KCWhereFn = Exclude<KCFindManyArg['where'], SQL | undefined>
-
-export function buildKnowledgeCheckWhere(db: DrizzleDB, filters?: KnowledgeCheckFilterBundle): KCWhereFn {
-  return (kc, { and }) => {
-    const clauses: SQL[] = []
-
-    const rootWhere = buildWhere(db_knowledgeCheck, filters?.baseFilter)
-    if (rootWhere) clauses.push(rootWhere)
-
-    const settingsExists = existsByFk(db, {
-      childTable: db_knowledgeCheckSettings,
-      aliasName: 'kcs',
-      childFk: (t) => t.knowledgecheckId,
-      parentPk: kc.id,
-      filter: filters?.settingsFilter,
-    })
-    if (settingsExists) clauses.push(settingsExists)
-
-    const categoriesExists = existsByFk(db, {
-      childTable: db_category,
-      aliasName: 'c',
-      childFk: (t) => t.knowledgecheckId,
-      parentPk: kc.id,
-      filter: filters?.categoriesFilter,
-    })
-    if (categoriesExists) clauses.push(categoriesExists)
-
-    const questionsExists = existsByFk(db, {
-      childTable: db_question,
-      aliasName: 'q',
-      childFk: (t) => t.knowledgecheckId,
-      parentPk: kc.id,
-      filter: filters?.questionsFilter,
-    })
-    if (questionsExists) clauses.push(questionsExists)
-
-    const answersExists = existsAnswerForKnowledgeCheck(db, kc.id, filters?.answersFilter, filters?.questionsFilter)
-    if (answersExists) clauses.push(answersExists)
-
-    return clauses.length ? and(...clauses) : undefined
-  }
 }
