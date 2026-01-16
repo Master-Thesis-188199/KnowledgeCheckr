@@ -1,8 +1,9 @@
 import { SQL } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_category, db_knowledgeCheck, db_knowledgeCheckSettings, db_question } from '@/database/drizzle'
-import { existsAnswerForKnowledgeCheck, existsByFk } from '@/database/knowledgeCheck/query'
+import { existsAnswerForKnowledgeCheck } from '@/database/knowledgeCheck/query'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
+import existsByFk from '@/database/utils/existsByFK'
 
 export type KnowledgeCheckFilterBundle = {
   /** Filters on the root KnowledgeCheck table. */
