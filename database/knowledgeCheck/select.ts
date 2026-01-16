@@ -24,10 +24,10 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
   return checks
 }
 
-export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<KnowledgeCheck> {
+export async function getKnowledgeCheckById(id: KnowledgeCheck['id']) {
   await requireAuthentication()
 
-  const [check] = await getKnowledgeChecks({
+  const checks = await getKnowledgeChecks({
     limit: 1,
     baseFilter: {
       id: {
@@ -37,11 +37,11 @@ export async function getKnowledgeCheckById(id: KnowledgeCheck['id']): Promise<K
     },
   })
 
-  return check
+  return checks.at(0)
 }
 
 export async function getKnowledgeCheckByShareToken(token: string) {
-  const [check] = await getKnowledgeChecks({
+  const checks = await getKnowledgeChecks({
     limit: 1,
     baseFilter: {
       share_key: {
@@ -51,7 +51,7 @@ export async function getKnowledgeCheckByShareToken(token: string) {
     },
   })
 
-  return check
+  return checks.at(0)
 }
 
 export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
