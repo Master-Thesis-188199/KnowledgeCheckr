@@ -51,7 +51,7 @@ type KnowledgeCheckTableConfig = Tables['db_knowledgeCheck']
 
 export type KnowledgeCheckWithAll = BuildQueryResult<Tables, KnowledgeCheckTableConfig, { with: typeof knowledgeCheckWithAllConfig }>
 
-export async function getKnowledgeCheck({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}) {
+export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}) {
   const db = await getDatabase()
 
   const checks = await db.query.db_knowledgeCheck.findMany({
