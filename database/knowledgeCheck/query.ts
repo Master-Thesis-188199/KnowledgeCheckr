@@ -3,13 +3,10 @@ import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
-import _logger from '@/src/lib/log/Logger'
 import { KnowledgeCheck, validateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
-
-const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 //* joins the knowledgeCheck table with the following tables and aggregates the results: `Settings`, `Questions`, `Answers` and `Category`
 const knowledgeCheckWithAllConfig = {
@@ -25,13 +22,15 @@ const knowledgeCheckWithAllConfig = {
     },
   },
   questions: {
-    orderBy: (q, { desc }) => [desc(q._position)],
+    orderBy: (q, { asc }) => [asc(q._position)],
     columns: {
       knowledgecheckId: false,
       categoryId: false,
     },
     with: {
-      answers: true,
+      answers: {
+        orderBy: (a, { asc }) => [asc(a._position)],
+      },
       category: {
         columns: {
           knowledgecheckId: false,
