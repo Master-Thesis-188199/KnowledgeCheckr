@@ -47,6 +47,11 @@ export const questionRelations = relations(db_question, ({ one, many }) => ({
 }))
 
 export const categoryRelations = relations(db_category, ({ one, many }) => ({
+  knowledgeCheck: one(db_knowledgeCheck, {
+    fields: [db_category.knowledgecheckId],
+    references: [db_knowledgeCheck.id],
+  }),
+
   category: one(db_category, {
     fields: [db_category.prequisiteCategoryId],
     references: [db_category.id],
@@ -63,7 +68,8 @@ export const knowledgeCheckRelations = relations(db_knowledgeCheck, ({ one, many
     fields: [db_knowledgeCheck.owner_id],
     references: [db_user.id],
   }),
-  knowledgeCheckSettings: many(db_knowledgeCheckSettings),
+  categories: many(db_category),
+  knowledgeCheckSettings: one(db_knowledgeCheckSettings),
   questions: many(db_question),
   userContributesToKnowledgeChecks: many(db_userContributesToKnowledgeCheck),
   userHasDoneKnowledgeChecks: many(db_userHasDoneKnowledgeCheck),

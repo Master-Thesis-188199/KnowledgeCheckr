@@ -6,8 +6,9 @@ import { addDays, format } from 'date-fns'
 import isEmpty from 'lodash/isEmpty'
 import { useForm, UseFormProps, useWatch } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
+import CollaboratorSelection from '@/src/components/checks/create/(sections)/CollaboratorSelection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
-import { Form } from '@/src/components/shadcn/form'
+import { Form, FormLabel } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
@@ -108,6 +109,10 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
           <Field {...baseFieldProps} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
           <Field {...baseFieldProps} label='Start Date' name='openDate' type='date' />
           <Field {...baseFieldProps} label='Deadline' name='closeDate' type='date' />
+          <>
+            <FormLabel>Collaborators</FormLabel>
+            <CollaboratorSelection />
+          </>
         </div>
       </Card>
     </Form>

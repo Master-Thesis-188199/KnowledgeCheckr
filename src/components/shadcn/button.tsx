@@ -26,6 +26,12 @@ const buttonVariants = cva(
           'bg-neutral-100/80 dark:bg-neutral-700/40 ring-ring-subtle ring-1',
           'hover:ring-ring hover:bg-neutral-50/80 active:bg-neutral-200/90 active:ring-ring-focus dark:hover:bg-neutral-700/70 dark:active:bg-neutral-700/90 ',
         ),
+        input: cn(
+          'bg-input border border-input-ring',
+          'focus-visible:border-ring-hover focus-visible:ring-ring-hover/50 focus-visible:ring-[3px]',
+          'hover:border-ring-hover dark:hover:border-ring-hover',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:hover:border-destructive',
+        ),
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

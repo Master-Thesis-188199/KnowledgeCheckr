@@ -20,7 +20,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 flex gap-1'>
         <ShareKnowledgeCheckButton check={check} />
-        <KnowledgeCheckMenu id={check.id} questions={check.questions} share_key={check.share_key} owner_id={check.owner_id!} />
+        <KnowledgeCheckMenu {...check} />
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />

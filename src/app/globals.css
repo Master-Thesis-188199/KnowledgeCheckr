@@ -200,3 +200,8 @@ input.hidden-spin-button::-webkit-outer-spin-button {
   appearance: none;
   margin: 0;
 }
+
+.auto-popover-content-width {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
+}

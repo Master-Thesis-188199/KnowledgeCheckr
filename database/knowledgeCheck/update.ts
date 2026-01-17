@@ -19,7 +19,7 @@ export async function updateKnowledgeCheck(user_id: User['id'], updatedCheck: Kn
   await db.transaction(async (tx) => {
     try {
       await tx.delete(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, updatedCheck.id))
-      await insertKnowledgeCheck(user_id, updatedCheck)
+      await insertKnowledgeCheck(updatedCheck)
     } catch (err) {
       await tx.rollback()
       logger.error('[Rollback]: Error updating knowledge check:', err)

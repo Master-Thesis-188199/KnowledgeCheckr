@@ -1,6 +1,4 @@
-import { addDays } from 'date-fns/addDays'
 import { isBefore } from 'date-fns/isBefore'
-import { isFuture } from 'date-fns/isFuture'
 import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -46,7 +44,7 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
+      // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
       .default(() => new Date(Date.now()))
       .describe('The day on which users can start to use the check.'),
     closeDate: z
@@ -54,14 +52,16 @@ export const KnowledgeCheckSchema = z
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
+      // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
       .nullable()
       .default(null)
       .describe('The last day on which the check can be used by others.'),
 
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
-    owner_id: z.string().optional(),
+
+    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'),
+    collaborators: z.array(z.string()).default([]),
 
     settings: KnowledgeCheckSettingsSchema,
 
