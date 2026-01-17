@@ -1,6 +1,5 @@
 'use server'
 
-import { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
@@ -15,7 +14,7 @@ import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
+export default async function insertKnowledgeCheck(check: KnowledgeCheck) {
   await requireAuthentication()
 
   const db = await getDatabase()
@@ -29,7 +28,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
           description: check.description,
           difficulty: check.difficulty,
           share_key: check.share_key,
-          owner_id: user_id,
+          owner_id: check.owner_id,
           openDate: formatDatetime(check.openDate),
           closeDate: check.closeDate ? formatDatetime(check.closeDate) : null,
         })
