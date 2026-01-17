@@ -28,12 +28,14 @@ import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
-export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id }: {} & Required<Pick<KnowledgeCheck, 'share_key' | 'questions' | 'id' | 'owner_id'>>) {
+export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id, collaborators }: {} & KnowledgeCheck) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const { data } = useSession()
 
-  const isOwner = owner_id === data?.user.id
-  const isContributor = false
+  const { data } = useSession()
+  const userId = data?.user.id
+
+  const isOwner = owner_id === userId
+  const isContributor = userId ? collaborators.includes(userId) : false
 
   const router = useRouter()
   const hasQuestions = questions.length > 0
