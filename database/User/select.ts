@@ -3,8 +3,10 @@
 import { and, isNull, notLike } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_user } from '@/database/drizzle/schema'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 export async function getUsers() {
+  await requireAuthentication()
   const db = await getDatabase()
 
   const users = await db
