@@ -31,7 +31,7 @@ export async function saveAction({ check }: { check: KnowledgeCheck }) {
       }
     } else {
       logger.info('Inserting new knowledge check', check)
-      await insertKnowledgeCheck(user.id, check)
+      await insertKnowledgeCheck(check)
     }
 
     redirect('/checks')

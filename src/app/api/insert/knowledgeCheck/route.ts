@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const { success, error, data: check } = safeParseKnowledgeCheck(Object.assign(body, { owner_id: user.id }))
   if (!success) return NextResponse.json({ message: 'Please provide a valid knowledgecheck instance!', errors: error, timestamp: Date.now() }, { status: 400 })
 
-  await insertKnowledgeCheck(user.id, check)
+  await insertKnowledgeCheck(check)
 
   return NextResponse.json({ success: true }, { status: 200 })
 }

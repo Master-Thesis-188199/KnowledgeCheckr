@@ -31,7 +31,7 @@ describe('Category Insertion / Retrieval Suite: ', () => {
       dummyCheck.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
     }
 
-    await insertKnowledgeCheck(testUser.id, dummyCheck)
+    await insertKnowledgeCheck(dummyCheck)
 
     //* Ensure category was inserted and retrieved correctly
     const check = await getKnowledgeCheckById(dummyCheck.id)

@@ -11,6 +11,7 @@ import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgres
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
   Partial<Pick<CheckStoreProviderProps, 'options'>> & {
@@ -23,10 +24,11 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
   }
 
 export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
+  const { user } = await requireAuthentication()
   const users = await getUsers()
 
   return (
-    <CheckStoreProvider initialStoreProps={initialStoreProps} options={options}>
+    <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
       <MultiStageStoreProvider
         initialStoreProps={{
           stages: [
