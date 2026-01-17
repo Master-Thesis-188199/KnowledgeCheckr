@@ -18,7 +18,7 @@ describe('Edit KnowledgeCheck page: ', () => {
     cy.get('input[name="name"]').type('Test Check Title')
 
     //* Switch to last stage to save check
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
+    cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
     cy.get('button').contains('Save').should('exist').scrollIntoView().should('be.visible').click()
 
     //? Ensure that the check was created and the user is redirected

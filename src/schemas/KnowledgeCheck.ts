@@ -59,7 +59,9 @@ export const KnowledgeCheckSchema = z
 
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
+
     owner_id: z.string().optional(),
+    collaborators: z.array(z.string()).default([]),
 
     settings: KnowledgeCheckSettingsSchema,
 
