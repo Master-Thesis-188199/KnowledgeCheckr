@@ -44,7 +44,7 @@ const defaultInitState: CheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initialState = defaultInitState, options }) =>
+export const createCheckStore: WithCaching<ZustandStore<CheckStore, Partial<CheckState>>> = ({ initialState, options }) =>
   createZustandStore({
     caching: true,
     options,
@@ -64,6 +64,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
         })
 
       return {
+        ...defaultInitState,
         ...initialState,
         setName: (name) => set((prev) => ({ ...prev, name, unsavedChanges: true })),
         setDescription: (description) => set((prev) => ({ ...prev, description, unsavedChanges: true })),
