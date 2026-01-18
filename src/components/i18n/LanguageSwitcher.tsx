@@ -15,7 +15,7 @@ export default function LanguageSwitcher() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className='flex size-auto items-center p-1' variant='ghost' size='icon'>
+        <Button aria-label='change app language' className='flex size-auto items-center p-1' variant='ghost' size='icon'>
           {Icon}
         </Button>
       </PopoverTrigger>
