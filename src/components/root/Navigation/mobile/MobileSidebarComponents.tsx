@@ -6,6 +6,7 @@ import { motion } from 'motion/react'
 import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
+import LanguageSwitcher from '@/src/components/i18n/LanguageSwitcher'
 import { sideBarConfiguration } from '@/src/components/root/Navigation/SideBarConfiguration'
 
 export function MobileMenubar() {
@@ -15,7 +16,10 @@ export function MobileMenubar() {
       className='sticky inset-x-0 top-0 z-50 flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
       <OpenButton />
       <span className='tracking-widest'>{sideBarConfiguration.title}</span>
-      <ThemeSwitcher />
+      <div className='flex items-center gap-4'>
+        <ThemeSwitcher />
+        <LanguageSwitcher />
+      </div>
     </div>
   )
 }

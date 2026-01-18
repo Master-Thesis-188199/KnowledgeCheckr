@@ -8,6 +8,7 @@ import SidebarContentPanel from '@/components/root/Navigation/SidebarContentPane
 import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import AppVersion from '@/components/Shared/AppVersion'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
+import LanguageSwitcher from '@/src/components/i18n/LanguageSwitcher'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
@@ -38,6 +39,7 @@ function MenuBar() {
       </div>
       <div className='flex items-center gap-2'>
         <ThemeSwitcher />
+        <LanguageSwitcher />
       </div>
     </div>
   )
