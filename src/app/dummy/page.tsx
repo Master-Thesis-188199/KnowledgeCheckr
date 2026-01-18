@@ -8,7 +8,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
- const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default function DummyDataPage() {
   return (
@@ -134,5 +134,5 @@ async function createPracticeCheck() {
   ]
 
   logger.info('Inserting new check...')
-  await insertKnowledgeCheck(user.id, check) //.then(() => redirect('/checks'))
+  await insertKnowledgeCheck(check) //.then(() => redirect('/checks'))
 }
