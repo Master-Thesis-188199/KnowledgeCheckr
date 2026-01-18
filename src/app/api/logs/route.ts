@@ -26,7 +26,6 @@ export async function POST(req: Request) {
   const { level, context, messages } = parsed.data
   const logger = _logger.createModuleLogger(context ? `client/${context}` : 'Client')
 
-   
   logger[level].apply(logger, messages as Any)
 
   return new NextResponse(null, { status: 204 })
