@@ -6,7 +6,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "predev": "yarn de-instrument-code",
-    "dev": "NEXT_PUBLIC_MODE=development next dev --turbopack",
+    "dev": "concurrently 'NEXT_PUBLIC_MODE=development next dev --turbopack' 'nodemon src/i18n/scripts/prepare-i18n_ally-locales.ts  --watch src/i18n/locales -q'",
     "-------- build & start --------": "--------",
     "instrument-code": "cp ./config/.babelrc.json .babelrc.json",
     "de-instrument-code": "rm -rf .babelrc.json",
