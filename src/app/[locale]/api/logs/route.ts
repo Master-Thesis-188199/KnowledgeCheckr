@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const { level, context, messages } = parsed.data
   const logger = _logger.createModuleLogger(context ? `client/${context}` : 'Client')
 
-  // eslint-disable-next-line prefer-spread
+   
   logger[level].apply(logger, messages as Any)
 
   return new NextResponse(null, { status: 204 })
