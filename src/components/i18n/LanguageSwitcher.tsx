@@ -6,7 +6,7 @@ import { ChevronDownIcon, FileQuestionIcon } from 'lucide-react'
 import { Button } from '@/src/components/shadcn/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { useChangeLocale, useCurrentLocale } from '@/src/i18n/client-localization'
-import { i18nLocales } from '@/src/proxy'
+import { i18nLocale, locales } from '@/src/i18n/i18nConfig'
 
 export default function LanguageSwitcher() {
   const currentLocale = useCurrentLocale()
@@ -22,7 +22,7 @@ export default function LanguageSwitcher() {
       </PopoverTrigger>
       <PopoverContent className='w-32 p-2 text-sm'>
         <div className='grid gap-1'>
-          {i18nLocales.map((locale) => (
+          {locales.map((locale) => (
             <LocaleButton key={locale} locale={locale} />
           ))}
         </div>
@@ -31,7 +31,7 @@ export default function LanguageSwitcher() {
   )
 }
 
-function LocaleButton({ locale }: { locale: (typeof i18nLocales)[number] }) {
+function LocaleButton({ locale }: { locale: i18nLocale }) {
   const { Icon, long } = useLocale(locale)
   const changeLocale = useChangeLocale()
 
@@ -43,7 +43,7 @@ function LocaleButton({ locale }: { locale: (typeof i18nLocales)[number] }) {
   )
 }
 
-function useLocale(locale: (typeof i18nLocales)[number], defaultIconClass = 'size-5') {
+function useLocale(locale: i18nLocale, defaultIconClass = 'size-5') {
   switch (locale) {
     case 'en':
       return { Icon: <US title='United States' className={defaultIconClass} />, short: locale, long: 'English' }

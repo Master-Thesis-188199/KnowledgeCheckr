@@ -1,13 +1,8 @@
 import type { NextRequest } from 'next/server'
 import { createI18nMiddleware } from 'next-international/middleware'
+import i18nConfig from '@/src/i18n/i18nConfig'
 
-export const i18nLocales = ['en', 'de'] as const
-
-const I18nMiddleware = createI18nMiddleware({
-  locales: i18nLocales,
-  defaultLocale: 'en',
-  urlMappingStrategy: 'rewriteDefault', // hides default locale from path
-})
+const I18nMiddleware = createI18nMiddleware(i18nConfig)
 
 export function proxy(request: NextRequest) {
   return I18nMiddleware(request)
