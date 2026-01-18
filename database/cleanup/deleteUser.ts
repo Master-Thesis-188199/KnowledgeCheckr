@@ -1,3 +1,4 @@
+/* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
 import { and, eq, SQL } from 'drizzle-orm'
 import isEmpty from 'lodash/isEmpty'
 import getDatabase from '@/database/Database'

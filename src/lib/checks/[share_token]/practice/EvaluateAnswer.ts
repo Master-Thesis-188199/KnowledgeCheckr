@@ -1,8 +1,11 @@
 'use server'
 
 import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questions/select'
+import _logger from '@/src/lib/log/Logger'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export type PracticeFeedbackServerState = {
   success: boolean
@@ -15,14 +18,14 @@ export type PracticeFeedbackServerState = {
 }
 
 export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: PracticeData): Promise<PracticeFeedbackServerState> {
-  console.log('Evaluating practice answers...', data)
+  logger.info('Evaluating practice answers...', data)
 
   await new Promise((r) => setTimeout(r, 500))
 
   const parsed = PracticeSchema.safeParse(data)
 
   if (!parsed.success) {
-    console.log("The practice-schema constraints weren't satisfied....", parsed.error.flatten())
+    logger.info("The practice-schema constraints weren't satisfied....", parsed.error.flatten())
     const { fieldErrors } = parsed.error.flatten()
     return { success: false, fieldErrors, values: data }
   }
@@ -45,7 +48,7 @@ async function createFeedback({ question_id, ...answer }: PracticeData): Promise
   let question = await getKnowledgeCheckQuestionById(question_id)
 
   if (!question) {
-    console.warn(`Question with id ${question_id} not found when creating feedback.`)
+    logger.warn(`Question with id ${question_id} not found when creating feedback.`)
     return undefined
   }
 

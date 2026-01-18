@@ -1,5 +1,8 @@
 import { createPool as mysqlCreatePool, Pool, PoolOptions } from 'mysql2/promise'
+import _logger from '@/src/lib/log/Logger'
 import env from '@/src/lib/Shared/Env'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 let pool: Pool
 const config: PoolOptions = {
@@ -22,7 +25,7 @@ export default function createPool(): Pool {
     pool = mysqlCreatePool(config)
   } else {
     if (!global.pool) {
-      console.log('Creating new database pool for development environment.')
+      logger.info('Creating new database pool for development environment.')
       global.pool = mysqlCreatePool(config)
     }
     pool = global.pool

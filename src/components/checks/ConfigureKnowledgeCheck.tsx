@@ -1,3 +1,5 @@
+import { getUsers } from '@/database/User/select'
+import CollaboratorProviderContext from '@/src/components/checks/create/(sections)/CollaboratorProvider'
 import GeneralSection from '@/src/components/checks/create/(sections)/GeneralSection'
 import { OverviewSection } from '@/src/components/checks/create/(sections)/OverviewSection'
 import QuestionsSection from '@/src/components/checks/create/(sections)/QuestionsSection'
@@ -9,6 +11,7 @@ import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgres
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
   Partial<Pick<CheckStoreProviderProps, 'options'>> & {
@@ -20,9 +23,12 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
     mode: 'edit'
   }
 
-export function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
+export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
+  const { user } = await requireAuthentication()
+  const users = await getUsers()
+
   return (
-    <CheckStoreProvider initialStoreProps={initialStoreProps} options={options}>
+    <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
       <MultiStageStoreProvider
         initialStoreProps={{
           stages: [
@@ -36,20 +42,22 @@ export function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, op
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
         <div className='mx-[1.5%] grid grid-cols-1 gap-8'>
-          <MutliStageRenderer stage={1}>
-            <GeneralSection />
-          </MutliStageRenderer>
-          <MutliStageRenderer stage={2}>
-            <QuestionsSection />
-          </MutliStageRenderer>
+          <CollaboratorProviderContext users={users}>
+            <MutliStageRenderer stage={1}>
+              <GeneralSection />
+            </MutliStageRenderer>
+            <MutliStageRenderer stage={2}>
+              <QuestionsSection />
+            </MutliStageRenderer>
 
-          <MutliStageRenderer stage={3}>
-            <SettingsSection />
-          </MutliStageRenderer>
+            <MutliStageRenderer stage={3}>
+              <SettingsSection />
+            </MutliStageRenderer>
 
-          <MutliStageRenderer stage={4}>
-            <OverviewSection />
-          </MutliStageRenderer>
+            <MutliStageRenderer stage={4}>
+              <OverviewSection />
+            </MutliStageRenderer>
+          </CollaboratorProviderContext>
         </div>
         <div className='mx-[1.5%] mt-4 flex justify-between'>
           <MultiStageBackButton variant='outline' children='Back' />

@@ -26,7 +26,7 @@ describe('Anonymous User Authentication: ', () => {
 
     cy.get('input[name="name"]').type('Example Anonymous Check')
 
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
+    cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
     cy.intercept('POST', `/checks/create`).as('create-server-action')
     cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
 
@@ -48,7 +48,7 @@ describe('Anonymous User Authentication: ', () => {
 
     cy.get('input[name="name"]').type(CHECK_NAME)
 
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
+    cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
     cy.intercept('POST', `/checks/create`).as('create-server-action')
     cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
 

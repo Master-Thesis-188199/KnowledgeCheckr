@@ -21,8 +21,8 @@ export const sideBarConfiguration: SideBarProps = {
     },
     {
       type: 'navigation',
-      label: 'Explore Checks',
-      href: '/checks',
+      label: 'Discover Checks',
+      href: '/checks/discover',
       icon: <SearchIcon className={iconClasses} />,
     },
     {

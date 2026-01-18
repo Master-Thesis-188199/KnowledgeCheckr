@@ -54,3 +54,7 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Log Files
+logs/*.json
+logs/*.log

@@ -20,8 +20,8 @@ export default function FormFieldError<FormData extends FieldValues>({
   if (!error || !error.message) return null
 
   return (
-    <div aria-label={`field-error-${String(field)}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>
+    <p data-field-error={field} aria-label={`field-error-${String(field)}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80', className)}>
       {error.message}
-    </div>
+    </p>
   )
 }

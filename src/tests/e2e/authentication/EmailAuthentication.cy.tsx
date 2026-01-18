@@ -89,8 +89,8 @@ describe('Better Auth: Email Authentication - ', () => {
       expect(body.success).to.equal(false)
     })
 
-    cy.get('main * #signup-form [aria-label="field-error-root"]').should('exist')
-    cy.get('main * #signup-form [aria-label="field-error-root"]').contains('User already exists!')
+    cy.get('main * #credentials-form [data-field-error="root"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="root"]').contains('User already exists!')
   })
 
   it('Verify that sign-up client-side field errors are displayed on invalid input', () => {
@@ -106,9 +106,9 @@ describe('Better Auth: Email Authentication - ', () => {
 
     cy.get('button[type="submit"]').should('be.disabled')
 
-    cy.get('main * #signup-form [data-field-error="name"]').should('exist')
-    cy.get('main * #signup-form [data-field-error="email"]').should('exist')
-    cy.get('main * #signup-form [data-field-error="password"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="name"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="email"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="password"]').should('exist')
   })
 
   it('Verify that login client-side field errors are displayed on invalid input', () => {
@@ -123,8 +123,8 @@ describe('Better Auth: Email Authentication - ', () => {
     cy.get('button[type="submit"]').should('be.disabled')
     cy.get('button[type="submit"]').click({ force: true })
 
-    cy.get('main * #login-form [data-field-error="email"]').should('exist')
-    cy.get('main * #login-form [data-field-error="password"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="email"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="password"]').should('exist')
   })
 
   it('Verify that error is displayed when logging in with wrong credentials', () => {
@@ -145,7 +145,7 @@ describe('Better Auth: Email Authentication - ', () => {
       expect(body.success).to.equal(false)
     })
 
-    cy.get('main * #login-form [aria-label="field-error-root"]').should('exist')
-    cy.get('main * #login-form [aria-label="field-error-root"]').contains('Wrong e-mail address or password.')
+    cy.get('main * #credentials-form [data-field-error="root"]').should('exist')
+    cy.get('main * #credentials-form [data-field-error="root"]').contains('Wrong e-mail address or password.')
   })
 })

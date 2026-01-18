@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { Config, createSwapy, SwapEndEventHandler, SwapStartEventHandler, Swapy } from 'swapy'
+import { cn } from '@/src/lib/Shared/utils'
 
 export type ItemSwapEvent = CustomEvent<{
   name: string
@@ -67,7 +68,7 @@ export default function DragDropContainer({ children, className, onSwapEnd, onSw
   }, [])
 
   return (
-    <div ref={containerRef} className={className} data-enabled={config.enabled}>
+    <div ref={containerRef} className={cn('group/drag-drop-container', className)} data-enabled={config.enabled}>
       {children}
     </div>
   )

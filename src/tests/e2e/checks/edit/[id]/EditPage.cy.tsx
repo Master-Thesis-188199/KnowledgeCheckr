@@ -18,13 +18,16 @@ describe('Edit KnowledgeCheck page: ', () => {
     cy.get('input[name="name"]').type('Test Check Title')
 
     //* Switch to last stage to save check
-    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
+    cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
     cy.get('button').contains('Save').should('exist').scrollIntoView().should('be.visible').click()
 
     //? Ensure that the check was created and the user is redirected
     cy.wait(750)
     cy.visit('/checks')
 
-    cy.get("main * a[href^='/checks/edit/']").first().click()
+    cy.get(`[data-slot="generic-card"]`).first().should('exist').and('be.visible').find('button[data-slot="dropdown-menu-trigger"]').click()
+    cy.get(`[data-slot="generic-card"]`).first().find('button[data-slot="dropdown-menu-trigger"]').should('have.attr', 'data-state', 'open')
+
+    cy.get('[data-slot="dropdown-menu-content"]').should('exist').find("a[href^='/checks/edit/']").should('exist')
   })
 })

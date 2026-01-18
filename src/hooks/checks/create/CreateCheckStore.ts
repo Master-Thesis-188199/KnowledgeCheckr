@@ -17,6 +17,7 @@ export type CheckActions = {
   removeQuestion: (questionId: Question['id']) => void
   updateSettings: (settings: Partial<KnowledgeCheck['settings']>) => void
   updateCheck: (update: Partial<KnowledgeCheck>) => void
+  updateCollaborators: (collaborators: KnowledgeCheck['collaborators']) => void
 }
 
 export type CheckStore = CheckState & CheckActions
@@ -43,7 +44,7 @@ const defaultInitState: CheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initialState = defaultInitState, options }) =>
+export const createCheckStore: WithCaching<ZustandStore<CheckStore, Partial<CheckState>>> = ({ initialState, options }) =>
   createZustandStore({
     caching: true,
     options,
@@ -63,6 +64,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
         })
 
       return {
+        ...defaultInitState,
         ...initialState,
         setName: (name) => set((prev) => ({ ...prev, name, unsavedChanges: true })),
         setDescription: (description) => set((prev) => ({ ...prev, description, unsavedChanges: true })),
@@ -100,6 +102,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore>> = ({ initia
         removeQuestion,
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
         updateCheck: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
+        updateCollaborators: (collaborators) => set((prev) => ({ ...prev, collaborators: collaborators, unsavedChanges: true })),
       }
     },
   })

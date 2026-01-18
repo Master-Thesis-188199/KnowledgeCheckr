@@ -32,7 +32,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
             </button>
           ))}
         </nav>
-        <span className='text-neutral-500 dark:text-neutral-400'>
+        <span className='text-sm text-neutral-500 dark:text-neutral-400'>
           <TimeTicker
             onTimeUp={() =>
               finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, startedAt, ...examinationState }))
@@ -48,7 +48,8 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
             }
             start={startedAt}
             duration={knowledgeCheck.settings.examTimeFrameSeconds}
-          />
+          />{' '}
+          left
         </span>
         <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60 text-neutral-700/80'>
           <span>Finish Check</span>

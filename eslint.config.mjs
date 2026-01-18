@@ -4,6 +4,7 @@ import nextTs from 'eslint-config-next/typescript'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
 import requireColorModeStyles from './config/eslint_rules/color-mode-styles/require-color-mode-styles.js'
+import enforceLoggerPlugin from './config/eslint_rules/enforce-logger-usages.mjs'
 import serverOnlyPlugin from './config/eslint_rules/server-only-first.mjs'
 
 const eslintConfig = defineConfig([
@@ -12,6 +13,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
+      'prefer-spread': 0,
       'react/no-children-prop': 0,
       'react-hooks/exhaustive-deps': 0,
       '@typescript-eslint/ban-ts-comment': 'warn',
@@ -26,12 +28,16 @@ const eslintConfig = defineConfig([
   {
     plugins: {
       'server-only-first': serverOnlyPlugin,
+      'enforce-logger-usage': enforceLoggerPlugin,
       'simple-import-sort': simpleImportSort,
       'unused-imports': unusedImports,
       'require-color-modes': requireColorModeStyles,
     },
 
     rules: {
+      'enforce-logger-usage/no-console-in-server-or-async': 'warn',
+      'enforce-logger-usage/no-logger-in-client-modules': 'error',
+
       'server-only-first/server-only-first': 'error',
 
       'simple-import-sort/imports': [

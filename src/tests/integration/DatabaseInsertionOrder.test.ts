@@ -21,7 +21,7 @@ describe('Validate the order of inserted database elements', () => {
     expect(testUser).toBeDefined()
 
     const dummyCheck = Object.assign(instantiateKnowledgeCheck(), { owner_id: testUser.id })
-    await insertKnowledgeCheck(testUser.id, dummyCheck)
+    await insertKnowledgeCheck(dummyCheck)
 
     const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)
     expect(id).toBe(dummyCheck.id)
@@ -48,7 +48,7 @@ describe('Validate the order of inserted database elements', () => {
 
   it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['questionOrder']>)(
     "Ensure that `prepareExaminationCheck` shuffled questions & answers do/don't match input order based on order-settings",
-    (order) => {
+    async (order) => {
       const check: KnowledgeCheck = {
         ...instantiateKnowledgeCheck(),
 
@@ -64,7 +64,7 @@ describe('Validate the order of inserted database elements', () => {
       check.settings.answerOrder = order
 
       for (let i = 0; i < 10; i++) {
-        const preparedCheck = prepareExaminationCheck(check)
+        const preparedCheck = await prepareExaminationCheck(check)
 
         if (order === 'random') {
           expect(preparedCheck.questions.map((q) => q.id).join(',')).not.toBe(check.questions.map((q) => q.id).join(','))

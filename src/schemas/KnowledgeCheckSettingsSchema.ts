@@ -32,6 +32,16 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .max(3600 * 5 + 1, 'The examination time frame cannot exceed more than 5 hours!')
     .default(3600)
     .describe('The max duration users have to finish their examination attempt.'),
+
+  examinationAttemptCount: z.number().min(1, 'Users must be allowed to have at least one attempt.').default(1).describe('The amount of examination attempts users have.'),
+
+  shareAccessibility: z
+    .boolean()
+    .or(z.number())
+    .transform((v) => !!v)
+    .optional()
+    .default(false)
+    .describe('Defines whether this check is publicly accessible, thus whether users can discover this check.'),
 })
 
 export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>

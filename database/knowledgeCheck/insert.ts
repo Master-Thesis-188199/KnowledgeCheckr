@@ -1,17 +1,20 @@
 'use server'
 
-import { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import { insertQuestionCategories } from '@/database/knowledgeCheck/catagories/insert'
+import { insertCollaboratorsToKnowledgeCheck } from '@/database/knowledgeCheck/collaborators/insert'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
-export default async function insertKnowledgeCheck(user_id: User['id'], check: KnowledgeCheck) {
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
+
+export default async function insertKnowledgeCheck(check: KnowledgeCheck) {
   await requireAuthentication()
 
   const db = await getDatabase()
@@ -25,7 +28,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
           description: check.description,
           difficulty: check.difficulty,
           share_key: check.share_key,
-          owner_id: user_id,
+          owner_id: check.owner_id,
           openDate: formatDatetime(check.openDate),
           closeDate: check.closeDate ? formatDatetime(check.closeDate) : null,
         })
@@ -33,6 +36,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
+      await insertCollaboratorsToKnowledgeCheck(transaction, check.id, check.collaborators)
       await insertKnowledgeCheckSettings(transaction, check)
       const categories = await insertQuestionCategories(transaction, id, check.questionCategories)
       const questionsWithCategoryIds = check.questions.map((q) => {
@@ -45,7 +49,7 @@ export default async function insertKnowledgeCheck(user_id: User['id'], check: K
 
       await insertKnowledgeCheckQuestions(transaction, questionsWithCategoryIds, id)
     } catch (err) {
-      console.log('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
+      logger.info('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
       transaction.rollback()
     }
   })

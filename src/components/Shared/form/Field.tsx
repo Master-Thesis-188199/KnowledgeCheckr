@@ -55,6 +55,23 @@ export default function Field<Values extends FieldValues>({
         // when true --> prevents layout shifts when switching between error / description by setting min-h to animation-container. Note this "feature" is only enabled when there is something to switch between (thus, when there is a description (&& !!description))
         const keepAnimationContainerSize = previousFocusState.current && (showDescription || hasError) && !!description
 
+        const fieldOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+          // use 'custom' onChange to override value
+          if (onChange) {
+            return field.onChange({
+              ...e,
+              target: { value: onChange(e.target) },
+            })
+          }
+
+          // auto-support number inputs to use `valueAsNumber`
+          if (props.type === 'number') {
+            return field.onChange({ ...e, target: { ...e.target, value: e.target.valueAsNumber } })
+          }
+
+          return field.onChange(e)
+        }
+
         return (
           <>
             <FormLabel className={cn('self-baseline pl-1 capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
@@ -83,15 +100,7 @@ export default function Field<Values extends FieldValues>({
                     props.onBlur?.(e)
                     field.onBlur()
                   }}
-                  onChange={
-                    onChange
-                      ? (e) =>
-                          field.onChange({
-                            ...e,
-                            target: { value: onChange(e.target) },
-                          })
-                      : field.onChange
-                  }
+                  onChange={fieldOnChange}
                 />
               </FormControl>
 
