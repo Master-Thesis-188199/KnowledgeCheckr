@@ -2,7 +2,7 @@
 
 import DE from 'country-flag-icons/react/3x2/DE'
 import US from 'country-flag-icons/react/3x2/US'
-import { ChevronDownIcon, FileQuestionIcon } from 'lucide-react'
+import { FileQuestionIcon } from 'lucide-react'
 import { Button } from '@/src/components/shadcn/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { useChangeLocale, useCurrentLocale } from '@/src/i18n/client-localization'
@@ -15,9 +15,8 @@ export default function LanguageSwitcher() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className='flex items-center' variant='input' size='sm'>
+        <Button className='flex size-auto items-center p-1' variant='ghost' size='icon'>
           {Icon}
-          <ChevronDownIcon className='' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-32 p-2 text-sm'>
