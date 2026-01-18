@@ -1,4 +1,5 @@
 /* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
+import { exec } from 'node:child_process'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -98,7 +99,13 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(e)
-  process.exit(1)
-})
+main()
+  .then(() => {
+    try {
+      exec(` osascript -e 'display notification "Re-generated i18n-ally translations to support plural entries" with title "Generated i18n-ally translations" sound name "TheDrop"' `)
+    } catch {}
+  })
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
