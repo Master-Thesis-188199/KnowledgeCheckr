@@ -101,9 +101,9 @@ async function main() {
 
 main()
   .then(() => {
-    try {
-      exec(` osascript -e 'display notification "Re-generated i18n-ally translations to support plural entries" with title "Generated i18n-ally translations" sound name "TheDrop"' `)
-    } catch {}
+    if (process.platform === 'darwin') {
+      exec(`osascript -e 'display notification "Re-generated i18n-ally translations to support plural entries" with title "Generated i18n-ally translations" sound name "TheDrop"'`, () => {})
+    }
   })
   .catch((e) => {
     console.error(e)
