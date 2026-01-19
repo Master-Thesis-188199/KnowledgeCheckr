@@ -73,6 +73,7 @@ export function RenderPracticeQuestion() {
     if (isPending) return
     if (isSubmitting) return
 
+    console.info(question.question, ' has been answered & submitted')
     storeAnswer({ questionId: question.id, ...getValues() })
   }, [isSubmitSuccessful, isPending, isSubmitting])
 
@@ -103,11 +104,6 @@ export function RenderPracticeQuestion() {
   })
 
   if (!isEmpty(errors)) console.log('error', errors)
-  if (isSubmitted && isSubmitSuccessful && !isPending) {
-    console.log('Question has been answered...')
-
-    console.log(state)
-  }
 
   return (
     <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
