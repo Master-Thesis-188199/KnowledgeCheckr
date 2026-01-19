@@ -29,8 +29,6 @@ export function RenderPracticeQuestion() {
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
-  const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
-
   const question = questions.at(currentQuestionIndex)
 
   if (questions.length === 0 && unfilteredQuestions.length > 0) {
@@ -60,6 +58,12 @@ export function RenderPracticeQuestion() {
       type: state.values?.type ?? question.type,
     },
   })
+
+  const nextRandomQuestion = () =>
+    questions.length > 1
+      ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
+      : // allow the same (only) question to be answered again and again.
+        reset()
 
   useEffect(() => {
     if (!isSubmitSuccessful) return
@@ -284,11 +288,13 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           'has-enabled:has-checked:ring-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
-          isCorrectlySelected(a) &&
+          isEvaluated &&
+            isCorrectlySelected(a) &&
             'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
-          isFalslySelected(a) &&
+          isEvaluated &&
+            isFalslySelected(a) &&
             'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
-          isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+          isEvaluated && isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
         )}
         title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
         htmlFor={a.id}>
