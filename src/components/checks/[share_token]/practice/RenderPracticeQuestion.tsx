@@ -29,8 +29,6 @@ export function RenderPracticeQuestion() {
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
-  const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
-
   const question = questions.at(currentQuestionIndex)
 
   if (questions.length === 0 && unfilteredQuestions.length > 0) {
@@ -60,6 +58,12 @@ export function RenderPracticeQuestion() {
       type: state.values?.type ?? question.type,
     },
   })
+
+  const nextRandomQuestion = () =>
+    questions.length > 1
+      ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
+      : // allow the same (only) question to be answered again and again.
+        reset()
 
   useEffect(() => {
     if (!isSubmitSuccessful) return
