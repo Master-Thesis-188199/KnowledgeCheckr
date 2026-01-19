@@ -7,20 +7,19 @@ import { buildBaseReturn, buildDefaultValues, createNoopServerAction, isServerAc
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
-const INITIAL_SERVER_STATE = { success: false } as const
-
 /**
  * Internal hook that encapsulates all server-action/useActionState wiring.
  * Keeps `useRHF` body focused on "schema + RHF init + return shape".
  */
 function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOptions<TSchema>): RHFServerReturn<TSchema> & { hasServerValidation: boolean } {
   const serverAction = options?.serverAction
+  const initialActionState = options?.initialActionState ?? ({} as RHFServerState<TSchema>)
   const hasServerValidation = isServerAction(serverAction)
 
   // Hooks must not be conditional; always provide an action function.
   const actionForUseActionState = (serverAction ?? createNoopServerAction<TSchema>()) as RHFServerAction<TSchema>
 
-  const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, INITIAL_SERVER_STATE)
+  const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, initialActionState)
 
   const [isServerValidationPending, startTransition] = useTransition()
 

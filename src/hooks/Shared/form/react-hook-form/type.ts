@@ -12,6 +12,7 @@ export type RHFServerState<TSchema extends z.ZodSchema> = {
 export type RHFServerAction<TSchema extends z.ZodSchema> = (prev: RHFServerState<TSchema>, data: z.infer<TSchema>) => Promise<RHFServerState<TSchema>>
 
 export type UseRHFOptions<TSchema extends z.ZodSchema> = {
+  initialActionState: RHFServerState<TSchema>
   serverAction?: RHFServerAction<TSchema>
 }
 
