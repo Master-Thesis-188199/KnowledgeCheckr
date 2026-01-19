@@ -54,7 +54,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
         <RenderPracticeQuestion />
 
-        <div className='flex justify-between'>
+        <div className={cn('flex justify-between', practiceQuestions.length <= 1 && 'hidden')}>
           <PracticeNavigationPreviousButton />
           <PracticeNavigationNextButton />
         </div>
