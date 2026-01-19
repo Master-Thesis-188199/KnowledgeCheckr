@@ -6,7 +6,7 @@ export type RHFServerState<TSchema extends z.ZodSchema> = {
   success: boolean
   fieldErrors?: Partial<Record<keyof z.infer<TSchema>, string[]>>
   rootError?: string
-  values?: Partial<z.infer<TSchema>>
+  values?: z.infer<TSchema>
 }
 
 export type RHFServerAction<TSchema extends z.ZodSchema> = (prev: RHFServerState<TSchema>, data: z.infer<TSchema>) => Promise<RHFServerState<TSchema>>

@@ -11,7 +11,7 @@ export type PracticeFeedbackServerState = {
   success: boolean
   fieldErrors?: { [key in keyof PracticeData]?: string[] }
   rootError?: string
-  values?: Partial<PracticeData>
+  values?: PracticeData
   feedback?: PracticeFeedback
 }
 
