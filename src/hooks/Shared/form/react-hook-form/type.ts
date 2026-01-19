@@ -13,7 +13,7 @@ export type RHFServerAction<TSchema extends z.ZodSchema> = (prev: RHFServerState
 
 export type UseRHFOptions<TSchema extends z.ZodSchema> = {
   initialActionState: RHFServerState<TSchema>
-  serverAction?: RHFServerAction<TSchema>
+  serverAction: RHFServerAction<TSchema>
 }
 
 export type UseRHFFormProps<TSchema extends z.ZodSchema> = Omit<UseFormProps<z.infer<TSchema>>, 'resolver'>
