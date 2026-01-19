@@ -14,8 +14,8 @@ export function createNoopServerAction<TSchema extends z.ZodSchema>(): RHFServer
 
 export function buildDefaultValues<TSchema extends z.ZodSchema>(serverState: RHFServerState<TSchema>, formProps?: UseRHFFormProps<TSchema>): DefaultValues<z.infer<TSchema>> {
   return {
-    ...(serverState.values ?? ({} as DefaultValues<z.infer<TSchema>>)),
     ...(formProps?.defaultValues ?? {}),
+    ...(serverState.values ?? ({} as DefaultValues<z.infer<TSchema>>)),
   } as DefaultValues<z.infer<TSchema>>
 }
 

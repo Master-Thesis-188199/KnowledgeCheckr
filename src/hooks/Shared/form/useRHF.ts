@@ -57,7 +57,6 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
     defaultValues: {
       ...instantiate({ stripDefaultValues: true }), // instantiates each prop with e.g. an empty string so that they are not undefined
       ...buildDefaultValues(serverReturnProps.state, formProps),
-      ...formProps?.defaultValues,
     },
   })
 
