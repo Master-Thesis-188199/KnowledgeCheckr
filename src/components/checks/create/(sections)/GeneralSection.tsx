@@ -1,10 +1,9 @@
 'use client'
 
 import { ComponentType, InputHTMLAttributes, useCallback, useEffect } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays, format } from 'date-fns'
 import isEmpty from 'lodash/isEmpty'
-import { useForm, UseFormProps, useWatch } from 'react-hook-form'
+import { UseFormProps, useWatch } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import CollaboratorSelection from '@/src/components/checks/create/(sections)/CollaboratorSelection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
@@ -13,9 +12,9 @@ import Card from '@/src/components/Shared/Card'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
+import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
 
 export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
@@ -24,8 +23,7 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
   const now = useCallback(() => new Date(Date.now()), [])()
 
-  const form = useForm({
-    resolver: zodResolver(KnowledgeCheckSchema),
+  const { form, baseFieldProps } = useRHF(KnowledgeCheckSchema, {
     defaultValues: {
       ...check,
 
@@ -37,7 +35,6 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
     ...config,
   })
 
-  const baseFieldProps = { form, descriptions: extractDescriptionMap(KnowledgeCheckSchema) }
   const formValues = useWatch({ control: form.control })
 
   /**
