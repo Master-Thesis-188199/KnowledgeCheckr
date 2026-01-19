@@ -54,10 +54,7 @@ export function RenderPracticeQuestion() {
   } = useRHF(
     PracticeSchema,
     {
-      defaultValues: {
-        question_id: question.id,
-        type: question.type,
-      },
+      defaultValues: (stateValues) => ({ question_id: question.id, type: question.type, ...(stateValues as Partial<typeof question>) }),
     },
     { serverAction: EvaluateAnswer, initialActionState: { success: false } },
   )

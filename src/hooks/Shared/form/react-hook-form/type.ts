@@ -1,4 +1,4 @@
-import { UseFormProps, UseFormReturn } from 'react-hook-form'
+import { DefaultValues, UseFormProps, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 
@@ -16,7 +16,15 @@ export type UseRHFOptions<TSchema extends z.ZodSchema> = {
   serverAction: RHFServerAction<TSchema>
 }
 
-export type UseRHFFormProps<TSchema extends z.ZodSchema> = Omit<UseFormProps<z.infer<TSchema>>, 'resolver'>
+export type UseRHFFormProps<TSchema extends z.ZodSchema> = Omit<UseFormProps<z.infer<TSchema>>, 'resolver' | 'defaultValues'> & {
+  /**
+   * Dynamically build the form default values
+   * @param stateValues The values returned by the server-validation action, e.g. to preserver user-inputs after submission
+   * @param instantiatedValues Property instantiations of the schema without default-values, thus string --> '', number --> 0, ...
+   * @returns The form default values
+   */
+  defaultValues?: (stateValues: RHFServerState<TSchema>['values'], instantiatedValues: z.infer<TSchema>) => DefaultValues<z.infer<TSchema>>
+}
 
 export type RHFBaseReturn<TSchema extends z.ZodSchema> = {
   form: UseFormReturn<z.infer<TSchema>>

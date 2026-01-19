@@ -28,7 +28,7 @@ export default function SettingsSection() {
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSettingsSchema, {
     mode: 'all',
     delayError: 100,
-    defaultValues: settings,
+    defaultValues: () => settings,
   })
 
   const {

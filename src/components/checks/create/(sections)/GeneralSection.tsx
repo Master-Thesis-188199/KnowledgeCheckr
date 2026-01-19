@@ -24,13 +24,13 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
   const now = useCallback(() => new Date(Date.now()), [])()
 
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSchema, {
-    defaultValues: {
+    defaultValues: () => ({
       ...check,
 
       // the date-value causes the input to not display the `Date` object
       openDate: format(check.openDate ?? now, 'yyyy-LL-dd') as Any,
       closeDate: format(check.closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
-    },
+    }),
     mode: 'all',
     ...config,
   })
