@@ -97,7 +97,7 @@ export function RenderPracticeQuestion() {
 
   useEffect(() => {
     const sub = watch((values, { name }) => {
-      console.log(`[${name ?? 'Form-State (validation)'}] changed`, values)
+      console.debug(`[${name ?? 'Form-State (validation)'}] changed`, values)
     })
 
     return () => sub.unsubscribe()
