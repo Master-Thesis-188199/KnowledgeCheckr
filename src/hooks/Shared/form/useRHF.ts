@@ -63,7 +63,7 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   const base = buildBaseReturn(form, descriptions)
 
-  useServerValidationResults(hasServerValidation, serverReturnProps.state, { setError: form.setError, reset: form.reset })
+  useServerValidationResults(hasServerValidation, serverReturnProps.state, { setError: form.setError, clearErrors: form.clearErrors })
 
   if (!hasServerValidation) return base
 

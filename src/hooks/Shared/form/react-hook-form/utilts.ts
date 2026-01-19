@@ -37,7 +37,7 @@ export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn
 export function useServerValidationResults<TSchema extends z.ZodSchema>(
   hasServerValidation: boolean,
   state: RHFServerState<TSchema>,
-  { setError, reset }: {} & Pick<UseFormReturn<z.infer<TSchema>>, 'reset' | 'setError'>,
+  { setError, clearErrors }: {} & Pick<UseFormReturn<z.infer<TSchema>>, 'setError' | 'clearErrors'>,
 ) {
   useEffect(() => {
     if (!hasServerValidation) return
@@ -61,6 +61,6 @@ export function useServerValidationResults<TSchema extends z.ZodSchema>(
   useEffect(() => {
     if (!hasServerValidation) return
 
-    if (state.success) reset()
-  }, [state.success, reset, hasServerValidation])
+    if (state.success) clearErrors()
+  }, [state.success, clearErrors, hasServerValidation])
 }
