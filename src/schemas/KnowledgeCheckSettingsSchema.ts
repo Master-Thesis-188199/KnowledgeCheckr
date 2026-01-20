@@ -1,3 +1,4 @@
+import { addYears, format } from 'date-fns'
 import { z } from 'zod'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
@@ -23,7 +24,7 @@ export const KnowledgeCheckSettingsSchema = z.object({
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .nullable()
-      .default(null)
+      .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
       .describe('The start-date on which users can start examinations. When set to null no start constraints are set.'),
 
     endDate: z
@@ -32,7 +33,7 @@ export const KnowledgeCheckSettingsSchema = z.object({
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .nullable()
-      .default(null)
+      .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
       .describe('The end-date after which users can no longer start examinations. When set to null no end constraints are set.'),
 
     questionOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how questions are ordered during practice / exams.'),
