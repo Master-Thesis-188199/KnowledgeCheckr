@@ -1,5 +1,6 @@
 import { isBefore } from 'date-fns/isBefore'
 import { z } from 'zod'
+import { db_knowledgeCheck } from '@/database/drizzle'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
@@ -88,5 +89,5 @@ export const KnowledgeCheckSchema = z
 
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
 
-const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema)
+const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema, db_knowledgeCheck)
 export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }
