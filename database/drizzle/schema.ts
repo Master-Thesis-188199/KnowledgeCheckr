@@ -154,14 +154,14 @@ export const db_knowledgeCheckSettings = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.questionOrder._def.defaultValue()),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.answerOrder._def.defaultValue()),
-    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examTimeFrameSeconds._def.defaultValue()),
-    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examinationAttemptCount._def.defaultValue()),
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.questionOrder._def.defaultValue()),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.answerOrder._def.defaultValue()),
+    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examTimeFrameSeconds._def.defaultValue()),
+    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examinationAttemptCount._def.defaultValue()),
     shareAccessibility: int()
       .notNull()
       .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),

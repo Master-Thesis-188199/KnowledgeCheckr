@@ -37,7 +37,8 @@ export default function SettingsSection() {
     formState: { errors },
   } = form
 
-  const { examTimeFrameSeconds, questionOrder, answerOrder } = useWatch({ control })
+  const { examination } = useWatch({ control })
+  const { examTimeFrameSeconds, questionOrder, answerOrder } = examination!
 
   return (
     <Form {...form}>
@@ -72,7 +73,7 @@ export default function SettingsSection() {
             <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'>
               <Field
                 {...baseFieldProps}
-                name='questionOrder'
+                name='examination.questionOrder'
                 label='Randomize Question Order'
                 labelClassname='mt-0.5'
                 className='place-self-start'
@@ -82,7 +83,7 @@ export default function SettingsSection() {
               />
               <Field
                 {...baseFieldProps}
-                name='answerOrder'
+                name='examination.answerOrder'
                 label='Randomize Answer Order'
                 labelClassname='mt-0.5'
                 className='place-self-start'
@@ -115,10 +116,12 @@ export default function SettingsSection() {
                   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` // --> HH:mm format
                 }}
                 type='time'
-                name='examTimeFrameSeconds'
+                name='examination.examTimeFrameSeconds'
                 label='Examination Time Frame'
                 list='time-values'>
-                <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableDuration(examTimeFrameSeconds, !!errors.examTimeFrameSeconds)}</span>
+                <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>
+                  {humanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)}
+                </span>
               </Field>
 
               <datalist id='time-values'>
@@ -128,7 +131,7 @@ export default function SettingsSection() {
                 <option value='01:30' label='90 minutes'></option>
               </datalist>
 
-              <Field {...baseFieldProps} name='examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+              <Field {...baseFieldProps} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
             </div>
           </TabsContentPanel>
           <TabsContentPanel tab='sharing'>

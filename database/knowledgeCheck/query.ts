@@ -132,7 +132,12 @@ function parseAnswers(
 }
 
 function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): KnowledgeCheckSettings {
-  const result = safeParseKnowledgeCheckSettings(setting)
+  const result = safeParseKnowledgeCheckSettings({
+    ...setting!,
+    examination: {
+      ...setting!,
+    },
+  })
   if (result.error && setting !== null) console.error('Failed to parse existing setting', setting, 'because of', result.error)
 
   return result.data ?? instantiateKnowledgeCheckSettings()
