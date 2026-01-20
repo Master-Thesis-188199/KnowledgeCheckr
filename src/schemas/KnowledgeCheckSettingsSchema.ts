@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { db_knowledgeCheckSettings } from '@/database/drizzle'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
@@ -47,9 +46,5 @@ export const KnowledgeCheckSettingsSchema = z.object({
 
 export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>
 
-const {
-  validate: validateKnowledgeCheckSettings,
-  instantiate: instantiateKnowledgeCheckSettings,
-  safeParse: safeParseKnowledgeCheckSettings,
-} = schemaUtilities(KnowledgeCheckSettingsSchema, db_knowledgeCheckSettings)
+const { validate: validateKnowledgeCheckSettings, instantiate: instantiateKnowledgeCheckSettings, safeParse: safeParseKnowledgeCheckSettings } = schemaUtilities(KnowledgeCheckSettingsSchema)
 export { instantiateKnowledgeCheckSettings, safeParseKnowledgeCheckSettings, validateKnowledgeCheckSettings }

@@ -1,5 +1,4 @@
 import { z, ZodIssueCode } from 'zod'
-import { db_question } from '@/database/drizzle'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
@@ -163,8 +162,8 @@ export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
 
 export type Question = z.infer<typeof QuestionSchema>
 
-const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion, convertToDatabase: questionConvertToDatabase } = schemaUtilities(QuestionSchema, db_question)
-export { instantiateQuestion, safeParseQuestion, validateQuestion, questionConvertToDatabase }
+const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities(QuestionSchema)
+export { instantiateQuestion, safeParseQuestion, validateQuestion }
 
 export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
 export type SingleChoice = Extract<Question, { type: 'single-choice' }>
