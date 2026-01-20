@@ -9,6 +9,32 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .default(() => getUUID()),
 
   examination: z.object({
+    enableExaminations: z
+      .boolean()
+      .or(z.number())
+      .transform((v) => !!v)
+      .optional()
+      .default(true)
+      .describe('Defines whether users are able to start an examination attempt for this check or not.'),
+
+    startDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .nullable()
+      .default(null)
+      .describe('The start-date on which users can start examinations. When set to null no start constraints are set.'),
+
+    endDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .nullable()
+      .default(null)
+      .describe('The end-date after which users can no longer start examinations. When set to null no end constraints are set.'),
+
     questionOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how questions are ordered during practice / exams.'),
     answerOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how answers are ordered during practice / exams.'),
 

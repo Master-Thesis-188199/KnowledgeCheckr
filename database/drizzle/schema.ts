@@ -165,6 +165,13 @@ export const db_knowledgeCheckSettings = mysqlTable(
     shareAccessibility: int()
       .notNull()
       .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
+
+    // -----
+    enableExaminations: int()
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
+    startDate: datetime({ mode: 'string' }).notNull(),
+    endDate: datetime({ mode: 'string' }),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
