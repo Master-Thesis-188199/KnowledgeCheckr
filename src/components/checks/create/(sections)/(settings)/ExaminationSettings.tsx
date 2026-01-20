@@ -28,6 +28,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
 
       <Field
         {...baseFieldProps}
+        disabled={!enableExaminations}
         name='examination.questionOrder'
         label='Randomize Question Order'
         labelClassname='mt-0.5'
@@ -38,6 +39,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
       />
       <Field
         {...baseFieldProps}
+        disabled={!enableExaminations}
         name='examination.answerOrder'
         label='Randomize Answer Order'
         labelClassname='mt-0.5'
@@ -49,6 +51,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
 
       <Field
         {...baseFieldProps}
+        disabled={!enableExaminations}
         onChange={({ value }) =>
           value
             .split(':')
@@ -74,10 +77,10 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         <option value='01:30' label='90 minutes'></option>
       </datalist>
 
-      <Field {...baseFieldProps} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+      <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
 
-      <Field {...baseFieldProps} label='Start Date' name='examination.startDate' type='datetime-local' />
-      <Field {...baseFieldProps} label='End Date' name='examination.endDate' type='datetime-local' />
+      <Field {...baseFieldProps} disabled={!enableExaminations} label='Start Date' name='examination.startDate' type='datetime-local' />
+      <Field {...baseFieldProps} disabled={!enableExaminations} label='End Date' name='examination.endDate' type='datetime-local' />
     </div>
   )
 }
