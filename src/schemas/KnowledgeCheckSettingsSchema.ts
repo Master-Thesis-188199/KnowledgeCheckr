@@ -46,9 +46,5 @@ export const KnowledgeCheckSettingsSchema = z.object({
 
 export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>
 
-const {
-  validate: validateKnowledgeCheckSettings,
-  instantiate: instantiateKnowledgeCheckSettings,
-  safeParse: safeParseKnowledgeCheckSettings,
-} = schemaUtilities<KnowledgeCheckSettings>(KnowledgeCheckSettingsSchema)
+const { validate: validateKnowledgeCheckSettings, instantiate: instantiateKnowledgeCheckSettings, safeParse: safeParseKnowledgeCheckSettings } = schemaUtilities(KnowledgeCheckSettingsSchema)
 export { instantiateKnowledgeCheckSettings, safeParseKnowledgeCheckSettings, validateKnowledgeCheckSettings }

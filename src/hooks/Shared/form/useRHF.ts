@@ -49,7 +49,7 @@ export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, fo
 export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
   const { hasServerValidation, ...serverReturnProps } = useServerValidation<TSchema>(options)
-  const { instantiate } = schemaUtilities<z.infer<TSchema>>(schema)
+  const { instantiate } = schemaUtilities(schema)
 
   const form = useForm<z.infer<TSchema>>({
     resolver: zodResolver(schema),
