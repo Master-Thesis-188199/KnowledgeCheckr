@@ -1,3 +1,4 @@
+import { isFuture, isPast } from 'date-fns'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
@@ -18,6 +19,9 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
   if (!check) {
     notFound()
   }
+
+  if (isFuture(check.openDate)) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
+  if (check.closeDate !== null && isPast(check.closeDate)) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
 
   const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getExaminationAttempts(user.id, check.id)])
 
