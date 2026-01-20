@@ -2,13 +2,11 @@
 
 import { UsersIcon } from '@heroicons/react/24/outline'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
-import { useWatch } from 'react-hook-form'
 import { ExaminationSettings } from '@/src/components/checks/create/(sections)/(settings)/ExaminationSettings'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
-import Field from '@/src/components/Shared/form/Field'
 import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
@@ -31,10 +29,7 @@ export default function SettingsSection() {
     defaultValues: () => settings,
   })
 
-  const { control, getValues } = form
-
-  const { examination } = useWatch({ control })
-  const { questionOrder, answerOrder } = examination!
+  const { getValues } = form
 
   return (
     <Form {...form}>
@@ -66,28 +61,7 @@ export default function SettingsSection() {
           </div>
 
           <TabsContentPanel tab='general'>
-            <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'>
-              <Field
-                {...baseFieldProps}
-                name='examination.questionOrder'
-                label='Randomize Question Order'
-                labelClassname='mt-0.5'
-                className='place-self-start'
-                type='checkbox'
-                onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-                checked={questionOrder === 'random'}
-              />
-              <Field
-                {...baseFieldProps}
-                name='examination.answerOrder'
-                label='Randomize Answer Order'
-                labelClassname='mt-0.5'
-                className='place-self-start'
-                type='checkbox'
-                onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-                checked={answerOrder === 'random'}
-              />
-            </div>
+            <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'></div>
           </TabsContentPanel>
           <TabsContentPanel tab='practice'>
             <TemporarySettingsOptions />

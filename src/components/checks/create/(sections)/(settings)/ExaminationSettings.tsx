@@ -11,11 +11,32 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
   } = useFormContext<KnowledgeCheckSettings>()
 
   const { examination } = useWatch({ control })
-  const { examTimeFrameSeconds } = examination!
+  const { examTimeFrameSeconds, questionOrder, answerOrder } = examination!
 
   return (
     <div
       className={cn('grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0')}>
+      <Field
+        {...baseFieldProps}
+        name='examination.questionOrder'
+        label='Randomize Question Order'
+        labelClassname='mt-0.5'
+        className='place-self-start'
+        type='checkbox'
+        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+        checked={questionOrder === 'random'}
+      />
+      <Field
+        {...baseFieldProps}
+        name='examination.answerOrder'
+        label='Randomize Answer Order'
+        labelClassname='mt-0.5'
+        className='place-self-start'
+        type='checkbox'
+        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+        checked={answerOrder === 'random'}
+      />
+
       <Field
         {...baseFieldProps}
         onChange={({ value }) =>
