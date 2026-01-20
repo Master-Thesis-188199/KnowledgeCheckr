@@ -65,6 +65,9 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
       </datalist>
 
       <Field {...baseFieldProps} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+
+      <Field {...baseFieldProps} label='Start Date' name='examination.startDate' type='datetime-local' />
+      <Field {...baseFieldProps} label='End Date' name='examination.endDate' type='datetime-local' />
     </div>
   )
 }
