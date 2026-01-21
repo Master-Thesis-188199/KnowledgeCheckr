@@ -1,6 +1,8 @@
+import { getTableColumns } from 'drizzle-orm'
 import type { MySqlTableWithColumns } from 'drizzle-orm/mysql-core'
 import { z } from 'zod'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
+import getKeys from '@/src/lib/Shared/Keys'
 import { Any } from '@/types'
 
 /**
@@ -147,9 +149,9 @@ export default function createConvertToDatabase<Schema extends z.ZodTypeAny, Tab
    */
   return function convertToDatabase<const Type extends z.infer<Schema>>(obj: Type): DbConversionResult<Type, Table> {
     const out: Record<string, unknown> = {}
-    const columns = Object.keys(table) as (keyof Table['$columns'])[]
+    const columns = getTableColumns(table)
 
-    for (const col of columns) {
+    for (const col of getKeys(columns)) {
       const raw = findDeepPropertyValue(String(col), obj)
       if (raw === undefined) continue // don't emit missing keys
 
