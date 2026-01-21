@@ -1,6 +1,6 @@
 import { Stage } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
-import { ZustandStore } from '@/types/Shared/ZustandStore'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type MultiStageState = {
   stages: Stage[]
@@ -25,9 +25,10 @@ const defaultState: MultiStageState = {
   stages: [],
   enabled: true,
 }
-export const createMultiStageStore: ZustandStore<MultiStageStore, Partial<MultiStageState>> = ({ initialState }) =>
+export const createMultiStageStore: WithCaching<ZustandStore<MultiStageStore, Partial<MultiStageState>>> = ({ initialState, options }) =>
   createZustandStore({
-    caching: false,
+    caching: true,
+    options,
     initializer: (set, get) => {
       return {
         ...defaultState,
