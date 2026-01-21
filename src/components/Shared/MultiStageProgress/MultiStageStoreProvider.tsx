@@ -20,10 +20,10 @@ export interface MultiStageStoreProviderProps {
   children: ReactNode
   initialStoreProps?: Partial<MultiStageState>
 
-  cacheOptions: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<MultiStageStore>, ''>>
+  cacheOptions?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<MultiStageStore>, ''>>
 }
 
-export function MultiStageStoreProvider({ children, initialStoreProps, cacheOptions }: MultiStageStoreProviderProps) {
+export function MultiStageStoreProvider({ children, initialStoreProps, cacheOptions = { cacheKey: 'multi-stage-cache' } }: MultiStageStoreProviderProps) {
   const props = useZustandStore<MultiStageStore, Partial<MultiStageState>>({
     caching: true,
     createStoreFunc: createMultiStageStore,
