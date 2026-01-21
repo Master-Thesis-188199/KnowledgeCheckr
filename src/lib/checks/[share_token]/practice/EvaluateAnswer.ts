@@ -9,9 +9,7 @@ const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').rever
 
 export type PracticeFeedbackServerState = {
   success: boolean
-  fieldErrors?: {
-    [K in keyof PracticeData]?: string[]
-  }
+  fieldErrors?: { [key in keyof PracticeData]?: string[] }
   rootError?: string
   values?: PracticeData
   feedback?: PracticeFeedback

@@ -48,6 +48,8 @@ export default function schemaDefaults<Schema extends z.ZodFirstPartySchemaTypes
       const schemaChecks = schema._def.checks
 
       let value = ''
+      if (options.stripDefaultValues) return value
+
       if (schemaChecks.some((check: any) => check.kind === 'uuid')) value = getUUID()
 
       return value

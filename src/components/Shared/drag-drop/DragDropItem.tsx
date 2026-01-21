@@ -40,7 +40,15 @@ export function DragDropItem({ children, className, name, onSwap, initialIndex, 
         )}>
         {showPositionCounter && initialIndex !== undefined && <DragDropItemPositionCounter initialIndex={initialIndex} />}
         {children}
-        <MoveIcon className='absolute top-0 right-5 bottom-0 my-auto size-4.5 text-neutral-500 group-data-[enabled=true]/drag-drop-container:group-hover:text-neutral-700 group-data-[enabled=true]/drag-drop-container:group-active:text-neutral-800 dark:text-neutral-400 dark:group-data-[enabled=true]/drag-drop-container:group-hover:text-neutral-200/90 dark:group-data-[enabled=true]/drag-drop-container:group-active:text-neutral-100' />
+        <MoveIcon
+          className={cn(
+            'absolute top-0 right-5 bottom-0 my-auto size-4.5 text-neutral-500 dark:text-neutral-400',
+            // disabled icon styles
+            'group-data-[enabled=false]/drag-drop-container:text-muted-foreground/40 dark:group-data-[enabled=false]/drag-drop-container:text-muted-foreground/40',
+            // hover, active styles
+            'group-data-[enabled=true]/drag-drop-container:group-hover:text-neutral-700 group-data-[enabled=true]/drag-drop-container:group-active:text-neutral-800 dark:group-data-[enabled=true]/drag-drop-container:group-hover:text-neutral-200/90 dark:group-data-[enabled=true]/drag-drop-container:group-active:text-neutral-100',
+          )}
+        />
       </div>
     </div>
   )

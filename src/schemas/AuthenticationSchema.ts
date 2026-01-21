@@ -9,12 +9,12 @@ const baseSchema = z.object({
 
 export type LoginProps = z.infer<typeof baseSchema>
 export const LoginSchema = baseSchema
-const { validate: validateLoginProps, instantiate: instantiateLoginProps, safeParse: safeParseLoginProps } = schemaUtilities<LoginProps>(LoginSchema)
+const { validate: validateLoginProps, instantiate: instantiateLoginProps, safeParse: safeParseLoginProps } = schemaUtilities(LoginSchema)
 export { instantiateLoginProps, safeParseLoginProps, validateLoginProps }
 
 export const SignupSchema = baseSchema.extend({
   name: z.string().trim().min(1, { message: 'The name must be at least 1 characters long.' }),
 })
 export type SignupProps = z.infer<typeof SignupSchema>
-const { validate: validateSignupProps, instantiate: instantiateSignupProps, safeParse: safeParseSignupProps } = schemaUtilities<SignupProps>(SignupSchema)
+const { validate: validateSignupProps, instantiate: instantiateSignupProps, safeParse: safeParseSignupProps } = schemaUtilities(SignupSchema)
 export { instantiateSignupProps, safeParseSignupProps, validateSignupProps }

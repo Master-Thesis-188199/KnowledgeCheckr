@@ -162,30 +162,22 @@ export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes)
 
 export type Question = z.infer<typeof QuestionSchema>
 
-const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities<Question>(QuestionSchema)
+const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities(QuestionSchema)
 export { instantiateQuestion, safeParseQuestion, validateQuestion }
 
 export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
 export type SingleChoice = Extract<Question, { type: 'single-choice' }>
-const { validate: validateSingleChoice, instantiate: instantiateSingleChoice, safeParse: safeParseSingleChoice } = schemaUtilities<SingleChoice>(z.intersection(baseQuestion, singleChoiceAnswerSchema))
+const { validate: validateSingleChoice, instantiate: instantiateSingleChoice, safeParse: safeParseSingleChoice } = schemaUtilities(z.intersection(baseQuestion, singleChoiceAnswerSchema))
 export { instantiateSingleChoice, safeParseSingleChoice, validateSingleChoice }
 
 export type MultipleChoice = Extract<Question, { type: 'multiple-choice' }>
-const {
-  validate: validateMultipleChoice,
-  instantiate: instantiateMultipleChoice,
-  safeParse: safeParseMultipleChoice,
-} = schemaUtilities<MultipleChoice>(z.intersection(baseQuestion, multipleChoiceAnswerSchema))
+const { validate: validateMultipleChoice, instantiate: instantiateMultipleChoice, safeParse: safeParseMultipleChoice } = schemaUtilities(z.intersection(baseQuestion, multipleChoiceAnswerSchema))
 export { instantiateMultipleChoice, safeParseMultipleChoice, validateMultipleChoice }
 
 export type OpenQuestion = Extract<Question, { type: 'open-question' }>
-const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities<OpenQuestion>(z.intersection(baseQuestion, openAnswerSchema))
+const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities(z.intersection(baseQuestion, openAnswerSchema))
 export { instantiateOpenQuestion, safeParseOpenQuestion, validateOpenQuestion }
 
 export type DragDropQuestion = Extract<Question, { type: 'drag-drop' }>
-const {
-  validate: validateDragDropQuestion,
-  instantiate: instantiateDragDropQuestion,
-  safeParse: safeParseDragDropQuestion,
-} = schemaUtilities<DragDropQuestion>(z.intersection(baseQuestion, dragDropAnswerSchema))
+const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = schemaUtilities(z.intersection(baseQuestion, dragDropAnswerSchema))
 export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }

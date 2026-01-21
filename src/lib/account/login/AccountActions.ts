@@ -13,14 +13,14 @@ export type SignupAuthState = {
   success: boolean
   fieldErrors?: { [key in keyof SignupProps]?: string[] }
   rootError?: string
-  values?: Partial<SignupProps>
+  values?: SignupProps
 }
 
 export type LoginAuthState = {
   success: boolean
   fieldErrors?: { [key in keyof LoginProps]?: string[] }
   rootError?: string
-  values?: Partial<LoginProps>
+  values?: LoginProps
 }
 
 export async function loginAction(_: LoginAuthState, values: LoginProps): Promise<LoginAuthState> {

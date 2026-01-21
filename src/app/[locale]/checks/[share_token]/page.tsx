@@ -25,8 +25,8 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
 
   const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getExaminationAttempts(user.id, check.id)])
 
-  if (attempts.length >= check.settings.examinationAttemptCount) {
-    return redirect(`/checks/${share_token}/attempt-limit?attemptLimit=${check.settings.examinationAttemptCount}`, RedirectType.replace)
+  if (attempts.length >= check.settings.examination.examinationAttemptCount) {
+    return redirect(`/checks/${share_token}/attempt-limit?attemptLimit=${check.settings.examination.examinationAttemptCount}`, RedirectType.replace)
   }
 
   return (
