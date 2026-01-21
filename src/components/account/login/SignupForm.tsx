@@ -14,9 +14,11 @@ export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callba
       formAction={signupAction}
       refererCallbackUrl={refererCallbackUrl}
       formProps={{
-        defaultValues: {
+        defaultValues: (stateValues, instantiations) => ({
+          ...instantiations,
           callbackURL: callbackUrl,
-        },
+          ...stateValues,
+        }),
       }}
       renderFields={({ form }) => (
         <>

@@ -88,5 +88,5 @@ export const KnowledgeCheckSchema = z
 
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
 
-const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<KnowledgeCheck>(KnowledgeCheckSchema)
+const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema)
 export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }

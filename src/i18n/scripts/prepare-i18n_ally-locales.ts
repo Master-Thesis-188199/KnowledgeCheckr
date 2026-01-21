@@ -99,13 +99,36 @@ async function main() {
   }
 }
 
+let executionCount = 0
 main()
   .then(() => {
-    if (process.platform === 'darwin') {
-      exec(`osascript -e 'display notification "Re-generated i18n-ally translations to support plural entries" with title "Generated i18n-ally translations" sound name "TheDrop"'`, () => {})
+    const startNoficiationOptions: Parameters<typeof sendUpdateNotification>['0'] = {
+      soundName: 'SelectClick',
+      title: 'Listening for locale changes',
+      subtitle: 'Generating i18n-ally friend locale files onChange',
     }
+    sendUpdateNotification(executionCount > 0 ? {} : startNoficiationOptions)
+    executionCount++
   })
   .catch((e) => {
     console.error(e)
     process.exit(1)
   })
+
+function sendUpdateNotification({
+  title = 'Generated i18n-ally translations',
+  subtitle = 'Re-generated i18n-ally translations to support plural entries',
+  soundName = 'TheDrop',
+  withSound = true,
+}: {
+  title?: string
+  subtitle?: string
+  withSound?: boolean
+  soundName?: string
+}) {
+  if (process.platform === 'darwin') {
+    const cmd = `osascript -e 'display notification "${subtitle}" with title "${title}" ${withSound ? `sound name "${soundName}"` : ''}'`
+    console.log(cmd)
+    exec(cmd, () => {})
+  }
+}

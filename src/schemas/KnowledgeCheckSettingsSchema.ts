@@ -1,3 +1,5 @@
+import { addYears } from 'date-fns/addYears'
+import { format } from 'date-fns/format'
 import { z } from 'zod'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
@@ -8,32 +10,58 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .uuid()
     .default(() => getUUID()),
 
-  questionOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how questions are ordered during practice / exams.'),
+  examination: z.object({
+    enableExaminations: z
+      .boolean()
+      .or(z.number())
+      .transform((v) => !!v)
+      .optional()
+      .default(true)
+      .describe('Defines whether users are able to start an examination attempt for this check or not.'),
 
-  answerOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how answers are ordered during practice / exams.'),
+    startDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
+      .describe('The start-date on which users can start examinations.'),
 
-  allowAnonymous: z
-    .boolean()
-    .or(z.number())
-    .transform((v) => !!v)
-    .default(true)
-    .describe('Specifies whether anonymous users can interact with this check.'),
+    endDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .nullable()
+      .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
+      .describe('The end-date after which users can no longer start examinations. When set to null no end constraints are set.'),
 
-  allowFreeNavigation: z
-    .boolean()
-    .or(z.number())
-    .transform((v) => !!v)
-    .default(true)
-    .describe('Specifies whether users can switch between questions freely or not.'),
+    questionOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how questions are ordered during practice / exams.'),
+    answerOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how answers are ordered during practice / exams.'),
 
-  examTimeFrameSeconds: z
-    .number()
-    .min(60, 'The examination time frame must be at least 1 minute!')
-    .max(3600 * 5 + 1, 'The examination time frame cannot exceed more than 5 hours!')
-    .default(3600)
-    .describe('The max duration users have to finish their examination attempt.'),
+    allowAnonymous: z
+      .boolean()
+      .or(z.number())
+      .transform((v) => !!v)
+      .default(true)
+      .describe('Specifies whether anonymous users can interact with this check.'),
 
-  examinationAttemptCount: z.number().min(1, 'Users must be allowed to have at least one attempt.').default(1).describe('The amount of examination attempts users have.'),
+    allowFreeNavigation: z
+      .boolean()
+      .or(z.number())
+      .transform((v) => !!v)
+      .default(true)
+      .describe('Specifies whether users can switch between questions freely or not.'),
+
+    examTimeFrameSeconds: z
+      .number()
+      .min(60, 'The examination time frame must be at least 1 minute!')
+      .max(3600 * 5 + 1, 'The examination time frame cannot exceed more than 5 hours!')
+      .default(3600)
+      .describe('The max duration users have to finish their examination attempt.'),
+
+    examinationAttemptCount: z.number().min(1, 'Users must be allowed to have at least one attempt.').default(1).describe('The amount of examination attempts users have.'),
+  }),
 
   shareAccessibility: z
     .boolean()
@@ -46,9 +74,5 @@ export const KnowledgeCheckSettingsSchema = z.object({
 
 export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>
 
-const {
-  validate: validateKnowledgeCheckSettings,
-  instantiate: instantiateKnowledgeCheckSettings,
-  safeParse: safeParseKnowledgeCheckSettings,
-} = schemaUtilities<KnowledgeCheckSettings>(KnowledgeCheckSettingsSchema)
+const { validate: validateKnowledgeCheckSettings, instantiate: instantiateKnowledgeCheckSettings, safeParse: safeParseKnowledgeCheckSettings } = schemaUtilities(KnowledgeCheckSettingsSchema)
 export { instantiateKnowledgeCheckSettings, safeParseKnowledgeCheckSettings, validateKnowledgeCheckSettings }

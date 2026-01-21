@@ -32,7 +32,7 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
       delayError: 150,
       ...formProps,
     },
-    { serverAction: formAction },
+    { serverAction: formAction, initialActionState: { success: false } },
   )
 
   const {
