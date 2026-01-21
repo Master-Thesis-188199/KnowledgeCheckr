@@ -65,12 +65,6 @@ export function RenderPracticeQuestion() {
       : // allow the same (only) question to be answered again and again.
         reset()
 
-  const nextRandomQuestion = () =>
-    questions.length > 1
-      ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
-      : // allow the same (only) question to be answered again and again.
-        reset()
-
   useEffect(() => {
     if (!isSubmitSuccessful) return
     if (isPending) return
