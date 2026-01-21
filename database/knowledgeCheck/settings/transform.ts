@@ -1,7 +1,8 @@
 import 'server-only'
 import { db_knowledgeCheckSettings } from '@/database/drizzle'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 import { Any } from '@/types'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -26,12 +27,8 @@ function convertFromDatabase(settings: Omit<typeof db_knowledgeCheckSettings.$in
   return parseResult.data
 }
 
-function convertToDatabase({ examination: examSettings, ...settings }: KnowledgeCheckSettings): Omit<typeof db_knowledgeCheckSettings.$inferInsert, 'knowledgecheckId'> {
-  return {
-    ...settings,
-    ...examSettings,
-    allowAnonymous: examSettings.allowAnonymous ? 1 : 0,
-    allowFreeNavigation: examSettings.allowFreeNavigation ? 1 : 0,
-    shareAccessibility: settings.shareAccessibility ? 1 : 0,
-  }
+function convertToDatabase(settings: KnowledgeCheckSettings): Omit<typeof db_knowledgeCheckSettings.$inferInsert, 'knowledgecheckId'> {
+  const convertToDatabase = createConvertToDatabase(KnowledgeCheckSettingsSchema, db_knowledgeCheckSettings)
+
+  return convertToDatabase(settings)
 }
