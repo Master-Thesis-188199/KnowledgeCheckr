@@ -1,4 +1,5 @@
-import { addYears, format } from 'date-fns'
+import { addYears } from 'date-fns/addYears'
+import { format } from 'date-fns/format'
 import { z } from 'zod'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
