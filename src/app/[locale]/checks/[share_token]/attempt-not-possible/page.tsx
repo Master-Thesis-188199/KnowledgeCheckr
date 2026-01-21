@@ -1,10 +1,9 @@
-import { isFuture } from 'date-fns/isFuture'
-import { isPast } from 'date-fns/isPast'
 import { notFound } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getCurrentLocale, getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAllowed'
 
 export default async function ClosedExaminationPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
@@ -19,8 +18,10 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
 
   let message: string = t('unavailable')
 
-  if (isFuture(check.openDate)) message = t('notOpenYet', { openDate: check.openDate.toLocaleDateString(currentLocale) })
-  if (check.closeDate !== null && isPast(check.closeDate)) message = t('checkClosed', { closeDate: check.closeDate.toLocaleDateString(currentLocale) })
+  const allowance = isExaminationAllowed(check)
+
+  if (allowance === 'examination window not yet open') message = t('notOpenYet', { openDate: check.settings.examination.startDate.toLocaleDateString(currentLocale) })
+  if (allowance === 'examination window closed') message = t('checkClosed', { closeDate: check.settings.examination.endDate?.toLocaleDateString(currentLocale) })
 
   return (
     <>

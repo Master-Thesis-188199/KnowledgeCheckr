@@ -1,4 +1,3 @@
-import { isFuture, isPast } from 'date-fns'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
@@ -8,6 +7,7 @@ import { QuestionNavigationMenu } from '@/src/components/checks/[share_token]/Qu
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { defaultExaminationStoreProps } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAllowed'
 import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
 
 export default async function CheckPage({ params }: { params: Promise<{ share_token: string }> }) {
@@ -20,8 +20,7 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
     notFound()
   }
 
-  if (isFuture(check.openDate)) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
-  if (check.closeDate !== null && isPast(check.closeDate)) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
+  if (isExaminationAllowed(check) !== 'allowed') redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
 
   const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getExaminationAttempts(user.id, check.id)])
 
