@@ -84,12 +84,15 @@ export type DbConversionResult<Obj, Table> = Pick<DrizzleInsertShape<Table>, Mat
  * @param value - The object/array/value to search within.
  * @returns The found value, or `undefined` if no match exists.
  */
-export function findDeepPropertyValue(searchKey: string, value: unknown): unknown {
+export function findDeepPropertyValue(searchKey: string, value: unknown, visited = new WeakSet<object>()): unknown {
   if (value == null) return undefined
 
   if (Array.isArray(value)) {
+    if (visited.has(value)) return undefined
+    visited.add(value)
+
     for (const item of value) {
-      const found = findDeepPropertyValue(searchKey, item)
+      const found = findDeepPropertyValue(searchKey, item, visited)
       if (found !== undefined) return found
     }
     return undefined
@@ -97,10 +100,13 @@ export function findDeepPropertyValue(searchKey: string, value: unknown): unknow
 
   if (typeof value !== 'object') return undefined
 
+  if (visited.has(value)) return undefined
+  visited.add(value)
+
   for (const [key, inner] of Object.entries(value as Record<string, unknown>)) {
     if (key === searchKey) return inner
 
-    const found = findDeepPropertyValue(searchKey, inner)
+    const found = findDeepPropertyValue(searchKey, inner, visited)
     if (found !== undefined) return found
   }
 
