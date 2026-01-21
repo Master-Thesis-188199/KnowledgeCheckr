@@ -25,7 +25,7 @@ export const KnowledgeCheckSettingsSchema = z.object({
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
-      .describe('The start-date on which users can start examinations. When set to null no start constraints are set.'),
+      .describe('The start-date on which users can start examinations.'),
 
     endDate: z
       .date()
