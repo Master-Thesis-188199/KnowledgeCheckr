@@ -175,6 +175,14 @@ export const db_knowledgeCheckSettings = mysqlTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .$default(() => formatDatetime(new Date(Date.now()))),
     endDate: datetime({ mode: 'string' }),
+
+    //* Practice settings
+
+    enablePracticing: int()
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.practice.shape.enablePracticing._def.defaultValue() ? 1 : 0),
+
+    allowedPracticeCount: int().default(sql`NULL`),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
