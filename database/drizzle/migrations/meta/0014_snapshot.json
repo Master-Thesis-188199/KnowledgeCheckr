@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "9028b3a1-e634-4256-a756-68e53046e851",
+  "id": "8841b5d3-da0a-4ce1-964b-009f716c3d01",
   "prevId": "16b68384-9d33-49c4-afe4-efbf01a6dcfe",
   "tables": {
     "Account": {
@@ -511,7 +511,8 @@
           "type": "datetime",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         },
         "endDate": {
           "name": "endDate",

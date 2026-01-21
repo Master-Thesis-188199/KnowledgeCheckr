@@ -170,7 +170,10 @@ export const db_knowledgeCheckSettings = mysqlTable(
     enableExaminations: int()
       .notNull()
       .default(KnowledgeCheckSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
-    startDate: datetime({ mode: 'string' }).notNull(),
+    startDate: datetime({ mode: 'string' })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .$default(() => formatDatetime(new Date(Date.now()))),
     endDate: datetime({ mode: 'string' }),
   },
   (table) => [
