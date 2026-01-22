@@ -7,7 +7,7 @@ export const CategorySchema = z.object({
     .uuid()
     .default(() => getUUID()),
   name: z.string(),
-  prequisiteCategoryId: z.string().min(1, 'A prerequisite category may not be empty!').optional(),
+  prequisiteCategoryId: z.string().min(1, 'A prerequisite category may not be empty!').nullable().default(null),
   skipOnMissingPrequisite: z.boolean().default(false),
 })
 
