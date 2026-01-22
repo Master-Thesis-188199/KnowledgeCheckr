@@ -1,4 +1,3 @@
-import 'node-json-color-stringify'
 import { colorize } from 'json-colorizer'
 
 export const stringifyObject = (obj: object | null, opts: { colored?: boolean; pretified?: boolean }): string => {

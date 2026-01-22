@@ -1,6 +1,5 @@
 import 'server-only'
 import 'winston-daily-rotate-file'
-import 'node-json-color-stringify'
 import winston, { Logger as WinstonLogger } from 'winston'
 import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
 import { createProductionFileTransports } from '@/src/lib/log/ProductionTransports'

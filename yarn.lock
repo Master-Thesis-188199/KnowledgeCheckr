@@ -5899,7 +5899,7 @@ colorette@^2.0.16, colorette@^2.0.20:
   resolved "https://registry.npmjs.org/colorette/-/colorette-2.0.20.tgz"
   integrity sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==
 
-colors@1.4.0, colors@^1.1.2:
+colors@1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
   integrity sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==
@@ -10212,13 +10212,6 @@ node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==
-
-node-json-color-stringify@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/node-json-color-stringify/-/node-json-color-stringify-1.1.0.tgz#8bb124f913859591058026513121d6609d6ef5b7"
-  integrity sha512-EfCyON2e1RVY9zECodKxwnrE2c858xj1GlueR5w3s5d3sdHALFkyouaii+34Ga3+nt8cF99mtkXau7VTTJaJXg==
-  dependencies:
-    colors "^1.1.2"
 
 node-preload@^0.2.1:
   version "0.2.1"
