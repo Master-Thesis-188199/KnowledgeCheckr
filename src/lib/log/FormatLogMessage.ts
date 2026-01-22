@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
-import { stringifyObject } from '@/src/lib/log/StringifyObject'
+import util from 'node:util'
 
 type FormatValues = {
   timestamp: unknown
@@ -45,7 +45,14 @@ export function formatLogMessage({ show, values }: { show: ShowOptions; values: 
 function parseExtraArguments(args: Array<unknown>, colored: boolean) {
   return args.map((arg) => {
     if (typeof arg === 'object') {
-      return '\n' + stringifyObject(arg, { colored, pretified: true })
+      return (
+        '\n' +
+        util.inspect(arg, {
+          colors: true,
+          depth: null,
+          compact: false,
+        })
+      )
     }
 
     return String(arg)
@@ -109,7 +116,11 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
     if (messageElementKey === 'args') {
       value = parseExtraArguments(value as unknown[], propertyVisibilities.colorizeArgs ?? false).join(' ')
     } else if (typeof value === 'object') {
-      value = stringifyObject(value, { colored: propertyVisibilities.colorizeArgs ?? false, pretified: true })
+      value = util.inspect(value, {
+        colors: true,
+        depth: null,
+        compact: false,
+      })
     }
 
     logMessage = logMessage.replace(`<${messageElementKey}>`, String(value).trim())
