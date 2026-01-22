@@ -2,16 +2,19 @@
 
 import { UsersIcon } from '@heroicons/react/24/outline'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
+import { useWatch } from 'react-hook-form'
 import { ExaminationSettings } from '@/src/components/checks/create/(sections)/(settings)/ExaminationSettings'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
+import Field from '@/src/components/Shared/form/Field'
 import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
 import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 const tabs = [
@@ -30,6 +33,7 @@ export default function SettingsSection() {
   })
 
   const { getValues } = form
+  const { practice } = useWatch({ control: form.control })
 
   return (
     <Form {...form}>
@@ -64,7 +68,33 @@ export default function SettingsSection() {
             <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'></div>
           </TabsContentPanel>
           <TabsContentPanel tab='practice'>
-            <TemporarySettingsOptions />
+            <div
+              className={cn(
+                'grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0',
+                '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
+              )}>
+              <Field
+                {...baseFieldProps}
+                name='practice.enablePracticing'
+                label='Allow users to Practice'
+                labelClassname='mt-0.5'
+                className='place-self-start'
+                type='checkbox'
+                checked={practice?.enablePracticing}
+              />
+
+              <Field
+                {...baseFieldProps}
+                disabled={!practice?.enablePracticing}
+                name='practice.allowedPracticeCount'
+                label='Allowed Practice Attempts'
+                type='number'
+                placeholder='Unlimited'
+                onChange={({ valueAsNumber: value }) => (value === 0 ? null : value)}
+                modifyValue={(val) => (val === null || val === 0 ? '' : val)}
+                min={0}
+              />
+            </div>
           </TabsContentPanel>
           <TabsContentPanel tab='examination'>
             <ExaminationSettings baseFieldProps={baseFieldProps} />

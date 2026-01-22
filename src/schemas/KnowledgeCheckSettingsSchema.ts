@@ -10,6 +10,23 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .uuid()
     .default(() => getUUID()),
 
+  practice: z.object({
+    enablePracticing: z
+      .boolean()
+      .or(z.number())
+      .transform((v) => !!v)
+      .optional()
+      .default(true)
+      .describe('Defines whether users are able to practice with this check or not.'),
+
+    allowedPracticeCount: z
+      .number()
+      .min(1, 'Users must be allowed to have at least one attempt.')
+      .nullable()
+      .default(null)
+      .describe('The amount of practice attempts users have. When set to null users have unlimited attempts'),
+  }),
+
   examination: z.object({
     enableExaminations: z
       .boolean()

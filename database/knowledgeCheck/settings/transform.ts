@@ -1,7 +1,7 @@
 import 'server-only'
 import { db_knowledgeCheckSettings } from '@/database/drizzle'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, KnowledgeCheckSettingsSchema, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 import { Any } from '@/types'
 
@@ -14,10 +14,29 @@ export function convertSettings(direction: 'to-database' | 'from-database', sett
 }
 
 function convertFromDatabase(settings: Omit<typeof db_knowledgeCheckSettings.$inferSelect, 'knowledgecheckId'> | null): KnowledgeCheckSettings | undefined {
+  if (settings === null) {
+    logger.warn('Check has not settings (null) returning instantiated settings object.')
+    return instantiateKnowledgeCheckSettings()
+  }
+
   const obj: KnowledgeCheckSettings = {
     ...settings,
-    //@ts-expect-error Expect both structure and types to not align, e.g. booleans (1 | 0) are transformed by the schema
-    examination: settings,
+    shareAccessibility: !!settings.shareAccessibility,
+    examination: {
+      allowAnonymous: !!settings.allowAnonymous,
+      allowFreeNavigation: !!settings.allowFreeNavigation,
+      answerOrder: settings.answerOrder,
+      questionOrder: settings.questionOrder,
+      examinationAttemptCount: settings.examinationAttemptCount,
+      examTimeFrameSeconds: settings.examTimeFrameSeconds,
+      enableExaminations: !!settings.enableExaminations,
+      startDate: new Date(settings.startDate),
+      endDate: settings.endDate ? new Date(settings.endDate) : null,
+    },
+    practice: {
+      allowedPracticeCount: settings.allowedPracticeCount,
+      enablePracticing: !!settings.enablePracticing,
+    },
   }
 
   const parseResult = safeParseKnowledgeCheckSettings(obj)

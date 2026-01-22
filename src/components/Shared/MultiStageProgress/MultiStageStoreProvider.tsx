@@ -3,7 +3,8 @@
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
 import { createMultiStageStore, MultiStageState, type MultiStageStore } from '@/hooks/Shared/MultiStage/MultiStageStore'
-import { useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
 export interface Stage {
   stage: number
@@ -18,13 +19,16 @@ export const MultiStageStoreContext = createContext<MultiStageStoreApi | undefin
 export interface MultiStageStoreProviderProps {
   children: ReactNode
   initialStoreProps?: Partial<MultiStageState>
+
+  cacheOptions?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<MultiStageStore>, ''>>
 }
 
-export function MultiStageStoreProvider({ children, initialStoreProps }: MultiStageStoreProviderProps) {
+export function MultiStageStoreProvider({ children, initialStoreProps, cacheOptions = { cacheKey: 'multi-stage-cache' } }: MultiStageStoreProviderProps) {
   const props = useZustandStore<MultiStageStore, Partial<MultiStageState>>({
-    caching: false,
+    caching: true,
     createStoreFunc: createMultiStageStore,
     initialStoreProps,
+    options: cacheOptions,
   })
 
   return <MultiStageStoreContext.Provider value={props}>{children}</MultiStageStoreContext.Provider>
