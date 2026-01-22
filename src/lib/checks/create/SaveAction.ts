@@ -18,23 +18,23 @@ export type LodashDifferences<T> = {
   [K in keyof T]-?: { key: K; value: T[K] }
 }[keyof T][]
 
-export async function saveAction({ check }: { check: KnowledgeCheck }) {
+export async function saveAction({ check: modifiedCheck }: { check: KnowledgeCheck }) {
   await requireAuthentication()
 
   try {
-    const exists = await getKnowledgeCheckById(check.id)
-    if (exists) {
-      if (!isEqual(exists, check)) {
-        const changes = differenceWith(toPairs(exists), toPairs(check), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<KnowledgeCheck>
+    const originCheck = await getKnowledgeCheckById(modifiedCheck.id)
+    if (originCheck) {
+      if (!isEqual(originCheck, modifiedCheck)) {
+        const changes = differenceWith(toPairs(modifiedCheck), toPairs(originCheck), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<KnowledgeCheck>
 
         logger.info('Updating existing knowledge check -> changes', changes)
-        await updateKnowledgeCheck(check, changes)
+        await updateKnowledgeCheck(modifiedCheck, changes)
       } else {
         logger.info('Knowledge check is unchanged, skipping update')
       }
     } else {
-      logger.info('Inserting new knowledge check', check)
-      await insertKnowledgeCheck(check)
+      logger.info('Inserting new knowledge check', modifiedCheck)
+      await insertKnowledgeCheck(modifiedCheck)
     }
 
     redirect('/checks')
