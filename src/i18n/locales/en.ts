@@ -15,4 +15,11 @@ export default {
       unavailable: 'The check you tried to access is currently not available to users.',
     },
   },
+  Practice: {
+    practicing_not_allowed: {
+      title: 'Practicing not allowed',
+      disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
+      toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.',
+    },
+  },
 } as const

@@ -17,4 +17,11 @@ export default {
       unavailable: 'Der Wissenscheck, auf den Sie zugreifen wollten, ist derzeit für Benutzer nicht verfügbar.',
     },
   },
+  Practice: {
+    practicing_not_allowed: {
+      disabled: 'Das Üben dieses KnowledgeChecks ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des KnowledgeChecks, um das Üben zu aktivieren.',
+      title: 'Üben nicht erlaubt',
+      toManyAttempts: 'Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht.',
+    },
+  },
 } as const
