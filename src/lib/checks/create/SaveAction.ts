@@ -19,7 +19,7 @@ export type LodashDifferences<T> = {
 }[keyof T][]
 
 export async function saveAction({ check }: { check: KnowledgeCheck }) {
-  const { user } = await requireAuthentication()
+  await requireAuthentication()
 
   try {
     const exists = await getKnowledgeCheckById(check.id)
@@ -28,7 +28,7 @@ export async function saveAction({ check }: { check: KnowledgeCheck }) {
         const changes = differenceWith(toPairs(exists), toPairs(check), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<KnowledgeCheck>
 
         logger.info('Updating existing knowledge check -> changes', changes)
-        await updateKnowledgeCheck(user.id, check)
+        await updateKnowledgeCheck(check, changes)
       } else {
         logger.info('Knowledge check is unchanged, skipping update')
       }
