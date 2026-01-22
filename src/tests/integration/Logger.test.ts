@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals'
 import util from 'node:util'
 import logger from '@/src/lib/log/Logger'
 
-const DEBUG_LOGS = true
+const DEBUG_LOGS = false
 
 describe('Ensure logger input / output mimics console.log: ', () => {
   let writeSpy: jest.SpyInstance
