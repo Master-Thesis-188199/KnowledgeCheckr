@@ -1,5 +1,5 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { getUUID } from '@/src/lib/Shared/getUUID'
+import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
@@ -23,9 +23,8 @@ describe('Verify selection of practice questions by category', () => {
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
         questionCategories.push({
-          id: getUUID(),
+          ...instantiateCategory(),
           name: category,
-          skipOnMissingPrequisite: false,
         })
       }
 
@@ -67,9 +66,8 @@ describe('Verify selection of practice questions by category', () => {
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
       questionCategories.push({
-        id: getUUID(),
+        ...instantiateCategory(),
         name: category,
-        skipOnMissingPrequisite: false,
       })
     }
 
@@ -101,9 +99,8 @@ describe('Verify selection of practice questions by category', () => {
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
         questionCategories.push({
-          id: getUUID(),
+          ...instantiateCategory(),
           name: category,
-          skipOnMissingPrequisite: false,
         })
       }
 
@@ -175,9 +172,8 @@ describe('Verify selection of practice questions by category', () => {
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
       questionCategories.push({
-        id: getUUID(),
+        ...instantiateCategory(),
         name: category,
-        skipOnMissingPrequisite: false,
       })
     }
 

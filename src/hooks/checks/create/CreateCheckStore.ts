@@ -4,6 +4,7 @@ import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/schemas/KnowledgeCh
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
+import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type CheckState = KnowledgeCheck & {
@@ -30,9 +31,8 @@ const defaultInitState: CheckState = {
   description: '',
   questionCategories: [
     {
-      id: uuid(),
+      ...instantiateCategory(),
       name: 'general',
-      skipOnMissingPrequisite: false,
     },
   ],
 
@@ -85,9 +85,8 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore, Partial<Chec
             // Add new category if not part of check-categories
             if (!questionCategories.find((category) => category.name === question.category)) {
               questionCategories.push({
-                id: uuid(),
+                ...instantiateCategory(),
                 name: question.category,
-                skipOnMissingPrequisite: false,
               })
             }
 
