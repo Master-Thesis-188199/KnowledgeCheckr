@@ -14,6 +14,10 @@ import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
+export type LodashDifferences<T> = {
+  [K in keyof T]-?: { key: K; value: T[K] }
+}[keyof T][]
+
 export async function saveAction({ check }: { check: KnowledgeCheck }) {
   const { user } = await requireAuthentication()
 
@@ -21,10 +25,9 @@ export async function saveAction({ check }: { check: KnowledgeCheck }) {
     const exists = await getKnowledgeCheckById(check.id)
     if (exists) {
       if (!isEqual(exists, check)) {
-        logger.info(
-          'Updating existing knowledge check -> changes',
-          differenceWith(toPairs(exists), toPairs(check), isEqual).map(([key, value]) => ({ key, value })),
-        )
+        const changes = differenceWith(toPairs(exists), toPairs(check), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<KnowledgeCheck>
+
+        logger.info('Updating existing knowledge check -> changes', changes)
         await updateKnowledgeCheck(user.id, check)
       } else {
         logger.info('Knowledge check is unchanged, skipping update')
