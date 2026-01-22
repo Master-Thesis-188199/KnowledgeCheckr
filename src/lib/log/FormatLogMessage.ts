@@ -13,7 +13,6 @@ type ShowOptions = {
   timestamp?: boolean
   context?: boolean
   args?: boolean
-  colorizeArgs?: boolean
 }
 
 /**
@@ -42,7 +41,7 @@ export function formatLogMessage({ show, values }: { show: ShowOptions; values: 
   return computeAndApplyTemplate(show, values)
 }
 
-function parseExtraArguments(args: Array<unknown>, colored: boolean) {
+function parseExtraArguments(args: Array<unknown>) {
   return args.map((arg) => {
     if (typeof arg === 'object') {
       return (
@@ -114,7 +113,7 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
     let value = fields.get(messageElementKey)
 
     if (messageElementKey === 'args') {
-      value = parseExtraArguments(value as unknown[], propertyVisibilities.colorizeArgs ?? false).join(' ')
+      value = parseExtraArguments(value as unknown[]).join(' ')
     } else if (typeof value === 'object') {
       value = util.inspect(value, {
         colors: true,
