@@ -1,7 +1,8 @@
 'use client'
 
-import { CheckIcon, Folder, Info, Pen, Plus, Trash2, XIcon } from 'lucide-react'
+import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 import { TbPoint } from 'react-icons/tb'
+import TextareaAutosize from 'react-textarea-autosize'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
@@ -71,24 +72,43 @@ function QuestionCard({ question }: { question: Question }) {
         </div>
       </div>
 
-      {question.type !== 'open-question' && (
+      {question.type !== 'open-question' ? (
         <div className='mx-4 grid grid-cols-2 gap-8'>
-          {question.answers.map((answer) => (
-            <div className='relative flex items-center justify-center gap-4 rounded-md bg-neutral-200/40 px-3 py-1.5 dark:bg-neutral-700/40' key={answer.id}>
-              {question.type === 'drag-drop' && (
-                <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80'>
-                  {(answer as DragDropQuestion['answers'][number]).position + 1}
-                </span>
-              )}
+          {question.answers.map((answer) => {
+            const isChoiceQuestion = (answer as ChoiceQuestion['answers'][number]).correct === true || (answer as ChoiceQuestion['answers'][number]).correct === false
+            const isCorrect = (answer as ChoiceQuestion['answers'][number]).correct ? true : false
 
-              {question.type !== 'drag-drop' && (
-                <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80 *:[svg]:size-4'>
-                  {(answer as ChoiceQuestion['answers'][number]).correct ? <CheckIcon /> : <XIcon />}
-                </span>
-              )}
-              <span>{answer.answer}</span>
-            </div>
-          ))}
+            return (
+              <div
+                className={cn(
+                  'relative flex items-center justify-center gap-4 rounded-md bg-neutral-300/30 px-3 py-1.5 dark:bg-neutral-700/40',
+                  'text-neutral-600/80 dark:text-neutral-300/80',
+                  isChoiceQuestion && 'ring-2',
+                  isChoiceQuestion && isCorrect && 'ring-green-600/20 dark:ring-green-400/20',
+                  isChoiceQuestion && !isCorrect && 'ring-red-700/20 dark:ring-red-400/25',
+                )}
+                key={answer.id}>
+                {question.type === 'drag-drop' && (
+                  <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80'>
+                    {(answer as DragDropQuestion['answers'][number]).position + 1}
+                  </span>
+                )}
+
+                <span>{answer.answer}</span>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className='mx-12 flex justify-center'>
+          <TextareaAutosize
+            className='ring-input-ring/30 dark:ring-input-ring/50 w-[stretch] resize-none rounded-md bg-neutral-300/15 px-3 py-2 text-neutral-600/70 ring-1 dark:bg-neutral-700/30 dark:text-neutral-300/70'
+            rows={10}
+            maxRows={10}
+            readOnly
+            disabled
+            value={question.expectation}
+          />
         </div>
       )}
 
