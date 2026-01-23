@@ -1,13 +1,13 @@
 'use client'
 
-import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
+import { CheckIcon, Folder, Info, Pen, Plus, Trash2, XIcon } from 'lucide-react'
 import { TbPoint } from 'react-icons/tb'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
-import { Question } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 export default function QuestionsSection() {
   const { questions } = useCheckStore((state) => state)
 
@@ -71,11 +71,30 @@ function QuestionCard({ question }: { question: Question }) {
         </div>
       </div>
 
-      <div className='flex justify-evenly opacity-90'>
-        <StatisticElement capitalizeValue label='Accessibility' value={question.accessibility} />
+      {question.type !== 'open-question' && (
+        <div className='mx-4 grid grid-cols-2 gap-8'>
+          {question.answers.map((answer) => (
+            <div className='relative flex items-center justify-center gap-4 rounded-md bg-neutral-200/40 px-3 py-1.5 dark:bg-neutral-700/40' key={answer.id}>
+              {question.type === 'drag-drop' && (
+                <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80'>
+                  {(answer as DragDropQuestion['answers'][number]).position + 1}
+                </span>
+              )}
+
+              {question.type !== 'drag-drop' && (
+                <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80 *:[svg]:size-4'>
+                  {(answer as ChoiceQuestion['answers'][number]).correct ? <CheckIcon /> : <XIcon />}
+                </span>
+              )}
+              <span>{answer.answer}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* <StatisticElement capitalizeValue label='Accessibility' value={question.accessibility} />
         {question.type !== 'open-question' && <StatisticElement label='Answers' value={question.answers.length} />}
-        <StatisticElement capitalizeValue label='Category' value={question.category} />
-      </div>
+        <StatisticElement capitalizeValue label='Category' value={question.category} /> */}
       <div className='flex justify-center gap-4'>
         <CreateQuestionDialog initialValues={question}>
           <div className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-2 rounded-lg bg-neutral-300/50 p-1.5 text-orange-600/70 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:text-orange-400/70 dark:ring-neutral-600'>
