@@ -1,4 +1,5 @@
 /* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
+import isEqual from 'lodash/isEqual'
 import { exec } from 'node:child_process'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
@@ -98,6 +99,11 @@ async function main() {
 
     const baseTranslations = await readRuntimeLocale(filePath)
     const extendedTranslations = addPluralBaseKeys(baseTranslations)
+
+    if (isEqual(baseTranslations, extendedTranslations)) {
+      console.log(`Locale '${locale}' has not been modified. Aborting i18n-ally locale preparation...\n`)
+      continue
+    }
 
     const outPath = path.join(outputLocaleDirectory, `${locale}.json`)
     await fs.writeFile(outPath, JSON.stringify(extendedTranslations, null, 2) + '\n', 'utf8')
