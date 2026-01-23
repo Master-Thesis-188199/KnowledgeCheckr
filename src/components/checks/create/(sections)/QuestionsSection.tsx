@@ -7,9 +7,11 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 export default function QuestionsSection() {
   const { questions } = useCheckStore((state) => state)
+  const t = useScopedI18n('Checks.buttons')
 
   return (
     <div className='flex flex-col gap-8'>
@@ -24,7 +26,7 @@ export default function QuestionsSection() {
         <CreateQuestionDialog>
           <Button variant='outline' size='lg'>
             <Plus className='size-5' />
-            Create Question
+            {t('create_question')}
           </Button>
         </CreateQuestionDialog>
       </div>
@@ -33,22 +35,24 @@ export default function QuestionsSection() {
 }
 
 function EmptyQuestionsStatus({ show }: { show: boolean }) {
+  const t = useScopedI18n('Checks')
   return (
     <div className={cn('flex h-60 flex-col items-center justify-center gap-6', !show && 'hidden')}>
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
-      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>Currently there are no questions associated to this quiz</span>
+      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{t('no_existing_questions')}</span>
     </div>
   )
 }
 
 function QuestionCard({ question }: { question: Question }) {
   const { removeQuestion, questions } = useCheckStore((state) => state)
+  const t = useScopedI18n('Checks.QuestionCard')
 
   return (
     <Card className='flex flex-col gap-10' data-question-id={question.id} data-question={question.question}>
       <div className='flex items-center justify-between text-sm'>
         <div className='flex gap-1 text-neutral-500 dark:text-neutral-400'>
-          <span>Question</span>
+          <span>{t('question_label')}</span>
           <span className='text-neutral-600 dark:text-neutral-300'>
             {questions.findIndex((q) => q.id === question.id) + 1} / {questions.length}
           </span>
@@ -57,7 +61,7 @@ function QuestionCard({ question }: { question: Question }) {
         <span className='bg-highlight rounded-md px-2 py-1 text-neutral-600/80 capitalize dark:text-neutral-300/80'>{question.type.split('-').join(' ')}</span>
         <div className='flex items-center gap-4'>
           <span className='flex items-center gap-0.5 text-neutral-600/80 dark:text-neutral-300/80'>
-            <TbPoint className='text-orange-600/80 dark:text-orange-400/60' /> {question.points} point{question.points > 1 ? 's' : ''}
+            <TbPoint className='text-orange-600/80 dark:text-orange-400/60' /> {t('points_label', { count: question.points })}
           </span>
         </div>
       </div>

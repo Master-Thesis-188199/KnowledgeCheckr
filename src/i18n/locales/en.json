@@ -5,7 +5,17 @@
   "Checks": {
     "title": "Your Checks",
     "no_existing_checks": "No checks found. Create a new one",
-    "no_existing_checks_action_button": "here"
+    "no_existing_checks_action_button": "here",
+    "buttons": {
+      "create_question": "Create Question"
+    },
+    "no_existing_questions": "Currently there are no questions associated to this quiz",
+    "QuestionCard": {
+      "question_label": "Question",
+      "points_label#one": "1 point",
+      "points_label#other": "{count} points",
+      "points_label": "{count} points"
+    }
   },
   "Examination": {
     "attempt_not_possible": {

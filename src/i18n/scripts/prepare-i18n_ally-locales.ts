@@ -200,10 +200,11 @@ async function updateLocale(
   }
 }
 
-main().catch((e) => {
-  console.error(e)
-  process.exit(1)
-})
+main()
+// .catch((e) => {
+//   console.error(e)
+//   process.exit(1)
+// })
 
 function sendUpdateNotification({
   title = 'Generated i18n-ally translations',
