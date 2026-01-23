@@ -4,10 +4,17 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
+type Translations = {
+  [key: string]: string | Translations
+}
+
 type PlainObject = Record<string, unknown>
 
-const localeDir = 'locales'
-const i18nAllyDir = 'locales_i18n_ally'
+const baseLocaleDirName = 'locales'
+/**
+ * The name of the directory to save the i18n-ally extension friendly locales
+ */
+const outputLocaleDirName = 'locales_i18n_ally'
 
 const PLURAL_FORMS = new Set(['zero', 'one', 'two', 'few', 'many', 'other'])
 
@@ -16,11 +23,11 @@ const PLURAL_FORMS = new Set(['zero', 'one', 'two', 'few', 'many', 'other'])
  *   "stars#one", "stars#other"  -> also create "stars" (prefer #other)
  * so that `i18n-ally` recognizes the key and display the base-translation
  */
-function addPluralBaseKeys(input: unknown): unknown {
+function addPluralBaseKeys<TInputShape extends object | string>(input: TInputShape): TInputShape {
   if (!isPlainObject(input)) return input
 
-  const obj = input as PlainObject
-  const out: PlainObject = {}
+  const obj = input as Translations
+  const out: Translations = {}
 
   // First recurse normally
   for (const [k, v] of Object.entries(obj)) {
@@ -58,7 +65,7 @@ function addPluralBaseKeys(input: unknown): unknown {
     out[base] = group.other ?? group.one ?? group.first ?? ''
   }
 
-  return out
+  return out as TInputShape
 }
 
 function isPlainObject(x: unknown): x is PlainObject {
@@ -69,7 +76,7 @@ async function ensureDir(p: string) {
   await fs.mkdir(p, { recursive: true })
 }
 
-async function readRuntimeLocale(filePath: string): Promise<unknown> {
+async function readRuntimeLocale(filePath: string): Promise<object> {
   // With a TS runner (tsx), we can import TS locale modules directly.
   const mod = await import(pathToFileURL(filePath).href)
   return mod.default ?? mod
@@ -77,25 +84,25 @@ async function readRuntimeLocale(filePath: string): Promise<unknown> {
 
 async function main() {
   const root = import.meta.dirname
-  const runtimeDir = path.join(root, '..', localeDir)
-  const ideDir = path.join(root, '..', i18nAllyDir)
+  const baseLocaleDirectory = path.join(root, '..', baseLocaleDirName)
+  const outputLocaleDirectory = path.join(root, '..', outputLocaleDirName)
 
-  await ensureDir(ideDir)
+  await ensureDir(outputLocaleDirectory)
 
-  const files = await fs.readdir(runtimeDir)
+  const files = await fs.readdir(baseLocaleDirectory)
   const localeFiles = files.filter((f) => f.endsWith('.ts') || f.endsWith('.js'))
 
   for (const file of localeFiles) {
     const locale = file.replace(/\.(ts|js)$/, '')
-    const runtimePath = path.join(runtimeDir, file)
+    const filePath = path.join(baseLocaleDirectory, file)
 
-    const runtimeMessages = await readRuntimeLocale(runtimePath)
-    const ideMessages = addPluralBaseKeys(runtimeMessages)
+    const baseTranslations = await readRuntimeLocale(filePath)
+    const extendedTranslations = addPluralBaseKeys(baseTranslations)
 
-    const outPath = path.join(ideDir, `${locale}.json`)
-    await fs.writeFile(outPath, JSON.stringify(ideMessages, null, 2) + '\n', 'utf8')
+    const outPath = path.join(outputLocaleDirectory, `${locale}.json`)
+    await fs.writeFile(outPath, JSON.stringify(extendedTranslations, null, 2) + '\n', 'utf8')
 
-    console.log(`Generated ${outPath}`)
+    console.log(`Generated ${outPath}\n`)
   }
 }
 
