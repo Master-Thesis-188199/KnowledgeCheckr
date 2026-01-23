@@ -15,7 +15,7 @@ export default function QuestionsSection() {
 
   return (
     <div className='flex flex-col gap-8'>
-      <div className='grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-8'>
+      <div className='grid grid-cols-[repeat(auto-fill,minmax(420px,1fr))] gap-10'>
         {questions.map((q) => (
           <QuestionCard key={q.id} question={q} />
         ))}
