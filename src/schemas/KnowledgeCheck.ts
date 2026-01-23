@@ -35,7 +35,7 @@ export const KnowledgeCheckSchema = z
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false }]),
+      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
 
     share_key: z.string().nullable().default(null),
 

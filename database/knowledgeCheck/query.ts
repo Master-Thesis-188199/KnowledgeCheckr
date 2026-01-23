@@ -77,10 +77,8 @@ function parseCheck({ questions, knowledgeCheckSettings: settings, categories, u
     collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
     questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
-      id: c.id,
-      name: c.name,
+      ...c,
       skipOnMissingPrequisite: false,
-      prequisiteCategoryId: c.prequisiteCategoryId ?? undefined,
     })),
     settings: parseSetting(settings),
   })

@@ -5,6 +5,7 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
@@ -35,10 +36,10 @@ async function createPracticeCheck() {
   check.difficulty = 6
 
   check.questionCategories = [
-    { id: getUUID(), name: 'Design', skipOnMissingPrequisite: false },
-    { id: getUUID(), name: 'Tech', skipOnMissingPrequisite: false },
-    { id: getUUID(), name: 'Daily', skipOnMissingPrequisite: false },
-    { id: getUUID(), name: 'general', skipOnMissingPrequisite: false },
+    { ...instantiateCategory(), name: 'Design' },
+    { ...instantiateCategory(), name: 'Tech' },
+    { ...instantiateCategory(), name: 'Daily' },
+    { ...instantiateCategory(), name: 'general' },
   ]
 
   check.questions = [

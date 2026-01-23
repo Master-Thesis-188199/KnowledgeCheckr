@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
-import { stringifyObject } from '@/src/lib/log/StringifyObject'
+import util from 'node:util'
 
 type FormatValues = {
   timestamp: unknown
@@ -13,7 +13,6 @@ type ShowOptions = {
   timestamp?: boolean
   context?: boolean
   args?: boolean
-  colorizeArgs?: boolean
 }
 
 /**
@@ -42,10 +41,17 @@ export function formatLogMessage({ show, values }: { show: ShowOptions; values: 
   return computeAndApplyTemplate(show, values)
 }
 
-function parseExtraArguments(args: Array<unknown>, colored: boolean) {
+function parseExtraArguments(args: Array<unknown>) {
   return args.map((arg) => {
     if (typeof arg === 'object') {
-      return '\n' + stringifyObject(arg, { colored, pretified: true })
+      return (
+        '\n' +
+        util.inspect(arg, {
+          colors: true,
+          depth: null,
+          compact: false,
+        })
+      )
     }
 
     return String(arg)
@@ -107,9 +113,13 @@ function computeAndApplyTemplate(propertyVisibilities: ShowOptions, values: Form
     let value = fields.get(messageElementKey)
 
     if (messageElementKey === 'args') {
-      value = parseExtraArguments(value as unknown[], propertyVisibilities.colorizeArgs ?? false).join(' ')
+      value = parseExtraArguments(value as unknown[]).join(' ')
     } else if (typeof value === 'object') {
-      value = stringifyObject(value, { colored: propertyVisibilities.colorizeArgs ?? false, pretified: true })
+      value = util.inspect(value, {
+        colors: true,
+        depth: null,
+        compact: false,
+      })
     }
 
     logMessage = logMessage.replace(`<${messageElementKey}>`, String(value).trim())
