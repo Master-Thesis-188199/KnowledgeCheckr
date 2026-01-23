@@ -97,7 +97,7 @@ function QuestionCard({ question }: { question: Question }) {
                   </span>
                 )}
 
-                <span className='line-clamp-1' title={answer.answer}>
+                <span className='truncate text-ellipsis' title={answer.answer}>
                   {answer.answer}
                 </span>
               </div>
