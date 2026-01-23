@@ -2,7 +2,6 @@
 
 import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 import { TbPoint } from 'react-icons/tb'
-import TextareaAutosize from 'react-textarea-autosize'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
@@ -73,7 +72,7 @@ function QuestionCard({ question }: { question: Question }) {
       </div>
 
       {question.type !== 'open-question' ? (
-        <div className='mx-4 grid grid-cols-2 gap-8'>
+        <div className={cn('mx-4 grid flex-1 grid-cols-2 gap-10 gap-y-10', question.answers.length > 4 && 'mx-4 gap-6')}>
           {question.answers.map((answer) => {
             const isChoiceQuestion = (answer as ChoiceQuestion['answers'][number]).correct === true || (answer as ChoiceQuestion['answers'][number]).correct === false
             const isCorrect = (answer as ChoiceQuestion['answers'][number]).correct ? true : false
@@ -89,25 +88,23 @@ function QuestionCard({ question }: { question: Question }) {
                 )}
                 key={answer.id}>
                 {question.type === 'drag-drop' && (
-                  <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-400/80'>
+                  <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-300/70'>
                     {(answer as DragDropQuestion['answers'][number]).position + 1}
                   </span>
                 )}
 
-                <span>{answer.answer}</span>
+                <span className='line-clamp-1' title={answer.answer}>
+                  {answer.answer}
+                </span>
               </div>
             )
           })}
         </div>
       ) : (
-        <div className='mx-12 flex justify-center'>
-          <TextareaAutosize
-            className='ring-input-ring/30 dark:ring-input-ring/50 w-[stretch] resize-none rounded-md bg-neutral-300/15 px-3 py-2 text-neutral-600/70 ring-1 dark:bg-neutral-700/30 dark:text-neutral-300/70'
-            rows={10}
-            maxRows={10}
-            readOnly
-            disabled
-            value={question.expectation}
+        <div className='mx-12 flex flex-1 justify-center'>
+          <p
+            className='ring-input-ring/30 dark:ring-input-ring/50 h-[stretch] w-[stretch] resize-none rounded-md bg-neutral-300/15 px-3 py-2 text-neutral-600/70 ring-1 dark:bg-neutral-700/30 dark:text-neutral-300/70'
+            children={question.expectation}
           />
         </div>
       )}
