@@ -1,7 +1,7 @@
 /* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
 import isEqual from 'lodash/isEqual'
 import { exec } from 'node:child_process'
-import { promises as fs } from 'node:fs'
+import { promises as fs, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import util from 'node:util'
@@ -84,19 +84,34 @@ async function readRuntimeLocale(filePath: string): Promise<object> {
   return mod.default ?? mod
 }
 
+async function readJSONLocale(filePath: string): Promise<object> {
+  const content = readFileSync(filePath).toString()
+  return JSON.parse(content)
+}
+
 /**
  * Saves the modified translations (added base-keys) to the respective filePath in a tsx-module default export syntax.
  * @param filePath The file path under which the updated translations are to be saved
  * @param translations The modified translations to save
  */
 async function exportRuntimeLocale(filePath: string, translations: object) {
-  const moduleContent = `export default ${util.inspect(translations, {
+  const moduleContent = `//! Auto generated file, changes to this file will get replaced on next update
+export default ${util.inspect(translations, {
     colors: false,
     depth: null,
     compact: false,
   })} as const`
 
   await fs.writeFile(filePath, moduleContent + '\n', 'utf8')
+}
+
+/**
+ * Saves the modified translations (added base-keys) to the respective filePath as json file.
+ * @param filePath The file path under which the updated translations are to be saved
+ * @param translations The modified translations to save
+ */
+async function exportJsonLocale(filePath: string, translations: object) {
+  await fs.writeFile(filePath, JSON.stringify(translations, null, 2) + '\n', 'utf8')
 }
 
 async function main() {
@@ -106,14 +121,19 @@ async function main() {
 
   await ensureDir(outputLocaleDirectory)
 
+  //* Source of truth are json files, upon edit --> they are extended with missing base-keys and respective typescript modules are re-created to support type-safety.
+
   const files = await fs.readdir(baseLocaleDirectory)
-  const localeFiles = files.filter((f) => f.endsWith('.ts') || f.endsWith('.js'))
 
-  for (const file of localeFiles) {
-    const locale = file.replace(/\.(ts|js)$/, '')
-    const filePath = path.join(baseLocaleDirectory, file)
+  const localeFiles = files.filter((f) => f.endsWith('.json'))
+  console.log('Scanning locale files\n', localeFiles)
 
-    const baseTranslations = await readRuntimeLocale(filePath)
+  for (const filename of localeFiles) {
+    const extension = filename.split('.').at(-1)
+    const locale = filename.replace(/\.(ts|js|json)$/, '')
+    const filePath = path.join(baseLocaleDirectory, filename)
+
+    const baseTranslations = extension === 'ts' ? await readRuntimeLocale(filePath) : await readJSONLocale(filePath)
     const extendedTranslations = addPluralBaseKeys(baseTranslations)
 
     if (isEqual(baseTranslations, extendedTranslations)) {
@@ -121,10 +141,10 @@ async function main() {
       continue
     }
 
-    const outPath = path.join(outputLocaleDirectory, file)
+    await exportRuntimeLocale(path.join(outputLocaleDirectory, `${locale}.ts`), extendedTranslations)
+    await exportJsonLocale(path.join(outputLocaleDirectory, `${locale}.json`), extendedTranslations)
 
-    await exportRuntimeLocale(outPath, extendedTranslations)
-    console.log(`Generated ${outPath}\n`)
+    console.log(`Generated missing base-keys for locale '${locale}' in ${outputLocaleDirectory}\n`)
   }
 }
 
