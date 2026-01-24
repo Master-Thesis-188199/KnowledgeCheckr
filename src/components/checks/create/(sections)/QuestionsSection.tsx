@@ -49,7 +49,7 @@ function QuestionCard({ question }: { question: Question }) {
   const t = useScopedI18n('Checks.QuestionCard')
 
   return (
-    <Card className='flex flex-col gap-10' data-question-id={question.id} data-question={question.question}>
+    <Card className='flex flex-col gap-10' data-question-id={question.id} data-question={question.question} disableInteractions>
       <div className='flex items-center justify-between text-sm'>
         <div className='flex gap-1 text-neutral-500 dark:text-neutral-400'>
           <span>{t('question_label')}</span>
