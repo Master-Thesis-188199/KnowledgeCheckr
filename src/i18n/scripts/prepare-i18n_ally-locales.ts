@@ -150,6 +150,20 @@ async function main() {
     }
 
     await updateLocale(locale, outputLocaleDirectory, extendedTranslations, { missingBaseKeys: !noBaseKeysMissing, translationsOutdated: !areTranslationsUpToDate })
+
+    if (!noBaseKeysMissing) {
+      await sendUpdateNotification({
+        title: `Identified missing base-keys for '${locale}'`,
+        subtitle: `Updating source and output locale files for '${locale}' with missing base-keys`,
+        soundName: 'TheDrop',
+      })
+    } else if (!areTranslationsUpToDate) {
+      await sendUpdateNotification({
+        title: `Translations out of sync for '${locale}'`,
+        subtitle: `Updating typescript translation for '${locale}' as they are out-of-sync`,
+        soundName: 'SelectClick',
+      })
+    }
   }
 }
 
@@ -187,21 +201,10 @@ async function updateLocale(
   }
 }
 
-let executionCount = 0
-main()
-  .then(() => {
-    const startNoficiationOptions: Parameters<typeof sendUpdateNotification>['0'] = {
-      soundName: 'SelectClick',
-      title: 'Listening for locale changes',
-      subtitle: 'Generating i18n-ally friend locale files onChange',
-    }
-    sendUpdateNotification(executionCount > 0 ? {} : startNoficiationOptions)
-    executionCount++
-  })
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
+main().catch((e) => {
+  console.error(e)
+  process.exit(1)
+})
 
 function sendUpdateNotification({
   title = 'Generated i18n-ally translations',
