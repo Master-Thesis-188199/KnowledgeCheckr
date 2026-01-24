@@ -50,7 +50,7 @@ function QuestionCard({ question }: { question: Question }) {
 
   return (
     <Card className='flex flex-col gap-10' data-question-id={question.id} data-question={question.question} disableInteractions>
-      <div className='flex items-center justify-between text-sm'>
+      <div className='header -mb-4 flex items-center justify-between border-b pb-4 text-sm'>
         <div className='flex gap-1 text-neutral-500 dark:text-neutral-400'>
           <span>{t('question_label')}</span>
           <span className='text-neutral-600 dark:text-neutral-300'>
@@ -66,14 +66,10 @@ function QuestionCard({ question }: { question: Question }) {
         </div>
       </div>
       <div className='mx-12 flex items-center justify-center gap-4'>
-        <h1 className='px-2 py-1 text-center font-semibold'>{question.question}</h1>
+        <h1 className='px-2 py-1 text-center text-neutral-700/90 dark:text-neutral-200/90'>{question.question}</h1>
       </div>
 
-      <div className='relative -my-3'>
-        <div className='absolute inset-0 inset-x-12 flex items-center' aria-hidden='true'>
-          <div className='h-[1px] w-full bg-gradient-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500/90 dark:to-neutral-700' />
-        </div>
-      </div>
+      <Seperator className='-mt-4 -mb-3' label='&zwnj;' />
 
       {question.type !== 'open-question' ? (
         <div className='flex flex-1 items-center'>
@@ -201,6 +197,22 @@ function StatisticElement({ label, value, capitalizeValue = false }: { label: st
     <div className='flex max-w-fit flex-col items-center gap-1'>
       <dt className='text-sm text-neutral-500 dark:text-neutral-400'>{label}</dt>
       <dd className={cn('order-first text-lg font-semibold tracking-tight text-neutral-600/90 dark:text-neutral-300', capitalizeValue && 'capitalize')}>{value}</dd>
+    </div>
+  )
+}
+
+function Seperator({ label, className }: { label?: string; className?: string }) {
+  return (
+    <div className={cn(className, 'relative')}>
+      <div className='absolute inset-0 inset-x-12 flex items-center' aria-hidden='true'>
+        <div className='h-[1px] w-full bg-gradient-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500 dark:to-neutral-700' />
+
+        {label && (
+          <p className='absolute right-0 left-0 mx-auto flex w-fit justify-center gap-2 bg-[#EBECED] px-3 text-sm leading-6 tracking-widest text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'>
+            <span className=''>{label}</span>
+          </p>
+        )}
+      </div>
     </div>
   )
 }
