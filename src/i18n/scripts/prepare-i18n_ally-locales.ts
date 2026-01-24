@@ -4,6 +4,7 @@ import { exec } from 'node:child_process'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import util from 'node:util'
 
 type Translations = {
   [key: string]: string | Translations
@@ -15,7 +16,7 @@ const baseLocaleDirName = 'locales'
 /**
  * The name of the directory to save the i18n-ally extension friendly locales
  */
-const outputLocaleDirName = 'locales_i18n_ally'
+const outputLocaleDirName = 'locales'
 
 const PLURAL_FORMS = new Set(['zero', 'one', 'two', 'few', 'many', 'other'])
 
@@ -83,6 +84,21 @@ async function readRuntimeLocale(filePath: string): Promise<object> {
   return mod.default ?? mod
 }
 
+/**
+ * Saves the modified translations (added base-keys) to the respective filePath in a tsx-module default export syntax.
+ * @param filePath The file path under which the updated translations are to be saved
+ * @param translations The modified translations to save
+ */
+async function exportRuntimeLocale(filePath: string, translations: object) {
+  const moduleContent = `export default ${util.inspect(translations, {
+    colors: false,
+    depth: null,
+    compact: false,
+  })} as const`
+
+  await fs.writeFile(filePath, moduleContent + '\n', 'utf8')
+}
+
 async function main() {
   const root = import.meta.dirname
   const baseLocaleDirectory = path.join(root, '..', baseLocaleDirName)
@@ -105,9 +121,9 @@ async function main() {
       continue
     }
 
-    const outPath = path.join(outputLocaleDirectory, `${locale}.json`)
-    await fs.writeFile(outPath, JSON.stringify(extendedTranslations, null, 2) + '\n', 'utf8')
+    const outPath = path.join(outputLocaleDirectory, file)
 
+    await exportRuntimeLocale(outPath, extendedTranslations)
     console.log(`Generated ${outPath}\n`)
   }
 }
