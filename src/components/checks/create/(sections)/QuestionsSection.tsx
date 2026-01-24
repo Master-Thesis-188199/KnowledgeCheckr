@@ -76,33 +76,35 @@ function QuestionCard({ question }: { question: Question }) {
       </div>
 
       {question.type !== 'open-question' ? (
-        <div className={cn('mx-4 grid flex-1 grid-cols-2 gap-10 gap-y-10', question.answers.length > 4 && 'mx-4 gap-6')}>
-          {question.answers.map((answer) => {
-            const isChoiceQuestion = (answer as ChoiceQuestion['answers'][number]).correct === true || (answer as ChoiceQuestion['answers'][number]).correct === false
-            const isCorrect = (answer as ChoiceQuestion['answers'][number]).correct ? true : false
+        <div className='flex flex-1 items-center'>
+          <div className={cn('mx-4 grid w-[stretch] grid-cols-[150px_150px] justify-evenly gap-10 text-sm', question.answers.length > 4 && 'gap-4')}>
+            {question.answers.map((answer) => {
+              const isChoiceQuestion = (answer as ChoiceQuestion['answers'][number]).correct === true || (answer as ChoiceQuestion['answers'][number]).correct === false
+              const isCorrect = (answer as ChoiceQuestion['answers'][number]).correct ? true : false
 
-            return (
-              <div
-                className={cn(
-                  'relative flex items-center justify-center gap-4 rounded-md bg-neutral-300/30 px-3 py-1.5 dark:bg-neutral-700/40',
-                  'text-neutral-600/80 dark:text-neutral-300/80',
-                  isChoiceQuestion && 'ring-2',
-                  isChoiceQuestion && isCorrect && 'ring-green-600/20 dark:ring-green-400/20',
-                  isChoiceQuestion && !isCorrect && 'ring-red-700/20 dark:ring-red-400/25',
-                )}
-                key={answer.id}>
-                {question.type === 'drag-drop' && (
-                  <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-300/70'>
-                    {(answer as DragDropQuestion['answers'][number]).position + 1}
+              return (
+                <div
+                  className={cn(
+                    'relative flex items-center justify-center gap-4 rounded-md bg-neutral-300/30 px-3 py-1.5 dark:bg-neutral-700/40',
+                    'text-neutral-600/80 dark:text-neutral-300/80',
+                    isChoiceQuestion && 'ring-2',
+                    isChoiceQuestion && isCorrect && 'ring-green-600/20 dark:ring-green-400/20',
+                    isChoiceQuestion && !isCorrect && 'ring-red-700/20 dark:ring-red-400/25',
+                  )}
+                  key={answer.id}>
+                  {question.type === 'drag-drop' && (
+                    <span className='absolute top-0 bottom-0 left-3 flex items-center text-sm text-neutral-500/80 dark:text-neutral-300/70'>
+                      {(answer as DragDropQuestion['answers'][number]).position + 1}
+                    </span>
+                  )}
+
+                  <span className='truncate text-ellipsis' title={answer.answer}>
+                    {answer.answer}
                   </span>
-                )}
-
-                <span className='truncate text-ellipsis' title={answer.answer}>
-                  {answer.answer}
-                </span>
-              </div>
-            )
-          })}
+                </div>
+              )
+            })}
+          </div>
         </div>
       ) : (
         <div className='mx-12 flex flex-1 justify-center'>
