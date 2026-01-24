@@ -126,7 +126,6 @@ async function main() {
   const files = await fs.readdir(baseLocaleDirectory)
 
   const localeFiles = files.filter((f) => f.endsWith('.json'))
-  console.log('Scanning locale files\n', localeFiles)
 
   for (const filename of localeFiles) {
     const extension = filename.split('.').at(-1)
