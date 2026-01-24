@@ -187,7 +187,7 @@ async function updateLocale(
 
   switch (updateMode) {
     case 'update-typescript': {
-      console.log(`'${locale}' translations out-of-sync. Generating typescript module and updating locale.json file.`)
+      console.log(`'${locale}' translations out-of-sync. Generating typescript module.`)
       await exportRuntimeLocale(path.join(directoryPath, `${locale}.ts`), translations)
       break
     }
