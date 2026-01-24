@@ -1,7 +1,7 @@
 /* eslint-disable enforce-logger-usage/no-console-in-server-or-async */
 import isEqual from 'lodash/isEqual'
 import { exec } from 'node:child_process'
-import { promises as fs, readFileSync } from 'node:fs'
+import { existsSync, promises as fs, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import util from 'node:util'
@@ -133,18 +133,27 @@ async function main() {
     const locale = filename.replace(/\.(ts|js|json)$/, '')
     const filePath = path.join(baseLocaleDirectory, filename)
 
+    //* are translations up-to-date
+    const localeHasOuptut = existsSync(path.join(baseLocaleDirectory, `${locale}.ts`))
+    const generatedLocaleOuptutExists = localeHasOuptut ? await readRuntimeLocale(path.join(baseLocaleDirectory, `${locale}.ts`)) : undefined
+
     const baseTranslations = extension === 'ts' ? await readRuntimeLocale(filePath) : await readJSONLocale(filePath)
     const extendedTranslations = addPluralBaseKeys(baseTranslations)
 
-    if (isEqual(baseTranslations, extendedTranslations)) {
-      console.log(`Locale '${locale}' has not been modified. Aborting i18n-ally locale preparation...\n`)
+    const areLocaleTranslationsUpToDate = generatedLocaleOuptutExists ? isEqual(baseTranslations, generatedLocaleOuptutExists) : false
+
+    // locale files (json --> ts) are in sync and no base-keys are missing
+    if (areLocaleTranslationsUpToDate && isEqual(baseTranslations, extendedTranslations)) {
+      console.log(`Locale '${locale}' is up-to-date with auto-generated translations. No new keys were added, aborting preparation script for this locale.`)
       continue
     }
+
+    console.log(`'${locale}' has changed (missing base-keys) or auto-generated typescript module is not up-to-date.`)
 
     await exportRuntimeLocale(path.join(outputLocaleDirectory, `${locale}.ts`), extendedTranslations)
     await exportJsonLocale(path.join(outputLocaleDirectory, `${locale}.json`), extendedTranslations)
 
-    console.log(`Generated missing base-keys for locale '${locale}' in ${outputLocaleDirectory}\n`)
+    console.log(`Auto-generated missing base-keys / synchronized typescript declaration for locale '${locale}' in ${outputLocaleDirectory}\n`)
   }
 }
 

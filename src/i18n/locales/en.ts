@@ -1,3 +1,4 @@
+//! Auto generated file, changes to this file will get replaced on next update
 export default {
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
