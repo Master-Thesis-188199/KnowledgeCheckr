@@ -140,20 +140,50 @@ async function main() {
     const baseTranslations = extension === 'ts' ? await readRuntimeLocale(filePath) : await readJSONLocale(filePath)
     const extendedTranslations = addPluralBaseKeys(baseTranslations)
 
-    const areLocaleTranslationsUpToDate = generatedLocaleOuptutExists ? isEqual(baseTranslations, generatedLocaleOuptutExists) : false
+    const areTranslationsUpToDate = generatedLocaleOuptutExists ? isEqual(baseTranslations, generatedLocaleOuptutExists) : false
+    const noBaseKeysMissing = isEqual(baseTranslations, extendedTranslations)
 
     // locale files (json --> ts) are in sync and no base-keys are missing
-    if (areLocaleTranslationsUpToDate && isEqual(baseTranslations, extendedTranslations)) {
+    if (areTranslationsUpToDate && noBaseKeysMissing) {
       console.log(`Locale '${locale}' is up-to-date with auto-generated translations. No new keys were added, aborting preparation script for this locale.`)
       continue
     }
 
-    console.log(`'${locale}' has changed (missing base-keys) or auto-generated typescript module is not up-to-date.`)
+    await updateLocale(locale, outputLocaleDirectory, extendedTranslations, { missingBaseKeys: !noBaseKeysMissing, translationsOutdated: !areTranslationsUpToDate })
+  }
+}
 
-    await exportRuntimeLocale(path.join(outputLocaleDirectory, `${locale}.ts`), extendedTranslations)
-    await exportJsonLocale(path.join(outputLocaleDirectory, `${locale}.json`), extendedTranslations)
+/**
+ * This utility function applies updated translations to either both the source-locale (json) and the output locale (ts) depending on what changed
+ * @param locale The locale which should be updated
+ * @param directoryPath The directory where the locales are stored
+ * @param translations The updated translations
+ * @param options.translationsOutdated When set to true and no base-keys are missing only the typescript locale file is updated so that is up-to-date with the source-locale (json)
+ * @param options.missingBaseKeys When set to true then the updated translations are applied to both the source-locale (json)  and the typescript locale file (ts)
+ */
+async function updateLocale(
+  locale: 'en' | 'de' | string,
+  directoryPath: string,
+  translations: object,
+  { translationsOutdated, missingBaseKeys }: { translationsOutdated: boolean; missingBaseKeys: boolean },
+) {
+  let updateMode: 'update-typescript' | 'update-both' | undefined
 
-    console.log(`Auto-generated missing base-keys / synchronized typescript declaration for locale '${locale}' in ${outputLocaleDirectory}\n`)
+  if (translationsOutdated) updateMode = 'update-typescript'
+  if (missingBaseKeys) updateMode = 'update-both'
+
+  switch (updateMode) {
+    case 'update-typescript': {
+      console.log(`'${locale}' translations out-of-sync. Generating typescript module and updating locale.json file.`)
+      await exportRuntimeLocale(path.join(directoryPath, `${locale}.ts`), translations)
+      break
+    }
+    case 'update-both': {
+      console.log(`Missing base-keys detected for '${locale}'. Generating typescript module and updating locale.json file.`)
+      await exportRuntimeLocale(path.join(directoryPath, `${locale}.ts`), translations)
+      await exportJsonLocale(path.join(directoryPath, `${locale}.json`), translations)
+      break
+    }
   }
 }
 
