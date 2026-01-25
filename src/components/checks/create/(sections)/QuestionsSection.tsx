@@ -14,7 +14,7 @@ export default function QuestionsSection() {
   const t = useScopedI18n('Checks.buttons')
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='question-section flex flex-col gap-8'>
       <div className='grid grid-cols-[repeat(auto-fill,minmax(420px,1fr))] gap-10'>
         {questions.map((q) => (
           <QuestionCard key={q.id} question={q} />
@@ -49,7 +49,7 @@ function QuestionCard({ question }: { question: Question }) {
   const t = useScopedI18n('Checks.QuestionCard')
 
   return (
-    <Card className='flex flex-col gap-10' data-question-id={question.id} data-question={question.question} disableInteractions>
+    <Card className='question flex flex-col gap-10' data-question-id={question.id} data-question={question.question} disableInteractions>
       <div className='header -mb-4 flex items-center justify-between border-b pb-4 text-sm'>
         <div className='flex gap-1 text-neutral-500 dark:text-neutral-400'>
           <span>{t('question_label')}</span>
@@ -58,7 +58,9 @@ function QuestionCard({ question }: { question: Question }) {
           </span>
         </div>
 
-        <span className='bg-highlight rounded-md px-2 py-1 text-neutral-600/80 capitalize dark:text-neutral-300/80'>{question.type.split('-').join(' ')}</span>
+        <span data-question-type={question.type} className='bg-highlight rounded-md px-2 py-1 text-neutral-600/80 capitalize dark:text-neutral-300/80'>
+          {question.type.split('-').join(' ')}
+        </span>
         <div className='flex items-center gap-4'>
           <span className='flex items-center gap-0.5 text-neutral-600/80 dark:text-neutral-300/80'>
             <TbPoint className='text-orange-600/80 dark:text-orange-400/60' /> {t('points_label', { count: question.points })}
@@ -66,7 +68,9 @@ function QuestionCard({ question }: { question: Question }) {
         </div>
       </div>
       <div className='mx-12 flex items-center justify-center gap-4'>
-        <h1 className='px-2 py-1 text-center text-neutral-700/90 dark:text-neutral-200/90'>{question.question}</h1>
+        <h1 data-question={question.question} className='px-2 py-1 text-center text-neutral-700/90 dark:text-neutral-200/90'>
+          {question.question}
+        </h1>
       </div>
 
       <Seperator className='-mt-4 -mb-3' label='&zwnj;' />
