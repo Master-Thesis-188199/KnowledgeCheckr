@@ -8,6 +8,7 @@ import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@
 import { useCollaboratorContext } from '@/src/components/checks/create/(sections)/CollaboratorProvider'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
 type CollaboratorItem = {
@@ -18,6 +19,7 @@ type CollaboratorItem = {
 export default function CollaboratorSelection() {
   const { users } = useCollaboratorContext()
   const [open, setOpen] = useState(false)
+  const t = useScopedI18n('Checks.Create.GeneralSection.CollaboratorSelection')
 
   const { collaborators: collaboratorIds, updateCollaborators } = useCheckStore((store) => store)
   const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>(users.filter((u) => collaboratorIds.includes(u.id)).map((u) => ({ id: u.id, name: u.name })))
@@ -46,7 +48,7 @@ export default function CollaboratorSelection() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='input' role='combobox' aria-expanded={open} className='text-muted-foreground w-auto justify-between'>
-          <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? 'Add contributors' : selectedCollaborators.map((s) => s.name).join(', ')}</span>
+          <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? t('collaborators_placeholder') : selectedCollaborators.map((s) => s.name).join(', ')}</span>
           {selectedCollaborators.length > 0 && <span className='text-neutral-500 dark:text-neutral-400'>({selectedCollaborators.length})</span>}
           <ChevronsUpDown className='opacity-50' />
         </Button>
@@ -54,7 +56,7 @@ export default function CollaboratorSelection() {
       <PopoverContent className='auto-popover-content-width p-0'>
         <Command loop>
           <CommandInput
-            placeholder='Search users...'
+            placeholder={t('command_input_placeholder')}
             className='h-9'
             onValueChange={async (search) => {
               if (search.length < 3) {
@@ -75,15 +77,13 @@ export default function CollaboratorSelection() {
             }}
           />
           <CommandList>
-            {selectionStatus === 'require-min-input' && (
-              <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>You must provide at least 3 characters to find matches</CommandEmpty>
-            )}
-            {selectionStatus === 'no-matches-found' && <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>No matching users found. </CommandEmpty>}
+            {selectionStatus === 'require-min-input' && <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>{t('command_empty_min_input')}</CommandEmpty>}
+            {selectionStatus === 'no-matches-found' && <CommandEmpty className='py-4 text-center text-sm text-neutral-600/80 dark:text-neutral-300/80'>{t('command_empty_no_users')}</CommandEmpty>}
 
             {selectionStatus === 'loading' && (
               <CommandLoading className='flex min-h-10 items-center justify-center py-4 text-sm text-neutral-600 *:flex *:items-center *:gap-2 dark:text-neutral-300'>
                 <LoaderCircle className='size-5 animate-spin' />
-                Loading more users
+                {t('command_loading_message')}
               </CommandLoading>
             )}
 

@@ -8,6 +8,24 @@ export default {
     no_existing_checks: 'Keine Wissenschecks gefunden. Erstelle einen',
     no_existing_checks_action_button: 'hier',
     Create: {
+      GeneralSection: {
+        title: 'Allgemein',
+        name_label: 'Name',
+        name_placeholder: 'Österreich Wissenscheck',
+        description_label: 'Beschreibung',
+        description_placeholder: 'Erfahren Sie mehr über Österreich',
+        difficulty_label: 'Schwierigkeit',
+        openDate_label: 'Startdatum',
+        closeDate_label: 'Frist',
+        collaborators_label: 'Co-Authoren',
+        CollaboratorSelection: {
+          collaborators_placeholder: 'Author hinzufügen',
+          command_input_placeholder: 'Benutzer suchen...',
+          command_loading_message: 'Benutzer werden geladen',
+          command_empty_no_users: 'Keine Benutzer gefunden.',
+          command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden'
+        }
+      },
       MultiStages: {
         'basic-information': 'Allgemein',
         questions: 'Fragen',

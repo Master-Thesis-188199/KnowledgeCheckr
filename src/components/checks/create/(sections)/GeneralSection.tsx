@@ -13,6 +13,7 @@ import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
@@ -22,6 +23,8 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
   const { updateCheck, ...check } = useCheckStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
   const now = useCallback(() => new Date(Date.now()), [])()
+
+  const t = useScopedI18n('Checks.Create.GeneralSection')
 
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSchema, {
     defaultValues: () => ({
@@ -88,7 +91,7 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
         disableInteractions>
         <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
           <div className='flex items-center justify-between'>
-            <h2 className=''>General Information</h2>
+            <h2 className=''>{t('title')}</h2>
           </div>
         </div>
 
@@ -101,13 +104,13 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
             'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
-          <Field {...baseFieldProps} name='name' type='text' placeholder='Science Fiction Check' />
-          <Field {...baseFieldProps} name='description' placeholder='Learn about science fiction' type='text' />
-          <Field {...baseFieldProps} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
-          <Field {...baseFieldProps} label='Start Date' name='openDate' type='date' />
-          <Field {...baseFieldProps} label='Deadline' name='closeDate' type='date' />
+          <Field {...baseFieldProps} name='name' type='text' label={t('name_label')} placeholder={t('name_placeholder')} />
+          <Field {...baseFieldProps} name='description' label={t('description_label')} placeholder={t('description_placeholder')} type='text' />
+          <Field {...baseFieldProps} name='difficulty' label={t('difficulty_label')} min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
+          <Field {...baseFieldProps} label={t('openDate_label')} name='openDate' type='date' />
+          <Field {...baseFieldProps} label={t('closeDate_label')} name='closeDate' type='date' />
           <>
-            <FormLabel>Collaborators</FormLabel>
+            <FormLabel>{t('collaborators_label')}</FormLabel>
             <CollaboratorSelection />
           </>
         </div>
