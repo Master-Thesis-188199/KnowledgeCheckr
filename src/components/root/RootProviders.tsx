@@ -1,4 +1,5 @@
 import NavigationAbortProvider from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { I18nProvider } from '@/src/components/root/I18nProvider'
 import { RootStoreProvider } from '@/src/components/root/RootStoreProvider'
 import { SessionStorageProvider } from '@/src/hooks/root/SessionStorage'
 import getTheme from '@/src/lib/Shared/getTheme'
@@ -13,7 +14,9 @@ export default function RootProviders({ children, defaultTheme }: { children: Re
   return (
     <SessionStorageProvider>
       <RootStoreProvider initialStoreProps={{ theme_cookie: defaultTheme }}>
-        <NavigationAbortProvider>{children}</NavigationAbortProvider>
+        <I18nProvider>
+          <NavigationAbortProvider>{children}</NavigationAbortProvider>
+        </I18nProvider>
       </RootStoreProvider>
     </SessionStorageProvider>
   )
