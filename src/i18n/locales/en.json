@@ -1,4 +1,8 @@
 {
+  "Shared": {
+    "navigation_button_next": "Next",
+    "navigation_button_previous": "Previous"
+  },
   "Home": {
     "description": "Create your own KnowledgeChecks to boost your knowledge to the next level. (en)"
   },

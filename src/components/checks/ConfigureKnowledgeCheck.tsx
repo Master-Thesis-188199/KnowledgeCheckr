@@ -27,6 +27,7 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
 export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   const { user } = await requireAuthentication()
   const users = await getUsers()
+  const tButtons = await getScopedI18n('Shared')
   const t = await getScopedI18n('Checks.Create.MultiStages')
 
   return (
@@ -63,8 +64,8 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
           </CollaboratorProviderContext>
         </div>
         <div className='mx-[1.5%] mt-4 flex justify-between'>
-          <MultiStageBackButton variant='outline' children='Back' />
-          <MultiStageNextButton variant='primary' children='Next' />
+          <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
+          <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
         </div>
         <MutliStageRenderer stage={4}>
           <form className='mt-4 flex justify-center gap-4'>
