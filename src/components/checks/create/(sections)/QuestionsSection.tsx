@@ -116,17 +116,15 @@ function QuestionCard({ question }: { question: Question }) {
         <StatisticElement capitalizeValue label='Category' value={question.category} /> */}
       <div className='flex justify-center gap-4'>
         <CreateQuestionDialog initialValues={question}>
-          <div className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-2 rounded-lg bg-neutral-300/50 p-1.5 text-orange-600/70 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:text-orange-400/70 dark:ring-neutral-600'>
-            <Pen className='size-4 group-hover:stroke-3' />
-          </div>
+          <Button variant='outline' type='button' className='group'>
+            Edit
+            <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-300/70' />
+          </Button>
         </CreateQuestionDialog>
-        <button
-          aria-label='Delete Question'
-          type='button'
-          onClick={() => removeQuestion(question.id)}
-          className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
-          <Trash2 className='size-4 text-red-600/70 group-hover:stroke-[2.5] dark:text-red-400/70' />
-        </button>
+        <Button variant='destructive' aria-label='Delete Question' type='button' onClick={() => removeQuestion(question.id)} className='group'>
+          Remove
+          <Trash2 className='size-4 group-hover:stroke-[2.5]' />
+        </Button>
       </div>
     </Card>
   )
