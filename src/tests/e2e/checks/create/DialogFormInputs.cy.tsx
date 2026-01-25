@@ -48,7 +48,7 @@ function createQuestion({ question, points, ...rest }: Question) {
  */
 function verifyQuestionExistance(question: Question) {
   cy.get(`.question[data-question="${question.question}"]`).should('exist')
-  cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
+  cy.get(`.question[data-question="${question.question}"] [data-question-type]`).contains(question.type.split('-').join(' ')).should('exist').and('be.visible')
 }
 type KeysOfUnion<T> = T extends T ? keyof T : never
 type VerifyEditMenuOptions = {

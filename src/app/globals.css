@@ -28,6 +28,8 @@ html[data-theme='dark'] {
   --input: color-mix(in oklab, var(--color-neutral-700) 29%, var(--color-neutral-800));
   --input-ring: color-mix(in oklab, var(--color-neutral-500) 50%, var(--color-neutral-600));
 
+  --highlight: oklch(36% 0 0);
+
   --accent: var(--color-neutral-600);
   --accent-foreground: var(--color-neutral-100);
 
@@ -83,6 +85,8 @@ html[data-theme='dark'] {
   --popover: color-mix(in oklab, var(--color-neutral-200) 60%, var(--color-neutral-50));
   --input: color-mix(in oklab, var(--color-neutral-100) 90%, transparent);
   --input-ring: var(--color-neutral-400);
+
+  --highlight: oklch(87% 0 0);
 
   --accent: var(--color-neutral-300);
   --accent-foreground: var(--color-neutral-800);
@@ -162,6 +166,8 @@ html[data-theme='dark'] {
 
   --color-input: var(--input);
   --color-input-ring: var(--input-ring);
+
+  --color-highlight: var(--highlight);
 
   @keyframes accordion-down {
     from {

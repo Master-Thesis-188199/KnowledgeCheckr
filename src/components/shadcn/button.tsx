@@ -16,7 +16,7 @@ const buttonVariants = cva(
           'dark:shadow-neutral-800 dark:bg-black dark:ring-neutral-600 dark:text-neutral-200 dark:enabled:hover:bg-neutral-900 dark:enabled:active:!bg-neutral-700 dark:!enabled:active:bg-primary/70',
         ),
         destructive:
-          'bg-destructive text-white shadow-xs enabled:hover:bg-destructive/80 enabled:active:!bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'bg-destructive/15 text-destructive border hover:border-destructive/40 shadow-xs enabled:hover:bg-destructive/20 dark:enabled:hover:bg-destructive/30 enabled:active:!bg-destructive/30 dark:enabled:active:!bg-destructive/40 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/50 dark:text-destructive/90 dark:bg-destructive/15',
         outline:
           'bg-transparent ring-1 ring-foreground/50 dark:ring-foreground/25 dark:enabled:hover:bg-neutral-700 text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80 dark:text-neutral-200',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
