@@ -6,7 +6,15 @@ export default {
   Checks: {
     title: 'Your Checks',
     no_existing_checks: 'No checks found. Create a new one',
-    no_existing_checks_action_button: 'here'
+    no_existing_checks_action_button: 'here',
+    Create: {
+      MultiStages: {
+        'basic-information': 'Basic Information',
+        questions: 'Questions',
+        settings: 'Settings',
+        conclusion: 'Conclusion'
+      }
+    }
   },
   Examination: {
     attempt_not_possible: {

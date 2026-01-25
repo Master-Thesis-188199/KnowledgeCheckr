@@ -11,6 +11,7 @@ import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgres
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
@@ -26,6 +27,7 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
 export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   const { user } = await requireAuthentication()
   const users = await getUsers()
+  const t = await getScopedI18n('Checks.Create.MultiStages')
 
   return (
     <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
@@ -33,10 +35,10 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
         cacheOptions={{ cacheKey: 'create-check-stages' }}
         initialStoreProps={{
           stages: [
-            { stage: 1, title: 'Basic Information' },
-            { stage: 2, title: 'Questions' },
-            { stage: 3, title: 'Settings' },
-            { stage: 4, title: 'Conclusion' },
+            { stage: 1, title: t('basic-information') },
+            { stage: 2, title: t('questions') },
+            { stage: 3, title: t('settings') },
+            { stage: 4, title: t('conclusion') },
           ],
         }}>
         <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps?.name}`} />

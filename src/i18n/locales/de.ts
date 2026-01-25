@@ -6,7 +6,15 @@ export default {
   Checks: {
     title: 'Deine Wissenschecks',
     no_existing_checks: 'Keine Wissenschecks gefunden. Erstelle einen',
-    no_existing_checks_action_button: 'hier'
+    no_existing_checks_action_button: 'hier',
+    Create: {
+      MultiStages: {
+        'basic-information': 'Allgemein',
+        questions: 'Fragen',
+        settings: 'Einstellungen',
+        conclusion: 'Zusammenfassung'
+      }
+    }
   },
   Examination: {
     attempt_not_possible: {
