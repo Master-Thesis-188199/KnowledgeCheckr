@@ -32,6 +32,7 @@ interface Classnames {
 
 interface State {
   open: boolean
+  label: string
   value: string
   query: string
   newOptions: Option[]
@@ -39,7 +40,7 @@ interface State {
 
 type Action =
   | { type: 'SET_OPEN'; payload: boolean }
-  | { type: 'SET_VALUE'; payload: string }
+  | { type: 'SET_VALUE'; value: string; label: string }
   | { type: 'SET_QUERY'; payload: string }
   | { type: 'SET_NEW_OPTIONS'; payload: Option[] }
   | { type: 'ADD_OPTION'; payload: Option }
@@ -51,7 +52,7 @@ function reducer(state: State, action: Action): State {
     case 'SET_OPEN':
       return { ...state, open: action.payload }
     case 'SET_VALUE':
-      return { ...state, value: action.payload }
+      return { ...state, value: action.value, label: action.label }
     case 'SET_QUERY':
       return { ...state, query: action.payload }
     case 'SET_NEW_OPTIONS':
@@ -61,6 +62,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         newOptions: [...state.newOptions, action.payload],
         value: action.payload.value,
+        label: action.payload.label,
       }
     default:
       return state
@@ -72,7 +74,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
 
   const initialState: State = {
     open: false,
-    value: defaultValue?.value || '',
+    label: defaultValue?.label ?? '',
+    value: defaultValue?.value ?? '',
     query: '',
     newOptions: options,
   }
@@ -84,7 +87,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
     const items = state.query ? state.newOptions.filter((option) => option.label.toLowerCase().includes(state.query.toLowerCase())) : state.newOptions
     if (items.length === 0) return
 
-    dispatch({ type: 'SET_VALUE', payload: items.at(keySelection % items.length)!.value })
+    const option = items.at(keySelection % items.length)!
+    dispatch({ type: 'SET_VALUE', value: option?.value, label: option?.label })
   }, [keySelection, state.query])
 
   React.useEffect(() => {
@@ -95,7 +99,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
 
   React.useEffect(() => {
     // WHen re-rendered e.g. dialog in which it is used is re-rendered => reset to default value
-    dispatch({ type: 'SET_VALUE', payload: defaultValue?.value || '' })
+    dispatch({ type: 'SET_VALUE', value: defaultValue?.value ?? '', label: defaultValue?.label ?? '' })
   }, [])
 
   const createOption = () => {
@@ -142,7 +146,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-not-allowed disabled:opacity-50',
             selectTriggerClassname,
           )}>
-          {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
+          {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.label || 'Select option...'}
           <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
