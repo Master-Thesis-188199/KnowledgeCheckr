@@ -12,19 +12,20 @@ import Field from '@/src/components/Shared/form/Field'
 import { TabButton } from '@/src/components/Shared/tabs/TabButton'
 import { TabsContentPanel } from '@/src/components/Shared/tabs/TabsContentPanel'
 import { TabSelect } from '@/src/components/Shared/tabs/TabSelect'
-import TabsProvider, { useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
+import TabsProvider, { Tab, useTabsContext } from '@/src/components/Shared/tabs/TabsProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-const tabs = [
-  { name: 'General', icon: EyeIcon },
-  { name: 'Practice', icon: PlayIcon },
-  { name: 'Examination', icon: GraduationCapIcon },
-  { name: 'Sharing', icon: UsersIcon },
-]
 export default function SettingsSection() {
   const { updateSettings, settings } = useCheckStore((state) => state)
+
+  const tabs: Tab[] = [
+    { key: 'general', name: 'General', icon: EyeIcon },
+    { key: 'practice', name: 'Practice', icon: PlayIcon },
+    { key: 'examination', name: 'Examination', icon: GraduationCapIcon },
+    { key: 'sharing', name: 'Sharing', icon: UsersIcon },
+  ]
 
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSettingsSchema, {
     mode: 'all',
@@ -64,10 +65,10 @@ export default function SettingsSection() {
             </div>
           </div>
 
-          <TabsContentPanel tab='general'>
+          <TabsContentPanel tabKey='general'>
             <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'></div>
           </TabsContentPanel>
-          <TabsContentPanel tab='practice'>
+          <TabsContentPanel tabKey='practice'>
             <div
               className={cn(
                 'grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0',
@@ -96,10 +97,10 @@ export default function SettingsSection() {
               />
             </div>
           </TabsContentPanel>
-          <TabsContentPanel tab='examination'>
+          <TabsContentPanel tabKey='examination'>
             <ExaminationSettings baseFieldProps={baseFieldProps} />
           </TabsContentPanel>
-          <TabsContentPanel tab='sharing'>
+          <TabsContentPanel tabKey='sharing'>
             <TemporarySettingsOptions />
           </TabsContentPanel>
         </TabsProvider>
