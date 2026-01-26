@@ -177,6 +177,12 @@ export default {
         estimatedTime_label: 'geschätze Zeit',
         points_label: 'Punkte'
       }
+    },
+    ShareKnowledgeCheckButton: {
+      tooltip_message: 'Teile diesen KnowledgeCheck',
+      tooltip_empty_message: 'Dieser KnowledgeCheck hat keine Fragen und kann deswegen nicht geteilt werden.',
+      successfully_copied_toast_message: 'Freigabelink erfolgreich in Zwischenablage gespeichert',
+      failed_copy_toast_message: 'Der Freigabelink konnte nicht in Zwischenablage gespeichert werden.'
     }
   }
 } as const

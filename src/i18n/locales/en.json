@@ -176,6 +176,12 @@
         "estimatedTime_label": "estimatedTime",
         "points_label": "Points"
       }
+    },
+    "ShareKnowledgeCheckButton": {
+      "tooltip_message": "Share this KnowledgeCheck",
+      "tooltip_empty_message": "This check has no questions, cannot be shared at this moment.",
+      "successfully_copied_toast_message": "Successfully saved token to your clipboard.",
+      "failed_copy_toast_message": "Failed to copy share link to the clipboard."
     }
   }
 }
