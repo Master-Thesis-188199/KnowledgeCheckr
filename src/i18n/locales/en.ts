@@ -183,6 +183,55 @@ export default {
       tooltip_empty_message: 'This check has no questions, cannot be shared at this moment.',
       successfully_copied_toast_message: 'Successfully saved token to your clipboard.',
       failed_copy_toast_message: 'Failed to copy share link to the clipboard.'
+    },
+    KnowledgeCheckCardMenu: {
+      menu_label: 'Actions',
+      copy_practice: {
+        label: 'Copy Practice Link',
+        toast_success: 'Successfully saved practice url to clipboard.',
+        toast_failure: 'Failed to copy practice link to clipboard.'
+      },
+      start_practice: {
+        label: 'Start Practicing',
+        tooltip: 'This check has no questions, practice disabled.',
+        toast: 'Unable to start Practice'
+      },
+      copy_examination: {
+        label: 'Copy Examination Link',
+        toast_success: 'Successfully saved exam url to clipboard.',
+        toast_failure: 'Failed to copy exam link to clipboard.'
+      },
+      start_examination: {
+        label: 'Start Examination',
+        tooltip: 'This check has no questions, examination disabled.',
+        toast: 'Unable to start Practice'
+      },
+      edit_check: {
+        label: 'Edit KnowledgeCheck',
+        tooltip: 'You are not allowed to edit this check!'
+      },
+      clone_check: {
+        label: 'Clone KnowledgeCheck'
+      },
+      inspect_statistics: {
+        label: 'Inspect Statistics'
+      },
+      remove_share_token: {
+        tooltip: 'There is no share token associated to this check!',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.',
+        toast_deletion_successful: 'Successfully deleted share token',
+        toast_deletion_failure: 'Removing share token was unsuccessful!'
+      },
+      delete_knowledgeCheck: {
+        label: 'Delete KnowledgeCheck',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.',
+        toast_deletion_successful: 'Successfully deleted knowledgeCheck',
+        toast_deletion_failure: 'Removing knowledgeCheck was unsuccessful!'
+      },
+      Shared: {
+        tooltip_not_allowed: 'You are not allowed to perform this action!',
+        toast_deletion_not_found: 'Deletion was unsuccesful, check not found!'
+      }
     }
   }
 } as const

@@ -182,6 +182,55 @@
       "tooltip_empty_message": "Dieser KnowledgeCheck hat keine Fragen und kann deswegen nicht geteilt werden.",
       "successfully_copied_toast_message": "Freigabelink erfolgreich in Zwischenablage gespeichert",
       "failed_copy_toast_message": "Der Freigabelink konnte nicht in Zwischenablage gespeichert werden."
+    },
+    "KnowledgeCheckCardMenu": {
+      "menu_label": "Aktionen",
+      "copy_practice": {
+        "label": "Kopiere Übungslink",
+        "toast_success": "Übungs freigabelink erfolgreich in Zwischenablage kopiert.",
+        "toast_failure": "Erstellen des Übungslinks fehlgeschlagen."
+      },
+      "start_practice": {
+        "label": "Beginne zu Üben",
+        "tooltip": "Dieser KnowledgeCheck hat keine Fragen, Übung deaktiviert.",
+        "toast": "Starten der Übungsumgebung fehlgeschlagen."
+      },
+      "copy_examination": {
+        "label": "Kopiere Prüfungslink",
+        "toast_success": "Prüfungs freigabelink erfolgreich in Zwischenablage kopiert.",
+        "toast_failure": "Erstellen des Prüfungslinks fehlgeschlagen."
+      },
+      "start_examination": {
+        "label": "Starte Prüfung",
+        "tooltip": "Übungs freigabelink erfolgreich in Zwischenablage kopiert.",
+        "toast": "Erstellen des Übungslinks fehlgeschlagen."
+      },
+      "edit_check": {
+        "label": "Check bearbeiten",
+        "tooltip": "Dir fehlen die Berechtigungen um diese Check zu bearbeiten."
+      },
+      "clone_check": {
+        "label": "Check duplizieren"
+      },
+      "inspect_statistics": {
+        "label": "Statistik anzeigen"
+      },
+      "remove_share_token": {
+        "tooltip": "Dieser Check hat keinen Freigabe schlüssel.",
+        "confirmation_dialog_body": "Diese Aktion kann nicht rückgängig gemacht werden. \nDadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.",
+        "toast_deletion_successful": "Freigabe token erfolgreich gelöscht",
+        "toast_deletion_failure": "Löschen des freigabge tokens fehlgeschlagen!"
+      },
+      "delete_knowledgeCheck": {
+        "label": "Check löschen",
+        "confirmation_dialog_body": "Diese Aktion kann nicht rückgängig gemacht werden. \nDadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.",
+        "toast_deletion_successful": "KnowledgeCheck erfolgreich gelöscht",
+        "toast_deletion_failure": "Löschen des KnowledgeChecks fehlgeschlagen!"
+      },
+      "Shared": {
+        "tooltip_not_allowed": "Dir fehlen die Berechtigungen um diese Aktion durchzuführen.",
+        "toast_deletion_not_found": "Löschvorgang fehlgeschlagen, Check nicht gefunden."
+      }
     }
   }
 }
