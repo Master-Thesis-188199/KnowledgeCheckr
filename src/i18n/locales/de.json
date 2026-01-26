@@ -20,6 +20,15 @@
       },
       "category_label": "Kategorie",
       "answers_label": "Antworten"
+    },
+    "Timestamp": {
+      "hour#one": "{count} stunde",
+      "hour#other": "{count} stunden",
+      "minute#one": "{count} minute",
+      "minute#other": "{count} minuten",
+      "join_word": "und",
+      "hour": "{count} stunden",
+      "minute": "{count} minuten"
     }
   },
   "Home": {
@@ -56,6 +65,30 @@
           "points#one": "{count} punkt",
           "points#other": "{count} punkte",
           "points": "{count} punkte"
+        }
+      },
+      "SettingSection": {
+        "title": "Einstellungen",
+        "tabs": {
+          "sr_only_label": "Wähle einen Tab",
+          "general": "Allgemein",
+          "practice": "Üben",
+          "examination": "Prüfung",
+          "sharing": "Teilen"
+        },
+        "PracticeSettings": {
+          "enablePracticing_label": "Erlaube benutzern zu Üben",
+          "allowedPracticeCount_label": "Erlaubte Übungsversuche",
+          "allowedPracticeCount_placeholder": "Unbeschränkt"
+        },
+        "ExaminationSettings": {
+          "enableExaminations_label": "Erlaube Prüfungsantritte",
+          "questionOrder_label": "Zufällige Fragen Reihenfolge",
+          "answerOrder_label": "Zufällige Antwort Reihenfolge",
+          "examTimeFrameSeconds_label": "Prüfungszeit",
+          "examinationAttemptCount_label": "Erlaubte Prüfungsantritte",
+          "startDate_label": "Start Datum",
+          "endDate_label": "Abschluss Datum"
         }
       },
       "MultiStages": {

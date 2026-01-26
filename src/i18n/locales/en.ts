@@ -21,6 +21,14 @@ export default {
       },
       category_label: 'Category',
       answers_label: 'Answers'
+    },
+    Timestamp: {
+      'hour#one': '{count} hour',
+      'hour#other': '{count} hours',
+      'minute#one': '{count} minute',
+      'minute#other': '{count} minutes',
+      hour: '{count} hours',
+      minute: '{count} minutes'
     }
   },
   Home: {
@@ -57,6 +65,30 @@ export default {
           'points#one': '{count} point',
           'points#other': '{count} points',
           points: '{count} points'
+        }
+      },
+      SettingSection: {
+        title: 'Settings',
+        tabs: {
+          sr_only_label: 'Select a tab',
+          general: 'General',
+          practice: 'Practice',
+          examination: 'Examination',
+          sharing: 'Sharing'
+        },
+        PracticeSettings: {
+          enablePracticing_label: 'Allow users to Practice',
+          allowedPracticeCount_label: 'Allowed Practice Attempt',
+          allowedPracticeCount_placeholder: 'Unlimited'
+        },
+        ExaminationSettings: {
+          enableExaminations_label: 'Enable Examination Attempts',
+          questionOrder_label: 'Randomize Question Order',
+          answerOrder_label: 'Randomize Answer Order',
+          examTimeFrameSeconds_label: 'Examination Time Frame',
+          examinationAttemptCount_label: 'Examination Attempt Count',
+          startDate_label: 'Start Date',
+          endDate_label: 'End Date'
         }
       },
       MultiStages: {
