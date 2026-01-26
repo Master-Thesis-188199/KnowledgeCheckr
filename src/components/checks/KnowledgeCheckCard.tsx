@@ -6,10 +6,12 @@ import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/Knowled
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
       as={motion.div}
@@ -28,16 +30,16 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{check.description}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6'>
-        <StatisticElement label='Questions' value={check.questions.length} />
+        <StatisticElement label={t('Statistics.questions_label')} value={check.questions.length} />
         <StatisticElement
-          label='estimatedTime'
+          label={t('Statistics.estimatedTime_label')}
           value={
             <>
               10<span className='text-base'>m</span>
             </>
           }
         />
-        <StatisticElement label='Points' value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
+        <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
       <Footer updatedAt={check.updatedAt} />
     </Card>
@@ -45,9 +47,12 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
 }
 
 function Footer({ updatedAt }: { updatedAt?: Date }) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
-      <div>last modified: {updatedAt ? new Date(updatedAt).toLocaleDateString('de', { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}</div>
+      <div>
+        {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString('de', { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
+      </div>
     </div>
   )
 }

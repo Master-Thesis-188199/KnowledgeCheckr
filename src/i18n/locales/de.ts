@@ -168,5 +168,15 @@ export default {
       title: 'Üben nicht erlaubt',
       toManyAttempts: 'Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht.'
     }
+  },
+  Components: {
+    KnowledgeCheckCard: {
+      last_modified_label: 'zuletzt geändert',
+      Statistics: {
+        questions_label: 'Fragen',
+        estimatedTime_label: 'geschätze Zeit',
+        points_label: 'Punkte'
+      }
+    }
   }
 } as const

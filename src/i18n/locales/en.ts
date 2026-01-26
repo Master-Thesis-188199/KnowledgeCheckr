@@ -168,5 +168,15 @@ export default {
       disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
       toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.'
     }
+  },
+  Components: {
+    KnowledgeCheckCard: {
+      last_modified_label: 'last modified',
+      Statistics: {
+        questions_label: 'Questions',
+        estimatedTime_label: 'estimatedTime',
+        points_label: 'Points'
+      }
+    }
   }
 } as const
