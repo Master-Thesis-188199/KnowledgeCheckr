@@ -94,7 +94,7 @@ export default {
       },
       OverviewSection: {
         title: 'Preview Changes',
-        description: ''
+        description: 'Here is a brief overview of what changes were made'
       },
       MultiStages: {
         'basic-information': 'Basic Information',
@@ -125,6 +125,12 @@ export default {
           update_submit_button_label: 'Update Question',
           add_answer_label: 'Add Answer'
         }
+      },
+      UnsavedChangesAlert: {
+        title: 'You have unsaved changes. Discard?',
+        description: 'By leaving the page now the change you have made will be permanently lost.',
+        dismissLabel: 'Continue Editing',
+        continueLabel: 'Proceed without saving'
       }
     }
   },

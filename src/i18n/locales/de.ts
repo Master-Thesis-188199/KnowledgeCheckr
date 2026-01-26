@@ -125,6 +125,12 @@ export default {
           update_submit_button_label: 'Frage aktualisieren',
           add_answer_label: 'Weitere Antwort'
         }
+      },
+      UnsavedChangesAlert: {
+        title: 'Sie haben nicht gespeicherte Änderungen. \nVerwerfen?',
+        description: 'Wenn Sie die Seite jetzt verlassen, gehen die von Ihnen vorgenommenen Änderungen endgültig verloren.',
+        dismissLabel: 'Bearbeiten fortsetzten',
+        continueLabel: 'Ohne Speichern fortfahren'
       }
     }
   },
