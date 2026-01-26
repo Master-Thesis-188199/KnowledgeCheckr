@@ -131,6 +131,26 @@
         "dismissLabel": "Continue Editing",
         "continueLabel": "Proceed without saving"
       }
+    },
+    "Discover": {
+      "title": "Explore new Checks",
+      "no_checks_found_base": "No checks found. Create your own KnowledgeCheck",
+      "no_checks_found_link": "here",
+      "FilterFields": {
+        "filter_operand_menu_label": "Filter Operands",
+        "create_check_button_label": "Create your own Check",
+        "filter_input_placeholder": "Filter by name",
+        "tooltips": {
+          "filter_case_sensitive": "Filter is case-sensitive",
+          "filter_case_ignored": "Filter is ignored word casing"
+        },
+        "operands": {
+          "contains_filter_operand": "contains",
+          "startsWith_filter_operand": "startsWith",
+          "endsWith_filter_operand": "endsWith",
+          "eq_filter_operand": "Equals"
+        }
+      }
     }
   },
   "Examination": {

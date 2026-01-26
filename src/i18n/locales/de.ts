@@ -132,6 +132,26 @@ export default {
         dismissLabel: 'Bearbeiten fortsetzten',
         continueLabel: 'Ohne Speichern fortfahren'
       }
+    },
+    Discover: {
+      title: 'Entdecken Sie neue Wissenschecks',
+      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' + 'Erstellen Sie Ihren eigenen KnowledgeCheck',
+      no_checks_found_link: 'hier',
+      FilterFields: {
+        filter_operand_menu_label: 'Filter Operatoren',
+        create_check_button_label: 'Erstelle deinen eigenen Check',
+        filter_input_placeholder: 'nach Namen filtern',
+        tooltips: {
+          filter_case_sensitive: 'Filter beachtet die Groß-/Kleinschreibung',
+          filter_case_ignored: 'Der Filter ignoriert die Groß- und Kleinschreibung'
+        },
+        operands: {
+          contains_filter_operand: 'enthält',
+          startsWith_filter_operand: 'beginnt mit',
+          endsWith_filter_operand: 'endet mit',
+          eq_filter_operand: 'Gleich'
+        }
+      }
     }
   },
   Examination: {

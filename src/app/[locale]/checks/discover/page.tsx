@@ -6,9 +6,11 @@ import DiscoverFilterOptionsContext from '@/src/components/checks/discover/Disco
 import { KnowledgeCheckCard } from '@/src/components/checks/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
+  const t = await getScopedI18n('Checks.Discover')
   const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = [
     {
       limit: 10,
@@ -19,15 +21,14 @@ export default async function BrowseChecksPage() {
 
   return (
     <DiscoverFilterOptionsContext defaultProps={props[0]}>
-      <PageHeading title='Explore new Checks' />
+      <PageHeading title={t('title')} />
 
       {checks.length === 0 && (
         <div className='flex gap-2'>
-          No checks found. Create your own KnowledgeCheck
+          {t('no_checks_found_base')}
           <Link href='/checks/create' className='text-blue-500 underline dark:text-blue-500'>
-            here
+            {t('no_checks_found_link')}
           </Link>
-          .
         </div>
       )}
       <DiscoverFilterFields />
