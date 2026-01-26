@@ -233,6 +233,12 @@ export default {
         tooltip_not_allowed: 'Dir fehlen die Berechtigungen um diese Aktion durchzuführen.',
         toast_deletion_not_found: 'Löschvorgang fehlgeschlagen, Check nicht gefunden.'
       }
+    },
+    ConfirmationDialog: {
+      default_title: 'Bist du absolut sicher?',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_cancel_label: 'Abbrechen',
+      default_confirm_label: 'Weiter'
     }
   }
 } as const

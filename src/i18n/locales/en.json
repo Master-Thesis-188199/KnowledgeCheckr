@@ -233,6 +233,12 @@
         "tooltip_not_allowed": "You are not allowed to perform this action!",
         "toast_deletion_not_found": "Deletion was unsuccesful, check not found!"
       }
+    },
+    "ConfirmationDialog": {
+      "default_title": "Are you absolutely sure?",
+      "default_body": "This action cannot be undone. This will permanently delete this element from your account and remove its data from our servers.",
+      "default_cancel_label": "Cancel",
+      "default_confirm_label": "Continue"
     }
   }
 }
