@@ -1,7 +1,20 @@
 {
   "Shared": {
     "navigation_button_next": "Weiter",
-    "navigation_button_previous": "Zurück"
+    "navigation_button_previous": "Zurück",
+    "Question": {
+      "type": {
+        "multiple-choice": "Mehrfach-auswahl",
+        "single-choice": "Einzel-auswahl",
+        "open-question": "Offene-Frage",
+        "drag-drop": "Drag-Drop"
+      },
+      "accessibility": {
+        "all": "Universal",
+        "practice-only": "Übungs Frage",
+        "exam-only": "Prüfungs Frage"
+      }
+    }
   },
   "Home": {
     "description": "Create your own KnowledgeChecks to boost your knowledge to the next level. (de)"
@@ -27,6 +40,16 @@
           "command_loading_message": "Benutzer werden geladen",
           "command_empty_no_users": "Keine Benutzer gefunden.",
           "command_empty_min_input": "Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden"
+        }
+      },
+      "QuestionSection": {
+        "title": "Fragen",
+        "create_button": "Frage hinzufügen",
+        "no_questions_info": "Derzeit sind diesem Quiz keine Fragen zugeordnet",
+        "QuestionCard": {
+          "points#one": "{count} punkt",
+          "points#other": "{count} punkte",
+          "points": "{count} punkte"
         }
       },
       "MultiStages": {

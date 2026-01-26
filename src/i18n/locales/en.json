@@ -1,7 +1,20 @@
 {
   "Shared": {
     "navigation_button_next": "Next",
-    "navigation_button_previous": "Previous"
+    "navigation_button_previous": "Previous",
+    "Question": {
+      "type": {
+        "multiple-choice": "Multiple Choice",
+        "single-choice": "Single Choice",
+        "open-question": "Open Question",
+        "drag-drop": "Drag Drop"
+      },
+      "accessibility": {
+        "all": "Universal",
+        "practice-only": "Practice Question",
+        "exam-only": "Exam Question"
+      }
+    }
   },
   "Home": {
     "description": "Create your own KnowledgeChecks to boost your knowledge to the next level. (en)"
@@ -27,6 +40,16 @@
           "command_loading_message": "Loading more users",
           "command_empty_no_users": "No matching users found.",
           "command_empty_min_input": "You must provide at least 3 characters to find matches"
+        }
+      },
+      "QuestionSection": {
+        "title": "Questions",
+        "create_button": "Create Question",
+        "no_questions_info": "Currently there are no questions associated to this quiz",
+        "QuestionCard": {
+          "points#one": "{count} point",
+          "points#other": "{count} points",
+          "points": "{count} points"
         }
       },
       "MultiStages": {
