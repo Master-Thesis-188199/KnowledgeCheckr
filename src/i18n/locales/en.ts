@@ -27,6 +27,7 @@ export default {
       'hour#other': '{count} hours',
       'minute#one': '{count} minute',
       'minute#other': '{count} minutes',
+      join_word: 'and',
       hour: '{count} hours',
       minute: '{count} minutes'
     }
@@ -90,6 +91,10 @@ export default {
           startDate_label: 'Start Date',
           endDate_label: 'End Date'
         }
+      },
+      OverviewSection: {
+        title: 'Preview Changes',
+        description: ''
       },
       MultiStages: {
         'basic-information': 'Basic Information',

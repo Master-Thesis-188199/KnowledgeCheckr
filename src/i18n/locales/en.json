@@ -91,6 +91,10 @@
           "endDate_label": "End Date"
         }
       },
+      "OverviewSection": {
+        "title": "Preview Changes",
+        "description": "Here is a brief overview of what changes were made"
+      },
       "MultiStages": {
         "basic-information": "Basic Information",
         "questions": "Questions",

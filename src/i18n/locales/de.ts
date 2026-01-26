@@ -92,6 +92,10 @@ export default {
           endDate_label: 'Abschluss Datum'
         }
       },
+      OverviewSection: {
+        title: 'Überlick',
+        description: 'Kontrolliere deine Änderungen bevor du diese speicherst.'
+      },
       MultiStages: {
         'basic-information': 'Allgemein',
         questions: 'Fragen',
