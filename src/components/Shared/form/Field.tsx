@@ -74,7 +74,7 @@ export default function Field<Values extends FieldValues>({
 
         return (
           <>
-            <FormLabel className={cn('self-baseline pl-1 capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
+            <FormLabel className={cn('self-baseline pl-1', label === undefined && 'capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
 
             <div
               className={cn(
