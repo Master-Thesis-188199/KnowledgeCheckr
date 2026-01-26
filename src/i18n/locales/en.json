@@ -3,17 +3,23 @@
     "navigation_button_next": "Next",
     "navigation_button_previous": "Previous",
     "Question": {
+      "question_label": "Question",
+      "type_label": "Question Type",
       "type": {
-        "multiple-choice": "Multiple Choice",
-        "single-choice": "Single Choice",
-        "open-question": "Open Question",
-        "drag-drop": "Drag Drop"
+        "multiple-choice": "Multiple-Choice",
+        "single-choice": "Single-Choice",
+        "open-question": "Open-Question",
+        "drag-drop": "Drag-Drop"
       },
+      "points_label": "Points",
+      "accessibility_label": "Accessibility",
       "accessibility": {
         "all": "Universal",
         "practice-only": "Practice Question",
         "exam-only": "Exam Question"
-      }
+      },
+      "category_label": "Category",
+      "answers_label": "Answers"
     }
   },
   "Home": {
@@ -57,6 +63,32 @@
         "questions": "Questions",
         "settings": "Settings",
         "conclusion": "Conclusion"
+      },
+      "CreateQuestionDialog": {
+        "Header": {
+          "title_create": "Create Question",
+          "description_create": "Create your new question for your KnowledgeCheck",
+          "title_edit": "Edit Question",
+          "description_edit": "Edit your existing question of your KnowledgeCheck"
+        },
+        "placeholders": {
+          "question": "Formulate your question here",
+          "choice_answer_option": "Answer {position} - to your question",
+          "open_question_expectation": "What answer are you expecting"
+        },
+
+        "tooltips": {
+          "choice_question_marked_correct": "Answer marked as correct",
+          "choice_question_marked_incorrect": "Answer marked as wrong",
+          "drag_drop_correct_position": "The correct position for this answer"
+        },
+
+        "buttons": {
+          "cancel_button_label": "Cancel",
+          "add_submit_button_label": "Add Question",
+          "update_submit_button_label": "Update Question",
+          "add_answer_label": "Add Answer"
+        }
       }
     }
   },

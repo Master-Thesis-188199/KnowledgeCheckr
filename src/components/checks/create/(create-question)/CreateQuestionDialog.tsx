@@ -4,7 +4,6 @@ import { TooltipProps } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import startCase from 'lodash/startCase'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FormState, useFieldArray, UseFieldArrayReturn, useForm, useFormContext, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
@@ -17,6 +16,7 @@ import FieldError from '@/src/components/Shared/form/FormFieldError'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import {
@@ -70,6 +70,9 @@ const DELAY_ERROR_TIME = 250
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCheckStore((state) => state)
+
+  const tQuestion = useScopedI18n('Shared.Question')
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog')
 
   const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults('drag-drop') : initialValues), [initialValues])
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
@@ -136,21 +139,28 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             <input {...register('id')} id='id' value={watch('id')} className='hidden' />
 
             <div className='grid items-center gap-2'>
-              <Field form={form} name='question' placeholder='Formulate your question here' labelClassname={cn('text-base -ml-1', label_classes)} />
+              <Field form={form} name='question' label={tQuestion('question_label')} placeholder={t('placeholders.question')} labelClassname={cn('text-base -ml-1', label_classes)} />
             </div>
 
             <div className={cn('flex items-baseline gap-x-10', errors.points && 'gap-x-6')}>
               <div className='grid items-center gap-2'>
-                <Field form={form} name='points' type='number' onChange={({ valueAsNumber }) => valueAsNumber} labelClassname={cn('text-base -ml-1', label_classes)} />
+                <Field
+                  form={form}
+                  name='points'
+                  label={tQuestion('points_label')}
+                  type='number'
+                  onChange={({ valueAsNumber }) => valueAsNumber}
+                  labelClassname={cn('text-base -ml-1', label_classes)}
+                />
               </div>
               <div className='grid items-center gap-2'>
                 <label htmlFor='type' className={twMerge(label_classes)}>
-                  Question Type
+                  {tQuestion('type_label')}
                 </label>
                 <CreateableSelect
                   disabled={disabled}
                   name='type'
-                  defaultValue={{ label: watch('type').split('-').join(' '), value: watch('type') }}
+                  defaultValue={{ label: tQuestion(`type.${watch('type')}`), value: watch('type') }}
                   onChange={(type) => {
                     if (type !== watch('type')) {
                       let defaults = generateQuestionDefaults(type as Any)
@@ -182,17 +192,17 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                     register('type').onChange({ target: { value: type, name: 'type' } })
                   }}
                   options={[
-                    { label: 'Single Choice', value: 'single-choice' },
-                    { label: 'Multiple Choice', value: 'multiple-choice' },
-                    { label: 'Open Question', value: 'open-question' },
-                    { label: 'Drag Drop', value: 'drag-drop' },
+                    { label: tQuestion('type.single-choice'), value: 'single-choice' },
+                    { label: tQuestion('type.multiple-choice'), value: 'multiple-choice' },
+                    { label: tQuestion('type.open-question'), value: 'open-question' },
+                    { label: tQuestion('type.drag-drop'), value: 'drag-drop' },
                   ]}
                 />
                 <FieldError field='type' errors={errors} />
               </div>
               <div className='grid items-center gap-2'>
                 <label htmlFor='access' className={twMerge(label_classes)}>
-                  Accessibility
+                  {tQuestion('accessibility_label')}
                 </label>
 
                 <Select
@@ -201,12 +211,12 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   popoverContentClassname='w-[170px]'
                   onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
                   options={[
-                    { label: 'Both', value: 'all' },
-                    { label: 'Practice only', value: 'practice-only' },
-                    { label: 'Exam only', value: 'exam-only' },
+                    { label: tQuestion('accessibility.all'), value: 'all' },
+                    { label: tQuestion('accessibility.practice-only'), value: 'practice-only' },
+                    { label: tQuestion('accessibility.exam-only'), value: 'exam-only' },
                   ]}
                   defaultValue={{
-                    label: watch('accessibility') === 'all' ? 'Both' : watch('accessibility').replace('-', ' ').split(' ').map(startCase).join(' '),
+                    label: tQuestion(`accessibility.${watch('accessibility')}`),
                     value: watch('accessibility'),
                   }}
                 />
@@ -216,7 +226,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             </div>
             <div className='grid items-center gap-2'>
               <label htmlFor='category' className={twMerge(label_classes)}>
-                Category
+                {tQuestion('category_label')}
               </label>
               <Select
                 disabled={disabled}
@@ -231,17 +241,17 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             </div>
             <div className='grid items-center gap-2' id='question-answers'>
               <label htmlFor='answers' className={twMerge(label_classes)}>
-                Answers
+                {tQuestion('answers_label')}
               </label>
 
               <AnswerOptions control={control} watch={watch} register={register} errors={errors} setValue={setValue} />
             </div>
             <DialogFooter className='mt-4 grid grid-cols-2 gap-4'>
               <Button size='lg' variant='outline' onClick={() => setDialogOpenState(false)} type='button'>
-                Cancel
+                {t('buttons.cancel_button_label')}
               </Button>
               <Button size='lg' variant='primary' type='submit'>
-                {isSubmitting ? 'Processing' : mode === 'create' ? 'Add Question' : 'Update Question'}
+                {isSubmitting ? 'Processing' : mode === 'create' ? t('buttons.add_submit_button_label') : t('buttons.update_submit_button_label')}
               </Button>
               {errors.root && <div>{JSON.stringify(errors.root)}</div>}
             </DialogFooter>
@@ -253,8 +263,9 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
 }
 
 function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
-  const title = type === 'create' ? 'Create Question' : 'Edit Question'
-  const description = type === 'create' ? 'Create your new question for your KnowledgeCheck' : 'Edit your existing question of your KnowledgeCheck'
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.Header')
+  const title = type === 'create' ? t('title_create') : t('title_edit')
+  const description = type === 'create' ? t('description_create') : t('description_edit')
 
   return (
     <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
@@ -287,6 +298,7 @@ function AnswerOptions(options: AnswerOptionProps) {
 }
 
 function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptionProps) {
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog')
   const form = useFormContext<Question>()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -314,7 +326,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 registerProps={[`answers.${index}.correct` as const]}
                 inputType='checkbox'
                 register={register}
-                tooltipContent={`Answer marked as ${watch(`answers.${index}.correct` as const) ? 'correct' : 'wrong'}`}>
+                tooltipContent={watch(`answers.${index}.correct` as const) ? t('tooltips.choice_question_marked_correct') : t('tooltips.choice_question_marked_incorrect')}>
                 <Check className={twMerge('size-5 text-green-500 dark:text-green-500', !(watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
                 <X className={twMerge('size-5 text-red-400 dark:text-red-400/80', (watch(`answers.${index}`) as unknown as ChoiceQuestion['answers'][number]).correct && 'hidden')} />
               </CircleAnswer_IndicatorInput>
@@ -322,7 +334,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
                 form={form}
                 name={`answers.${index}.answer` as const}
                 containerClassname='flex-1'
-                placeholder={`Answer ${index + 1} -  to your question`}
+                placeholder={t('placeholders.choice_answer_option', { position: index + 1 })}
                 onKeyUp={debounceValidation}
                 showLabel={false}
               />
@@ -342,6 +354,8 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
 }
 
 function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<Question>['append']; type: 'choice-question' | DragDropQuestion['type']; watch: UseFormReturn<Question>['watch'] }) {
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.buttons')
+
   const generateNewAnswer = () => {
     switch (type) {
       case 'choice-question': {
@@ -359,22 +373,24 @@ function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<
   return (
     <button
       type='button'
-      aria-label='Add Answer'
+      aria-label={t('add_answer_label')}
       onClick={() => generateNewAnswer()}
       className='flex max-w-fit items-center gap-1 rounded-md py-1 text-neutral-700 hover:cursor-pointer dark:text-neutral-300/60'>
       <Plus className='size-4' />
-      Add Answer
+      {t('add_answer_label')}
     </button>
   )
 }
 
 function OpenQuestionAnswers() {
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.placeholders')
   const form = useFormContext()
 
-  return <Field form={form} name='expectation' id='expectation' placeholder='What answer are you looking expecting' showLabel={false} />
+  return <Field form={form} name='expectation' id='expectation' placeholder={t('open_question_expectation')} showLabel={false} />
 }
 
 function DragDropQuestionAnswers({ register, errors, control, watch, setValue }: AnswerOptionProps) {
+  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.tooltips')
   const form = useFormContext()
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -402,7 +418,7 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
                 value={index}
                 register={register}
                 inputType='hidden'
-                tooltipContent={`The correct position for this answer`}
+                tooltipContent={t('drag_drop_correct_position')}
                 registerProps={[`answers.${index}.position` as const, { valueAsNumber: true }]}>
                 <span className='field-sizing-content text-center outline-0'>{index + 1}</span>
               </CircleAnswer_IndicatorInput>
