@@ -48,7 +48,7 @@ function createQuestion({ question, points, ...rest }: Question) {
  */
 function verifyQuestionExistance(question: Question) {
   cy.get(`.question[data-question="${question.question}"]`).should('exist')
-  cy.get(`.question[data-question="${question.question}"]`).children('.header').contains(question.type).should('exist').and('be.visible')
+  cy.get(`.question[data-question="${question.question}"]`).find(`[data-question-type="${question.type}"]`).should('exist').and('be.visible')
 }
 type KeysOfUnion<T> = T extends T ? keyof T : never
 type VerifyEditMenuOptions = {
@@ -80,7 +80,7 @@ function verifyOpenCloseEditMenu(
 
   cy.get('#question-dialog input[name="question"]').should('have.value', question.question)
   cy.get('#question-dialog input[name="points"]').should('have.value', question.points)
-  cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
+  cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', question.type)
 
   if (validateProps.answers && (question.type === 'multiple-choice' || question.type === 'single-choice' || question.type === 'drag-drop')) {
     cy.get('#question-dialog #question-answers input[name$=".answer"]').should('have.length', question.answers.length)
@@ -246,7 +246,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             //* change question-type but don't save
             cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${compatible}"]`).click()
-            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', compatible)
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', compatible)
           },
           validateProps,
         })
@@ -261,7 +261,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
               cy.log(`Change back to original question type (${question.type})`)
               cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
               cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${question.type}"]`).click()
-              cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', question.type)
+              cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', question.type)
             },
             validateProps,
           },
@@ -295,7 +295,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
           //* change question-type but don't save
           cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
           cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragType}"]`).click()
-          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragType)
+          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', dragType)
         },
         validateProps,
       })
@@ -312,7 +312,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
           //* change question-type but don't save
           cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
           cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${choiceType}"]`).click()
-          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', choiceType)
+          cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', choiceType)
         },
         validateProps,
       })
@@ -328,7 +328,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             // change back to original question type
             cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${singleChoiceQuestion.type}"]`).click()
-            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', singleChoiceQuestion.type)
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', singleChoiceQuestion.type)
           },
           validateProps,
         },
@@ -341,7 +341,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             // change back to original question type
             cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${dragDropQuestion.type}"]`).click()
-            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', dragDropQuestion.type)
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', dragDropQuestion.type)
           },
           validateProps,
         },
@@ -393,7 +393,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
             //* change question-type but don't save
             cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
             cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${compatible}"]`).click()
-            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.text', compatible)
+            cy.get('#question-dialog button[data-slot="popover-trigger"][aria-label="popover-trigger-type"]').should('have.attr', 'data-selected-key', compatible)
           },
           validateProps,
         },

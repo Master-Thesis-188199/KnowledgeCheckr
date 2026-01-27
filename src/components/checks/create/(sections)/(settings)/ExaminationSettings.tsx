@@ -1,10 +1,13 @@
+import { format } from 'date-fns'
 import { useFormContext, useWatch } from 'react-hook-form'
 import Field from '@/src/components/Shared/form/Field'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typeof useRHF<typeof KnowledgeCheckSettingsSchema>>, 'baseFieldProps'>) {
+  const t = useScopedI18n('Checks.Create.SettingSection.ExaminationSettings')
   const {
     control,
     formState: { errors },
@@ -12,6 +15,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
 
   const { examination } = useWatch({ control })
   const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations } = examination!
+  const humanReadableTimeFrame = useHumanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)
 
   return (
     <div
@@ -19,7 +23,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
       <Field
         {...baseFieldProps}
         name='examination.enableExaminations'
-        label='Enable Examination Attempts'
+        label={t('enableExaminations_label')}
         labelClassname='mt-0.5'
         className='place-self-start'
         type='checkbox'
@@ -30,7 +34,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         {...baseFieldProps}
         disabled={!enableExaminations}
         name='examination.questionOrder'
-        label='Randomize Question Order'
+        label={t('questionOrder_label')}
         labelClassname='mt-0.5'
         className='place-self-start'
         type='checkbox'
@@ -41,7 +45,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         {...baseFieldProps}
         disabled={!enableExaminations}
         name='examination.answerOrder'
-        label='Randomize Answer Order'
+        label={t('answerOrder_label')}
         labelClassname='mt-0.5'
         className='place-self-start'
         type='checkbox'
@@ -65,9 +69,9 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         }}
         type='time'
         name='examination.examTimeFrameSeconds'
-        label='Examination Time Frame'
+        label={t('examTimeFrameSeconds_label')}
         list='time-values'>
-        <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)}</span>
+        <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableTimeFrame}</span>
       </Field>
 
       <datalist id='time-values'>
@@ -77,10 +81,34 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         <option value='01:30' label='90 minutes'></option>
       </datalist>
 
-      <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+      <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label={t('examinationAttemptCount_label')} type='number' min={0} />
 
-      <Field {...baseFieldProps} disabled={!enableExaminations} label='Start Date' name='examination.startDate' type='datetime-local' />
-      <Field {...baseFieldProps} disabled={!enableExaminations} label='End Date' name='examination.endDate' type='datetime-local' />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('startDate_label')}
+        modifyValue={(date) => {
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
+
+          return date
+        }}
+        name='examination.startDate'
+        type='datetime-local'
+      />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('endDate_label')}
+        modifyValue={(date) => {
+          if (date === null) return ''
+
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
+
+          return date
+        }}
+        name='examination.endDate'
+        type='datetime-local'
+      />
     </div>
   )
 }
@@ -91,15 +119,16 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
  * @param isErrorneous When set to true the function will return null
  * @returns A human readable string or nothing when `isErrorneous` is set to true or `seconds` is undefined.
  */
-function humanReadableDuration(seconds?: number, isErrorneous?: boolean) {
+function useHumanReadableDuration(seconds?: number, isErrorneous?: boolean) {
+  const t = useScopedI18n('Shared.Timestamp')
   if (isErrorneous || seconds === undefined) return null
 
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
 
   const segments: string[] = []
-  if (hours > 0) segments.push(`${hours} hour${hours > 1 ? 's' : ''}`)
-  if (minutes > 0) segments.push(`${minutes} minute${minutes > 1 ? 's' : ''}`)
+  if (hours > 0) segments.push(t('hour', { count: hours }))
+  if (minutes > 0) segments.push(t('minute', { count: minutes }))
 
-  return segments.join(' and ')
+  return segments.join(` ${t('join_word')} `)
 }

@@ -1,12 +1,158 @@
 //! Auto generated file, changes to this file will get replaced on next update
 export default {
+  Shared: {
+    navigation_button_next: 'Next',
+    navigation_button_previous: 'Previous',
+    Question: {
+      question_label: 'Question',
+      type_label: 'Question Type',
+      type: {
+        'multiple-choice': 'Multiple-Choice',
+        'single-choice': 'Single-Choice',
+        'open-question': 'Open-Question',
+        'drag-drop': 'Drag-Drop'
+      },
+      points_label: 'Points',
+      accessibility_label: 'Accessibility',
+      accessibility: {
+        all: 'Universal',
+        'practice-only': 'Practice Question',
+        'exam-only': 'Exam Question'
+      },
+      category_label: 'Category',
+      answers_label: 'Answers'
+    },
+    Timestamp: {
+      'hour#one': '{count} hour',
+      'hour#other': '{count} hours',
+      'minute#one': '{count} minute',
+      'minute#other': '{count} minutes',
+      join_word: 'and',
+      hour: '{count} hours',
+      minute: '{count} minutes'
+    }
+  },
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
   },
   Checks: {
     title: 'Your Checks',
     no_existing_checks: 'No checks found. Create a new one',
-    no_existing_checks_action_button: 'here'
+    no_existing_checks_action_button: 'here',
+    Create: {
+      GeneralSection: {
+        title: 'General Section',
+        name_label: 'Name',
+        name_placeholder: 'Science Fiction Check',
+        description_label: 'Description',
+        description_placeholder: 'Learn about science fiction',
+        difficulty_label: 'Difficulty',
+        openDate_label: 'Start Date',
+        closeDate_label: 'Deadline',
+        collaborators_label: 'Collaborators',
+        CollaboratorSelection: {
+          collaborators_placeholder: 'Add Collaborator(s)',
+          command_input_placeholder: 'Search users...',
+          command_loading_message: 'Loading more users',
+          command_empty_no_users: 'No matching users found.',
+          command_empty_min_input: 'You must provide at least 3 characters to find matches'
+        }
+      },
+      QuestionSection: {
+        title: 'Questions',
+        create_button: 'Create Question',
+        no_questions_info: 'Currently there are no questions associated to this quiz',
+        QuestionCard: {
+          'points#one': '{count} point',
+          'points#other': '{count} points',
+          points: '{count} points'
+        }
+      },
+      SettingSection: {
+        title: 'Settings',
+        tabs: {
+          sr_only_label: 'Select a tab',
+          general: 'General',
+          practice: 'Practice',
+          examination: 'Examination',
+          sharing: 'Sharing'
+        },
+        PracticeSettings: {
+          enablePracticing_label: 'Allow users to Practice',
+          allowedPracticeCount_label: 'Allowed Practice Attempt',
+          allowedPracticeCount_placeholder: 'Unlimited'
+        },
+        ExaminationSettings: {
+          enableExaminations_label: 'Enable Examination Attempts',
+          questionOrder_label: 'Randomize Question Order',
+          answerOrder_label: 'Randomize Answer Order',
+          examTimeFrameSeconds_label: 'Examination Time Frame',
+          examinationAttemptCount_label: 'Examination Attempt Count',
+          startDate_label: 'Start Date',
+          endDate_label: 'End Date'
+        }
+      },
+      OverviewSection: {
+        title: 'Preview Changes',
+        description: 'Here is a brief overview of what changes were made'
+      },
+      MultiStages: {
+        'basic-information': 'Basic Information',
+        questions: 'Questions',
+        settings: 'Settings',
+        conclusion: 'Conclusion'
+      },
+      CreateQuestionDialog: {
+        Header: {
+          title_create: 'Create Question',
+          description_create: 'Create your new question for your KnowledgeCheck',
+          title_edit: 'Edit Question',
+          description_edit: 'Edit your existing question of your KnowledgeCheck'
+        },
+        placeholders: {
+          question: 'Formulate your question here',
+          choice_answer_option: 'Answer {position} - to your question',
+          open_question_expectation: 'What answer are you expecting'
+        },
+        tooltips: {
+          choice_question_marked_correct: 'Answer marked as correct',
+          choice_question_marked_incorrect: 'Answer marked as wrong',
+          drag_drop_correct_position: 'The correct position for this answer'
+        },
+        buttons: {
+          cancel_button_label: 'Cancel',
+          add_submit_button_label: 'Add Question',
+          update_submit_button_label: 'Update Question',
+          add_answer_label: 'Add Answer'
+        }
+      },
+      UnsavedChangesAlert: {
+        title: 'You have unsaved changes. Discard?',
+        description: 'By leaving the page now the change you have made will be permanently lost.',
+        dismissLabel: 'Continue Editing',
+        continueLabel: 'Proceed without saving'
+      }
+    },
+    Discover: {
+      title: 'Explore new Checks',
+      no_checks_found_base: 'No checks found. Create your own KnowledgeCheck',
+      no_checks_found_link: 'here',
+      FilterFields: {
+        filter_operand_menu_label: 'Filter Operands',
+        create_check_button_label: 'Create your own Check',
+        filter_input_placeholder: 'Filter by name',
+        tooltips: {
+          filter_case_sensitive: 'Filter is case-sensitive',
+          filter_case_ignored: 'Filter is ignored word casing'
+        },
+        operands: {
+          contains_filter_operand: 'contains',
+          startsWith_filter_operand: 'startsWith',
+          endsWith_filter_operand: 'endsWith',
+          eq_filter_operand: 'Equals'
+        }
+      }
+    }
   },
   Examination: {
     attempt_not_possible: {
@@ -21,6 +167,77 @@ export default {
       title: 'Practicing not allowed',
       disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
       toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.'
+    }
+  },
+  Components: {
+    KnowledgeCheckCard: {
+      last_modified_label: 'last modified',
+      Statistics: {
+        questions_label: 'Questions',
+        estimatedTime_label: 'estimatedTime',
+        points_label: 'Points'
+      }
+    },
+    ShareKnowledgeCheckButton: {
+      tooltip_message: 'Share this KnowledgeCheck',
+      tooltip_empty_message: 'This check has no questions, cannot be shared at this moment.',
+      successfully_copied_toast_message: 'Successfully saved token to your clipboard.',
+      failed_copy_toast_message: 'Failed to copy share link to the clipboard.'
+    },
+    KnowledgeCheckCardMenu: {
+      menu_label: 'Actions',
+      copy_practice: {
+        label: 'Copy Practice Link',
+        toast_success: 'Successfully saved practice url to clipboard.',
+        toast_failure: 'Failed to copy practice link to clipboard.'
+      },
+      start_practice: {
+        label: 'Start Practicing',
+        tooltip: 'This check has no questions, practice disabled.',
+        toast: 'Unable to start Practice'
+      },
+      copy_examination: {
+        label: 'Copy Examination Link',
+        toast_success: 'Successfully saved exam url to clipboard.',
+        toast_failure: 'Failed to copy exam link to clipboard.'
+      },
+      start_examination: {
+        label: 'Start Examination',
+        tooltip: 'This check has no questions, examination disabled.',
+        toast: 'Unable to start Practice'
+      },
+      edit_check: {
+        label: 'Edit KnowledgeCheck',
+        tooltip: 'You are not allowed to edit this check!'
+      },
+      clone_check: {
+        label: 'Clone KnowledgeCheck'
+      },
+      inspect_statistics: {
+        label: 'Inspect Statistics'
+      },
+      remove_share_token: {
+        tooltip: 'There is no share token associated to this check!',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.',
+        toast_deletion_successful: 'Successfully deleted share token',
+        toast_deletion_failure: 'Removing share token was unsuccessful!'
+      },
+      delete_knowledgeCheck: {
+        label: 'Delete KnowledgeCheck',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.',
+        toast_deletion_successful: 'Successfully deleted knowledgeCheck',
+        toast_deletion_failure: 'Removing knowledgeCheck was unsuccessful!'
+      },
+      Shared: {
+        tooltip_not_allowed: 'You are not allowed to perform this action!',
+        toast_deletion_not_found: 'Deletion was unsuccesful, check not found!'
+      }
+    },
+    ConfirmationDialog: {
+      default_title: 'Are you absolutely sure?',
+      default_body: 'This action cannot be undone. This will permanently delete this element from your account and remove its data from our servers.',
+      default_cancel_label: 'Cancel',
+      default_confirm_label: 'Continue'
     }
   }
 } as const
