@@ -37,6 +37,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
       <button
         disabled={isEmpty}
         aria-label={t('tooltip_message')}
+        data-share-button
         onClick={(e) => {
           e.preventDefault()
 
