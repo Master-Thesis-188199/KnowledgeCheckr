@@ -84,7 +84,9 @@ function RenderCreatedQuestions({ show }: { show: boolean }) {
                 <Folder className='size-3' />
                 <span className='lowercase'>{question.category}</span>
               </div>
-              <span className='text-neutral-500 lowercase dark:text-neutral-400'>{tQuestion(`type.${question.type}`)}</span>
+              <span data-question-type={question.type} className='text-neutral-500 lowercase dark:text-neutral-400'>
+                {tQuestion(`type.${question.type}`)}
+              </span>
             </div>
           </div>
           <CreateQuestionDialog initialValues={question}>

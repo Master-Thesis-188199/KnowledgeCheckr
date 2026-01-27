@@ -130,6 +130,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-label={`popover-trigger-${name}`}
           role='combobox'
           aria-expanded={state.open}
+          data-selected-key={state.value}
           disabled={isLoading || disabled}
           className={cn(
             'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize placeholder:text-[15px] hover:cursor-pointer',
