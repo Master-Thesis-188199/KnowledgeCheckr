@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { useFormContext, useWatch } from 'react-hook-form'
 import Field from '@/src/components/Shared/form/Field'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
@@ -82,8 +83,32 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
 
       <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label={t('examinationAttemptCount_label')} type='number' min={0} />
 
-      <Field {...baseFieldProps} disabled={!enableExaminations} label={t('startDate_label')} name='examination.startDate' type='datetime-local' />
-      <Field {...baseFieldProps} disabled={!enableExaminations} label={t('endDate_label')} name='examination.endDate' type='datetime-local' />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('startDate_label')}
+        modifyValue={(date) => {
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
+
+          return date
+        }}
+        name='examination.startDate'
+        type='datetime-local'
+      />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('endDate_label')}
+        modifyValue={(date) => {
+          if (date === null) return ''
+
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
+
+          return date
+        }}
+        name='examination.endDate'
+        type='datetime-local'
+      />
     </div>
   )
 }
