@@ -6,7 +6,7 @@ import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/Knowled
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
@@ -48,10 +48,11 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
 
 function Footer({ updatedAt }: { updatedAt?: Date }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const currentLocale = useCurrentLocale()
   return (
     <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
       <div>
-        {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString('de', { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
+        {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
     </div>
   )
