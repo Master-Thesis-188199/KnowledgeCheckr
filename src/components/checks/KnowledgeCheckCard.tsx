@@ -7,10 +7,20 @@ import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledg
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
+import { useSession } from '@/src/lib/auth/client'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const { data } = useSession()
+  const userId = data?.user.id
+  const isCollaborator = userId ? check.collaborators.includes(userId) : false
+  const isOwner = userId ? check.owner_id === userId : false
+
+  let role = 'Guest'
+  if (isOwner) role = 'Owner'
+  else if (isCollaborator) role = 'Collaborator'
+
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
@@ -20,9 +30,12 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
-      <div className='absolute top-3 right-4 flex gap-1'>
-        <ShareKnowledgeCheckButton check={check} />
-        <KnowledgeCheckMenu {...check} />
+      <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
+        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
+        <div className='flex gap-1'>
+          <ShareKnowledgeCheckButton check={check} />
+          <KnowledgeCheckMenu {...check} />
+        </div>
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
         <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />
