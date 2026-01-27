@@ -58,3 +58,6 @@ next-env.d.ts
 # Log Files
 logs/*.json
 logs/*.log
+
+
+src/**/locales_i18n_ally

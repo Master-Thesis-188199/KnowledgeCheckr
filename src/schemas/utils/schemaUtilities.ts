@@ -9,18 +9,18 @@ import { stripZodDefault } from '@/schemas/utils/stripZodDefaultValues'
  * @returns An object containing utility functions: getDummy, validate and safeParse based on the given schema
  * @internal
  */
-export function schemaUtilities<Type>(schema: z.ZodTypeAny) {
+export function schemaUtilities<Schema extends z.ZodTypeAny>(schema: Schema) {
   /**
    * Validates a given object against a given schema. Throws an error if the object is invalid
    * @param object - The object to be validated
    */
-  const validate = (object: any): Type | never => stripZodDefault(schema).parse(object) as Type
+  const validate = (object: any): z.infer<Schema> | never => stripZodDefault(schema).parse(object)
 
   /**
    * Returns a dummy object based on a given schema
    * @param options - Defines how optional properties should be handled in terms of their instantiation (undefined / value)
    */
-  function instantiate(options?: SchemaOptionalProps): Type {
+  function instantiate(options?: SchemaOptionalProps): z.infer<Schema> {
     return schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options)
   }
 
@@ -28,7 +28,8 @@ export function schemaUtilities<Type>(schema: z.ZodTypeAny) {
    * Safely parses an object against its schema and returns the result of the zod.safeParse method
    * @param object - The object to be parsed / validated
    */
-  const safeParse = (object: any): z.SafeParseReturnType<any, Type> => stripZodDefault(schema).safeParse(object) as SafeParseReturnType<any, Type>
+  const safeParse = (object: any): z.SafeParseReturnType<any, z.infer<Schema>> => stripZodDefault(schema).safeParse(object) as SafeParseReturnType<any, z.infer<Schema>>
+
   return {
     instantiate,
     validate,

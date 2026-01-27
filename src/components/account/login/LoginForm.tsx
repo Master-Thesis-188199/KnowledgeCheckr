@@ -12,9 +12,11 @@ export default function LoginForm({ callbackUrl, refererCallbackUrl }: { callbac
       currentMode='login'
       formAction={loginAction}
       formProps={{
-        defaultValues: {
+        defaultValues: (stateValues, instantiations) => ({
+          ...instantiations,
           callbackURL: callbackUrl,
-        },
+          ...stateValues,
+        }),
       }}
       refererCallbackUrl={refererCallbackUrl}
       renderFields={({ form }) => (

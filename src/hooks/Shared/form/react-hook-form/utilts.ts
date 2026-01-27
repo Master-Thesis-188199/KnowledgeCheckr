@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { DefaultValues, UseFormReturn } from 'react-hook-form'
+import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
-import { RHFBaseReturn, RHFServerAction, RHFServerState, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
+import { RHFBaseReturn, RHFServerAction, RHFServerState, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 
 export function isServerAction<TSchema extends z.ZodSchema>(action: UseRHFOptions<TSchema>['serverAction'] | undefined): action is RHFServerAction<TSchema> {
@@ -10,13 +10,6 @@ export function isServerAction<TSchema extends z.ZodSchema>(action: UseRHFOption
 
 export function createNoopServerAction<TSchema extends z.ZodSchema>(): RHFServerAction<TSchema> {
   return async (prev) => prev
-}
-
-export function buildDefaultValues<TSchema extends z.ZodSchema>(serverState: RHFServerState<TSchema>, formProps?: UseRHFFormProps<TSchema>): DefaultValues<z.infer<TSchema>> {
-  return {
-    ...(serverState.values ?? ({} as DefaultValues<z.infer<TSchema>>)),
-    ...(formProps?.defaultValues ?? {}),
-  } as DefaultValues<z.infer<TSchema>>
 }
 
 export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn<z.infer<TSchema>>, descriptions: ReturnType<typeof extractDescriptionMap>): RHFBaseReturn<TSchema> {
@@ -37,7 +30,7 @@ export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn
 export function useServerValidationResults<TSchema extends z.ZodSchema>(
   hasServerValidation: boolean,
   state: RHFServerState<TSchema>,
-  { setError, reset }: {} & Pick<UseFormReturn<z.infer<TSchema>>, 'reset' | 'setError'>,
+  { setError, clearErrors }: {} & Pick<UseFormReturn<z.infer<TSchema>>, 'setError' | 'clearErrors'>,
 ) {
   useEffect(() => {
     if (!hasServerValidation) return
@@ -61,6 +54,6 @@ export function useServerValidationResults<TSchema extends z.ZodSchema>(
   useEffect(() => {
     if (!hasServerValidation) return
 
-    if (state.success) reset()
-  }, [state.success, reset, hasServerValidation])
+    if (state.success) clearErrors()
+  }, [state.success, clearErrors, hasServerValidation])
 }

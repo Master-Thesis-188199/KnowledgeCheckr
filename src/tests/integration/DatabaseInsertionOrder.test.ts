@@ -46,7 +46,7 @@ describe('Validate the order of inserted database elements', () => {
     )
   })
 
-  it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['questionOrder']>)(
+  it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['examination']['questionOrder']>)(
     "Ensure that `prepareExaminationCheck` shuffled questions & answers do/don't match input order based on order-settings",
     async (order) => {
       const check: KnowledgeCheck = {
@@ -60,8 +60,8 @@ describe('Validate the order of inserted database elements', () => {
         ],
       }
 
-      check.settings.questionOrder = order
-      check.settings.answerOrder = order
+      check.settings.examination.questionOrder = order
+      check.settings.examination.answerOrder = order
 
       for (let i = 0; i < 10; i++) {
         const preparedCheck = await prepareExaminationCheck(check)

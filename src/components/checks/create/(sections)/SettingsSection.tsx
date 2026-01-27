@@ -3,6 +3,7 @@
 import { UsersIcon } from '@heroicons/react/24/outline'
 import { EyeIcon, GraduationCapIcon, PlayIcon } from 'lucide-react'
 import { useWatch } from 'react-hook-form'
+import { ExaminationSettings } from '@/src/components/checks/create/(sections)/(settings)/ExaminationSettings'
 import { InputGroup } from '@/src/components/checks/create/(sections)/GeneralSection'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
@@ -28,16 +29,11 @@ export default function SettingsSection() {
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSettingsSchema, {
     mode: 'all',
     delayError: 100,
-    defaultValues: settings,
+    defaultValues: () => settings,
   })
 
-  const {
-    control,
-    getValues,
-    formState: { errors },
-  } = form
-
-  const { examTimeFrameSeconds, questionOrder, answerOrder } = useWatch({ control })
+  const { getValues } = form
+  const { practice } = useWatch({ control: form.control })
 
   return (
     <Form {...form}>
@@ -69,33 +65,9 @@ export default function SettingsSection() {
           </div>
 
           <TabsContentPanel tab='general'>
-            <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'>
-              <Field
-                {...baseFieldProps}
-                name='questionOrder'
-                label='Randomize Question Order'
-                labelClassname='mt-0.5'
-                className='place-self-start'
-                type='checkbox'
-                onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-                checked={questionOrder === 'random'}
-              />
-              <Field
-                {...baseFieldProps}
-                name='answerOrder'
-                label='Randomize Answer Order'
-                labelClassname='mt-0.5'
-                className='place-self-start'
-                type='checkbox'
-                onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-                checked={answerOrder === 'random'}
-              />
-            </div>
+            <div className='grid grid-cols-[auto_1fr] gap-4 gap-x-7'></div>
           </TabsContentPanel>
           <TabsContentPanel tab='practice'>
-            <TemporarySettingsOptions />
-          </TabsContentPanel>
-          <TabsContentPanel tab='examination'>
             <div
               className={cn(
                 'grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0',
@@ -103,33 +75,29 @@ export default function SettingsSection() {
               )}>
               <Field
                 {...baseFieldProps}
-                onChange={({ value }) =>
-                  value
-                    .split(':')
-                    .map((el, i) => parseInt(el) * (i === 0 ? 3600 : 60))
-                    .reduce((a, b) => a + b, 0)
-                }
-                modifyValue={(value: number) => {
-                  const hours = Math.floor(value / 3600)
-                  const minutes = Math.floor((value % 3600) / 60)
-                  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` // --> HH:mm format
-                }}
-                type='time'
-                name='examTimeFrameSeconds'
-                label='Examination Time Frame'
-                list='time-values'>
-                <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableDuration(examTimeFrameSeconds, !!errors.examTimeFrameSeconds)}</span>
-              </Field>
+                name='practice.enablePracticing'
+                label='Allow users to Practice'
+                labelClassname='mt-0.5'
+                className='place-self-start'
+                type='checkbox'
+                checked={practice?.enablePracticing}
+              />
 
-              <datalist id='time-values'>
-                <option value='00:30' label='30 minutes'></option>
-                <option value='00:45' label='45 minutes'></option>
-                <option value='01:00' label='60 minutes'></option>
-                <option value='01:30' label='90 minutes'></option>
-              </datalist>
-
-              <Field {...baseFieldProps} name='examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+              <Field
+                {...baseFieldProps}
+                disabled={!practice?.enablePracticing}
+                name='practice.allowedPracticeCount'
+                label='Allowed Practice Attempts'
+                type='number'
+                placeholder='Unlimited'
+                onChange={({ valueAsNumber: value }) => (value === 0 ? null : value)}
+                modifyValue={(val) => (val === null || val === 0 ? '' : val)}
+                min={0}
+              />
             </div>
+          </TabsContentPanel>
+          <TabsContentPanel tab='examination'>
+            <ExaminationSettings baseFieldProps={baseFieldProps} />
           </TabsContentPanel>
           <TabsContentPanel tab='sharing'>
             <TemporarySettingsOptions />
@@ -138,25 +106,6 @@ export default function SettingsSection() {
       </Card>
     </Form>
   )
-}
-
-/**
- * Produces a human readable time format based on the provided seconds, e.g. 1 minute, 1 hour and 2 minutes, ...
- * @param seconds The seconds to transform into a human readable string
- * @param isErrorneous When set to true the function will return null
- * @returns A human readable string or nothing when `isErrorneous` is set to true or `seconds` is undefined.
- */
-function humanReadableDuration(seconds?: number, isErrorneous?: boolean) {
-  if (isErrorneous || seconds === undefined) return null
-
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-
-  const segments: string[] = []
-  if (hours > 0) segments.push(`${hours} hour${hours > 1 ? 's' : ''}`)
-  if (minutes > 0) segments.push(`${minutes} minute${minutes > 1 ? 's' : ''}`)
-
-  return segments.join(' and ')
 }
 
 function TemporarySettingsOptions() {

@@ -30,6 +30,7 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
   return (
     <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
       <MultiStageStoreProvider
+        cacheOptions={{ cacheKey: 'create-check-stages' }}
         initialStoreProps={{
           stages: [
             { stage: 1, title: 'Basic Information' },

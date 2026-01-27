@@ -154,17 +154,35 @@ export const db_knowledgeCheckSettings = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.questionOrder._def.defaultValue()),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.answerOrder._def.defaultValue()),
-    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examTimeFrameSeconds._def.defaultValue()),
-    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examinationAttemptCount._def.defaultValue()),
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.questionOrder._def.defaultValue()),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.answerOrder._def.defaultValue()),
+    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examTimeFrameSeconds._def.defaultValue()),
+    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examinationAttemptCount._def.defaultValue()),
     shareAccessibility: int()
       .notNull()
       .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
+
+    // -----
+    enableExaminations: int()
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
+    startDate: datetime({ mode: 'string' })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .$default(() => formatDatetime(new Date(Date.now()))),
+    endDate: datetime({ mode: 'string' }),
+
+    //* Practice settings
+
+    enablePracticing: int()
+      .notNull()
+      .default(KnowledgeCheckSettingsSchema.shape.practice.shape.enablePracticing._def.defaultValue() ? 1 : 0),
+
+    allowedPracticeCount: int().default(sql`NULL`),
   },
   (table) => [
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),

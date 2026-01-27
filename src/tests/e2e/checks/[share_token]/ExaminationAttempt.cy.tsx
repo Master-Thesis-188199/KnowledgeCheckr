@@ -9,7 +9,7 @@ describe('ExaminationAttempt Suite: ', () => {
 
   it('Verify that attempt is automatically closed when time-frame is reached', () => {
     const check = instantiateKnowledgeCheck()
-    check.settings.examTimeFrameSeconds = 60
+    check.settings.examination.examTimeFrameSeconds = 60
     check.share_key = generateToken(8) + '-time-frame'
 
     cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
@@ -20,9 +20,9 @@ describe('ExaminationAttempt Suite: ', () => {
     cy.intercept('POST', `/checks/${check.share_key}`).as('finishAttemptAction')
 
     cy.wait(2000)
-    cy.clock(addSeconds(new Date(Date.now()), check.settings.examTimeFrameSeconds * 2), ['Date'])
+    cy.clock(addSeconds(new Date(Date.now()), check.settings.examination.examTimeFrameSeconds * 2), ['Date'])
 
-    cy.wait('@finishAttemptAction', { timeout: check.settings.examTimeFrameSeconds * 1000 })
+    cy.wait('@finishAttemptAction', { timeout: check.settings.examination.examTimeFrameSeconds * 1000 })
       .its('response.statusCode')
       .should('eq', 200)
     cy.url().should('eq', `${Cypress.env('NEXT_PUBLIC_BASE_URL')}/checks`)

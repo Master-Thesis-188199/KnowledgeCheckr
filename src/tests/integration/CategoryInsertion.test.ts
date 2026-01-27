@@ -4,7 +4,7 @@ import getDatabase from '@/database/Database'
 import { db_user } from '@/database/drizzle/schema'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
-import { getUUID } from '@/src/lib/Shared/getUUID'
+import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { instantiateMultipleChoice, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
@@ -27,7 +27,7 @@ describe('Category Insertion / Retrieval Suite: ', () => {
     dummyCheck.questionCategories = []
     dummyCheck.questions = []
     for (const category of categories) {
-      dummyCheck.questionCategories.push({ id: getUUID(), name: category, skipOnMissingPrequisite: false, prequisiteCategoryId: undefined })
+      dummyCheck.questionCategories.push({ ...instantiateCategory(), name: category })
       dummyCheck.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
     }
 

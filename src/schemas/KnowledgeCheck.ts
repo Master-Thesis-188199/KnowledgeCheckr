@@ -35,7 +35,7 @@ export const KnowledgeCheckSchema = z
     questionCategories: z
       .array(CategorySchema)
       .optional()
-      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false }]),
+      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
 
     share_key: z.string().nullable().default(null),
 
@@ -88,5 +88,5 @@ export const KnowledgeCheckSchema = z
 
 export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
 
-const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities<KnowledgeCheck>(KnowledgeCheckSchema)
+const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema)
 export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }

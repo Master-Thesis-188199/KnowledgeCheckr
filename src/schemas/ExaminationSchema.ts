@@ -29,5 +29,5 @@ export const ExaminationSchema = z.object({
 
 export type ExaminationSchema = z.infer<typeof ExaminationSchema>
 
-const { validate: validateExaminationSchema, instantiate: instantiateExaminationSchema, safeParse: safeParseExaminationSchema } = schemaUtilities<ExaminationSchema>(ExaminationSchema)
+const { validate: validateExaminationSchema, instantiate: instantiateExaminationSchema, safeParse: safeParseExaminationSchema } = schemaUtilities(ExaminationSchema)
 export { instantiateExaminationSchema, safeParseExaminationSchema, validateExaminationSchema }

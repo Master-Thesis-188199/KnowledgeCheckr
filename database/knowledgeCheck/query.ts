@@ -1,10 +1,11 @@
 import { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
+import { convertSettings } from '@/database/knowledgeCheck/settings/transform'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
 import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings, safeParseKnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
@@ -76,10 +77,8 @@ function parseCheck({ questions, knowledgeCheckSettings: settings, categories, u
     collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
     questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
-      id: c.id,
-      name: c.name,
+      ...c,
       skipOnMissingPrequisite: false,
-      prequisiteCategoryId: c.prequisiteCategoryId ?? undefined,
     })),
     settings: parseSetting(settings),
   })
@@ -132,8 +131,5 @@ function parseAnswers(
 }
 
 function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): KnowledgeCheckSettings {
-  const result = safeParseKnowledgeCheckSettings(setting)
-  if (result.error && setting !== null) console.error('Failed to parse existing setting', setting, 'because of', result.error)
-
-  return result.data ?? instantiateKnowledgeCheckSettings()
+  return convertSettings('from-database', setting) ?? instantiateKnowledgeCheckSettings()
 }

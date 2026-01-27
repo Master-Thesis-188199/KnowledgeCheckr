@@ -5,13 +5,19 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Fragment } from 'react/jsx-runtime'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/src/components/shadcn/breadcrumb'
+import { useCurrentLocale } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
 export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
   const [breadcrumbExists, setBreadcrumbExists] = useState(false)
+  const locale = useCurrentLocale()
   const pathname = usePathname()
   const pages = pathname.split('?').at(0)!.split('/')!
   pages?.shift()
+
+  // do not render the locale as a breadcrumb
+  if (pages.includes(locale) && pages.indexOf(locale) === 0) pages.shift()
+
   const isCurrentPage = (index: number) => pages.length - 1 === index
 
   useEffect(() => {

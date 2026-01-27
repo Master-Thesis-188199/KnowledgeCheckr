@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { PracticeNavigationNextButton, PracticeNavigationPreviousButton } from '@/src/components/checks/[share_token]/practice/NavigationButtons'
 import { PracticeBreadcrumbs } from '@/src/components/checks/[share_token]/practice/PracticeBreadcrumbs'
@@ -21,6 +21,8 @@ export default async function PracticePage({ params, searchParams }: { params: P
   if (!check) {
     notFound()
   }
+
+  if (!check.settings.practice.enablePracticing) redirect(`/checks/${share_token}/practice/not-allowed`, RedirectType.replace)
 
   const unfilteredQuestions = check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
@@ -54,7 +56,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
         <RenderPracticeQuestion />
 
-        <div className='flex justify-between'>
+        <div className={cn('flex justify-between', practiceQuestions.length <= 1 && 'hidden')}>
           <PracticeNavigationPreviousButton />
           <PracticeNavigationNextButton />
         </div>

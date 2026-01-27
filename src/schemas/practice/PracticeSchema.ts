@@ -43,5 +43,5 @@ export const PracticeSchema = z.intersection(baseSchema, answerOptionsSchema)
 
 export type PracticeData = z.infer<typeof PracticeSchema>
 
-const { validate: validatePracticeData, instantiate: instantiatePracticeData, safeParse: safeParsePracticeData } = schemaUtilities<PracticeData>(PracticeSchema)
+const { validate: validatePracticeData, instantiate: instantiatePracticeData, safeParse: safeParsePracticeData } = schemaUtilities(PracticeSchema)
 export { instantiatePracticeData, safeParsePracticeData, validatePracticeData }

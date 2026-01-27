@@ -47,7 +47,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
                 })
             }
             start={startedAt}
-            duration={knowledgeCheck.settings.examTimeFrameSeconds}
+            duration={knowledgeCheck.settings.examination.examTimeFrameSeconds}
           />{' '}
           left
         </span>

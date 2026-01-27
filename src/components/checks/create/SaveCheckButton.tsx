@@ -27,6 +27,11 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
         const key = cacheKey ?? 'check-store'
         const hasCache = !!sessionStorage.getItem(key)
 
+        const stagesKey = 'create-check-stages'
+        const hasCachedStage = !!sessionStorage.getItem(stagesKey)
+
+        if (hasCachedStage) sessionStorage.removeItem(stagesKey)
+
         if (hasCache) {
           sessionStorage.removeItem(key)
         } else {

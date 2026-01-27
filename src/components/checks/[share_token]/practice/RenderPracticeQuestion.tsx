@@ -1,14 +1,12 @@
 'use client'
 
-import { useActionState, useEffect, useTransition } from 'react'
+import { useEffect } from 'react'
 import React, { HTMLProps } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, Variants } from 'framer-motion'
 import isEmpty from 'lodash/isEmpty'
 import { LoaderCircleIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { z } from 'zod'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
@@ -18,6 +16,7 @@ import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
+import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
@@ -29,8 +28,6 @@ export function RenderPracticeQuestion() {
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
-  const nextRandomQuestion = () => navigateToQuestion((currentQuestionIndex + 1) % questions.length)
-
   const question = questions.at(currentQuestionIndex)
 
   if (questions.length === 0 && unfilteredQuestions.length > 0) {
@@ -40,56 +37,48 @@ export function RenderPracticeQuestion() {
     notFound()
   }
 
-  const [state, formAction] = useActionState(EvaluateAnswer, { success: false })
-  const [isPending, start] = useTransition()
-
   const {
-    register,
-    reset,
-    handleSubmit,
-    setError,
-    setValue,
-    trigger,
-    watch,
-    getValues,
-    formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
-  } = useForm({
-    resolver: zodResolver<PracticeData>(PracticeSchema),
-    defaultValues: {
-      question_id: state.values?.question_id ?? question.id,
-      type: state.values?.type ?? question.type,
+    form: {
+      register,
+      reset,
+      handleSubmit,
+      setValue,
+      trigger,
+      watch,
+      getValues,
+      formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
     },
-  })
+    isServerValidationPending: isPending,
+    state,
+    runServerValidation,
+  } = useRHF(
+    PracticeSchema,
+    {
+      defaultValues: () => ({ question_id: question.id, type: question.type }),
+    },
+    { serverAction: EvaluateAnswer, initialActionState: { success: false } },
+  )
+
+  const nextRandomQuestion = () =>
+    questions.length > 1
+      ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
+      : // allow the same (only) question to be answered again and again.
+        reset()
 
   useEffect(() => {
     if (!isSubmitSuccessful) return
     if (isPending) return
     if (isSubmitting) return
 
+    console.info(question.question, ' has been answered & submitted')
     storeAnswer({ questionId: question.id, ...getValues() })
   }, [isSubmitSuccessful, isPending, isSubmitting])
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
   const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending
 
-  //* Apply server-side validation errors (if any) - so that they show up in the form
-  useEffect(() => {
-    if (state.fieldErrors) {
-      Object.entries(state.fieldErrors).forEach(([key, msgs]) => {
-        if (msgs?.length) {
-          setError(key as keyof PracticeData, { type: 'server', message: msgs[0] })
-        }
-      })
-    }
-
-    if (state.rootError) {
-      setError('root', { type: 'server', message: state.rootError })
-    }
-  }, [state.fieldErrors, state.rootError, setError])
-
   //* Handle reseting form inputs when question changes
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/incompatible-library
     if (watch('type') === question.type && watch('question_id') === question.id) return
     else {
       //* When the question is changed reset the form (and set the new question id and type)
@@ -98,27 +87,20 @@ export function RenderPracticeQuestion() {
     }
   }, [question.id, question.type])
 
-  const onSubmit = (_data: z.infer<typeof PracticeSchema>, e?: React.BaseSyntheticEvent) => {
+  const onSubmit = (_data: z.infer<typeof PracticeSchema>) => {
     logger.verbose('Submitting practice answer...', _data)
-    start(() => {
-      formAction(_data)
-    })
+    runServerValidation(_data)
   }
 
   useEffect(() => {
     const sub = watch((values, { name }) => {
-      console.log(`[${name ?? 'Form-State (validation)'}] changed`, values)
+      console.debug(`[${name ?? 'Form-State (validation)'}] changed`, values)
     })
 
     return () => sub.unsubscribe()
   })
 
   if (!isEmpty(errors)) console.log('error', errors)
-  if (isSubmitted && isSubmitSuccessful && !isPending) {
-    console.log('Question has been answered...')
-
-    console.log(state)
-  }
 
   return (
     <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
@@ -284,11 +266,13 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           'has-enabled:has-checked:ring-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
-          isCorrectlySelected(a) &&
+          isEvaluated &&
+            isCorrectlySelected(a) &&
             'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
-          isFalslySelected(a) &&
+          isEvaluated &&
+            isFalslySelected(a) &&
             'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
-          isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+          isEvaluated && isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
         )}
         title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
         htmlFor={a.id}>

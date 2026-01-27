@@ -1,6 +1,5 @@
 import 'server-only'
 import 'winston-daily-rotate-file'
-import 'node-json-color-stringify'
 import winston, { Logger as WinstonLogger } from 'winston'
 import { formatLogMessage } from '@/src/lib/log/FormatLogMessage'
 import { createProductionFileTransports } from '@/src/lib/log/ProductionTransports'
@@ -40,9 +39,7 @@ const logger = winston.createLogger({
       level: 'debug',
       format: winston.format.combine(
         winston.format.colorize({ level: true }),
-        winston.format.printf(({ level, message, timestamp, context, ...rest }) =>
-          formatLogMessage({ show: { context: true, args: true, colorizeArgs: env.NEXT_PUBLIC_MODE === 'development' }, values: { level, message, timestamp, context, ...rest } }),
-        ),
+        winston.format.printf(({ level, message, timestamp, context, ...rest }) => formatLogMessage({ show: { context: true, args: true }, values: { level, message, timestamp, context, ...rest } })),
       ),
     }),
     ...createProductionFileTransports({ create: env.ENABLE_FILE_LOGGING }),

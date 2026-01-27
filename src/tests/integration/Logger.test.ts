@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
+import util from 'node:util'
 import logger from '@/src/lib/log/Logger'
 
 const DEBUG_LOGS = false
@@ -46,7 +47,14 @@ describe('Ensure logger input / output mimics console.log: ', () => {
     const message = 'Created new object'
     const arg = { some: 'object' }
 
-    console.log(message, JSON.stringify(arg, null, 2))
+    console.log(
+      message,
+      util.inspect(arg, {
+        colors: false,
+        depth: null,
+        compact: false,
+      }),
+    )
     logger.info(message, arg)
 
     const capturedConsoleOutput = writeSpy.mock.calls[0][0]
