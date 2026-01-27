@@ -31,7 +31,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
+        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
