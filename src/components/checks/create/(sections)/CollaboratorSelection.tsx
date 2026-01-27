@@ -28,6 +28,10 @@ export default function CollaboratorSelection() {
   const [shownUsers, setShownUsers] = useState<CollaboratorItem[]>([])
 
   useEffect(() => {
+    // no changes...
+    if (selectedCollaborators.map((c) => c.id).every((id) => collaboratorIds.includes(id))) return
+
+    console.log('updating store with collaborators...')
     updateCollaborators(selectedCollaborators.map((c) => c.id))
   }, [selectedCollaborators, updateCollaborators])
 
