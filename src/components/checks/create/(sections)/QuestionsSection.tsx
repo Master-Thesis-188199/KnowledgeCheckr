@@ -92,6 +92,7 @@ function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: 
           </div>
           <CreateQuestionDialog initialValues={question}>
             <Button
+              aria-label='Edit question'
               size='icon'
               variant='base'
               type='button'
