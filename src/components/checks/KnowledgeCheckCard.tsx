@@ -31,12 +31,8 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
-      <div className='absolute top-0 left-0 opacity-75'>
-        {/* eslint-disable-next-line react-hooks/purity */}
-        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={+(Math.random() * 100).toFixed(0)} />
-      </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <div className='flex-1' />
+        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
@@ -68,8 +64,12 @@ function Footer({ updatedAt }: { updatedAt?: Date }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
   return (
-    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
-      <div>
+    <div className='relative -mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
+      <div className='absolute top-0.5 left-2'>
+        {/* eslint-disable-next-line react-hooks/purity */}
+        <DegradingScoreIndicator knowledgeCheckScore={+(Math.random() * 100).toFixed(0)} />
+      </div>
+      <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
     </div>
