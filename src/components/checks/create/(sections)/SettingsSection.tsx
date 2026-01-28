@@ -8,12 +8,13 @@ import PracticeSettings from '@/src/components/checks/create/(sections)/(setting
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
+import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export default function SettingsSection() {
+export default function SettingsSection({ jumpBackButtons }: { jumpBackButtons?: boolean }) {
   const { updateSettings, settings } = useCheckStore((state) => state)
   const t = useScopedI18n('Checks.Create.SettingSection')
 
@@ -28,16 +29,19 @@ export default function SettingsSection() {
   return (
     <Form {...form}>
       <form onChange={() => updateSettings(getValues())} className='@container my-4 grid grid-cols-1 gap-10 @[700px]:grid-cols-[repeat(auto-fill,minmax(600px,1fr))]'>
-        <Card className='row-span-2' disableInteractions>
+        <Card className='relative row-span-2' disableInteractions>
+          {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
           <CardHeading title={t('ExaminationSettings.title')} Icon={GraduationCapIcon} />
           <ExaminationSettings baseFieldProps={baseFieldProps} />
         </Card>
 
-        <Card className='' disableInteractions>
+        <Card className='relative' disableInteractions>
+          {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
           <CardHeading title={t('PracticeSettings.title')} Icon={TbSettingsAutomation} />
           <PracticeSettings baseFieldProps={baseFieldProps} />
         </Card>
-        <Card disableInteractions>
+        <Card className='relative' disableInteractions>
+          {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
           <CardHeading title={t('ShareSettings.title')} Icon={Share2Icon} iconClass='size-4.5' />
         </Card>
       </form>
