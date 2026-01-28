@@ -108,6 +108,7 @@ export default function Field<Values extends FieldValues>({
               <AnimatePresence mode='wait'>
                 {!hasError && (
                   <motion.div
+                    data-disabled={field.disabled || props.disabled}
                     exit={{ opacity: 0 }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -117,6 +118,8 @@ export default function Field<Values extends FieldValues>({
                     onMouseLeave={() => setIsHovered(false)}
                     className={cn(
                       'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                      // disabled state styles
+                      'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                       // positions the icon next to the checkbox
                       props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
                       !description && 'hidden',
