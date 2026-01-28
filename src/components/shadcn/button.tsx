@@ -25,13 +25,13 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 enabled:hover:underline',
         base: cn(
           'bg-neutral-100/80 dark:bg-neutral-700/40 ring-ring-subtle ring-1',
-          'hover:ring-ring hover:bg-neutral-50/80 active:bg-neutral-200/90 active:ring-ring-focus dark:hover:bg-neutral-700/70 dark:active:bg-neutral-700/90 ',
+          'enabled:hover:ring-ring enabled:hover:bg-neutral-50/80 enabled:active:bg-neutral-200/90 enabled:active:ring-ring-focus dark:enabled:hover:bg-neutral-700/70 dark:enabled:active:bg-neutral-700/90 ',
         ),
         input: cn(
           'bg-input border border-input-ring',
-          'focus-visible:border-ring-hover focus-visible:ring-ring-hover/50 focus-visible:ring-[3px]',
-          'hover:border-ring-hover dark:hover:border-ring-hover',
-          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:hover:border-destructive',
+          'enabled:focus-visible:border-ring-hover enabled:focus-visible:ring-ring-hover/50 enabled:focus-visible:ring-[3px]',
+          'enabled:hover:border-ring-hover dark:enabled:hover:border-ring-hover',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive enabled:aria-invalid:hover:border-destructive',
         ),
       },
       size: {
