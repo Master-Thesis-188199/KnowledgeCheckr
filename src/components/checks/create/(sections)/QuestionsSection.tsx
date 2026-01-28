@@ -6,13 +6,15 @@ import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
+import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import { useScopedI18n } from '@/src/i18n/client-localization'
-export default function QuestionsSection({ disabled }: { disabled?: boolean }) {
+export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBackButton?: boolean; disabled?: boolean }) {
   const t = useScopedI18n('Checks.Create.QuestionSection')
   const { questions } = useCheckStore((state) => state)
 
   return (
-    <Card disableInteractions className='question-section flex break-inside-avoid flex-col p-3'>
+    <Card disableInteractions className='question-section relative flex break-inside-avoid flex-col p-3'>
+      {jumpBackButton && <CardStageJumpButton targetStage={2} />}
       <div className='header -mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>{t('title')}</h2>
