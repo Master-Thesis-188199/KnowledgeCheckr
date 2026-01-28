@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { GraduationCapIcon, Share2Icon } from 'lucide-react'
+import { UseFormProps } from 'react-hook-form'
 import { TbSettingsAutomation } from 'react-icons/tb'
 import { ExaminationSettings } from '@/src/components/checks/create/(sections)/(settings)/ExaminationSettings'
 import PracticeSettings from '@/src/components/checks/create/(sections)/(settings)/PracticeSettings'
@@ -12,9 +13,9 @@ import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export default function SettingsSection({ jumpBackButtons }: { jumpBackButtons?: boolean }) {
+export default function SettingsSection({ jumpBackButtons, ...config }: { jumpBackButtons?: boolean } & Omit<UseFormProps<KnowledgeCheckSettings>, 'resolver' | 'defaultValues'>) {
   const { updateSettings, settings } = useCheckStore((state) => state)
   const t = useScopedI18n('Checks.Create.SettingSection')
 
@@ -22,6 +23,7 @@ export default function SettingsSection({ jumpBackButtons }: { jumpBackButtons?:
     mode: 'all',
     delayError: 100,
     defaultValues: () => settings,
+    ...config,
   })
 
   const { getValues } = form
