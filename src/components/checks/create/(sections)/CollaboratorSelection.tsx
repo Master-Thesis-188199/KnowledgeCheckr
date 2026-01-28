@@ -57,7 +57,7 @@ export default function CollaboratorSelection() {
         <Button disabled={form.formState.disabled} variant='input' role='combobox' aria-expanded={open} className='text-muted-foreground w-auto justify-between'>
           <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? t('collaborators_placeholder') : selectedCollaborators.map((s) => s.name).join(', ')}</span>
           {selectedCollaborators.length > 0 && <span className='text-neutral-500 dark:text-neutral-400'>({selectedCollaborators.length})</span>}
-          <ChevronsUpDown className='opacity-50' />
+          <ChevronsUpDown className='' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='auto-popover-content-width p-0'>
