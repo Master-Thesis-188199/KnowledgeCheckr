@@ -30,7 +30,8 @@ export default {
       join_word: 'and',
       hour: '{count} hours',
       minute: '{count} minutes'
-    }
+    },
+    jump_back_button_label: 'Jump back'
   },
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'

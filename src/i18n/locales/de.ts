@@ -30,7 +30,8 @@ export default {
       join_word: 'und',
       hour: '{count} stunden',
       minute: '{count} minuten'
-    }
+    },
+    jump_back_button_label: 'Bearbeiten'
   },
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (de)'

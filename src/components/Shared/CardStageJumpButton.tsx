@@ -1,5 +1,6 @@
 import { ArrowUpRightIcon } from 'lucide-react'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
 /**
@@ -8,7 +9,8 @@ import { cn } from '@/src/lib/Shared/utils'
  * @param options.className Override classes of the button
  * @param options.label The optional label to e.g. support localization.
  */
-export function CardStageJumpButton({ targetStage, className, label = 'Jump back' }: { label?: string; targetStage: number; className?: string }) {
+export function CardStageJumpButton({ targetStage, className, label }: { label?: string; targetStage: number; className?: string }) {
+  const t = useScopedI18n('Shared')
   const { setStage, stage } = useMultiStageStore((store) => store)
 
   return (
@@ -16,7 +18,7 @@ export function CardStageJumpButton({ targetStage, className, label = 'Jump back
       type='button'
       className={cn('hover: absolute top-1 right-2 flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-neutral-500/90 hover:ring-1 dark:text-neutral-400/90', className)}
       onClick={() => (stage !== targetStage ? setStage(targetStage) : null)}>
-      <span>{label}</span>
+      <span>{label ?? t('jump_back_button_label')}</span>
       <ArrowUpRightIcon className='size-5' />
     </button>
   )
