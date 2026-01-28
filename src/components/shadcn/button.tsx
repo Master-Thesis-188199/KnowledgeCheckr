@@ -20,7 +20,8 @@ const buttonVariants = cva(
         outline:
           'bg-transparent ring-1 ring-foreground/50 dark:ring-foreground/25 dark:enabled:hover:bg-neutral-700 text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80 dark:text-neutral-200',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
-        ghost: 'enabled:hover:bg-accent enabled:active:ring-2 enabled:active:ring-accent enabled:hover:text-accent-foreground dark:enabled:hover:bg-accent/50 dark:enabled:active:bg-accent/90',
+        ghost:
+          'enabled:hover:bg-neutral-400/30 enabled:active:ring-2 enabled:active:ring-accent enabled:hover:text-accent-foreground/60 dark:enabled:hover:text-accent-foreground/55 dark:enabled:hover:bg-accent/60 dark:enabled:active:bg-accent/90',
         link: 'text-primary underline-offset-4 enabled:hover:underline',
         base: cn(
           'bg-neutral-100/80 dark:bg-neutral-700/40 ring-ring-subtle ring-1',
