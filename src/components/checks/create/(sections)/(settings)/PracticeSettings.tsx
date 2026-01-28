@@ -13,15 +13,20 @@ export default function PracticeSettings({ baseFieldProps }: {} & Pick<ReturnTyp
   return (
     <div
       className={cn('grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0')}>
-      <Field
-        {...baseFieldProps}
-        name='practice.enablePracticing'
-        label={t('enablePracticing_label')}
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        checked={practice?.enablePracticing}
-      />
+      <div className='grid grid-cols-[auto_1fr] items-baseline justify-baseline gap-7 gap-x-7 *:last:mb-0 *:odd:mt-0 @md:col-span-2'>
+        <Field
+          {...baseFieldProps}
+          name='practice.enablePracticing'
+          label={t('enablePracticing_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={practice?.enablePracticing}
+        />
+      </div>
+
+      {/* needed for < @md layouts to satisfy even/odd selectors */}
+      <div className='@md:hidden' />
 
       <Field
         {...baseFieldProps}

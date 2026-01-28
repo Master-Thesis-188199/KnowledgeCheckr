@@ -20,38 +20,42 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
   return (
     <div
       className={cn('grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0')}>
-      <Field
-        {...baseFieldProps}
-        name='examination.enableExaminations'
-        label={t('enableExaminations_label')}
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        checked={enableExaminations}
-      />
+      <div className='grid grid-cols-[auto_1fr] items-baseline justify-baseline gap-7 gap-x-7 *:last:mb-0 *:odd:mt-0 @md:col-span-2'>
+        <Field
+          {...baseFieldProps}
+          name='examination.enableExaminations'
+          label={t('enableExaminations_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={enableExaminations}
+        />
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.questionOrder'
+          label={t('questionOrder_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+          checked={questionOrder === 'random'}
+        />
 
-      <Field
-        {...baseFieldProps}
-        disabled={!enableExaminations}
-        name='examination.questionOrder'
-        label={t('questionOrder_label')}
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-        checked={questionOrder === 'random'}
-      />
-      <Field
-        {...baseFieldProps}
-        disabled={!enableExaminations}
-        name='examination.answerOrder'
-        label={t('answerOrder_label')}
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-        checked={answerOrder === 'random'}
-      />
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.answerOrder'
+          label={t('answerOrder_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+          checked={answerOrder === 'random'}
+        />
+      </div>
+      {/* needed for < @md layouts to satisfy even/odd selectors */}
+      <div className='@md:hidden' />
 
       <Field
         {...baseFieldProps}
