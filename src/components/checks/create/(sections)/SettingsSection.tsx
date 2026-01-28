@@ -15,7 +15,11 @@ import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export default function SettingsSection({ jumpBackButtons, ...config }: { jumpBackButtons?: boolean } & Omit<UseFormProps<KnowledgeCheckSettings>, 'resolver' | 'defaultValues'>) {
+export default function SettingsSection({
+  jumpBackButtons,
+  className,
+  ...config
+}: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<KnowledgeCheckSettings>, 'resolver' | 'defaultValues'>) {
   const { updateSettings, settings } = useCheckStore((state) => state)
   const t = useScopedI18n('Checks.Create.SettingSection')
 
@@ -30,7 +34,7 @@ export default function SettingsSection({ jumpBackButtons, ...config }: { jumpBa
 
   return (
     <Form {...form}>
-      <form onChange={() => updateSettings(getValues())} className='@container my-4 grid grid-cols-1 gap-10 @[700px]:grid-cols-[repeat(auto-fill,minmax(600px,1fr))]'>
+      <form onChange={() => updateSettings(getValues())} className={cn('@container my-4 grid grid-cols-1 gap-10 @[700px]:grid-cols-[repeat(auto-fill,minmax(600px,1fr))]', className)}>
         <Card className='relative row-span-2' disableInteractions>
           {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
           <CardHeading title={t('ExaminationSettings.title')} Icon={GraduationCapIcon} />
