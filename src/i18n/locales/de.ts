@@ -78,11 +78,13 @@ export default {
           sharing: 'Teilen'
         },
         PracticeSettings: {
+          title: 'Übungs Einstellungen',
           enablePracticing_label: 'Erlaube benutzern zu Üben',
           allowedPracticeCount_label: 'Erlaubte Übungsversuche',
           allowedPracticeCount_placeholder: 'Unbeschränkt'
         },
         ExaminationSettings: {
+          title: 'Prüfungs Einstellungen',
           enableExaminations_label: 'Erlaube Prüfungsantritte',
           questionOrder_label: 'Zufällige Fragen Reihenfolge',
           answerOrder_label: 'Zufällige Antwort Reihenfolge',
@@ -90,6 +92,9 @@ export default {
           examinationAttemptCount_label: 'Erlaubte Prüfungsantritte',
           startDate_label: 'Start Datum',
           endDate_label: 'Abschluss Datum'
+        },
+        ShareSettings: {
+          title: 'Freigabe Einstellungen'
         }
       },
       OverviewSection: {
