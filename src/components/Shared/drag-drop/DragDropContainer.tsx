@@ -68,7 +68,7 @@ export default function DragDropContainer({ children, className, onSwapEnd, onSw
   }, [])
 
   return (
-    <div ref={containerRef} className={cn('group/drag-drop-container', className)} data-enabled={config.enabled}>
+    <div ref={containerRef} className={cn('group/drag-drop-container', className)} data-enabled={config.enabled ?? true}>
       {children}
     </div>
   )

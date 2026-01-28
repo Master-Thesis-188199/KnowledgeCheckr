@@ -6,11 +6,13 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import Tooltip from '@/src/components/Shared/Tooltip'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function ShareKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
+  const t = useScopedI18n('Components.ShareKnowledgeCheckButton')
   const [shareToken, setShareToken] = useState(check.share_key)
   const router = useRouter()
 
@@ -21,7 +23,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
   }, [check.share_key, shareToken])
 
   const isEmpty = check.questions.length === 0
-  const tooltipMessage = isEmpty ? 'This check has no questions, cannot be shared at this moment.' : 'Share this KnowledgeCheck'
+  const tooltipMessage = isEmpty ? t('tooltip_empty_message') : t('tooltip_message')
 
   return (
     <Tooltip
@@ -34,15 +36,16 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
       }>
       <button
         disabled={isEmpty}
-        aria-label='share KnowledgeCheck'
+        aria-label={t('tooltip_message')}
+        data-share-button
         onClick={(e) => {
           e.preventDefault()
 
           if (shareToken) {
             navigator.clipboard
               .writeText(`${window.location.origin}/checks/${shareToken}/practice`)
-              .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
-              .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
+              .then(() => toast(t('successfully_copied_toast_message'), { type: 'success' }))
+              .catch(() => toast(t('failed_copy_toast_message'), { type: 'error' }))
             return
           }
 
@@ -51,8 +54,8 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
             .then(() => {
               navigator.clipboard
                 .writeText(`${window.location.origin}/checks/${token}/practice`)
-                .then(() => toast('Successfully saved token to your clipboard.', { type: 'success' }))
-                .catch(() => toast('Failed to copy share link to the clipboard.', { type: 'error' }))
+                .then(() => toast(t('successfully_copied_toast_message'), { type: 'success' }))
+                .catch(() => toast(t('failed_copy_toast_message'), { type: 'error' }))
               setShareToken(token)
               router.refresh()
               const pageHeading = document.querySelector('main h1')
