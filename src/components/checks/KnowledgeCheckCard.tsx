@@ -31,8 +31,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
-        <div className='flex gap-1'>
+        <div className='ml-auto flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
         </div>
@@ -54,16 +53,17 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         />
         <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
-      <Footer updatedAt={check.updatedAt} />
+      <Footer updatedAt={check.updatedAt} role={role} />
     </Card>
   )
 }
 
-function Footer({ updatedAt }: { updatedAt?: Date }) {
+function Footer({ updatedAt, role }: { updatedAt?: Date; role: string }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
   return (
-    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
+    <div className='-mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
+      <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
       <div>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
