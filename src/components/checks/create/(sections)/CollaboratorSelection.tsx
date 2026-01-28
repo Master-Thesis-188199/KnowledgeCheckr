@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CommandLoading } from 'cmdk'
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/shadcn/button'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/shadcn/command'
 import { useCollaboratorContext } from '@/src/components/checks/create/(sections)/CollaboratorProvider'
@@ -10,6 +11,7 @@ import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvide
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 type CollaboratorItem = {
   id: string
@@ -17,6 +19,7 @@ type CollaboratorItem = {
 }
 
 export default function CollaboratorSelection() {
+  const form = useFormContext<KnowledgeCheck>()
   const { users } = useCollaboratorContext()
   const [open, setOpen] = useState(false)
   const t = useScopedI18n('Checks.Create.GeneralSection.CollaboratorSelection')
@@ -51,7 +54,7 @@ export default function CollaboratorSelection() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='input' role='combobox' aria-expanded={open} className='text-muted-foreground w-auto justify-between'>
+        <Button disabled={form.formState.disabled} variant='input' role='combobox' aria-expanded={open} className='text-muted-foreground w-auto justify-between'>
           <span className='flex-1 truncate text-left'>{selectedCollaborators.length === 0 ? t('collaborators_placeholder') : selectedCollaborators.map((s) => s.name).join(', ')}</span>
           {selectedCollaborators.length > 0 && <span className='text-neutral-500 dark:text-neutral-400'>({selectedCollaborators.length})</span>}
           <ChevronsUpDown className='opacity-50' />
