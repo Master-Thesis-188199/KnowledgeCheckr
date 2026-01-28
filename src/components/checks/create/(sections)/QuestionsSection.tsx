@@ -7,7 +7,7 @@ import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { Button } from '@/src/components/shadcn/button'
 import { useScopedI18n } from '@/src/i18n/client-localization'
-export default function QuestionsSection() {
+export default function QuestionsSection({ disabled }: { disabled?: boolean }) {
   const t = useScopedI18n('Checks.Create.QuestionSection')
   const { questions } = useCheckStore((state) => state)
 
@@ -20,11 +20,11 @@ export default function QuestionsSection() {
       </div>
       <div className='questions'>
         <EmptyQuestionsStatus show={questions.length === 0} />
-        <RenderCreatedQuestions show={questions.length > 0} />
+        <RenderCreatedQuestions show={questions.length > 0} disabled={disabled} />
       </div>
       <div className='flex justify-center gap-8'>
         <CreateQuestionDialog>
-          <Button variant='outline' size='lg'>
+          <Button variant='outline' size='lg' disabled={disabled}>
             <Plus className='size-5' />
             {t('create_button')}
           </Button>
@@ -45,7 +45,7 @@ function EmptyQuestionsStatus({ show }: { show: boolean }) {
   )
 }
 
-function RenderCreatedQuestions({ show }: { show: boolean }) {
+function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: boolean }) {
   const { questions, removeQuestion } = useCheckStore((state) => state)
   const tQuestion = useScopedI18n('Shared.Question')
   const t = useScopedI18n('Checks.Create.QuestionSection.QuestionCard')
@@ -56,6 +56,7 @@ function RenderCreatedQuestions({ show }: { show: boolean }) {
     <div className={cn('my-4 grid grid-cols-1 gap-6')}>
       {questions.map((question, i) => (
         <Card
+          disableInteractions
           data-question-id={question.id}
           data-question={question.question}
           key={i + question.id}
@@ -90,17 +91,25 @@ function RenderCreatedQuestions({ show }: { show: boolean }) {
             </div>
           </div>
           <CreateQuestionDialog initialValues={question}>
-            <div className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+            <Button
+              size='icon'
+              variant='base'
+              type='button'
+              disabled={disabled}
+              className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
               <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
-            </div>
+            </Button>
           </CreateQuestionDialog>
-          <button
+          <Button
+            size='icon'
+            variant='base'
             aria-label='Delete Question'
             type='button'
+            disabled={disabled}
             onClick={() => removeQuestion(question.id)}
-            className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+            className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
             <Trash2 className='size-4 text-red-600/70 group-hover:stroke-[2.5] dark:text-red-400/70' />
-          </button>
+          </Button>
         </Card>
       ))}
     </div>
