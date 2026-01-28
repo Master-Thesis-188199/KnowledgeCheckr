@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { KeySquareIcon, LockIcon } from 'lucide-react'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
@@ -17,7 +18,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
   const isOwner = userId ? check.owner_id === userId : false
 
-  let role = 'Guest'
+  let role: 'Guest' | 'Owner' | 'Collaborator' = 'Guest'
   if (isOwner) role = 'Owner'
   else if (isCollaborator) role = 'Collaborator'
 
@@ -58,13 +59,17 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
   )
 }
 
-function Footer({ updatedAt, role }: { updatedAt?: Date; role: string }) {
+function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner' | 'Collaborator' }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
   return (
-    <div className='-mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
-      <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
-      <div>
+    <div className='-mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
+      <div className='flex items-center gap-1 text-[oklch(60%_0_0)]'>
+        {role === 'Guest' && <LockIcon className='size-4' />}
+        {role === 'Owner' && <KeySquareIcon className='size-3.5' />}
+        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-semibold')}>{role}</span>
+      </div>
+      <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
     </div>
