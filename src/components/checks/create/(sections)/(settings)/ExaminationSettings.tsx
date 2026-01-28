@@ -72,14 +72,14 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         label={t('examTimeFrameSeconds_label')}
         list='time-values'>
         <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableTimeFrame}</span>
-      </Field>
 
-      <datalist id='time-values'>
-        <option value='00:30' label='30 minutes'></option>
-        <option value='00:45' label='45 minutes'></option>
-        <option value='01:00' label='60 minutes'></option>
-        <option value='01:30' label='90 minutes'></option>
-      </datalist>
+        <datalist id='time-values'>
+          <option value='00:30' label='30 minutes'></option>
+          <option value='00:45' label='45 minutes'></option>
+          <option value='01:00' label='60 minutes'></option>
+          <option value='01:30' label='90 minutes'></option>
+        </datalist>
+      </Field>
 
       <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label={t('examinationAttemptCount_label')} type='number' min={0} />
 
