@@ -9,6 +9,7 @@ import CollaboratorSelection from '@/src/components/checks/create/(sections)/Col
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form, FormLabel } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
+import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
@@ -18,7 +19,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
-export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
+export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
@@ -87,8 +88,9 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
           console.debug('Updating store with:', values)
           updateCheck(values)
         }}
-        className='@container flex flex-col gap-8 p-3'
+        className='@container relative flex flex-col gap-8 p-3'
         disableInteractions>
+        {jumpBackButton && <CardStageJumpButton targetStage={1} />}
         <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
           <div className='flex items-center justify-between'>
             <h2 className=''>{t('title')}</h2>

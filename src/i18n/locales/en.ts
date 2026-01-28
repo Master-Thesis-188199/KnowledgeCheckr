@@ -30,7 +30,8 @@ export default {
       join_word: 'and',
       hour: '{count} hours',
       minute: '{count} minutes'
-    }
+    },
+    jump_back_button_label: 'Jump back'
   },
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
@@ -78,11 +79,13 @@ export default {
           sharing: 'Sharing'
         },
         PracticeSettings: {
+          title: 'Practice Settings',
           enablePracticing_label: 'Allow users to Practice',
           allowedPracticeCount_label: 'Allowed Practice Attempt',
           allowedPracticeCount_placeholder: 'Unlimited'
         },
         ExaminationSettings: {
+          title: 'Examination Settings',
           enableExaminations_label: 'Enable Examination Attempts',
           questionOrder_label: 'Randomize Question Order',
           answerOrder_label: 'Randomize Answer Order',
@@ -90,6 +93,9 @@ export default {
           examinationAttemptCount_label: 'Examination Attempt Count',
           startDate_label: 'Start Date',
           endDate_label: 'End Date'
+        },
+        ShareSettings: {
+          title: 'Share Settings'
         }
       },
       OverviewSection: {

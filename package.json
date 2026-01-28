@@ -87,6 +87,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.55.0",
+    "react-icons": "^5.5.0",
     "react-textarea-autosize": "^8.5.9",
     "react-toastify": "^11.0.5",
     "semantic-release": "^24.2.3",
