@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
+import DegradingScoreIndicator from '@/src/components/checks/DegradingScoreIndicator'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
@@ -30,8 +31,12 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
+      <div className='absolute top-0 left-0 opacity-75'>
+        {/* eslint-disable-next-line react-hooks/purity */}
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={+(Math.random() * 100).toFixed(0)} />
+      </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
+        <div className='flex-1' />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
