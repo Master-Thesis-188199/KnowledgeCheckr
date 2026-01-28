@@ -12,10 +12,10 @@ export async function OverviewSection() {
         <span className='text-xl font-semibold'>{t('title')}</span>
         <p className='text-neutral-600 dark:text-neutral-300'>{t('description')}</p>
       </div>
-      <div className='3xl:grid-cols-3 grid gap-8 xl:grid-cols-2 **:[&_input]:ring-neutral-300/70 **:dark:[&_input]:ring-neutral-600/70 **:[&_textarea]:ring-neutral-300/70 **:dark:[&_textarea]:ring-neutral-600/70'>
+      <div className='grid gap-8 xl:grid-cols-2 **:[&_input]:ring-neutral-300/70 **:dark:[&_input]:ring-neutral-600/70 **:[&_textarea]:ring-neutral-300/70 **:dark:[&_textarea]:ring-neutral-600/70'>
         <GeneralSection disabled jumpBackButton />
         <QuestionsSection disabled jumpBackButton />
-        <SettingsSection disabled jumpBackButtons />
+        <SettingsSection disabled jumpBackButtons className='xl:col-span-2' />
       </div>
     </>
   )
