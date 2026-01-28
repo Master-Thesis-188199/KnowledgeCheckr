@@ -90,6 +90,7 @@ export default function Field<Values extends FieldValues>({
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
                   {...props}
+                  disabled={field.disabled || props.disabled}
                   onFocus={(e) => {
                     // this prevents the description from being shown when the checkbox is clicked --> thus has focus
                     if (props.type !== 'checkbox') setIsFocused(true)
