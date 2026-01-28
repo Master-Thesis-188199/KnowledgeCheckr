@@ -20,10 +20,8 @@ export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBac
           <h2 className=''>{t('title')}</h2>
         </div>
       </div>
-      <div className='questions'>
-        <EmptyQuestionsStatus show={questions.length === 0} />
-        <RenderCreatedQuestions show={questions.length > 0} disabled={disabled} />
-      </div>
+      <EmptyQuestionsStatus show={questions.length === 0} />
+      <RenderCreatedQuestions show={questions.length > 0} disabled={disabled} />
       <div className='flex justify-center gap-8'>
         <CreateQuestionDialog>
           <Button variant='outline' size='lg' disabled={disabled}>
@@ -40,7 +38,7 @@ function EmptyQuestionsStatus({ show }: { show: boolean }) {
   const t = useScopedI18n('Checks.Create.QuestionSection')
 
   return (
-    <div className={cn('flex h-60 flex-col items-center justify-center gap-6', !show && 'hidden')}>
+    <div className={cn('flex min-h-60 flex-1 flex-col items-center justify-center gap-6', !show && 'hidden')}>
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
       <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{t('no_questions_info')}</span>
     </div>
@@ -55,7 +53,7 @@ function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: 
   if (!show) return null
 
   return (
-    <div className={cn('my-4 grid grid-cols-1 gap-6')}>
+    <div className={cn('questions my-4 grid flex-1 grid-cols-1 gap-6')}>
       {questions.map((question, i) => (
         <Card
           disableInteractions
@@ -63,7 +61,7 @@ function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: 
           data-question={question.question}
           key={i + question.id}
           className={cn(
-            'question relative flex gap-3 p-2 first:mt-3 hover:bg-none',
+            'question relative flex h-fit gap-3 p-2 first:mt-3 hover:bg-none',
             // increase space to previous element / section-header when accessibility badge is displayed
             question.accessibility !== 'all' && 'mt-2 first:mt-6',
           )}>
