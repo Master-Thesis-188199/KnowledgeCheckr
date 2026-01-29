@@ -53,14 +53,14 @@ export default function DegradingScoreIndicator({ knowledgeCheckScore, className
     <Tooltip content={scoreMessage} delay={100}>
       <div
         className={cn(
-          'relative text-xs select-none dark:bg-neutral-500/80',
+          'relative bg-neutral-300 text-xs select-none dark:bg-neutral-500/80',
 
-          level === '0-20' && 'dark:bg-[oklch(40%_0.12_30)]',
-          level === '20-40' && 'dark:bg-[oklch(30%_0.09_30)]',
-          level === '40-60' && 'dark:bg-[oklch(32%_0.2_110)]',
-          level === '60-80' && 'dark:bg-[oklch(32%_0.2_116)]',
-          level === '80-95' && 'dark:bg-[oklch(35%_0.3_155)]',
-          level === '95-100' && 'dark:bg-[oklch(40%_0.37_155)]',
+          level === '0-20' && 'bg-[oklch(80%_0.25_30)] dark:bg-[oklch(40%_0.12_30)]',
+          level === '20-40' && 'bg-[oklch(88%_0.0.08_45)] dark:bg-[oklch(30%_0.09_30)]',
+          level === '40-60' && 'bg-[oklch(88%_0.08_110)] dark:bg-[oklch(32%_0.2_110)]',
+          level === '60-80' && 'bg-[oklch(85%_0.08_116)] dark:bg-[oklch(32%_0.2_116)]',
+          level === '80-95' && 'bg-[oklch(85%_0.10_155)] dark:bg-[oklch(35%_0.3_155)]',
+          level === '95-100' && 'bg-[oklch(85%_0.2_140)] dark:bg-[oklch(40%_0.37_155)]',
           className,
         )}>
         <span className='flex items-center justify-center'>{knowledgeCheckScore ?? 0}</span>
