@@ -1,7 +1,7 @@
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { ZustandStore } from '@/types/Shared/ZustandStore'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type PracticeState = {
   unfilteredQuestions: Question[]
@@ -35,9 +35,10 @@ const defaultInitState: PracticeState = {
   currentQuestionIndex: 0,
   answers: [],
 }
-export const createPracticeStore: ZustandStore<PracticeStore, Partial<PracticeState>> = ({ initialState = defaultInitState }) =>
+export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState = defaultInitState, options }) =>
   createZustandStore({
-    caching: false,
+    caching: true,
+    options,
     initializer: (set, get) => {
       return {
         ...defaultInitState,
