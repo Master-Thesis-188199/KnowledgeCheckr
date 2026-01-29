@@ -14,6 +14,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
@@ -23,7 +24,6 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
   if (isOwner) role = 'Owner'
   else if (isCollaborator) role = 'Collaborator'
 
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
       as={motion.div}
@@ -72,7 +72,7 @@ function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner'
       <div className='flex items-center gap-1 text-[oklch(60%_0_0)]'>
         {role === 'Guest' && <LockIcon className='size-4' />}
         {role === 'Owner' && <KeySquareIcon className='size-3.5' />}
-        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-semibold')}>{role}</span>
+        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-semibold')}>{t(`user_role.is_${role}_role`)}</span>
       </div>
       <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}

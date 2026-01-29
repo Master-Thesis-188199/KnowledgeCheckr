@@ -182,6 +182,11 @@ export default {
         questions_label: 'Questions',
         estimatedTime_label: 'estimatedTime',
         points_label: 'Points'
+      },
+      user_role: {
+        is_Owner_role: 'Owner',
+        is_Collaborator_role: 'Collaborator',
+        is_Guest_role: 'Guest'
       }
     },
     ShareKnowledgeCheckButton: {
