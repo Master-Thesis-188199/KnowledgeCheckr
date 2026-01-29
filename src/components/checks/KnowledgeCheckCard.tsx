@@ -31,6 +31,10 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
+      <div className='absolute top-0 left-0 z-10 opacity-65'>
+        {/* eslint-disable-next-line react-hooks/purity */}
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={+(Math.random() * 105).toFixed(0)} />
+      </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
         <div className='ml-auto flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
