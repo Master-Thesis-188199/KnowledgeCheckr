@@ -11,7 +11,7 @@ export type PracticeState = {
   unfilteredQuestions: Question[]
   practiceQuestions: Question[]
   currentQuestionIndex: number
-  answerResults: Array<{ questionId: Question['id'] } & PracticeData>
+  answerResults: Array<PracticeData>
 }
 
 export type PracticeActions = {
@@ -73,9 +73,9 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
-            const exists = prev.answerResults.find((r) => r.questionId === question.questionId)
+            const exists = prev.answerResults.find((r) => r.question_id === question.question_id)
 
-            const update = { ...prev, answers: exists ? prev.answerResults.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answerResults.concat([question]) }
+            const update = { ...prev, answers: exists ? prev.answerResults.map((r) => (r.question_id === question.question_id ? question : r)) : prev.answerResults.concat([question]) }
             savePracticeResults({ knowledgeCheckId: update.checkId, results: update.answers, startedAt: update.startedAt, score: 0 })
 
             return update
