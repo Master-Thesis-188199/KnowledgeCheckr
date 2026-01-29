@@ -1,4 +1,3 @@
-import { CircleIcon } from 'lucide-react'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -18,22 +17,23 @@ export default function DegradingScoreIndicator({ knowledgeCheckScore, className
   else if (knowledgeCheckScore >= 20) level = '20-40'
   else if (knowledgeCheckScore >= 0) level = '0-20'
 
+  if (knowledgeCheckScore && knowledgeCheckScore > 100) knowledgeCheckScore = 100
+
   return (
     <Tooltip content='Estimated knowledge retainment'>
       <div
         className={cn(
-          'relative text-xs select-none dark:text-neutral-500/80',
+          'relative text-xs select-none dark:bg-neutral-500/80',
 
-          level === '0-20' && 'dark:text-[oklch(55%_0.1_30)]',
-          level === '20-40' && 'dark:text-[oklch(50%_0.1_50)]',
-          level === '40-60' && 'dark:text-[oklch(50%_0.1_70)]',
-          level === '60-80' && 'dark:text-[oklch(50%_0.2_116)]',
-          level === '80-95' && 'dark:text-[oklch(45%_0.3_155)]',
-          level === '95-100' && 'dark:text-[oklch(55%_0.3_155)]',
+          level === '0-20' && 'dark:bg-[oklch(40%_0.12_30)]',
+          level === '20-40' && 'dark:bg-[oklch(30%_0.09_30)]',
+          level === '40-60' && 'dark:bg-[oklch(32%_0.2_110)]',
+          level === '60-80' && 'dark:bg-[oklch(32%_0.2_116)]',
+          level === '80-95' && 'dark:bg-[oklch(35%_0.3_155)]',
+          level === '95-100' && 'dark:bg-[oklch(40%_0.37_155)]',
           className,
         )}>
-        <CircleIcon className={cn('size-8 stroke-[1.5px]', knowledgeCheckScore === undefined && 'stroke-1')} />
-        <span className='absolute inset-0 flex items-center justify-center pt-0.5'>{knowledgeCheckScore ?? 0}</span>
+        <span className='flex items-center justify-center'>{knowledgeCheckScore ?? 0}</span>
       </div>
     </Tooltip>
   )
