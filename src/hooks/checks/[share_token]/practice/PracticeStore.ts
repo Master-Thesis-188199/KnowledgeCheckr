@@ -1,9 +1,12 @@
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type PracticeState = {
+  startedAt: Date
+  checkId: KnowledgeCheck['id']
   unfilteredQuestions: Question[]
   practiceQuestions: Question[]
   currentQuestionIndex: number
@@ -30,6 +33,8 @@ export type PracticeActions = {
 export type PracticeStore = PracticeState & PracticeActions
 
 const defaultInitState: PracticeState = {
+  checkId: '',
+  startedAt: new Date(Date.now()),
   practiceQuestions: [],
   unfilteredQuestions: [],
   currentQuestionIndex: 0,

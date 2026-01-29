@@ -20,7 +20,10 @@ export function PracticeStoreProvider({ children, initialStoreProps, options = {
     caching: true,
     createStoreFunc: createPracticeStore,
     initialStoreProps,
-    options,
+    options: {
+      discardCache: (cache) => cache.checkId !== initialStoreProps?.checkId,
+      ...options,
+    },
   })
 
   return <PracticeStoreContext.Provider value={props}>{children}</PracticeStoreContext.Provider>
