@@ -10,11 +10,14 @@ import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
+import { computeKnowledgeRetainment } from '@/src/lib/checks/computeKnowledgeRetainment'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const retainmentScore = computeKnowledgeRetainment({ difficulty: check.difficulty })
+
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
@@ -33,8 +36,8 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-0 left-0 z-10 opacity-65'>
-        {/* eslint-disable-next-line react-hooks/purity */}
-        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={+(Math.random() * 105).toFixed(0)} />
+        {}
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={retainmentScore} />
       </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
         <div className='ml-auto flex gap-1'>
