@@ -12,16 +12,16 @@ import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
   const isOwner = userId ? check.owner_id === userId : false
 
-  let role = 'Guest'
-  if (isOwner) role = 'Owner'
-  else if (isCollaborator) role = 'Collaborator'
+  let role = t('user_role.is_Guest_role')
+  if (isOwner) role = t('user_role.is_Owner_role')
+  else if (isCollaborator) role = t('user_role.is_Collaborator_role')
 
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
       as={motion.div}
