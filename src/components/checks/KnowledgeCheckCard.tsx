@@ -2,7 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { CrownIcon, LockIcon, UserPenIcon } from 'lucide-react'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
+import DegradingScoreIndicator from '@/src/components/checks/DegradingScoreIndicator'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
@@ -12,16 +14,16 @@ import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
   const isOwner = userId ? check.owner_id === userId : false
 
-  let role = 'Guest'
+  let role: 'Guest' | 'Owner' | 'Collaborator' = 'Guest'
   if (isOwner) role = 'Owner'
   else if (isCollaborator) role = 'Collaborator'
 
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
       as={motion.div}
@@ -30,9 +32,12 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
+      <div className='absolute top-0 left-0 z-10 opacity-65'>
+        {/* eslint-disable-next-line react-hooks/purity */}
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={+(Math.random() * 105).toFixed(0)} />
+      </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
-        <div className='flex gap-1'>
+        <div className='ml-auto flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
         </div>
@@ -54,17 +59,23 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         />
         <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
-      <Footer updatedAt={check.updatedAt} />
+      <Footer updatedAt={check.updatedAt} role={role} />
     </Card>
   )
 }
 
-function Footer({ updatedAt }: { updatedAt?: Date }) {
+function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner' | 'Collaborator' }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
   return (
-    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
-      <div>
+    <div className='relative -mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
+      <div className={cn('flex items-start gap-1 dark:text-[oklch(60%_0_0)]', role !== 'Guest' && 'text-[oklch(60%_0_0)] dark:text-[oklch(70%_0_0)]')}>
+        {role === 'Guest' && <LockIcon className='size-3.5' />}
+        {role === 'Owner' && <CrownIcon className='size-3.5' />}
+        {role === 'Collaborator' && <UserPenIcon className='size-3.5' />}
+        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-bold')}>{t(`user_role.is_${role}_role`)}</span>
+      </div>
+      <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
     </div>
