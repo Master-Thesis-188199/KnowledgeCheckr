@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { KeySquareIcon, LockIcon } from 'lucide-react'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
 import DegradingScoreIndicator from '@/src/components/checks/DegradingScoreIndicator'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
@@ -67,10 +68,11 @@ function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner'
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
   return (
-    <div className='relative -mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
-      <div className='absolute top-0.5 left-2'>
-        {/* eslint-disable-next-line react-hooks/purity */}
-        <DegradingScoreIndicator knowledgeCheckScore={+(Math.random() * 100).toFixed(0)} />
+    <div className='relative -mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
+      <div className='flex items-center gap-1 text-[oklch(60%_0_0)]'>
+        {role === 'Guest' && <LockIcon className='size-4' />}
+        {role === 'Owner' && <KeySquareIcon className='size-3.5' />}
+        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-semibold')}>{role}</span>
       </div>
       <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
