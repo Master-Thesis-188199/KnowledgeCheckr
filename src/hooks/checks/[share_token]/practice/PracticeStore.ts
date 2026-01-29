@@ -48,6 +48,7 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
     initializer: (set, get) => {
       return {
         ...defaultInitState,
+        startedAt: new Date(Date.now()),
         ...initialState,
 
         getQuestion: () => get().practiceQuestions.at(get().currentQuestionIndex) ?? null,
