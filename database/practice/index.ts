@@ -29,6 +29,7 @@ export async function savePracticeResults(
         eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, props.knowledgeCheckId),
         eq(db_userHasDoneKnowledgeCheck.startedAt, formatDatetime(props.startedAt)),
         eq(db_userHasDoneKnowledgeCheck.userId, userId),
+        eq(db_userHasDoneKnowledgeCheck.type, 'practice'),
       ),
     )
     .limit(1)

@@ -38,6 +38,7 @@ export async function updatePracticeResults({
         eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, values.knowledgeCheckId),
         eq(db_userHasDoneKnowledgeCheck.startedAt, formatDatetime(startedAt)),
         eq(db_userHasDoneKnowledgeCheck.userId, userId),
+        eq(db_userHasDoneKnowledgeCheck.type, 'practice'),
       ),
     )
     .limit(1)
