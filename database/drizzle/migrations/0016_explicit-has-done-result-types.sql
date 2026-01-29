@@ -1,0 +1,1 @@
+ALTER TABLE `User_has_done_KnowledgeCheck` ADD `type` enum('practice','examination') NOT NULL;
