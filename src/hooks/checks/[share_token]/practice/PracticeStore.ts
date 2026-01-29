@@ -11,7 +11,7 @@ export type PracticeState = {
   unfilteredQuestions: Question[]
   practiceQuestions: Question[]
   currentQuestionIndex: number
-  answers: Array<{ questionId: Question['id'] } & PracticeData>
+  answerResults: Array<{ questionId: Question['id'] } & PracticeData>
 }
 
 export type PracticeActions = {
@@ -27,7 +27,7 @@ export type PracticeActions = {
   previousQuestion: (looping?: boolean) => void
   navigateToQuestion: (index: number) => void
   getQuestion: () => Question | null
-  storeAnswer: (question: PracticeState['answers'][number]) => void
+  storeAnswer: (question: PracticeState['answerResults'][number]) => void
   updatePracticeQuestions: (questions: Question[]) => void
 }
 
@@ -39,7 +39,7 @@ const defaultInitState: PracticeState = {
   practiceQuestions: [],
   unfilteredQuestions: [],
   currentQuestionIndex: 0,
-  answers: [],
+  answerResults: [],
 }
 export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState = defaultInitState, options }) =>
   createZustandStore({
@@ -73,9 +73,9 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
-            const exists = prev.answers.find((r) => r.questionId === question.questionId)
+            const exists = prev.answerResults.find((r) => r.questionId === question.questionId)
 
-            const update = { ...prev, answers: exists ? prev.answers.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answers.concat([question]) }
+            const update = { ...prev, answers: exists ? prev.answerResults.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answerResults.concat([question]) }
             savePracticeResults({ knowledgeCheckId: update.checkId, results: update.answers, startedAt: update.startedAt, score: 0 })
 
             return update
