@@ -27,7 +27,7 @@ export default function DegradingScoreIndicator({ knowledgeCheckScore, className
       break
     }
     case '80-95': {
-      scoreMessage = 'Most of the Knokwledge gained by this check is retained'
+      scoreMessage = 'Most of the Knowledge gained by this check is retained'
       break
     }
     case '60-80': {
@@ -56,7 +56,7 @@ export default function DegradingScoreIndicator({ knowledgeCheckScore, className
           'relative bg-neutral-300 text-xs select-none dark:bg-neutral-500/80',
 
           level === '0-20' && 'bg-[oklch(80%_0.25_30)] dark:bg-[oklch(40%_0.12_30)]',
-          level === '20-40' && 'bg-[oklch(88%_0.0.08_45)] dark:bg-[oklch(30%_0.09_30)]',
+          level === '20-40' && 'bg-[oklch(88%_0.08_45)] dark:bg-[oklch(30%_0.09_30)]',
           level === '40-60' && 'bg-[oklch(88%_0.08_110)] dark:bg-[oklch(32%_0.2_110)]',
           level === '60-80' && 'bg-[oklch(85%_0.08_116)] dark:bg-[oklch(32%_0.2_116)]',
           level === '80-95' && 'bg-[oklch(85%_0.10_155)] dark:bg-[oklch(35%_0.3_155)]',
