@@ -1,3 +1,4 @@
+import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
@@ -74,7 +75,10 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
           set((prev) => {
             const exists = prev.answers.find((r) => r.questionId === question.questionId)
 
-            return { ...prev, answers: exists ? prev.answers.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answers.concat([question]) }
+            const update = { ...prev, answers: exists ? prev.answers.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answers.concat([question]) }
+            savePracticeResults({ knowledgeCheckId: update.checkId, results: update.answers, startedAt: update.startedAt, score: 0 })
+
+            return update
           }),
         updatePracticeQuestions: (questions) => set((prev) => ({ ...prev, practiceQuestions: questions })),
       }
