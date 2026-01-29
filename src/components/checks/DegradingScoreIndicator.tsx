@@ -19,8 +19,38 @@ export default function DegradingScoreIndicator({ knowledgeCheckScore, className
 
   if (knowledgeCheckScore && knowledgeCheckScore > 100) knowledgeCheckScore = 100
 
+  let scoreMessage: string = ''
+
+  switch (level) {
+    case '95-100': {
+      scoreMessage = 'Almost 100% of the Knowledge is most likely still retained'
+      break
+    }
+    case '80-95': {
+      scoreMessage = 'Most of the Knokwledge gained by this check is retained'
+      break
+    }
+    case '60-80': {
+      scoreMessage = 'Big Chunks of Knowledge are still retained'
+      break
+    }
+    case '40-60': {
+      scoreMessage = 'While some Knowledge parts are retained, a large part might have been forgotten'
+      break
+    }
+    case '20-40': {
+      scoreMessage = 'Most of the Knowledge delivered by this check is no longer retained'
+      break
+    }
+    case '0-20': {
+      scoreMessage = 'The contents and knowledge delivered by this check are no longer retained'
+      break
+    }
+    case 'none':
+  }
+
   return (
-    <Tooltip content='Estimated knowledge retainment'>
+    <Tooltip content={scoreMessage} delay={100}>
       <div
         className={cn(
           'relative text-xs select-none dark:bg-neutral-500/80',
