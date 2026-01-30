@@ -95,7 +95,8 @@
         },
 
         "ShareSettings": {
-          "title": "Freigabe Einstellungen"
+          "title": "Freigabe Einstellungen",
+          "shareAccessibility": "Öffentlich auffindbar"
         }
       },
       "OverviewSection": {

@@ -95,7 +95,8 @@ export default {
           endDate_label: 'End Date'
         },
         ShareSettings: {
-          title: 'Share Settings'
+          title: 'Share Settings',
+          shareAccessibility: 'Publicly Discoverable'
         }
       },
       OverviewSection: {

@@ -95,7 +95,8 @@ export default {
           endDate_label: 'Abschluss Datum'
         },
         ShareSettings: {
-          title: 'Freigabe Einstellungen'
+          title: 'Freigabe Einstellungen',
+          shareAccessibility: 'Öffentlich auffindbar'
         }
       },
       OverviewSection: {
