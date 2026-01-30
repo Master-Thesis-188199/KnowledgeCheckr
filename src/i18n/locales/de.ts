@@ -87,6 +87,7 @@ export default {
         ExaminationSettings: {
           title: 'Prüfungs Einstellungen',
           enableExaminations_label: 'Erlaube Prüfungsantritte',
+          allowAnonymous_label: 'Erlaube Anonyme Benutzer',
           questionOrder_label: 'Zufällige Fragen Reihenfolge',
           answerOrder_label: 'Zufällige Antwort Reihenfolge',
           examTimeFrameSeconds_label: 'Prüfungszeit',

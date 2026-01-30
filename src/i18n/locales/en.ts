@@ -87,6 +87,7 @@ export default {
         ExaminationSettings: {
           title: 'Examination Settings',
           enableExaminations_label: 'Enable Examination Attempts',
+          allowAnonymous_label: 'Allow Anonymous Users',
           questionOrder_label: 'Randomize Question Order',
           answerOrder_label: 'Randomize Answer Order',
           examTimeFrameSeconds_label: 'Examination Time Frame',
