@@ -7,7 +7,7 @@ import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAl
 
 export default async function ClosedExaminationPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
-  await requireAuthentication()
+  const { user } = await requireAuthentication()
 
   const check = await getKnowledgeCheckByShareToken(share_token)
 
@@ -18,10 +18,11 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
 
   let message: string = t('unavailable')
 
-  const allowance = isExaminationAllowed(check)
+  const allowance = isExaminationAllowed(check, user)
 
   if (allowance === 'examination window not yet open') message = t('notOpenYet', { openDate: check.settings.examination.startDate.toLocaleDateString(currentLocale) })
   if (allowance === 'examination window closed') message = t('checkClosed', { closeDate: check.settings.examination.endDate?.toLocaleDateString(currentLocale) })
+  if (allowance === 'anonymous-users-not-allowed') message = t('anonymous-users-not-allowed')
 
   return (
     <>

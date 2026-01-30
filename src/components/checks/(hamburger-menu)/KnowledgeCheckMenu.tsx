@@ -24,11 +24,13 @@ import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
 import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { TooltipProps } from '@/src/components/Shared/Tooltip'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id, collaborators }: {} & KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCardMenu')
   const [menuOpen, setMenuOpen] = useState(false)
 
   const { data } = useSession()
@@ -77,30 +79,30 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-58' align='start'>
-        <DropdownMenuLabel className='text-center'>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel className='text-center'>{t('menu_label')}</DropdownMenuLabel>
 
         <DropdownMenuGroup>
           <DropdownMenuItem
             className='group justify-between'
             enableTooltip={!hasQuestions}
-            tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, practice disabled.' }}
+            tooltipOptions={{ ...baseTooltipOptions, content: t('start_practice.tooltip') }}
             disabled={!hasQuestions}
-            onClick={gatherShareToken('Unable to start Practice', (token) => {
+            onClick={gatherShareToken(t('start_practice.toast'), (token) => {
               router.push(`${window.location.origin}/checks/${token}/practice`)
             })}>
-            Start Practicing
+            {t('start_practice.label')}
             <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400' />
           </DropdownMenuItem>
 
           <DropdownMenuItem
             className='group justify-between'
             enableTooltip={!hasQuestions}
-            tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, examination disabled.' }}
+            tooltipOptions={{ ...baseTooltipOptions, content: t('start_examination.tooltip') }}
             disabled={!hasQuestions}
-            onClick={gatherShareToken('Unable to start Examination', (token) => {
+            onClick={gatherShareToken(t('start_examination.toast'), (token) => {
               router.push(`${window.location.origin}/checks/${token}`)
             })}>
-            Start Examination
+            {t('start_examination.label')}
             <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -115,19 +117,19 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {
                   navigator.clipboard
                     .writeText(`${window.location.origin}/checks/${token}/practice`)
-                    .then(() => toast('Successfully saved practice-url to your clipboard.', { type: 'success' }))
-                    .catch(() => toast('Failed to copy practice link to the clipboard.', { type: 'error' }))
+                    .then(() => toast(t('copy_practice.toast_success'), { type: 'success' }))
+                    .catch(() => toast(t('copy_practice.toast_failure'), { type: 'error' }))
                 })}>
-                start Practicing
+                {t('start_practice.label')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {
                   navigator.clipboard
                     .writeText(`${window.location.origin}/checks/${token}/`)
-                    .then(() => toast('Successfully saved exam-url to your clipboard.', { type: 'success' }))
-                    .catch(() => toast('Failed to copy examination link to the clipboard.', { type: 'error' }))
+                    .then(() => toast(t('copy_examination.toast_success'), { type: 'success' }))
+                    .catch(() => toast(t('copy_examination.toast_failure'), { type: 'error' }))
                 })}>
-                start Examination
+                {t('copy_examination.label')}
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
@@ -135,39 +137,36 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            disabled={!isOwner && !isContributor}
-            enableTooltip={!isOwner && !isContributor}
-            tooltipOptions={{ ...baseTooltipOptions, content: 'You are not allowed to edit this check!' }}>
+          <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_check.tooltip') }}>
             <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
-              Edit KnowledgeCheck
+              {t('edit_check.label')}
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='justify-between' disabled>
-            Clone KnowledgeCheck
+            {t('clone_check.label')}
             <CopyPlusIcon className='size-4 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>Inspect Statistics</DropdownMenuItem>
+          <DropdownMenuItem disabled>{t('inspect_statistics.label')}</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         <ConfirmationDialog
-          body='This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.'
+          body={t('remove_share_token.confirmation_dialog_body')}
           onConfirmSuccess={() => setMenuOpen(false)}
           confirmAction={() =>
             updateKnowledgeCheckShareToken({ checkId: id, token: null })
               .then((success) => {
-                if (!success) return toast('Deletion was unsuccesful, check not found.', { type: 'info' })
+                if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
                 const pageHeading = document.querySelector('main h1')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-                toast('Successfully removed share-token', { type: 'success' })
+                toast(t('remove_share_token.toast_deletion_successful'), { type: 'success' })
               })
               .catch((err) => {
                 console.error('[Error]: Removing share-token failed.', err)
-                toast('Removing share-token was unsuccessful!', { type: 'error' })
+                toast(t('remove_share_token.toast_deletion_failure'), { type: 'error' })
               })
           }>
           <DropdownMenuItem
@@ -175,7 +174,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
             enableTooltip={share_key === null || (!isOwner && !isContributor)}
             tooltipOptions={{
               ...baseTooltipOptions,
-              content: share_key === null ? 'There is no share-key associated to this check!' : !isOwner && !isContributor ? 'You are not allowed to perform this action!' : undefined,
+              content: share_key === null ? t('remove_share_token.tooltip') : !isOwner && !isContributor ? t('Shared.tooltip_not_allowed') : undefined,
             }}
             onSelect={(e) => e.preventDefault()}
             variant='destructive'
@@ -185,21 +184,21 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
           </DropdownMenuItem>
         </ConfirmationDialog>
         <ConfirmationDialog
-          body='This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.'
+          body={t('delete_knowledgeCheck.confirmation_dialog_body')}
           onConfirmSuccess={() => setMenuOpen(false)}
           confirmAction={() => {
             removeKnowledgeCheck({ checkId: id })
               .then((success) => {
-                if (!success) return toast('Deletion was unsuccesful, check not found.', { type: 'info' })
+                if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
                 const pageHeading = document.querySelector('main h1')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-                toast('Successfully deleted KnowledgeCheck', { type: 'success' })
+                toast(t('delete_knowledgeCheck.toast_deletion_successful'), { type: 'success' })
               })
               .catch((err) => {
                 console.error('[Error]: Removing knowledgeCheck failed.', err)
-                toast('Removing knowledgeCheck was unsuccessful!', { type: 'error' })
+                toast(t('delete_knowledgeCheck.toast_deletion_failure'), { type: 'error' })
               })
           }}>
           <DropdownMenuItem
@@ -207,12 +206,12 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
             enableTooltip={!isOwner}
             tooltipOptions={{
               ...baseTooltipOptions,
-              content: 'You are not allowed to perform this action!',
+              content: t('Shared.tooltip_not_allowed'),
             }}
             onSelect={(e) => e.preventDefault()}
             variant='destructive'
             className='justify-between'>
-            Delete KnowledgeCheck
+            {t('delete_knowledgeCheck.label')}
             <TrashIcon />
           </DropdownMenuItem>
         </ConfirmationDialog>

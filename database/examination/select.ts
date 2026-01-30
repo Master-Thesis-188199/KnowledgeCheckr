@@ -10,7 +10,7 @@ export async function getExaminationAttempts(userId: User['id'], checkId: Knowle
   const attempts = await db
     .select()
     .from(db_userHasDoneKnowledgeCheck)
-    .where(and(eq(db_userHasDoneKnowledgeCheck.userId, userId), eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, checkId)))
+    .where(and(eq(db_userHasDoneKnowledgeCheck.userId, userId), eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, checkId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')))
 
   return attempts
 }

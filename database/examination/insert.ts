@@ -21,6 +21,7 @@ export default async function insertExaminationResults(examinationResult: Examin
       finishedAt: formatDatetime(examinationResult.finishedAt ?? new Date(Date.now())),
       score: examinationResult.score,
       results: examinationResult.results,
+      type: 'examination',
     })
   } catch (e) {
     logger.error('Failed to save examination results to database', e)
