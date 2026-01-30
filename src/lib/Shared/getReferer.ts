@@ -41,6 +41,9 @@ function stripLocale(pathname: string | null) {
     if (pathname?.startsWith(`/${locale}/`)) {
       return pathname.replace(`${locale}/`, '')
     }
+    if (pathname === `/${locale}`) {
+      return '/'
+    }
   }
   // unchanged url --> no locale
   return pathname
