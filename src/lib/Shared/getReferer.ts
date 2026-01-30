@@ -17,7 +17,9 @@ export default async function getReferer() {
   if (!referer) return undefined
 
   const refererUrl = URL.parse(referer, env.NEXT_PUBLIC_BASE_URL)!
-  if (!refererUrl.href.startsWith(env.NEXT_PUBLIC_BASE_URL)) {
+  const baseOrigin = URL.parse(env.NEXT_PUBLIC_BASE_URL)?.origin
+
+  if (!refererUrl || !baseOrigin || refererUrl.origin !== baseOrigin) {
     logger.warn('Discarded external referer', referer)
     return undefined
   }
