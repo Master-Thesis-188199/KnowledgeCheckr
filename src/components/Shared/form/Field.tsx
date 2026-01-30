@@ -123,7 +123,7 @@ export default function Field<Values extends FieldValues>({
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
-                        props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
+                        props.type === 'checkbox' && 'top-0 right-auto bottom-0 left-7 items-center',
                         !description && 'hidden',
                       )}>
                       <InfoIcon className={cn('size-4')} />
