@@ -12,18 +12,24 @@ export default async function getReferer() {
   const header = await headers()
 
   const currentPath = stripLocale(header.get('x-current-path'))
-  let referer = stripLocale(header.get('referer'))
-
-  referer = referer?.replace(env.NEXT_PUBLIC_BASE_URL, '') ?? null
+  const referer = stripLocale(header.get('referer'))
 
   if (!referer) return undefined
 
-  if (currentPath === referer) {
+  const refererUrl = URL.parse(referer, env.NEXT_PUBLIC_BASE_URL)!
+  if (!refererUrl.href.startsWith(env.NEXT_PUBLIC_BASE_URL)) {
+    logger.warn('Discarded external referer', referer)
+    return undefined
+  }
+
+  const refererPath = referer.replace(env.NEXT_PUBLIC_BASE_URL, '')
+
+  if (currentPath === refererPath) {
     logger.verbose('Referer matches current location, discarding referer.')
     return undefined
   }
 
-  return referer
+  return refererPath
 }
 /**
  * This simple utility function takes in a given url pathname and removes the leading locale (e.g. '/en', '/de', ..) from the path in case a locale is present.
