@@ -6,6 +6,7 @@ import { UseFormProps } from 'react-hook-form'
 import { TbSettingsAutomation } from 'react-icons/tb'
 import { ExaminationSettings } from '@/src/components/checks/create/(sections)/(settings)/ExaminationSettings'
 import PracticeSettings from '@/src/components/checks/create/(sections)/(settings)/PracticeSettings'
+import ShareSettings from '@/src/components/checks/create/(sections)/(settings)/ShareSettings'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
@@ -49,6 +50,7 @@ export default function SettingsSection({
         <Card className='relative' disableInteractions>
           {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
           <CardHeading title={t('ShareSettings.title')} Icon={Share2Icon} iconClass='size-4.5' />
+          <ShareSettings baseFieldProps={baseFieldProps} />
         </Card>
       </form>
     </Form>
