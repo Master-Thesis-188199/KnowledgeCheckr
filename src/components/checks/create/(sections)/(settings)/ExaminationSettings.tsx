@@ -14,7 +14,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
   } = useFormContext<KnowledgeCheckSettings>()
 
   const { examination } = useWatch({ control })
-  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations } = examination!
+  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations, allowAnonymous } = examination!
   const humanReadableTimeFrame = useHumanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)
 
   return (
@@ -30,6 +30,18 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
           type='checkbox'
           checked={enableExaminations}
         />
+
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.allowAnonymous'
+          label={t('allowAnonymous_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={allowAnonymous}
+        />
+
         <Field
           {...baseFieldProps}
           disabled={!enableExaminations}
