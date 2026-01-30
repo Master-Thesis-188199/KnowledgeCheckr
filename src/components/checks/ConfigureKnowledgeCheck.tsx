@@ -13,6 +13,10 @@ import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/M
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import _logger from '@/src/lib/log/Logger'
+import getReferer from '@/src/lib/Shared/getReferer'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
   Partial<Pick<CheckStoreProviderProps, 'options'>> & {
@@ -29,6 +33,9 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
   const users = await getUsers()
   const tButtons = await getScopedI18n('Shared')
   const t = await getScopedI18n('Checks.Create.MultiStages')
+
+  // when users start editing from e.g. '/discover', '/checks' redirect them back to that page after save. When creating new checks redirect to '/checks'
+  const callbackPath = mode === 'edit' ? await getReferer() : '/checks'
 
   return (
     <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
@@ -69,7 +76,7 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
         </div>
         <MutliStageRenderer stage={4}>
           <form className='mt-4 flex justify-center gap-4'>
-            <SaveCheckButton />
+            <SaveCheckButton callbackPath={callbackPath} />
           </form>
         </MutliStageRenderer>
         <div />
