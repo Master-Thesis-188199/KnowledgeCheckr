@@ -99,7 +99,7 @@ function DisplayUserRole({ role }: { role: 'Guest' | 'Owner' | 'Collaborator' })
   }
 
   return (
-    <div className={cn('flex items-start gap-1 dark:text-[oklch(60%_0_0)]', canEdit && 'text-[oklch(60%_0_0)] dark:text-[oklch(70%_0_0)]')}>
+    <div className={cn('flex items-start gap-1 text-[oklch(60%_0_0)]', canEdit && 'text-[oklch(68.1%_0.112_75.834)] dark:text-[oklch(68.1%_0.082_75.834)]/80')}>
       {<Icon className='size-3.5' />}
       <span className={cn('rounded-md text-xs select-none', canEdit && 'font-bold')}>{t(`user_role.is_${role}_role`)}</span>
     </div>
