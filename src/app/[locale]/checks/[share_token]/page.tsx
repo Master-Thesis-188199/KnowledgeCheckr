@@ -20,7 +20,9 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
     notFound()
   }
 
-  if (isExaminationAllowed(check) !== 'allowed') redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
+  const { allowed: examAllowed } = await isExaminationAllowed(check, user)
+
+  if (!examAllowed) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
 
   const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getExaminationAttempts(user.id, check.id)])
 

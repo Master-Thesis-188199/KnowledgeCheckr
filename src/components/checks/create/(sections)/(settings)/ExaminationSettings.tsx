@@ -14,13 +14,19 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
   } = useFormContext<KnowledgeCheckSettings>()
 
   const { examination } = useWatch({ control })
-  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations } = examination!
+  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations, allowAnonymous } = examination!
   const humanReadableTimeFrame = useHumanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)
 
   return (
-    <div
-      className={cn('grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0')}>
-      <div className='grid grid-cols-[auto_1fr] items-baseline justify-baseline gap-7 gap-x-7 *:last:mb-0 *:odd:mt-0 @md:col-span-2'>
+    <div className={cn('@container grid grid-cols-1 items-baseline justify-baseline gap-3', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7')}>
+      <div
+        className={cn(
+          'grid grid-cols-2 items-center gap-7 gap-x-7 @md:col-span-2',
+          // 2 columns with 'justify-between' mimic
+          '*:odd:my-auto @xl:grid-cols-[max-content_minmax(50px,1fr)_max-content_minmax(50px,auto)]',
+          // 3 columns with 'justify-between' mimic
+          '@4xl:grid-cols-[max-content_minmax(50px,1fr)_max-content_minmax(50px,1fr)_max-content_minmax(50px,auto)]',
+        )}>
         <Field
           {...baseFieldProps}
           name='examination.enableExaminations'
@@ -30,6 +36,18 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
           type='checkbox'
           checked={enableExaminations}
         />
+
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.allowAnonymous'
+          label={t('allowAnonymous_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={allowAnonymous}
+        />
+
         <Field
           {...baseFieldProps}
           disabled={!enableExaminations}

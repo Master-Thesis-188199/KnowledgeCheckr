@@ -87,6 +87,7 @@ export default {
         ExaminationSettings: {
           title: 'Examination Settings',
           enableExaminations_label: 'Enable Examination Attempts',
+          allowAnonymous_label: 'Allow Anonymous Users',
           questionOrder_label: 'Randomize Question Order',
           answerOrder_label: 'Randomize Answer Order',
           examTimeFrameSeconds_label: 'Examination Time Frame',
@@ -95,7 +96,8 @@ export default {
           endDate_label: 'End Date'
         },
         ShareSettings: {
-          title: 'Share Settings'
+          title: 'Share Settings',
+          shareAccessibility: 'Publicly Discoverable'
         }
       },
       OverviewSection: {
@@ -165,7 +167,8 @@ export default {
       title: 'Examination not possible',
       checkClosed: 'Unfortunately the check was closed on {closeDate}, thus you are no longer able to start examinations beyond that day.',
       notOpenYet: 'Unfortunately the check is not yet open for examinations, please wait until {openDate} to start an examination',
-      unavailable: 'The check you tried to access is currently not available to users.'
+      unavailable: 'The check you tried to access is currently not available to users.',
+      'anonymous-users-not-allowed': 'Anonymous users are not allowed in this check, please sign-in / login with a different account'
     }
   },
   Practice: {
