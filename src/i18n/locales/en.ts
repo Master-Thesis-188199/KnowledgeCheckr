@@ -185,6 +185,11 @@ export default {
         questions_label: 'Questions',
         estimatedTime_label: 'estimatedTime',
         points_label: 'Points'
+      },
+      user_role: {
+        is_Owner_role: 'Owner',
+        is_Collaborator_role: 'Collaborator',
+        is_Guest_role: 'Guest'
       }
     },
     ShareKnowledgeCheckButton: {
@@ -195,6 +200,7 @@ export default {
     },
     KnowledgeCheckCardMenu: {
       menu_label: 'Actions',
+      invite_to_submenu_label: 'Invite users to',
       copy_practice: {
         label: 'Copy Practice Link',
         toast_success: 'Successfully saved practice url to clipboard.',
