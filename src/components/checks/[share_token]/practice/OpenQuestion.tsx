@@ -1,8 +1,9 @@
 import { HTMLProps } from 'react'
 import { UseFormRegister } from 'react-hook-form'
+import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { cn } from '@/src/lib/Shared/utils'
-import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import type { OpenQuestion } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export function OpenQuestion({
   register,
@@ -11,9 +12,9 @@ export function OpenQuestion({
   isEvaluated,
   ...props
 }: {
-  register: UseFormRegister<PracticeData>
+  register: UseFormRegister<QuestionInput>
   isEvaluated: boolean
-  getFeedbackEvaluation: ReturnType<typeof import('@/src/hooks/checks/[share_token]/practice/usePracticeFeedback').usePracticeFeeback>
+  getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
   question: OpenQuestion
 } & Pick<HTMLProps<HTMLTextAreaElement>, 'disabled'>) {
   const { isCorrect, isIncorrect, reasoning } = getFeedbackEvaluation(question)

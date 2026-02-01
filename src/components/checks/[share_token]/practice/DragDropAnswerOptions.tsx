@@ -6,8 +6,8 @@ import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/D
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
-import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 /**
  * Renders the answer-options for a drag-drop question within a drag-and-drop container. Depending on the provided props it allows interaction for reordering answers or displays feedback based on the feedback and submission.
@@ -21,8 +21,8 @@ export default function DragDropAnswers({
   question: DragDropQuestion
   isEvaluated: boolean
   state: PracticeFeedbackServerState
-  setValue: UseFormSetValue<PracticeData>
-  trigger: UseFormTrigger<PracticeData>
+  setValue: UseFormSetValue<QuestionInput>
+  trigger: UseFormTrigger<QuestionInput>
 }) {
   return (
     <DragDropContainer

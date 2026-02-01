@@ -8,7 +8,6 @@ import { LoaderCircleIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { z } from 'zod'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
 import { OpenQuestion } from '@/src/components/checks/[share_token]/practice/OpenQuestion'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
@@ -19,8 +18,8 @@ import { useLogger } from '@/src/hooks/log/useLogger'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
-import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
@@ -52,7 +51,7 @@ export function RenderPracticeQuestion() {
     state,
     runServerValidation,
   } = useRHF(
-    PracticeSchema,
+    QuestionInputSchema,
     {
       defaultValues: () => ({ question_id: question.id, type: question.type }),
     },
@@ -87,7 +86,7 @@ export function RenderPracticeQuestion() {
     }
   }, [question.id, question.type])
 
-  const onSubmit = (_data: z.infer<typeof PracticeSchema>) => {
+  const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
     runServerValidation(_data)
   }
@@ -244,10 +243,10 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
   type,
 }: {
   isEvaluated: boolean
-  register: UseFormRegister<PracticeData>
-  errors: FieldErrors<PracticeData>
+  register: UseFormRegister<QuestionInput>
+  errors: FieldErrors<QuestionInput>
   type: Required<HTMLProps<HTMLInputElement>['type']>
-  registerKey: (index: number) => Parameters<UseFormRegister<PracticeData>>['0']
+  registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0']
   question: Q
   getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
 }) {

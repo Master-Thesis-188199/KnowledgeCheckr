@@ -1,8 +1,8 @@
 import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type PracticeState = {
@@ -11,7 +11,7 @@ export type PracticeState = {
   unfilteredQuestions: Question[]
   practiceQuestions: Question[]
   currentQuestionIndex: number
-  answerResults: Array<PracticeData>
+  answerResults: Array<QuestionInput>
 }
 
 export type PracticeActions = {
