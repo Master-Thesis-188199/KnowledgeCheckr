@@ -13,7 +13,7 @@ export async function insertPracticeResults({
   startedAt,
   results,
   ...values
-}: { results: PracticeState['answerResults']; startedAt: PracticeState['startedAt'] } & Omit<
+}: { results: PracticeState['results']; startedAt: PracticeState['startedAt'] } & Omit<
   typeof db_userHasDoneKnowledgeCheck.$inferInsert,
   'startedAt' | 'results' | 'finishedAt' | 'id' | 'userId' | 'type'
 >) {

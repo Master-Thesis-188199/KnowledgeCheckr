@@ -1,17 +1,12 @@
 import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiatePracticeData, PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
-export type PracticeState = {
-  startedAt: Date
-  checkId: KnowledgeCheck['id']
-  unfilteredQuestions: Question[]
+export type PracticeState = PracticeData & {
   practiceQuestions: Question[]
   currentQuestionIndex: number
-  answerResults: Array<QuestionInput>
 }
 
 export type PracticeActions = {
@@ -27,19 +22,17 @@ export type PracticeActions = {
   previousQuestion: (looping?: boolean) => void
   navigateToQuestion: (index: number) => void
   getQuestion: () => Question | null
-  storeAnswer: (question: PracticeState['answerResults'][number]) => void
+  storeAnswer: (question: PracticeState['results'][number]) => void
   updatePracticeQuestions: (questions: Question[]) => void
 }
 
 export type PracticeStore = PracticeState & PracticeActions
 
 const defaultInitState: PracticeState = {
-  checkId: '',
+  ...instantiatePracticeData(),
   startedAt: new Date(Date.now()),
   practiceQuestions: [],
-  unfilteredQuestions: [],
   currentQuestionIndex: 0,
-  answerResults: [],
 }
 export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState = defaultInitState, options }) =>
   createZustandStore({
@@ -74,13 +67,13 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
-            const exists = prev.answerResults.find((r) => r.question_id === question.question_id)
+            const exists = prev.results.find((r) => r.question_id === question.question_id)
 
             const update: typeof prev = {
               ...prev,
-              answerResults: exists ? prev.answerResults.map((r) => (r.question_id === question.question_id ? question : r)) : prev.answerResults.concat([question]),
+              results: exists ? prev.results.map((r) => (r.question_id === question.question_id ? question : r)) : prev.results.concat([question]),
             }
-            savePracticeResults({ knowledgeCheckId: update.checkId, results: update.answerResults, startedAt: update.startedAt, score: 0 })
+            savePracticeResults({ knowledgeCheckId: update.checkId, results: update.results, startedAt: update.startedAt, score: 0 })
 
             return update
           }),

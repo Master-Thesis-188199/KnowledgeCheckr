@@ -23,7 +23,7 @@ import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionIn
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const { practiceQuestions: questions, unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
