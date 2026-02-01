@@ -149,8 +149,8 @@ function DragDropAnswers({ debounceSave, question }: { question: DragDropQuestio
       }}
       className='flex flex-col gap-4'>
       {answers.map((a, i, array) => (
-        <DragDropItem name={a.id} key={a.id + a.position} initialIndex={a.position ? a.position : i} showPositionCounter>
-          <span className='flex-1'>{array.at(a.position ?? i)?.answer}</span>
+        <DragDropItem name={a.id} key={a.id + a.position} initialIndex={a.position} showPositionCounter>
+          <span className='flex-1'>{array.at(a.position)?.answer}</span>
         </DragDropItem>
       ))}
     </DragDropContainer>
