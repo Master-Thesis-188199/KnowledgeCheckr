@@ -6,6 +6,7 @@ import QuestionNavigationMenu from '@/src/components/checks/[share_token]/(share
 import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDialog'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { Button } from '@/src/components/shadcn/button'
 import { TimeTicker } from '@/src/components/Shared/TimeTicker'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
@@ -36,8 +37,10 @@ export function ExamQuestionNavigationMenu({ className }: { className?: string }
           />{' '}
           left
         </span>
-        <ExamFinishDialog triggerClassname='ml-auto text-sm hover:cursor-pointer hover:underline dark:text-neutral-200/60 text-neutral-700/80'>
-          <span>Finish Check</span>
+        <ExamFinishDialog triggerClassname='ml-auto text-sm dark:text-neutral-200/60 text-neutral-700/80 -mb-2'>
+          <Button variant='ghost' type='button'>
+            Finish Check
+          </Button>
         </ExamFinishDialog>
       </QuestionNavigationMenu>
     </>
