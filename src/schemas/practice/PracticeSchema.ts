@@ -9,7 +9,7 @@ import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
 export const PracticeSchema = z.object({
   checkId: stripZodDefault(stripEffects(KnowledgeCheckSchema)).shape.id,
   startedAt: StringDate,
-  score: z.number().positive().default(0),
+  score: z.number().default(0),
   questions: stripZodDefault(stripEffects(KnowledgeCheckSchema)).shape.questions.default([]),
   results: z.array(QuestionInputSchema).default([]),
 })

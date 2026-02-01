@@ -9,7 +9,7 @@ export const ExaminationSchema = z.object({
   knowledgeCheck: stripEffects(KnowledgeCheckSchema),
   startedAt: StringDate.default(new Date(Date.now())),
   finishedAt: StringDate.nullable().default(null),
-  score: z.number().positive(),
+  score: z.number().default(0),
   results: z.array(QuestionInputSchema).default([]),
 })
 
