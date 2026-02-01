@@ -40,7 +40,7 @@ export default function RenderExamQuestion() {
 
     console.debug('Examination input detected and saved.')
     debounceSave(form.getValues())
-  }, [values, form.getValues])
+  }, [values])
 
   return (
     <Form {...form}>
