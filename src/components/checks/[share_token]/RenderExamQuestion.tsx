@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useIsFirstRender } from '@uidotdev/usehooks'
 import { useForm, useFormContext, useWatch } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
 import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
 import { OpenQuestionAnswer } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
@@ -12,8 +11,7 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
-import { cn } from '@/src/lib/Shared/utils'
-import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
@@ -121,21 +119,6 @@ function ResetButton() {
       onClick={() => reset({ question_id: control._defaultValues.question_id })}>
       Reset
     </Button>
-  )
-}
-
-function ExamOpenQuestionAnswer() {
-  const { register } = useFormContext<Extract<QuestionInput, { type: OpenQuestion['type'] }>>()
-
-  return (
-    <TextareaAutosize
-      maxRows={10}
-      {...register('input')}
-      className={cn(
-        'focus:ring-ring-focus dark:focus:ring-ring-focus hover:ring-ring-hover dark:hover:ring-ring-hover rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text focus:ring-[1.2px] dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-        'resize-none',
-      )}
-    />
   )
 }
 
