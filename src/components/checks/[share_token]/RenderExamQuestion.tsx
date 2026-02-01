@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
+import { useForm, useFormContext, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
+import { Form } from '@/src/components/shadcn/form'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
@@ -12,7 +13,7 @@ import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
-import { Any } from '@/types'
+import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
@@ -21,27 +22,29 @@ export default function RenderExamQuestion() {
   const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
   const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
 
-  const {
-    reset: resetInputs,
-    setValue,
-    getValues,
-  } = useForm<ExaminationSchema>({
-    resolver: zodResolver(ExaminationSchema),
-    defaultValues: state,
+  const form = useForm<QuestionInput>({
+    resolver: zodResolver(QuestionInputSchema),
+    defaultValues: {
+      question_id: question.id,
+      // todo add default-values from saved results after updating examination schema
+    },
   })
+  const { getValues } = form
 
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
 
   return (
-    <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
-      <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
+    <Form {...form}>
+      <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues())}>
+        {/* <input {...form.register(`results.${currentQuestionIndex}.question_id`)} value={state.knowledgeCheck.questions[currentQuestionIndex].id} className='hidden' /> */}
+        <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
 
-      {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
-        <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
-      )}
-      {question.type === 'open-question' && <ExamOpenQuestionAnswer setValue={setValue} reset={resetInputs} />}
-      {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} getValues={getValues} setValue={setValue} reset={resetInputs} />}
-    </form>
+        {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswers question={question as ChoiceQuestion} />}
+
+        {/* {question.type === 'open-question' && <ExamOpenQuestionAnswer setValue={setValue} reset={resetInputs} />}
+        {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} getValues={getValues} setValue={setValue} reset={resetInputs} />} */}
+      </form>
+    </Form>
   )
 }
 
@@ -79,38 +82,27 @@ function HeaderInline({ title, index }: { title: string; index: number }) {
   )
 }
 
-function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuestion; reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema>; getValues: () => Any }) {
-  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
-  const answers = results.at(currentQuestionIndex)!.answer
-
+function ExamChoiceAnswers({ question }: { question: ChoiceQuestion }) {
   return (
     <ul className='group flex flex-col gap-4 px-4'>
-      {question.answers.map((answer, index) => (
+      {question.answers.map((answer, index) =>
+        // prettier-ignore
         <DisplayChoiceQuestionAnswer
+          answer={answer}
+          registerKey={question.type === 'single-choice' ? 'selection' : `selection.${index}`}
           key={answer.id}
           type={question.type}
-          defaultChecked={({ answerIndex }) => answers.at(answerIndex)?.selected}
-          answer={answer}
-          index={index}
-          onChange={({ selected }) => {
-            setValue(`results.${currentQuestionIndex}.answer.${index}.selected` as const, selected)
+        />,
+      )}
 
-            //* Ensure single-choice questions only have a single answer
-            if (question.type !== 'single-choice') return
-            for (let i = 0; i < question.answers.length; i++) {
-              if (i === index) continue
-              setValue(`results.${currentQuestionIndex}.answer.${i}.selected` as const, false)
-            }
-          }}
-        />
-      ))}
-
-      <ResetButton reset={reset} />
+      <ResetButton />
     </ul>
   )
 }
 
-function ResetButton({ reset }: { reset: UseFormReset<ExaminationSchema> }) {
+function ResetButton() {
+  const { reset } = useFormContext<QuestionInput>()
+
   return (
     <Button variant='link' type='button' className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-[:checked]:flex dark:text-neutral-400' onClick={() => reset()}>
       Reset
