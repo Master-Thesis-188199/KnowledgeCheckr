@@ -29,7 +29,7 @@ export async function insertPracticeResults({
     userId,
     startedAt: formatDatetime(startedAt),
     type: 'practice',
-    results: JSON.stringify(results),
+    results: results,
     finishedAt: formatDatetime(new Date(Date.now())),
     ...values,
   })

@@ -29,7 +29,7 @@ export async function updatePracticeResults({
   const result = await db
     .update(db_userHasDoneKnowledgeCheck)
     .set({
-      results: JSON.stringify(results),
+      results: results,
       score: values.score,
       finishedAt: formatDatetime(new Date(Date.now())),
     })
