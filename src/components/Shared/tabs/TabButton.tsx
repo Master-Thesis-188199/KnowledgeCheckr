@@ -10,8 +10,8 @@ export function TabButton({ tab }: { tab: Tab }) {
   return (
     <button
       type='button'
-      onClick={() => setCurrentTab(tab.name)}
-      key={tab.name}
+      onClick={() => setCurrentTab(tab.key)}
+      key={tab.key}
       className={cn(
         isActive
           ? 'border-neutral-800 font-semibold text-neutral-600 dark:border-neutral-100 dark:text-neutral-200'

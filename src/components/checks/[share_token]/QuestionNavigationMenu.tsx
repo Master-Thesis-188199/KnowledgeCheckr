@@ -6,11 +6,13 @@ import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDi
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { TimeTicker } from '@/src/components/Shared/TimeTicker'
+import { useLogger } from '@/src/hooks/log/useLogger'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export function QuestionNavigationMenu({ className }: { className?: string }) {
+  const { error } = useLogger('ExamQuestionNavigationMenu')
   const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex, startedAt, ...examinationState } = useExaminationStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
 
@@ -38,6 +40,7 @@ export function QuestionNavigationMenu({ className }: { className?: string }) {
               finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, startedAt, ...examinationState }))
                 .catch((e) => {
                   toast(`Failed to submit examination results. ${e}`, { type: 'error' })
+                  error('Failed to finish examination attempt', e)
                 })
                 .then(() => {
                   toast('Successfully submitted examination results', { type: 'success' })

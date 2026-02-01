@@ -307,6 +307,7 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
+    type: mysqlEnum(['practice', 'examination']).notNull(),
     userId: varchar('user_id', { length: 36 }).notNull(),
     knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 }).notNull(),
     startedAt: datetime({ mode: 'string' }).notNull(),
