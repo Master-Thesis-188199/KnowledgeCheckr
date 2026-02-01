@@ -9,7 +9,7 @@ import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
  * @param state The examinationState used to access the knowledgeCheck to mimic its structure
  * @returns
  */
-export function initializeExaminationResults(state: ExaminationState) {
+export function initializeExaminationResults(state: Pick<ExaminationState, 'knowledgeCheck'>): ExaminationState['results'] {
   return Array.from(state.knowledgeCheck.questions).map((question): ExaminationSchema['results'][number] => ({
     question_id: question.id,
     answer: Array.from({ length: (question?.answers as Partial<ChoiceQuestion[]>)?.length ?? 1 }).map((_, i): ExaminationSchema['results'][number]['answer'][number] => {

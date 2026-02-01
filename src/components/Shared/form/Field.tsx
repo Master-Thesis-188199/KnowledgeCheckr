@@ -4,6 +4,7 @@ import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
 import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 import { DescriptionMap, getDescriptionForRhfName } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
@@ -76,17 +77,12 @@ export default function Field<Values extends FieldValues>({
           <>
             <FormLabel className={cn('self-baseline pl-1', label === undefined && 'capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
 
-            <div
-              className={cn(
-                'relative grid',
-                // moves input indicators like 'number' | 'date' to the left to make room for the info / error icon
-                (description || hasError) && '**:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6',
-                containerClassname,
-              )}>
+            <div className={cn('relative grid', containerClassname)}>
               <FormControl>
                 <ShadcnInput
                   autoComplete={field.name.includes('password') ? 'current-password' : field.name}
-                  className='peer hover:cursor-text'
+                  // 'pr-8' moves input indicators like 'number' | 'date' to the left to make room for the info / error icon and ensures text does not cover info icon
+                  className={cn('peer hover:cursor-text', (description || hasError) && 'pr-8')}
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
                   {...props}
@@ -107,25 +103,29 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <motion.div
-                    data-disabled={field.disabled || props.disabled}
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                    key='info-icon'
-                    onMouseOver={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    className={cn(
-                      'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
-                      // disabled state styles
-                      'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
-                      // positions the icon next to the checkbox
-                      props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
-                      !description && 'hidden',
-                    )}>
-                    <InfoIcon className={cn('size-4')} />
-                  </motion.div>
+                  <Tooltip isDisabled={hasError || !description} offset={props.type === 'checkbox' ? 12 : 0} content={description}>
+                    <motion.div
+                      data-disabled={field.disabled || props.disabled}
+                      exit={{ opacity: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      key='info-icon'
+                      onMouseOver={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                      aria-label='Show field description'
+                      role='button'
+                      className={cn(
+                        'text-muted-foreground absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                        // disabled state styles
+                        'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
+                        // positions the icon next to the checkbox
+                        props.type === 'checkbox' && 'top-0 right-auto bottom-0 left-7 items-center',
+                        !description && 'hidden',
+                      )}>
+                      <InfoIcon className={cn('size-4')} />
+                    </motion.div>
+                  </Tooltip>
                 )}
                 {hasError && (
                   <motion.div
@@ -144,13 +144,9 @@ export default function Field<Values extends FieldValues>({
                 )}
               </AnimatePresence>
 
-              {/* //* set min-h when state changes but is still in focus, prevent layout shifts when switching between error/description. (!!description ensures that this feature is only enabled when there is a description to display)*/}
-              <div className={cn('relative', keepAnimationContainerSize && 'min-h-6')}>
-                <AnimatePresence mode='wait' initial={false}>
-                  {hasError ? <RenderInlineError animationDuration={animationDuration} /> : null}
-                  {!hasError && showDescription && description ? <RenderInlineDescription description={description} animationDuration={animationDuration} /> : null}
-                </AnimatePresence>
-              </div>
+              <AnimatePresence mode='wait' initial={false}>
+                {hasError ? <RenderInlineError animationDuration={animationDuration} /> : null}
+              </AnimatePresence>
               {children}
             </div>
           </>
