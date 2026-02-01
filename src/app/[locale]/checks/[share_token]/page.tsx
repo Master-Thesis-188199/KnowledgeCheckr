@@ -2,8 +2,8 @@ import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationStoreProvider } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { ExamQuestionNavigationMenu } from '@/src/components/checks/[share_token]/ExamQuestionNavigationMenu'
 import { ExamQuestionWrapper } from '@/src/components/checks/[share_token]/ExamQuestionWrapper'
-import { QuestionNavigationMenu } from '@/src/components/checks/[share_token]/QuestionNavigationMenu'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { defaultExaminationStoreProps } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -34,7 +34,7 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
 
       <div className='grid gap-12 @3xl:grid-cols-[1fr_auto] @3xl:gap-[7vw]'>
         <ExamQuestionWrapper />
-        <QuestionNavigationMenu className='order-first @3xl:order-last' />
+        <ExamQuestionNavigationMenu className='order-first @3xl:order-last' />
       </div>
     </ExaminationStoreProvider>
   )
