@@ -77,17 +77,12 @@ export default function Field<Values extends FieldValues>({
           <>
             <FormLabel className={cn('self-baseline pl-1', label === undefined && 'capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
 
-            <div
-              className={cn(
-                'relative grid',
-                // moves input indicators like 'number' | 'date' to the left to make room for the info / error icon
-                (description || hasError) && '**:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6',
-                containerClassname,
-              )}>
+            <div className={cn('relative grid', containerClassname)}>
               <FormControl>
                 <ShadcnInput
                   autoComplete={field.name.includes('password') ? 'current-password' : field.name}
-                  className='peer hover:cursor-text'
+                  // 'pr-8' moves input indicators like 'number' | 'date' to the left to make room for the info / error icon and ensures text does not cover info icon
+                  className={cn('peer hover:cursor-text', (description || hasError) && 'pr-8')}
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
                   {...props}
