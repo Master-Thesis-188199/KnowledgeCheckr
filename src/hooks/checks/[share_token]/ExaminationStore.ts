@@ -1,5 +1,3 @@
-import isEmpty from 'lodash/isEmpty'
-import { initializeExaminationResults } from '@/src/hooks/checks/[share_token]/initializeExaminationResults'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -39,8 +37,6 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
       return {
         ...initialState,
 
-        results: isEmpty(initialState.results) ? initializeExaminationResults(initialState) : initialState.results,
-
         // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
         setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length - 1 })),
         nextQuestion: () =>
@@ -55,7 +51,7 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
             currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
             isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
           })),
-        saveAnswer: (result: ExaminationSchema['results'][number]) => {
+        saveAnswer: (result) => {
           return set((prev) => ({
             ...prev,
             results: prev.results.find((r) => r.question_id === result.question_id) ? prev.results.map((r) => (r.question_id === result.question_id ? result : r)) : [...prev.results, result],
