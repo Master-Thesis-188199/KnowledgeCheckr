@@ -114,7 +114,7 @@ export default function Field<Values extends FieldValues>({
                       onMouseOver={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
                       className={cn(
-                        'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                        'text-muted-foreground absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
