@@ -9,8 +9,8 @@ import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
 import { useFormContext } from 'react-hook-form'
 import { UseFormRegister } from 'react-hook-form'
+import { FeedbackOpenQuestion } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
-import { OpenQuestion } from '@/src/components/checks/[share_token]/practice/OpenQuestion'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
@@ -121,7 +121,7 @@ export function RenderPracticeQuestion() {
           {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} />}
 
           {question.type === 'open-question' && (
-            <OpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
+            <FeedbackOpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
           )}
         </div>
 

@@ -4,6 +4,7 @@ import { useIsFirstRender } from '@uidotdev/usehooks'
 import { useForm, useFormContext, useWatch } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
+import { OpenQuestionAnswer } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
@@ -50,7 +51,7 @@ export default function RenderExamQuestion() {
 
         {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswers question={question as ChoiceQuestion} />}
 
-        {question.type === 'open-question' && <ExamOpenQuestionAnswer />}
+        {question.type === 'open-question' && <OpenQuestionAnswer />}
         {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} question={question} />}
       </form>
     </Form>
