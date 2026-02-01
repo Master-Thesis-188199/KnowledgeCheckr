@@ -113,6 +113,8 @@ export default function Field<Values extends FieldValues>({
                       key='info-icon'
                       onMouseOver={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
+                      aria-label='Show field description'
+                      role='button'
                       className={cn(
                         'text-muted-foreground absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
                         // disabled state styles
