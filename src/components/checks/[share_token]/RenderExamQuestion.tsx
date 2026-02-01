@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFormContext } from 'react-hook-form'
+import { useIsFirstRender } from '@uidotdev/usehooks'
+import { useForm, useFormContext, useWatch } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
 import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
@@ -20,6 +21,7 @@ import { Any } from '@/types'
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function RenderExamQuestion() {
+  const isFirstRender = useIsFirstRender()
   const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
   const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
 
@@ -35,14 +37,19 @@ export default function RenderExamQuestion() {
 
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
 
+  const values = useWatch({ control: form.control })
+
+  useEffect(() => {
+    if (isFirstRender) return
+
+    console.debug('User input / selection has changed...')
+    console.log(stringifyObject(getValues(), { pretified: true }))
+    debounceSave(getValues())
+  }, [values])
+
   return (
     <Form {...form}>
-      <form
-        className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]'
-        onChange={() => {
-          console.log(stringifyObject(getValues(), { pretified: true }))
-          debounceSave(getValues())
-        }}>
+      <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]'>
         {/* <input {...form.register(`results.${currentQuestionIndex}.question_id`)} value={state.knowledgeCheck.questions[currentQuestionIndex].id} className='hidden' /> */}
         <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
 
@@ -108,10 +115,14 @@ function ExamChoiceAnswers({ question }: { question: ChoiceQuestion }) {
 }
 
 function ResetButton() {
-  const { reset } = useFormContext<QuestionInput>()
+  const { reset, control } = useFormContext<QuestionInput>()
 
   return (
-    <Button variant='link' type='button' className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-[:checked]:flex dark:text-neutral-400' onClick={() => reset()}>
+    <Button
+      variant='link'
+      type='button'
+      className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-[:checked]:flex dark:text-neutral-400'
+      onClick={() => reset({ question_id: control._defaultValues.question_id })}>
       Reset
     </Button>
   )
