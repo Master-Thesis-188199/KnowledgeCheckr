@@ -14,6 +14,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { Any } from '@/types'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
@@ -25,8 +26,9 @@ export default function RenderExamQuestion() {
   const form = useForm<QuestionInput>({
     resolver: zodResolver(QuestionInputSchema),
     defaultValues: {
+      ...state.results[currentQuestionIndex],
       question_id: question.id,
-      // todo add default-values from saved results after updating examination schema
+      type: question.type as Any,
     },
   })
   const { getValues } = form
