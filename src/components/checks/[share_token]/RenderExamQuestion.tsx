@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleIcon } from 'lucide-react'
 import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
 import TextareaAutosize from 'react-textarea-autosize'
+import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { Button } from '@/src/components/shadcn/button'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
-import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
@@ -85,32 +85,36 @@ function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuest
 
   return (
     <ul className='group flex flex-col gap-4 px-4'>
-      {question.answers.map((answer, index, array) => (
-        <label className='flex items-center gap-2 hover:cursor-pointer' key={getUUID()}>
-          <input
-            type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'}
-            name={question.type === 'single-choice' ? 'answer.correct' : (`answers.${index}.correct` as const)}
-            defaultChecked={answers.at(index)?.selected}
-            onChange={(e) => {
-              setValue(`results.${currentQuestionIndex}.answer.${index}.selected` as const, e.target.checked)
+      {question.answers.map((answer, index) => (
+        <DisplayChoiceQuestionAnswer
+          key={answer.id}
+          type={question.type}
+          defaultChecked={({ answerIndex }) => answers.at(answerIndex)?.selected}
+          answer={answer}
+          index={index}
+          onChange={({ selected }) => {
+            setValue(`results.${currentQuestionIndex}.answer.${index}.selected` as const, selected)
 
-              //* Ensure single-choice questions only have a single answer
-              if (question.type !== 'single-choice') return
-              for (let i = 0; i < array.length; i++) {
-                if (i === index) continue
-                setValue(`results.${currentQuestionIndex}.answer.${i}.selected` as const, false)
-              }
-            }}
-            className='peer hidden'
-          />
-          <CircleIcon className='size-4.5 peer-checked:fill-neutral-400 dark:peer-checked:fill-neutral-300' />
-          {answer.answer}
-        </label>
+            //* Ensure single-choice questions only have a single answer
+            if (question.type !== 'single-choice') return
+            for (let i = 0; i < question.answers.length; i++) {
+              if (i === index) continue
+              setValue(`results.${currentQuestionIndex}.answer.${i}.selected` as const, false)
+            }
+          }}
+        />
       ))}
-      <button type='button' className='hidden text-neutral-500 underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset()}>
-        Reset
-      </button>
+
+      <ResetButton reset={reset} />
     </ul>
+  )
+}
+
+function ResetButton({ reset }: { reset: UseFormReset<ExaminationSchema> }) {
+  return (
+    <Button variant='link' type='button' className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-[:checked]:flex dark:text-neutral-400' onClick={() => reset()}>
+      Reset
+    </Button>
   )
 }
 
