@@ -7,6 +7,7 @@ import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import prepareQuestions from '@/src/lib/checks/[share_token]/prepareQuestions'
 import _logger from '@/src/lib/log/Logger'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -24,7 +25,10 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
   if (!check.settings.practice.enablePracticing) redirect(`/checks/${share_token}/practice/not-allowed`, RedirectType.replace)
 
-  const unfilteredQuestions = check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')
+  const unfilteredQuestions = prepareQuestions(
+    check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only'),
+    { hideSolutions: true, answerOrder: 'create-order', questionOrder: 'create-order' },
+  )
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
 
   // When there are no categories to switch between -> set (practice-) questions to be the base-questions.
