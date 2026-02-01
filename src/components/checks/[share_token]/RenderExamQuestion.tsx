@@ -11,7 +11,6 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
-import { stringifyObject } from '@/src/lib/log/StringifyObject'
 import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
@@ -33,24 +32,20 @@ export default function RenderExamQuestion() {
       type: question.type as Any,
     },
   })
-  const { getValues } = form
 
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
-
   const values = useWatch({ control: form.control })
 
   useEffect(() => {
     if (isFirstRender) return
 
-    console.debug('User input / selection has changed...')
-    console.log(stringifyObject(getValues(), { pretified: true }))
-    debounceSave(getValues())
-  }, [values])
+    console.debug('Examination input detected and saved.')
+    debounceSave(form.getValues())
+  }, [values, form.getValues])
 
   return (
     <Form {...form}>
       <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]'>
-        {/* <input {...form.register(`results.${currentQuestionIndex}.question_id`)} value={state.knowledgeCheck.questions[currentQuestionIndex].id} className='hidden' /> */}
         <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
 
         {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswers question={question as ChoiceQuestion} />}
