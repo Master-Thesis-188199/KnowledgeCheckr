@@ -116,7 +116,7 @@ function ResetButton() {
       variant='link'
       type='button'
       className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-[:checked]:flex dark:text-neutral-400'
-      onClick={() => reset({ question_id: control._defaultValues.question_id })}>
+      onClick={() => reset({ question_id: control._defaultValues.question_id, type: control._defaultValues.type as Any })}>
       Reset
     </Button>
   )
