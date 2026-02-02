@@ -36,7 +36,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-0 left-0 z-10 opacity-65'>
-        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={retainmentScore} />
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-3 px-3 text-xs' knowledgeCheckScore={retainmentScore} />
       </div>
       <div className='-mt-2 -mb-9 flex items-center justify-between'>
         <div className='w-14' />
