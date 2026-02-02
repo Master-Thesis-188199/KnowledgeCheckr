@@ -7,7 +7,7 @@ import { Progress } from '@/src/components/shadcn/progress'
  * Renders a progress bar indicating the (learning / answering) progress the user has made while practicing.
  */
 export function PracticeProgress() {
-  const { practiceQuestions: questions, answerResults: results } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, results } = usePracticeStore((store) => store)
 
   return (
     <div className='relative mx-5 my-0'>

@@ -10,7 +10,7 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
 export async function savePracticeResults(
-  props: { results: PracticeState['answerResults']; startedAt: PracticeState['startedAt'] } & Omit<
+  props: { results: PracticeState['results']; startedAt: PracticeState['startedAt'] } & Omit<
     typeof db_userHasDoneKnowledgeCheck.$inferInsert,
     'startedAt' | 'results' | 'finishedAt' | 'id' | 'userId' | 'type'
   >,

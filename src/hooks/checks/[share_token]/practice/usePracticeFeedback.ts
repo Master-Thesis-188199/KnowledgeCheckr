@@ -2,8 +2,8 @@
 
 import { FormState } from 'react-hook-form'
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
-import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEvaluation<Type> & {
@@ -30,7 +30,7 @@ type OpenQuestionFeedbackEvaluation = FeedbackEvaluation<OpenQuestion['type']> &
 type FeedbackEvaluation<Type extends Question['type']> = {
   type: Type
   feedback?: Extract<PracticeFeedback, { type: Type }>
-  submittedAnswers?: Extract<PracticeData, { type: Type }>
+  submittedAnswers?: Extract<QuestionInput, { type: Type }>
 }
 
 type PracticeFeedbackReturn = ChoiceFeedbackEvaluation<SingleChoice['type']> | ChoiceFeedbackEvaluation<MultipleChoice['type']> | OpenQuestionFeedbackEvaluation | DragDropFeedbackEvaluation

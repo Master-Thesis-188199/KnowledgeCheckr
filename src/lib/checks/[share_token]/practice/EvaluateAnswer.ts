@@ -2,25 +2,25 @@
 
 import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questions/select'
 import _logger from '@/src/lib/log/Logger'
-import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export type PracticeFeedbackServerState = {
   success: boolean
-  fieldErrors?: { [key in keyof PracticeData]?: string[] }
+  fieldErrors?: { [key in keyof QuestionInput]?: string[] }
   rootError?: string
-  values?: PracticeData
+  values?: QuestionInput
   feedback?: PracticeFeedback
 }
 
-export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: PracticeData): Promise<PracticeFeedbackServerState> {
+export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: QuestionInput): Promise<PracticeFeedbackServerState> {
   logger.info('Evaluating practice answers...', data)
 
   await new Promise((r) => setTimeout(r, 500))
 
-  const parsed = PracticeSchema.safeParse(data)
+  const parsed = QuestionInputSchema.safeParse(data)
 
   if (!parsed.success) {
     logger.info("The practice-schema constraints weren't satisfied....", parsed.error.flatten())
@@ -32,17 +32,17 @@ export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: Pract
   return { success: true, values: data, feedback }
 }
 
-type SingleChoiceFeedback = Omit<Extract<PracticeData, { type: 'single-choice' }> & { reasoning?: string[]; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
-type MultipleChoiceFeedback = Omit<Extract<PracticeData, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
+type SingleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'single-choice' }> & { reasoning?: string[]; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
+type MultipleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
 type OpenQuestionFeedback = Omit<
-  Extract<PracticeData, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; degreeOfCorrectness: number; solution?: string },
+  Extract<QuestionInput, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; degreeOfCorrectness: number; solution?: string },
   'question_id' | 'input'
 >
-type DragDropFeedback = Omit<Extract<PracticeData, { type: 'drag-drop' }> & { reasoning?: string[]; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
+type DragDropFeedback = Omit<Extract<QuestionInput, { type: 'drag-drop' }> & { reasoning?: string[]; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
-async function createFeedback({ question_id, ...answer }: PracticeData): Promise<PracticeFeedback | undefined> {
+async function createFeedback({ question_id, ...answer }: QuestionInput): Promise<PracticeFeedback | undefined> {
   let question = await getKnowledgeCheckQuestionById(question_id)
 
   if (!question) {
