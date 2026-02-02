@@ -38,7 +38,8 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       <div className='absolute top-0 left-0 z-10 opacity-65'>
         <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={retainmentScore} />
       </div>
-      <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
+      <div className='-mt-2 -mb-9 flex items-center justify-between'>
+        <div className='w-14' />
         <DisplayUserRole role={role} />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
