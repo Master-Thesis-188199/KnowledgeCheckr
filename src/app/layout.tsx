@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang='en' data-theme={theme}>
-      <body className={`antialiased scheme-light-dark`}>
+      <body className={`antialiased scheme-light dark:scheme-dark`}>
         <RootProviders defaultTheme={theme}>
           <SideBar {...sideBarConfiguration}>
             {children}

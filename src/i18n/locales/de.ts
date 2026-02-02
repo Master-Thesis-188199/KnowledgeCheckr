@@ -185,6 +185,11 @@ export default {
         questions_label: 'Fragen',
         estimatedTime_label: 'geschätze Zeit',
         points_label: 'Punkte'
+      },
+      user_role: {
+        is_Owner_role: 'Besitzer',
+        is_Collaborator_role: 'Co-Author',
+        is_Guest_role: 'Gast'
       }
     },
     ShareKnowledgeCheckButton: {
@@ -195,6 +200,7 @@ export default {
     },
     KnowledgeCheckCardMenu: {
       menu_label: 'Aktionen',
+      invite_to_submenu_label: 'Teile diesen Check',
       copy_practice: {
         label: 'Kopiere Übungslink',
         toast_success: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',

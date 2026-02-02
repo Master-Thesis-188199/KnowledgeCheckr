@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { CrownIcon, LockIcon, UserPenIcon } from 'lucide-react'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
@@ -12,16 +13,16 @@ import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
   const isOwner = userId ? check.owner_id === userId : false
 
-  let role = 'Guest'
+  let role: 'Guest' | 'Owner' | 'Collaborator' = 'Guest'
   if (isOwner) role = 'Owner'
   else if (isCollaborator) role = 'Collaborator'
 
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
   return (
     <Card
       as={motion.div}
@@ -31,7 +32,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <span className='rounded-md bg-neutral-200 px-2 text-sm text-neutral-500 select-none dark:bg-neutral-700 dark:text-neutral-400'>{role}</span>
+        <DisplayUserRole role={role} />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
@@ -54,19 +55,53 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         />
         <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
-      <Footer updatedAt={check.updatedAt} />
+      <Footer updatedAt={check.updatedAt} role={role} />
     </Card>
   )
 }
 
-function Footer({ updatedAt }: { updatedAt?: Date }) {
+function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner' | 'Collaborator' }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
+
   return (
-    <div className='-mt-6 -mb-1 flex flex-row-reverse justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-400/70'>
-      <div>
+    <div className='relative -mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
+      <div className='flex-1' />
+      <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
+    </div>
+  )
+}
+
+function DisplayUserRole({ role }: { role: 'Guest' | 'Owner' | 'Collaborator' }) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
+  let Icon: React.ComponentType<{ className?: string }>
+  let canEdit: boolean
+
+  switch (role) {
+    case 'Owner': {
+      Icon = CrownIcon
+      canEdit = true
+      break
+    }
+    case 'Collaborator': {
+      Icon = UserPenIcon
+      canEdit = true
+      break
+    }
+
+    default: {
+      Icon = LockIcon
+      canEdit = false
+      break
+    }
+  }
+
+  return (
+    <div className={cn('flex items-start gap-1 text-[oklch(60%_0_0)]', canEdit && 'text-[oklch(68.1%_0.112_75.834)] dark:text-[oklch(68.1%_0.082_75.834)]/80')}>
+      {<Icon className='size-3.5' />}
+      <span className={cn('rounded-md text-xs select-none', canEdit && 'font-bold')}>{t(`user_role.is_${role}_role`)}</span>
     </div>
   )
 }

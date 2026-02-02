@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { getCurrentLocale, getScopedI18n } from '@/src/i18n/server-localization'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAllowed'
 
@@ -13,22 +13,17 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
 
   if (!check) notFound()
 
-  const currentLocale = await getCurrentLocale()
   const t = await getScopedI18n('Examination.attempt_not_possible')
 
-  let message: string = t('unavailable')
+  const { reason, allowed } = await isExaminationAllowed(check, user)
 
-  const allowance = isExaminationAllowed(check, user)
-
-  if (allowance === 'examination window not yet open') message = t('notOpenYet', { openDate: check.settings.examination.startDate.toLocaleDateString(currentLocale) })
-  if (allowance === 'examination window closed') message = t('checkClosed', { closeDate: check.settings.examination.endDate?.toLocaleDateString(currentLocale) })
-  if (allowance === 'anonymous-users-not-allowed') message = t('anonymous-users-not-allowed')
+  if (allowed) redirect(`/checks/${share_token}`, RedirectType.replace)
 
   return (
     <>
       <PageHeading title={t('title')} />
 
-      <p>{message}</p>
+      <p>{reason}</p>
     </>
   )
 }
