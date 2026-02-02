@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect, RedirectType } from 'next/navigation'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
@@ -15,7 +15,9 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
 
   const t = await getScopedI18n('Examination.attempt_not_possible')
 
-  const { reason } = await isExaminationAllowed(check, user)
+  const { reason, allowed } = await isExaminationAllowed(check, user)
+
+  if (allowed) redirect(`/checks/${share_token}`, RedirectType.replace)
 
   return (
     <>

@@ -39,7 +39,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-1.5 px-3 text-sm' knowledgeCheckScore={retainmentScore} />
       </div>
       <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
-        <div className='flex-1' />
+        <DisplayUserRole role={role} />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
           <KnowledgeCheckMenu {...check} />
@@ -70,17 +70,45 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
 function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner' | 'Collaborator' }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
+
   return (
     <div className='relative -mt-6 -mb-1 flex justify-between border-t border-neutral-400/80 px-4 pt-3 text-xs text-neutral-500/70 dark:border-neutral-700 dark:text-neutral-500'>
-      <div className={cn('flex items-start gap-1 dark:text-[oklch(60%_0_0)]', role !== 'Guest' && 'text-[oklch(60%_0_0)] dark:text-[oklch(70%_0_0)]')}>
-        {role === 'Guest' && <LockIcon className='size-3.5' />}
-        {role === 'Owner' && <CrownIcon className='size-3.5' />}
-        {role === 'Collaborator' && <UserPenIcon className='size-3.5' />}
-        <span className={cn('rounded-md select-none', role !== 'Guest' && 'font-bold')}>{t(`user_role.is_${role}_role`)}</span>
-      </div>
+      <div className='flex-1' />
       <div className='text-neutral-500/70 dark:text-neutral-400/70'>
         {t('last_modified_label')} {updatedAt ? new Date(updatedAt).toLocaleDateString(currentLocale, { year: '2-digit', month: '2-digit', day: '2-digit' }) : 'N/A'}
       </div>
+    </div>
+  )
+}
+
+function DisplayUserRole({ role }: { role: 'Guest' | 'Owner' | 'Collaborator' }) {
+  const t = useScopedI18n('Components.KnowledgeCheckCard')
+  let Icon: React.ComponentType<{ className?: string }>
+  let canEdit: boolean
+
+  switch (role) {
+    case 'Owner': {
+      Icon = CrownIcon
+      canEdit = true
+      break
+    }
+    case 'Collaborator': {
+      Icon = UserPenIcon
+      canEdit = true
+      break
+    }
+
+    default: {
+      Icon = LockIcon
+      canEdit = false
+      break
+    }
+  }
+
+  return (
+    <div className={cn('flex items-start gap-1 text-[oklch(60%_0_0)]', canEdit && 'text-[oklch(68.1%_0.112_75.834)] dark:text-[oklch(68.1%_0.082_75.834)]/80')}>
+      {<Icon className='size-3.5' />}
+      <span className={cn('rounded-md text-xs select-none', canEdit && 'font-bold')}>{t(`user_role.is_${role}_role`)}</span>
     </div>
   )
 }

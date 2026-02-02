@@ -18,7 +18,7 @@ export type LodashDifferences<T> = {
   [K in keyof T]-?: { key: K; value: T[K] }
 }[keyof T][]
 
-export async function saveAction({ check: modifiedCheck }: { check: KnowledgeCheck }) {
+export async function saveAction({ check: modifiedCheck, callbackPath }: { check: KnowledgeCheck; callbackPath: string }) {
   await requireAuthentication()
 
   try {
@@ -37,7 +37,7 @@ export async function saveAction({ check: modifiedCheck }: { check: KnowledgeChe
       await insertKnowledgeCheck(modifiedCheck)
     }
 
-    redirect('/checks')
+    redirect(callbackPath)
   } catch (err) {
     if (isRedirectError(err)) {
       throw err

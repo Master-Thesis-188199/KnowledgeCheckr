@@ -200,6 +200,7 @@
     },
     "KnowledgeCheckCardMenu": {
       "menu_label": "Aktionen",
+      "invite_to_submenu_label": "Teile diesen Check",
       "copy_practice": {
         "label": "Kopiere Übungslink",
         "toast_success": "Übungs freigabelink erfolgreich in Zwischenablage kopiert.",

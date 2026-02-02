@@ -109,7 +109,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger enableTooltip={!hasQuestions} tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, sharing disabled.' }} disabled={!hasQuestions}>
-            Invite users to
+            {t('invite_to_submenu_label')}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent sideOffset={4}>
@@ -120,7 +120,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                     .then(() => toast(t('copy_practice.toast_success'), { type: 'success' }))
                     .catch(() => toast(t('copy_practice.toast_failure'), { type: 'error' }))
                 })}>
-                {t('start_practice.label')}
+                {t('copy_practice.label')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {

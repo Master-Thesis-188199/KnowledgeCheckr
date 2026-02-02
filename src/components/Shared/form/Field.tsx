@@ -77,17 +77,12 @@ export default function Field<Values extends FieldValues>({
           <>
             <FormLabel className={cn('self-baseline pl-1', label === undefined && 'capitalize', labelClassname, !showLabel && 'hidden')}>{label ?? field.name}</FormLabel>
 
-            <div
-              className={cn(
-                'relative grid',
-                // moves input indicators like 'number' | 'date' to the left to make room for the info / error icon
-                (description || hasError) && '**:[&::-webkit-calendar-picker-indicator]:-translate-x-6 **:[&::-webkit-inner-spin-button]:-translate-x-6',
-                containerClassname,
-              )}>
+            <div className={cn('relative grid', containerClassname)}>
               <FormControl>
                 <ShadcnInput
                   autoComplete={field.name.includes('password') ? 'current-password' : field.name}
-                  className='peer hover:cursor-text'
+                  // 'pr-8' moves input indicators like 'number' | 'date' to the left to make room for the info / error icon and ensures text does not cover info icon
+                  className={cn('peer hover:cursor-text', (description || hasError) && 'pr-8')}
                   {...field}
                   value={modifyValue ? modifyValue(field.value) : field.value}
                   {...props}
@@ -108,7 +103,7 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <Tooltip isDisabled={hasError || !description} offset={12} content={description}>
+                  <Tooltip isDisabled={hasError || !description} offset={props.type === 'checkbox' ? 12 : 0} content={description}>
                     <motion.div
                       data-disabled={field.disabled || props.disabled}
                       exit={{ opacity: 0 }}
@@ -118,8 +113,10 @@ export default function Field<Values extends FieldValues>({
                       key='info-icon'
                       onMouseOver={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
+                      aria-label='Show field description'
+                      role='button'
                       className={cn(
-                        'text-muted-foreground absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                        'text-muted-foreground absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox

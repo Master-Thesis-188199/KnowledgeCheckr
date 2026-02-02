@@ -18,7 +18,7 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
   const humanReadableTimeFrame = useHumanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)
 
   return (
-    <div className={cn('@container grid grid-cols-1 items-baseline justify-baseline gap-3', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7')}>
+    <div className={cn('@container grid grid-cols-1 items-baseline gap-3', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7')}>
       <div
         className={cn(
           'grid grid-cols-2 items-center gap-7 gap-x-7 @md:col-span-2',
