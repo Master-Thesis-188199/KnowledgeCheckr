@@ -25,7 +25,7 @@ export function DataTableColumnHeader<TData, TValue>({
         style={{ maxWidth: column.columnDef.maxSize ?? 'none' }}
         asChild
         className={cn('ring-ring-subtle dark:ring-ring-subtle data-[state=open]:bg-transparent dark:data-[state=open]:bg-transparent', 'justify-start', className)}>
-        <Button variant='link' size='sm' className={cn('-ml-2 flex h-8 items-center gap-1 data-[state=open]:*:[svg]:stroke-3')}>
+        <Button variant='link' size='sm' className={cn('-ml-3 flex h-8 items-center gap-1 data-[state=open]:*:[svg]:stroke-3')}>
           <span>{title}</span>
 
           {column.getIsSorted() === 'desc' ? <ArrowDown className='size-3.5' /> : column.getIsSorted() === 'asc' ? <ArrowUp className='size-3.5' /> : <ChevronDownIcon className='' />}

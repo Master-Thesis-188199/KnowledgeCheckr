@@ -2,19 +2,14 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal } from 'lucide-react'
+import Image from 'next/image'
 import { DataTableColumnHeader } from '@/src/app/[locale]/checks/[share_token]/results/data-table-column-header'
+import { ExaminationAttemptTableStructure } from '@/src/app/[locale]/checks/[share_token]/results/page'
 import { Button } from '@/src/components/shadcn/button'
 import { Checkbox } from '@/src/components/shadcn/checkbox'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 
-export type Payment = {
-  id: string
-  score: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<ExaminationAttemptTableStructure>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -25,19 +20,47 @@ export const columns: ColumnDef<Payment>[] = [
         aria-label='Select all'
       />
     ),
-    size: 30,
-    maxSize: 30,
+    size: 40,
+    maxSize: 40,
     cell: ({ row }) => <Checkbox className='ml-2' checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label='Select row' />,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'email',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Email' features={{ hiding: true, sorting: true }} className='justify-start' />,
+    accessorKey: 'userName',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Username' features={{ sorting: true }} className='justify-start' />,
+    cell: ({ row, column, table }) => {
+      console.log(row)
+      return (
+        <div className='flex items-center gap-3 font-medium'>
+          {row.original.userAvatar && <Image alt='user avatar' width={24} height={24} src={row.original.userAvatar} className='rounded-full' />}
+          <span>{row.getValue('userName')}</span>
+        </div>
+      )
+    },
   },
   {
-    accessorKey: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Status' features={{ hiding: true, sorting: true }} />,
+    accessorKey: 'startedAt',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Started At' features={{ sorting: true }} className='justify-start' />,
+    cell: ({ row }) => {
+      console.log(row)
+      return <div className='font-medium'>{row.getValue('startedAt')}</div>
+    },
+  },
+  {
+    accessorKey: 'duration',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Duration' features={{ sorting: true }} className='justify-start' />,
+    cell: ({ row }) => {
+      console.log(row)
+      return <div className='font-medium'>{row.getValue('duration')} minutes</div>
+    },
+  },
+  {
+    accessorKey: 'answerCount',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Question Answered' />,
+    cell: ({ row }) => {
+      return <div className='pl-1 font-medium'>{row.getValue('answerCount')} question</div>
+    },
   },
   {
     accessorKey: 'score',
@@ -68,8 +91,6 @@ export const columns: ColumnDef<Payment>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>Copy payment ID</DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem>View customer</DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
