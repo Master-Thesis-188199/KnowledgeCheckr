@@ -208,3 +208,30 @@ input.hidden-spin-button::-webkit-outer-spin-button {
   width: var(--radix-popover-trigger-width);
   max-height: var(--radix-popover-content-available-height);
 }
+
+.grid-container-2 {
+  --grid-layout-gap: 56px;
+  --grid-column-count: 2;
+  --grid-item--min-width: 140px;
+
+  --gap-count: calc(var(--grid-column-count) - 1);
+  --total-gap-width: calc(var(--gap-count) * var(--grid-layout-gap));
+  --grid-item--max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(var(--grid-item--min-width), var(--grid-item--max-width)), 1fr));
+  grid-gap: var(--grid-layout-gap);
+}
+
+.grid-container-3 {
+  --grid-layout-gap: 56px;
+  --grid-column-count: 3;
+  --grid-item--min-width: 140px;
+
+  --gap-count: calc(var(--grid-column-count) - 1);
+  --grid-item--max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(var(--grid-item--min-width), var(--grid-item--max-width)), 1fr));
+  grid-gap: var(--grid-layout-gap);
+}
