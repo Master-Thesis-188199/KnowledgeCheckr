@@ -37,6 +37,8 @@ function ThemeHandler(defaultValue: ThemeOption) {
     if (!theme) return
 
     document.documentElement.dataset.theme = theme
+    document.documentElement.className = theme
+
     setCookie(null, 'theme', theme, {
       maxAge: 24 * 60 * 60 * 300, // 300 days
       path: '/',
