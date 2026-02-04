@@ -1,8 +1,10 @@
+'use server'
+
 import { format } from 'date-fns'
 import { differenceInMinutes } from 'date-fns/differenceInMinutes'
 import { deAT, enUS } from 'date-fns/locale'
-import { setDefaultOptions } from 'date-fns/setDefaultOptions'
 import { EllipsisIcon } from 'lucide-react'
+import Image from 'next/image'
 import { forbidden, notFound } from 'next/navigation'
 import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
@@ -12,6 +14,8 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { getCurrentLocale } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
+import { cn } from '@/src/lib/Shared/utils'
+import ExemplaryStat1 from './ExemplaryStat1.png'
 
 type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]
 export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' | 'type'> & {
@@ -34,7 +38,6 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   const userAttempts = await getKnowledgeCheckExaminationAttempts(check.id, { limit: 4 })
 
   const currentLocale = await getCurrentLocale()
-  setDefaultOptions({ locale: currentLocale === 'en' ? enUS : deAT })
 
   const data = userAttempts.map(
     (attempt): ExaminationAttemptTableStructure => ({
@@ -53,8 +56,8 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
       <PageHeading title='Examination Results' description='Look at the examination attempts of users.' />
 
       <div className='mt-6 flex flex-col gap-16'>
-        <div className='flex flex-col gap-8'>
-          <div className='grid-container-3 mx-8'>
+        <div className='mx-0 flex flex-col gap-20'>
+          <div className='grid-container-3'>
             <StatisticElement label='Attempts' value={userAttempts.length} title='User Attempts' />
             <StatisticElement
               label='Average Duration'
@@ -65,15 +68,21 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
           </div>
 
           <div className='grid-container-2'>
-            <Card></Card>
-            <Card></Card>
+            <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70')}>
+              <Image alt='test' src={ExemplaryStat1} className='mx-auto' width={512} height={512} />
+            </div>
+            <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70')}>
+              <Image alt='test' src={ExemplaryStat1} className='mx-auto' width={512} height={512} />
+            </div>
+            {/* <StatisticElement label='Attempts' value={userAttempts.length} className='h-72 justify-baseline gap-20' />
+            <StatisticElement label='Attempts' value={userAttempts.length} className='h-72 justify-baseline gap-20' /> */}
           </div>
         </div>
 
         <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
           <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>Examination Attempts</CardHeader>
-          <CardContent className='my-0 px-4 py-0'>
-            <DataTable columns={columns} data={data} />
+          <CardContent className='my-0 px-4 py-0 pb-2'>
+            <DataTable />
           </CardContent>
         </Card>
       </div>
@@ -81,11 +90,11 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   )
 }
 
-function StatisticElement({ label, value, title }: { label: string; value: React.ReactNode; title?: string }) {
+function StatisticElement({ label, value, title, className }: { label: string; value: React.ReactNode; title?: string; className?: string }) {
   title ||= label
 
   return (
-    <div className='ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70'>
+    <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70', className)}>
       {title && (
         <h3 className='bg-input border-b-input-ring flex justify-between rounded-t-md border-b px-3 py-1.5 text-sm font-medium dark:text-neutral-300/80'>
           {title}
