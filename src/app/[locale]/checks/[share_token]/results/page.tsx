@@ -56,8 +56,8 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
       <PageHeading title='Examination Results' description='Look at the examination attempts of users.' />
 
       <div className='mt-6 flex flex-col gap-16'>
-        <div className='mx-0 flex flex-col gap-20'>
-          <div className='grid-container-3'>
+        <div className='mx-0 flex flex-col gap-16'>
+          <div className='grid-container [--grid-column-count:4] [--grid-desired-gap:56px] [--grid-item-min-width:140px]'>
             <StatisticElement label='Attempts' value={userAttempts.length} title='User Attempts' />
             <StatisticElement
               label='Average Duration'
@@ -65,9 +65,10 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
             />
 
             <StatisticElement label='Attempts' value={userAttempts.length} />
+            <StatisticElement label='Attempts' value={userAttempts.length} />
           </div>
 
-          <div className='grid-container-2'>
+          <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:140px]'>
             <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70')}>
               <Image alt='test' src={ExemplaryStat1} className='mx-auto' width={512} height={512} />
             </div>
