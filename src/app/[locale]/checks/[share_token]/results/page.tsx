@@ -55,7 +55,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
     <>
       <PageHeading title='Examination Results' description='Look at the examination attempts of users.' />
 
-      <div className='mx-6 mt-2 flex flex-col gap-16'>
+      <div className='mx-6 mt-2 flex w-[stretch] max-w-6xl flex-col gap-16 place-self-center'>
         <div className='mx-0 flex flex-col gap-16'>
           <div className='grid-container [--grid-column-count:4] [--grid-desired-gap:56px] [--grid-item-min-width:140px]'>
             <StatisticElement label='Attempts' value={userAttempts.length} title='User Attempts' />
