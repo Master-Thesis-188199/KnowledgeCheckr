@@ -1,4 +1,5 @@
 'use client'
+import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Any } from '@/types'
 
@@ -43,6 +44,15 @@ const data = [
 ]
 
 export default function ExemplaryLineChart() {
+  const size = useWindowSize()
+  const previous = usePrevious(size)
+  const hasResized = () => {
+    // initial load
+    if (!previous || !previous.height || !previous.width) return false
+
+    return true
+  }
+
   type Data = {
     name: string
     measurements: number[]
@@ -98,6 +108,7 @@ export default function ExemplaryLineChart() {
 
   return (
     <LineChart
+      responsive
       style={{ width: '100%', aspectRatio: 1.618 }}
       margin={{
         bottom: 10,
@@ -114,9 +125,9 @@ export default function ExemplaryLineChart() {
 
       <Tooltip content={CustomTooltip} />
 
-      <Line dataKey='value' stroke='green' strokeWidth={2} />
-      <Line dataKey='userA' stroke='orange' strokeWidth={2} />
-      <Line dataKey='userB' stroke='lightblue' strokeWidth={2} />
+      <Line dataKey='value' isAnimationActive={!hasResized()} stroke='green' strokeWidth={2} />
+      <Line dataKey='userA' isAnimationActive={!hasResized()} stroke='orange' strokeWidth={2} />
+      <Line dataKey='userB' isAnimationActive={!hasResized()} stroke='lightblue' strokeWidth={2} />
     </LineChart>
   )
 }

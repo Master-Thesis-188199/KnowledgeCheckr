@@ -1,10 +1,21 @@
 'use client'
 
+import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts'
 
 export default function ExampleAreaChart() {
+  const size = useWindowSize()
+  const previous = usePrevious(size)
+  const hasResized = () => {
+    // initial load
+    if (!previous || !previous.height || !previous.width) return false
+
+    return true
+  }
+
   return (
     <AreaChart
+      responsive
       className=''
       accessibilityLayer
       barCategoryGap='10%'
@@ -67,9 +78,9 @@ export default function ExampleAreaChart() {
       <CartesianGrid strokeDasharray='3 3' className='dark:stroke-neutral-500' />
       <XAxis dataKey='name' />
       <YAxis />
-      <Area animationBegin={0} dataKey='uv' fill='rgba(136,132,216,0.47)' stackId='1' stroke='#8884d8' strokeWidth={3} type='monotone' />
-      <Area animationBegin={300} dataKey='pv' fill='rgba(130,202,157,0.47)' stackId='1' stroke='#82ca9d' strokeWidth={3} type='monotone' />
-      <Area animationBegin={600} dataKey='amt' fill='rgba(255,198,88,0.47)' stackId='1' stroke='#ffc658' strokeWidth={3} type='monotone' />
+      <Area animationBegin={0} isAnimationActive={!hasResized()} dataKey='uv' fill='rgba(136,132,216,0.47)' stackId='1' stroke='#8884d8' strokeWidth={3} type='monotone' />
+      <Area animationBegin={300} isAnimationActive={!hasResized()} dataKey='pv' fill='rgba(130,202,157,0.47)' stackId='1' stroke='#82ca9d' strokeWidth={3} type='monotone' />
+      <Area animationBegin={600} isAnimationActive={!hasResized()} dataKey='amt' fill='rgba(255,198,88,0.47)' stackId='1' stroke='#ffc658' strokeWidth={3} type='monotone' />
       <Legend />
     </AreaChart>
   )
