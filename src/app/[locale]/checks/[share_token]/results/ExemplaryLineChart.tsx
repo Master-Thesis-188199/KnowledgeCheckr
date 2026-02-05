@@ -1,6 +1,6 @@
 'use client'
 import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Legend, Line, LineChart, Margin, Tooltip, XAxis, YAxis } from 'recharts'
 import { Any } from '@/types'
 
 // #region Sample data
@@ -106,22 +106,19 @@ export default function ExemplaryLineChart() {
     },
   ]
 
+  const margin: Margin = {
+    left: 0,
+    right: 0,
+    bottom: 10,
+    top: 10,
+  }
+
   return (
-    <LineChart
-      responsive
-      style={{ width: '100%', aspectRatio: 1.618 }}
-      margin={{
-        bottom: 10,
-        left: 0,
-        right: 40,
-        top: 10,
-      }}
-      data={data}
-      className='*:[svg]:outline-none'>
+    <LineChart responsive style={{ width: '100%', aspectRatio: 1.418 }} margin={margin} data={data} className='*:[svg]:outline-none'>
       <CartesianGrid className='dark:stroke-neutral-500' />
       <XAxis dataKey='name' />
-      <YAxis />
-      <Legend align='center' width={'100%'} />
+      <YAxis width={'auto'} />
+      <Legend align='center' width={'stretch'} wrapperStyle={{ left: margin.left, right: margin.right }} />
 
       <Tooltip content={CustomTooltip} />
 

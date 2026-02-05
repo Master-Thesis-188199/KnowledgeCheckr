@@ -1,7 +1,7 @@
 'use client'
 
 import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
-import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, Legend, Margin, XAxis, YAxis } from 'recharts'
 
 export default function ExampleAreaChart() {
   const size = useWindowSize()
@@ -11,6 +11,13 @@ export default function ExampleAreaChart() {
     if (!previous || !previous.height || !previous.width) return false
 
     return true
+  }
+
+  const margin: Margin = {
+    left: 0,
+    right: 0,
+    bottom: 10,
+    top: 10,
   }
 
   return (
@@ -65,23 +72,18 @@ export default function ExampleAreaChart() {
         },
       ]}
       layout='horizontal'
-      margin={{
-        bottom: 10,
-        left: 10,
-        right: 30,
-        top: 10,
-      }}
+      margin={margin}
       style={{
         width: '100%',
       }}
       syncMethod='index'>
       <CartesianGrid strokeDasharray='3 3' className='dark:stroke-neutral-500' />
       <XAxis dataKey='name' />
-      <YAxis />
+      <YAxis width={'auto'} />
       <Area animationBegin={0} isAnimationActive={!hasResized()} dataKey='uv' fill='rgba(136,132,216,0.47)' stackId='1' stroke='#8884d8' strokeWidth={3} type='monotone' />
       <Area animationBegin={300} isAnimationActive={!hasResized()} dataKey='pv' fill='rgba(130,202,157,0.47)' stackId='1' stroke='#82ca9d' strokeWidth={3} type='monotone' />
       <Area animationBegin={600} isAnimationActive={!hasResized()} dataKey='amt' fill='rgba(255,198,88,0.47)' stackId='1' stroke='#ffc658' strokeWidth={3} type='monotone' />
-      <Legend />
+      <Legend align='center' width={'stretch'} wrapperStyle={{ left: margin.left, right: margin.right }} />
     </AreaChart>
   )
 }
