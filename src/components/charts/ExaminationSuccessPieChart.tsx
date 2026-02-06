@@ -49,7 +49,40 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
       <CardContent className='flex-1 pb-0'>
         <ChartContainer config={chartConfig} className='mx-auto aspect-square max-h-[250px]'>
           <PieChart>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  formatter={(value, name, item, index) => {
+                    console.log(value, name, item)
+                    return (
+                      <div className='flex flex-col gap-1'>
+                        <div className='flex flex-col gap-1.5'>
+                          <div className='flex items-center justify-between gap-4'>
+                            <div className='flex items-center gap-2'>
+                              <div
+                                className='h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)'
+                                style={
+                                  {
+                                    '--color-bg': `var(--color-${name})`,
+                                  } as React.CSSProperties
+                                }
+                              />
+                              {chartConfig[name as keyof typeof chartConfig]?.label || name}
+                            </div>
+                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                              {value}
+                              <span className='text-muted-foreground font-normal'>attempts</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }}
+                />
+              }
+            />
             <Pie data={data} dataKey='count' nameKey='type' innerRadius={60} strokeWidth={5}>
               <Label
                 content={({ viewBox }) => {
