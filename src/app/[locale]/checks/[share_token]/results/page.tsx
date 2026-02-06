@@ -7,15 +7,15 @@ import { EllipsisIcon } from 'lucide-react'
 import { forbidden, notFound } from 'next/navigation'
 import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
-import { DataTable } from '@/src/app/[locale]/checks/[share_token]/results/data-table'
-import ExampleAreaChart from '@/src/app/[locale]/checks/[share_token]/results/ExemplaryAreaChart'
-import ExemplaryLineChart from '@/src/app/[locale]/checks/[share_token]/results/ExemplaryLineChart'
+import { ChartAreaInteractive } from '@/src/app/[locale]/checks/[share_token]/results/chart-area-interactive'
+import { ShadcnDataTable } from '@/src/app/[locale]/checks/[share_token]/results/shadcn-table'
 import { Card, CardContent, CardHeader } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getCurrentLocale } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
 import { cn } from '@/src/lib/Shared/utils'
+import shadcnData from './data.json'
 
 type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]
 export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' | 'type'> & {
@@ -55,7 +55,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
     <>
       <PageHeading title='Examination Results' description='Look at the examination attempts of users.' />
 
-      <div className='mx-6 mt-2 flex w-[stretch] max-w-6xl flex-col gap-16 place-self-center'>
+      <div className='mx-6 mt-2 flex flex-col gap-16'>
         <div className='mx-0 flex flex-col gap-16'>
           <div className='grid-container [--grid-column-count:4] [--grid-desired-gap:56px] [--grid-item-min-width:140px]'>
             <StatisticElement label='Attempts' value={userAttempts.length} title='User Attempts' />
@@ -69,35 +69,15 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
           </div>
 
           <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:140px]'>
-            <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
-              <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>User Activity</CardHeader>
-              <CardContent className='my-0 -mt-2 px-4 py-0 pb-2 text-sm **:outline-none **:[text]:text-xs'>
-                <ExemplaryLineChart />
-              </CardContent>
-            </Card>
-
-            <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
-              <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>User Activity</CardHeader>
-              <CardContent className='my-0 -mt-2 flex-1 px-4 py-0 pb-2 text-sm *:h-full **:outline-none **:[text]:text-xs'>
-                <ExampleAreaChart />
-              </CardContent>
-            </Card>
-            {/* <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 *:-ml-4 dark:bg-neutral-800/70', 'px-2 py-3.5')}>
-              <ExemplaryLineChart />
-            </div>
-            <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 *:-ml-3 dark:bg-neutral-800/70', 'p-3 text-xs **:outline-none')}>
-              <ExampleAreaChart />
-            </div>
-            <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70', 'hidden')}>
-              <Image alt='test' src={ExemplaryStat1} className='mx-auto' width={512} height={512} />
-            </div> */}
+            <ChartAreaInteractive />
+            <ChartAreaInteractive />
           </div>
         </div>
 
         <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
           <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>Examination Attempts</CardHeader>
-          <CardContent className='my-0 px-4 py-0 pb-2'>
-            <DataTable />
+          <CardContent className='my-0 px-0 py-0 pb-8'>
+            <ShadcnDataTable data={shadcnData} />
           </CardContent>
         </Card>
       </div>
