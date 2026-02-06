@@ -9,6 +9,9 @@ import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/sel
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ChartAreaInteractive } from '@/src/app/[locale]/checks/[share_token]/results/chart-area-interactive'
 import { ShadcnDataTable } from '@/src/app/[locale]/checks/[share_token]/results/shadcn-table'
+import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
+import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
+import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { Card, CardContent, CardHeader } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getCurrentLocale } from '@/src/i18n/server-localization'
@@ -57,15 +60,10 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>
         <div className='mx-0 flex flex-col gap-16'>
-          <div className='grid-container [--grid-column-count:4] [--grid-desired-gap:56px] [--grid-item-min-width:140px]'>
-            <StatisticElement label='Attempts' value={userAttempts.length} title='User Attempts' />
-            <StatisticElement
-              label='Average Duration'
-              value={getAverage(userAttempts.map((attempt) => differenceInMinutes(new Date(Date.parse(attempt.finishedAt)), new Date(Date.parse(attempt.startedAt))))) + 'm'}
-            />
-
-            <StatisticElement label='Attempts' value={userAttempts.length} />
-            <StatisticElement label='Attempts' value={userAttempts.length} />
+          <div className='grid-container [--grid-column-count:4] [--grid-desired-gap:70px] [--grid-item-min-width:140px]'>
+            <UserTypePieChart title='Examinations by User types' description='Shows examination attempts by user type' />
+            <ExamQuestionDurationChart title='Average Question time differences' description='Shows the variance in actual and estimated answer-time ' />
+            <ExaminationSuccessPieChart title='Examinations Success Rate' description='Shows how many users have passed / failed.' />
           </div>
 
           <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:140px]'>
@@ -104,5 +102,3 @@ function StatisticElement({ label, value, title, className }: { label: string; v
     </div>
   )
 }
-
-const getAverage = (array: number[]) => array.reduce((sum, currentValue) => sum + currentValue, 0) / array.length
