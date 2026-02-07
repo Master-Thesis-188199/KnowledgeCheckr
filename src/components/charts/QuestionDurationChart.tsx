@@ -135,7 +135,15 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
                 </text>
               )}
             />
-            <YAxis label={<AxisLabel>Time spent</AxisLabel>} domain={[-10, 10]} />
+            <YAxis
+              domain={([dataMin, dataMax]) => {
+                // ensure that the domain is at least -10, 10  or greater than that depending on min/max values
+                const updatedDomain: Any = [dataMin < -10 ? dataMin - 2 : -10, dataMax > 10 ? dataMax + 2 : 10]
+                // console.log('Normalized domain', ...updatedDomain, 'min: ', dataMin, 'max: ', dataMax)
+                return updatedDomain
+              }}
+              label={<AxisLabel>Time spent</AxisLabel>}
+            />
             <Area type='monotone' dataKey='difference' className='text-neutral-400 dark:text-neutral-500' stroke='currentColor' fill='url(#splitColor)' />
           </AreaChart>
         </ChartContainer>
