@@ -135,7 +135,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               )}
             />
             <YAxis label={<AxisLabel>Time spent</AxisLabel>} domain={[-10, 10]} />
-            <Area type='monotone' dataKey='difference' stroke='#000' fill='url(#splitColor)' />
+            <Area type='monotone' dataKey='difference' className='text-neutral-400 dark:text-neutral-500' stroke='currentColor' fill='url(#splitColor)' />
           </AreaChart>
         </ChartContainer>
       </CardContent>
