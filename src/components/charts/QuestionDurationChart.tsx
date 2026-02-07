@@ -129,6 +129,16 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               </linearGradient>
             </defs>
             <XAxis
+              //* shows every second tick-label
+              tick={({ payload, ...props }) => {
+                if (payload.value % 2 !== 0) return <></>
+
+                return (
+                  <text x={props.x} textAnchor='middle' y={props.y + props.height / 3} className='' fill='gray'>
+                    {payload.value + 1}
+                  </text>
+                )
+              }}
               label={({ viewBox: { x, y, width, height } }: Any) => (
                 <text x={x + width / 2 - 20} y={y + height + 3} className='' fill='gray'>
                   Questions
