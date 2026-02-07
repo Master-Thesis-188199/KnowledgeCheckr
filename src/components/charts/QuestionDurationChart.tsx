@@ -4,6 +4,7 @@ import React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
+import randomRange from '@/src/lib/Shared/randomRange'
 import { cn } from '@/src/lib/Shared/utils'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
@@ -17,8 +18,8 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
     const data: { name: string; actualTime: number; difference: number; estimated: number }[] = []
 
     questions.forEach((q, i) => {
-      const estimated = Math.round(Math.random() * 15)
-      const actualTime = Math.round(Math.random() * 15)
+      const estimated = randomRange({ min: 3, max: 15, multiplyFactor: 15, rounded: true })
+      const actualTime = randomRange({ min: 3, max: 15, multiplyFactor: 15, rounded: true })
       const difference = estimated - actualTime
 
       data.push({
