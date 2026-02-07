@@ -134,13 +134,20 @@ export function MultiTabBarChart<T extends { dataKey: string }>({ title, descrip
   const chartTabs = React.useMemo(() => getKeys(data[0]).filter((key) => key !== 'dataKey'), [data])
 
   const total = React.useMemo(() => {
-    return {
-      desktop: 147,
-      mobile: 623,
-      visits: 2.3,
-      bounce: 36.78,
-    }
-  }, [chartTabs])
+    const keySums: { [key: string]: string | number } = {}
+
+    chartTabs.forEach((tab) => {
+      const total: number = data.reduce((acc, curr: Any) => acc + (curr?.[tab] ?? 0), 0)
+
+      let sum: string | number = total
+      if (total > 1_000_000) sum = `${(total / 1_000_000).toFixed(2)}M`
+      else if (total > 1_000) sum = `${(total / 1000).toFixed(1)}k`
+
+      keySums[tab as string] = sum
+    })
+
+    return keySums
+  }, [chartTabs, data])
 
   return (
     <Card className='@container'>
@@ -162,7 +169,7 @@ export function MultiTabBarChart<T extends { dataKey: string }>({ title, descrip
                   {chartConfig[chart].label}
                 </span>
                 <div className='flex items-center justify-between gap-2 @3xl:gap-4'>
-                  <span className='text-base leading-none font-bold @3xl:text-xl'>{total[key as keyof typeof total].toLocaleString()}k</span>
+                  <span className='text-base leading-none font-bold @3xl:text-xl'>{total[key]}</span>
                   <Badge
                     className={cn(
                       'flex items-center gap-1 text-[10px] @3xl:h-6.5 @3xl:text-xs [&>svg]:size-3.5',
