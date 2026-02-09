@@ -50,6 +50,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/shadcn/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { cn } from '@/src/lib/Shared/utils'
 
 const ExamAttemptItemSchema = z.object({
@@ -521,86 +522,25 @@ function QuickEditTableCell({ item }: { item: ExamAttemptItem }) {
       <DrawerTrigger asChild>
         <Button variant='link' size='sm' className='text-foreground/50'>
           <EyeIcon />
-          Details
+          Preview
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className='gap-1'>
-          <DrawerTitle>{item.username}</DrawerTitle>
-          <DrawerDescription>Showing total visitors for the last 6 months</DrawerDescription>
+        <DrawerHeader className='mb-6 gap-1 border-b'>
+          <DrawerTitle>Examination Attempt - {item.username}</DrawerTitle>
+          <DrawerDescription>Showing details of {item.username}&apos;s examaination attempt.</DrawerDescription>
         </DrawerHeader>
-        <div className='flex flex-col gap-4 overflow-y-auto px-4 text-sm'>
-          {!isMobile && (
-            <>
-              <ChartContainer config={chartConfig}>
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey='month' tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} hide />
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent indicator='dot' />} />
-                  <Area dataKey='mobile' type='natural' fill='var(--color-mobile)' fillOpacity={0.6} stroke='var(--color-mobile)' stackId='a' />
-                  <Area dataKey='desktop' type='natural' fill='var(--color-desktop)' fillOpacity={0.4} stroke='var(--color-desktop)' stackId='a' />
-                </AreaChart>
-              </ChartContainer>
-              <Separator />
-              <div className='grid gap-2'>
-                <div className='flex gap-2 leading-none font-medium'>
-                  Trending up by 5.2% this month <IconTrendingUp className='size-4' />
-                </div>
-                <div className='text-muted-foreground'>
-                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should wrap around.
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
+        <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
+          <QuestionScoresLineChart />
           <form className='flex flex-col gap-4'>
             <div className='flex flex-col gap-3'>
-              <Label htmlFor='username'>Header</Label>
-              <Input id='username' defaultValue={item.username} />
+              <Label htmlFor='username'>Username</Label>
+              <Input id='username' readOnly defaultValue={item.username} />
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div className='flex flex-col gap-3'>
-                <Label htmlFor='type'>Type</Label>
-                <Select defaultValue={item.type}>
-                  <SelectTrigger id='type' className='w-full'>
-                    <SelectValue placeholder='Select a type' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='Table of Contents'>Table of Contents</SelectItem>
-                    <SelectItem value='Executive Summary'>Executive Summary</SelectItem>
-                    <SelectItem value='Technical Approach'>Technical Approach</SelectItem>
-                    <SelectItem value='Design'>Design</SelectItem>
-                    <SelectItem value='Capabilities'>Capabilities</SelectItem>
-                    <SelectItem value='Focus Documents'>Focus Documents</SelectItem>
-                    <SelectItem value='Narrative'>Narrative</SelectItem>
-                    <SelectItem value='Cover Page'>Cover Page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className='flex flex-col gap-3'>
-                <Label htmlFor='status'>Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id='status' className='w-full'>
-                    <SelectValue placeholder='Select a status' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='Done'>Done</SelectItem>
-                    <SelectItem value='In Progress'>In Progress</SelectItem>
-                    <SelectItem value='Not Started'>Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='flex flex-col gap-3'>
-                <Label htmlFor='score'>Score</Label>
-                <Input id='score' defaultValue={item.score} />
+                <Label htmlFor='score'>User Score</Label>
+                <Input id='score' type='number' defaultValue={item.score} />
               </div>
             </div>
           </form>
