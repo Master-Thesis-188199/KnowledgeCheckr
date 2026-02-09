@@ -55,7 +55,6 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
                 <ChartTooltipContent
                   hideLabel
                   formatter={(value, name, item, index) => {
-                    console.log(value, name, item)
                     return (
                       <div className='flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>

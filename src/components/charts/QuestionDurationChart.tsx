@@ -30,7 +30,6 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
       })
     })
 
-    console.log(data)
     return data
   }, [questions])
 
@@ -162,7 +161,6 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
   )
 }
 const AxisLabel = ({ children, viewBox: { x, y, width, height }, ...props }: Any) => {
-  console.log(props)
   const isVert = true
   const cx = isVert ? x : x + width / 2
   const cy = isVert ? height / 2 + y : y + height + 10
