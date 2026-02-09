@@ -65,20 +65,20 @@ export function QuestionScoresLineChart({ title, description }: { title: string;
               dataKey='questionIndex'
               tickLine={false}
             />
+            <defs>
+              <linearGradient id='fillScore' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='5%' stopColor='var(--chart-2)' stopOpacity={0.9} />
+                <stop offset='95%' stopColor='var(--chart-2)' stopOpacity={0.3} />
+              </linearGradient>
+              <linearGradient id='fillMaxScore' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='5%' stopColor='var(--color-chart-3)' stopOpacity={0.9} />
+                <stop offset='95%' stopColor='var(--color-chart-3)' stopOpacity={0.3} />
+              </linearGradient>
+            </defs>
 
             <ChartTooltip content={<ChartTooltipContent className='w-[150px]' nameKey='score' />} />
-            <Area type='bumpX' dataKey={'score'} stroke={`var(--chart-2)`} strokeWidth={3} stackId='a' dot={true} fill='currentColor' className='text-[var(--chart-2)]/50' />
-            <Area
-              type='bumpX'
-              label={'Question Points'}
-              dataKey={'maxScore'}
-              stroke={`var(--chart-3)`}
-              strokeWidth={3}
-              stackId='a'
-              dot={true}
-              fill='currentColor'
-              className='text-[var(--chart-3)]/70'
-            />
+            <Area type='bumpX' dataKey={'score'} stroke={`var(--chart-2)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillScore)' />
+            <Area type='bumpX' label={'Question Points'} dataKey={'maxScore'} stroke={`var(--chart-3)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillMaxScore)' />
             <ChartLegend wrapperStyle={{ bottom: '-10px', left: '25px', margin: '0px 15px 0px 25px', width: 'stretch' }} />
           </AreaChart>
         </ChartContainer>
