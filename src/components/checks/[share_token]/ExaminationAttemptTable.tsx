@@ -177,7 +177,8 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
 ]
 
 // gap between columns (padding) except for action columns
-const sharedClasses = '*:[th]:not-data-[column-id^=action]:px-5 *:[td]:not-data-[column-id^=action]:px-5 *:[th]:not-data-[column-id^=action]:border-x'
+const sharedClasses =
+  '*:[th]:not-data-[column-id^=action]:px-5 *:[td]:not-data-[column-id^=action]:px-5 *:[th]:not-data-[column-id^=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit'
 
 function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -189,7 +190,10 @@ function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
       data-state={row.getIsSelected() && 'selected'}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className={cn('relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80', sharedClasses)}
+      className={cn(
+        'relative z-0 hover:bg-neutral-200/30 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 data-[state=selected]:bg-neutral-200/50 dark:hover:bg-neutral-700/40 dark:data-[state=selected]:bg-neutral-700/50',
+        sharedClasses,
+      )}
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -273,7 +277,10 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}>
-            <SelectTrigger size='sm' className='w-20' id='rows-per-page'>
+            <SelectTrigger
+              size='sm'
+              className='dark:border-ring-subtle border-ring-subtle !h-7 w-fit bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
+              id='rows-per-page'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
@@ -314,7 +321,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
         <div className='overflow-hidden rounded-lg border'>
           <DndContext collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd} sensors={sensors} id={sortableId}>
             <Table>
-              <TableHeader className='bg-muted sticky top-0 z-10'>
+              <TableHeader className='sticky top-0 z-10 bg-neutral-200/70 dark:bg-neutral-900/70'>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className={cn('*:[th[id=username]]:w-full', sharedClasses)}>
                     {headerGroup.headers.map((header) => {
