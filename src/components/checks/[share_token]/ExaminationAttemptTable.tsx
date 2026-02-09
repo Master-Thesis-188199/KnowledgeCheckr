@@ -33,6 +33,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table'
+import isEqual from 'lodash/isEqual'
 import { EyeIcon } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 import { toast } from 'sonner'
@@ -273,6 +274,13 @@ export function ExaminationAttemptTable({ data: initialData = defaultItems() }: 
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  React.useEffect(() => {
+    if (isEqual(data, initialData)) return
+
+    console.debug('[ExamAttemptTable]: InitialData changed updating table-data.')
+    setData(initialData)
+  }, [initialData])
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
@@ -286,8 +294,28 @@ export function ExaminationAttemptTable({ data: initialData = defaultItems() }: 
 
   return (
     <div className='flex w-full flex-col justify-start gap-6'>
-      <div className='flex items-center justify-between px-4 lg:px-6'>
-        <div className='flex-1' />
+      <div className='-mb-2 flex items-center justify-between px-4 lg:px-6'>
+        <div className='ml-2 hidden items-center gap-2 lg:flex'>
+          <Label htmlFor='rows-per-page' className='text-sm font-medium'>
+            Rows per page
+          </Label>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value))
+            }}>
+            <SelectTrigger size='sm' className='w-20' id='rows-per-page'>
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side='top'>
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className='flex items-center gap-2'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -361,27 +389,6 @@ function TableFooter({ table }: { table: TableType<z.infer<typeof schema>> }) {
         {table.getFilteredSelectedRowModel().rows.length > 0 && `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`}
       </div>
       <div className='mb-0.25 flex w-full items-center gap-8 lg:w-fit'>
-        <div className='hidden items-center gap-2 lg:flex'>
-          <Label htmlFor='rows-per-page' className='text-sm font-medium'>
-            Rows per page
-          </Label>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}>
-            <SelectTrigger size='sm' className='w-20' id='rows-per-page'>
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
-            </SelectTrigger>
-            <SelectContent side='top'>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
         <div className='flex w-fit items-center justify-center text-sm font-medium'>
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
