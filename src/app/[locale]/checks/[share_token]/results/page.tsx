@@ -1,24 +1,20 @@
 'use server'
 
-import { format } from 'date-fns'
-import { differenceInMinutes } from 'date-fns/differenceInMinutes'
-import { deAT, enUS } from 'date-fns/locale'
 import { EllipsisIcon } from 'lucide-react'
 import { forbidden, notFound } from 'next/navigation'
 import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
-import { ChartAreaInteractive } from '@/src/app/[locale]/checks/[share_token]/results/chart-area-interactive'
-import { ShadcnDataTable } from '@/src/app/[locale]/checks/[share_token]/results/shadcn-table'
 import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
+import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
+import { ExaminationAttemptTable } from '@/src/components/checks/[share_token]/ExaminationAttemptTable'
 import { Card, CardContent, CardHeader } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { getCurrentLocale } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
+import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 import { cn } from '@/src/lib/Shared/utils'
-import shadcnData from './data.json'
 
 type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]
 export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' | 'type'> & {
@@ -38,21 +34,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   if (!check) notFound()
   if (!hasCollaborativePermissions(check, user.id)) forbidden()
 
-  const userAttempts = await getKnowledgeCheckExaminationAttempts(check.id, { limit: 4 })
-
-  const currentLocale = await getCurrentLocale()
-
-  const data = userAttempts.map(
-    (attempt): ExaminationAttemptTableStructure => ({
-      startedAt: format(new Date(Date.parse(attempt.startedAt)), 'P', { locale: currentLocale === 'en' ? enUS : deAT }),
-      userName: attempt.user.name,
-      duration: differenceInMinutes(new Date(Date.parse(attempt.finishedAt)), new Date(Date.parse(attempt.startedAt))),
-      score: attempt.score,
-      type: attempt.type,
-      userAvatar: attempt.user.image ?? undefined,
-      answerCount: attempt.results.length,
-    }),
-  )
+  const dummyAttempts = await getDummyExamAttempts(50)
 
   return (
     <>
@@ -67,15 +49,25 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
           </div>
 
           <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[550px]:[--grid-item-min-width:500px]'>
-            <ChartAreaInteractive />
-            <ChartAreaInteractive />
+            <QuestionScoresLineChart title='Average question score by question' description='Shows the variance between average question score and max-score by question' />
           </div>
         </div>
 
         <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
           <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>Examination Attempts</CardHeader>
-          <CardContent className='my-0 px-0 py-0 pb-8'>
-            <ShadcnDataTable data={shadcnData} />
+          <CardContent className='my-0 flex flex-col gap-6 px-0 py-0 pb-8'>
+            <ExaminationAttemptTable
+              data={dummyAttempts.map((attempt, i) => ({
+                id: attempt.id,
+                score: attempt.score,
+                startedAt: new Date(Date.parse(attempt.startedAt)),
+                finishedAt: new Date(Date.parse(attempt.finishedAt)),
+                status: i % 4 !== 0 ? 'Done' : 'in-progress',
+                totalCheckScore: 100,
+                type: i % 5 !== 0 ? 'normal' : 'anonymous',
+                username: attempt.user.name,
+              }))}
+            />
           </CardContent>
         </Card>
       </div>
