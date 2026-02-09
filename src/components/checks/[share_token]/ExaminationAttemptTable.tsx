@@ -137,7 +137,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           Score
         </Label>
         <Input
-          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-10 bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent'
+          type='number'
+          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-12 bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent [&::-webkit-inner-spin-button]:-translate-x-1 [&::-webkit-inner-spin-button]:scale-75'
           defaultValue={row.original.score}
           id={`${row.original.id}-score`}
         />
@@ -163,7 +164,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </Label>
         <Input
           disabled
-          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-10 bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent'
+          type='number'
+          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-10 border-none bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent [&::-webkit-inner-spin-button]:appearance-none'
           defaultValue={row.original.totalCheckScore}
           id={`${row.original.id}-total-check-score`}
         />
