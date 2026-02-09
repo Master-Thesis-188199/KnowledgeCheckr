@@ -204,8 +204,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
 ]
 
-// const sharedClasses = 'last:!px-0 *:[th]:px-0 *:[td]:px-5'
-const sharedClasses = ''
+// gap between columns (padding) except for action columns
+const sharedClasses = '*:[th]:not-data-[column-id^=action]:px-5 *:[td]:not-data-[column-id^=action]:px-5 *:[th]:not-data-[column-id^=action]:border-x'
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -223,7 +223,9 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         transition: transition,
       }}>
       {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+        <TableCell data-column-id={cell.column.id} key={cell.id}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
       ))}
     </TableRow>
   )
@@ -315,11 +317,10 @@ export function ExaminationAttemptTable({ data: initialData = defaultItems() }: 
             <Table>
               <TableHeader className='bg-muted sticky top-0 z-10'>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className={cn('*:border *:[th[id=username]]:w-full', sharedClasses)}>
+                  <TableRow key={headerGroup.id} className={cn('*:[th[id=username]]:w-full', sharedClasses)}>
                     {headerGroup.headers.map((header) => {
                       return (
-                        // <TableHead key={header.id} colSpan={header.colSpan} style={{ width: header.id === 'header' ? 'auto' : 'auto' }}>
-                        <TableHead key={header.id} id={header.id} colSpan={header.colSpan}>
+                        <TableHead data-column-id={header.id} key={header.id} id={header.id} colSpan={header.colSpan}>
                           {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableHead>
                       )
