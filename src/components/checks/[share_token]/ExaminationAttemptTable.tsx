@@ -50,28 +50,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/shadcn/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { getUUID } from '@/src/lib/Shared/getUUID'
-import lorem from '@/src/lib/Shared/Lorem'
 import { cn } from '@/src/lib/Shared/utils'
-import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
-const schema = z.object({
-  id: z
-    .number()
-    .or(z.string())
-    .default(() => getUUID()),
-  username: z.string().default(() => lorem().substring(0, Math.random() * 100)),
-  type: z.enum(['normal', 'anonymous']),
-  status: z.enum(['Done', 'in-progress']),
-  score: z.number().min(1).max(100),
-  totalCheckScore: z.number().min(1).max(100),
+const ExamAttemptItemSchema = z.object({
+  id: z.number().or(z.string()),
+  username: z.string(),
+  type: z.enum(['normal', 'anonymous']).or(z.string().nonempty()),
+  status: z.enum(['Done', 'in-progress']).or(z.string().nonempty()),
+  score: z.number(),
+  totalCheckScore: z.number(),
 })
 
-const { instantiate } = schemaUtilities(schema)
+type ExamAttemptItem = z.infer<typeof ExamAttemptItemSchema>
 
-const defaultItems = () => Array.from({ length: 25 }, () => instantiate())
-
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
+const columns: ColumnDef<ExamAttemptItem>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -210,7 +202,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 // gap between columns (padding) except for action columns
 const sharedClasses = '*:[th]:not-data-[column-id^=action]:px-5 *:[td]:not-data-[column-id^=action]:px-5 *:[th]:not-data-[column-id^=action]:border-x'
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
+function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -234,7 +226,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   )
 }
 
-export function ExaminationAttemptTable({ data: initialData = defaultItems() }: { data?: z.infer<typeof schema>[] }) {
+export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttemptItem[] }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -382,7 +374,7 @@ export function ExaminationAttemptTable({ data: initialData = defaultItems() }: 
   )
 }
 
-function TableFooter({ table }: { table: TableType<z.infer<typeof schema>> }) {
+function TableFooter({ table }: { table: TableType<ExamAttemptItem> }) {
   return (
     <div className='flex items-center justify-between px-4'>
       <div className='text-muted-foreground hidden flex-1 text-sm lg:flex'>
@@ -435,7 +427,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+function TableCellViewer({ item }: { item: ExamAttemptItem }) {
   const isMobile = useIsMobile()
 
   return (
@@ -537,7 +529,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   )
 }
 
-function QuickEditTableCell({ item }: { item: z.infer<typeof schema> }) {
+function QuickEditTableCell({ item }: { item: ExamAttemptItem }) {
   const isMobile = useIsMobile()
 
   return (
