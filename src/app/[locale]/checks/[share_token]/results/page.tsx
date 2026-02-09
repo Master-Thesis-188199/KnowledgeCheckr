@@ -9,7 +9,7 @@ import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurat
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { ExaminationAttemptTable } from '@/src/components/checks/[share_token]/ExaminationAttemptTable'
-import { Card, CardContent, CardHeader } from '@/src/components/shadcn/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
@@ -53,7 +53,30 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
           </div>
         </div>
 
-        <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
+        <Card>
+          <CardHeader className='bg-card -mt-6 flex flex-col items-stretch border-b pt-6 sm:flex-row'>
+            <div className='flex flex-1 flex-col justify-center gap-1 pb-3 sm:pb-0'>
+              <CardTitle>Examation Attempts</CardTitle>
+              <CardDescription>Shows a detailed list of all examination attempts for this check</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className='mt-auto px-0'>
+            <ExaminationAttemptTable
+              data={dummyAttempts.map((attempt, i) => ({
+                id: attempt.id,
+                score: attempt.score,
+                startedAt: new Date(Date.parse(attempt.startedAt)),
+                finishedAt: new Date(Date.parse(attempt.finishedAt)),
+                status: i % 4 !== 0 ? 'Done' : 'in-progress',
+                totalCheckScore: 100,
+                type: i % 5 !== 0 ? 'normal' : 'anonymous',
+                username: attempt.user.name,
+              }))}
+            />
+          </CardContent>
+        </Card>
+
+        {/* <Card className='bg-background border-ring-subtle dark:border-ring-subtle p-0'>
           <CardHeader className='text-md grid-rows-1 rounded-t-md bg-neutral-200/60 px-4 py-2 font-medium dark:bg-neutral-700/60'>Examination Attempts</CardHeader>
           <CardContent className='my-0 flex flex-col gap-6 px-0 py-0 pb-8'>
             <ExaminationAttemptTable
@@ -69,7 +92,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
               }))}
             />
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </>
   )
