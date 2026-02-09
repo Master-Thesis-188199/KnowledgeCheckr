@@ -33,6 +33,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table'
+import { differenceInMinutes } from 'date-fns'
 import isEqual from 'lodash/isEqual'
 import { EyeIcon } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
@@ -56,6 +57,8 @@ const ExamAttemptItemSchema = z.object({
   username: z.string(),
   type: z.enum(['normal', 'anonymous']).or(z.string().nonempty()),
   status: z.enum(['Done', 'in-progress']).or(z.string().nonempty()),
+  startedAt: z.date(),
+  finishedAt: z.date(),
   score: z.number(),
   totalCheckScore: z.number(),
 })
@@ -90,14 +93,24 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     },
     enableHiding: false,
   },
+
   {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
       <Badge variant='outline' className='text-muted-foreground px-1.5'>
-        {row.original.status === 'Done' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400' /> : <IconLoader />}
+        {row.original.status === 'Done' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' /> : <IconLoader />}
         {row.original.status}
       </Badge>
+    ),
+  },
+  {
+    accessorKey: 'duration',
+    header: () => <div className=''>Duration</div>,
+    cell: ({ row }) => (
+      <div className='text-foreground' id={`${row.original.id}-duration`}>
+        {differenceInMinutes(row.original.finishedAt, row.original.startedAt)} minutes
+      </div>
     ),
   },
   {
