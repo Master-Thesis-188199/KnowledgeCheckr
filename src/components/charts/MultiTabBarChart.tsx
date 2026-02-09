@@ -152,7 +152,7 @@ export function MultiTabBarChart<T extends { dataKey: string }>({ title, descrip
   return (
     <Card className='@container'>
       <CardHeader className='flex flex-col items-stretch gap-2 !p-0'>
-        <div className='flex flex-1 flex-col justify-center gap-1 px-6 pb-3'>
+        <div className='mb-4 flex flex-1 flex-col justify-center gap-1 border-b px-6 pb-6'>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
