@@ -36,7 +36,6 @@ import {
 import isEqual from 'lodash/isEqual'
 import { EyeIcon } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
-import { toast } from 'sonner'
 import { z } from 'zod'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
@@ -116,53 +115,18 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     accessorKey: 'score',
     header: () => <div className='w-full text-center'>Score</div>,
     cell: ({ row }) => (
-      <form
-        className='flex justify-center'
-        onSubmit={(e) => {
-          e.preventDefault()
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.username}`,
-            success: 'Done',
-            error: 'Error',
-          })
-        }}>
-        <Label htmlFor={`${row.original.id}-score`} className='sr-only'>
-          Score
-        </Label>
-        <Input
-          type='number'
-          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-12 bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent [&::-webkit-inner-spin-button]:-translate-x-1 [&::-webkit-inner-spin-button]:scale-75'
-          defaultValue={row.original.score}
-          id={`${row.original.id}-score`}
-        />
-      </form>
+      <div className='text-foreground text-center text-xs' id={`${row.original.id}-score`}>
+        {row.original.score}
+      </div>
     ),
   },
   {
     accessorKey: 'totalScore',
     header: () => <div className='w-full text-center'>Max Score</div>,
     cell: ({ row }) => (
-      <form
-        className='flex justify-center'
-        onSubmit={(e) => {
-          e.preventDefault()
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.username}`,
-            success: 'Done',
-            error: 'Error',
-          })
-        }}>
-        <Label htmlFor={`${row.original.id}-total-check-score`} className='sr-only'>
-          Total Check Score
-        </Label>
-        <Input
-          disabled
-          type='number'
-          className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-10 border-none bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent [&::-webkit-inner-spin-button]:appearance-none'
-          defaultValue={row.original.totalCheckScore}
-          id={`${row.original.id}-total-check-score`}
-        />
-      </form>
+      <div className='text--foreground text-center text-xs' id={`${row.original.id}-total-check-score`}>
+        {row.original.totalCheckScore}
+      </div>
     ),
   },
   {
