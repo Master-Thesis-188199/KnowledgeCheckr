@@ -6,7 +6,7 @@ import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/sel
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
-import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
+import { QuestionScoresLineChartCard } from '@/src/components/charts/QuestionScoresLineChart'
 import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { ExaminationAttemptTable } from '@/src/components/checks/[share_token]/ExaminationAttemptTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
@@ -49,7 +49,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
           </div>
 
           <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[550px]:[--grid-item-min-width:500px]'>
-            <QuestionScoresLineChart title='Average question score by question' description='Shows the variance between average question score and max-score by question' />
+            <QuestionScoresLineChartCard title='Average question score by question' description='Shows the variance between average question score and max-score by question' />
           </div>
         </div>
 

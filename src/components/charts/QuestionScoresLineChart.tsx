@@ -6,7 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { type ChartConfig, ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from '@/shadcn/chart'
 import { Any } from '@/types'
 
-const data = [
+type ChartData = {
+  questionIndex: number
+  score: number
+  maxScore: number
+}
+
+const data: ChartData[] = [
   { questionIndex: 0, score: 5, maxScore: 5 },
   { questionIndex: 1, score: 6, maxScore: 7 },
   { questionIndex: 2, score: 7, maxScore: 14 },
@@ -26,7 +32,7 @@ const data = [
 
 const chartConfig = {} satisfies ChartConfig
 
-export function QuestionScoresLineChart({ title, description }: { title: string; description?: string }) {
+export function QuestionScoresLineChartCard({ title, description }: { title: string; description?: string }) {
   return (
     <Card>
       <CardHeader className='flex flex-col items-stretch border-b sm:flex-row'>
@@ -36,53 +42,59 @@ export function QuestionScoresLineChart({ title, description }: { title: string;
         </div>
       </CardHeader>
       <CardContent className='mt-auto px-2'>
-        <ChartContainer config={chartConfig} className='aspect-auto h-[250px] w-full'>
-          <AreaChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              right: 12,
-              bottom: 5,
-            }}>
-            <CartesianGrid vertical={true} horizontal={false} />
-            <YAxis width={15} axisLine={false} tick={() => <></>} tickLine={false} />
-            <XAxis
-              //* shows every second tick-label
-              tick={({ payload, ...props }) => {
-                if (payload.value % 2 !== 0) return <></>
-
-                return (
-                  <text x={props.x} textAnchor='middle' y={props.y + props.height / 3} className='' fill='gray'>
-                    {payload.value + 1}
-                  </text>
-                )
-              }}
-              label={({ viewBox: { x, y, width, height } }: Any) => (
-                <text x={x + width / 2 - 20} y={y + height + 3} className='' fill='gray'>
-                  Questions
-                </text>
-              )}
-              dataKey='questionIndex'
-              tickLine={false}
-            />
-            <defs>
-              <linearGradient id='fillScore' x1='0' y1='0' x2='0' y2='1'>
-                <stop offset='5%' stopColor='var(--chart-2)' stopOpacity={0.9} />
-                <stop offset='95%' stopColor='var(--chart-2)' stopOpacity={0.3} />
-              </linearGradient>
-              <linearGradient id='fillMaxScore' x1='0' y1='0' x2='0' y2='1'>
-                <stop offset='5%' stopColor='var(--color-chart-3)' stopOpacity={0.9} />
-                <stop offset='95%' stopColor='var(--color-chart-3)' stopOpacity={0.3} />
-              </linearGradient>
-            </defs>
-
-            <ChartTooltip content={<ChartTooltipContent className='w-[150px]' nameKey='score' />} />
-            <Area type='bumpX' dataKey={'score'} stroke={`var(--chart-2)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillScore)' />
-            <Area type='bumpX' label={'Question Points'} dataKey={'maxScore'} stroke={`var(--chart-3)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillMaxScore)' />
-            <ChartLegend wrapperStyle={{ bottom: '-10px', left: '25px', margin: '0px 15px 0px 25px', width: 'stretch' }} />
-          </AreaChart>
-        </ChartContainer>
+        <QuestionScoresLineChart />
       </CardContent>
     </Card>
+  )
+}
+
+export function QuestionScoresLineChart({ data: initialData = data }: { data?: ChartData[] }) {
+  return (
+    <ChartContainer config={chartConfig} className='aspect-auto h-[250px] w-full'>
+      <AreaChart
+        accessibilityLayer
+        data={initialData}
+        margin={{
+          right: 12,
+          bottom: 5,
+        }}>
+        <CartesianGrid vertical={true} horizontal={false} />
+        <YAxis width={15} axisLine={false} tick={() => <></>} tickLine={false} />
+        <XAxis
+          //* shows every second tick-label
+          tick={({ payload, ...props }) => {
+            if (payload.value % 2 !== 0) return <></>
+
+            return (
+              <text x={props.x} textAnchor='middle' y={props.y + props.height / 3} className='' fill='gray'>
+                {payload.value + 1}
+              </text>
+            )
+          }}
+          label={({ viewBox: { x, y, width, height } }: Any) => (
+            <text x={x + width / 2 - 20} y={y + height + 3} className='' fill='gray'>
+              Questions
+            </text>
+          )}
+          dataKey='questionIndex'
+          tickLine={false}
+        />
+        <defs>
+          <linearGradient id='fillScore' x1='0' y1='0' x2='0' y2='1'>
+            <stop offset='5%' stopColor='var(--chart-2)' stopOpacity={0.9} />
+            <stop offset='95%' stopColor='var(--chart-2)' stopOpacity={0.3} />
+          </linearGradient>
+          <linearGradient id='fillMaxScore' x1='0' y1='0' x2='0' y2='1'>
+            <stop offset='5%' stopColor='var(--color-chart-3)' stopOpacity={0.9} />
+            <stop offset='95%' stopColor='var(--color-chart-3)' stopOpacity={0.3} />
+          </linearGradient>
+        </defs>
+
+        <ChartTooltip content={<ChartTooltipContent className='w-[150px]' nameKey='score' />} />
+        <Area type='bumpX' dataKey={'score'} stroke={`var(--chart-2)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillScore)' />
+        <Area type='bumpX' label={'Question Points'} dataKey={'maxScore'} stroke={`var(--chart-3)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillMaxScore)' />
+        <ChartLegend wrapperStyle={{ bottom: '-10px', left: '25px', margin: '0px 15px 0px 25px', width: 'stretch' }} />
+      </AreaChart>
+    </ChartContainer>
   )
 }
