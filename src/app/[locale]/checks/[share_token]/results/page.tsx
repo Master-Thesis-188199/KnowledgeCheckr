@@ -60,13 +60,13 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>
         <div className='mx-0 flex flex-col gap-16'>
-          <div className='grid-container [--grid-column-count:3] [--grid-desired-gap:70px] [--grid-item-min-width:340px]'>
+          <div className='grid-container [--grid-column-count:3] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[360px]:[--grid-item-min-width:340px]'>
             <UserTypePieChart title='Examinations by User types' description='Shows examination attempts by user type' />
             <ExamQuestionDurationChart title='Average Question time differences' description='Shows the variance in actual and estimated answer-time ' />
             <ExaminationSuccessPieChart title='Examinations Success Rate' description='Shows how many users have passed / failed.' />
           </div>
 
-          <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:500px]'>
+          <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[550px]:[--grid-item-min-width:500px]'>
             <ChartAreaInteractive />
             <ChartAreaInteractive />
           </div>
