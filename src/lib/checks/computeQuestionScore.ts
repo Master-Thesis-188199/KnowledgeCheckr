@@ -20,7 +20,7 @@ export function computeQuestionInputScore(question: Question, answer: QuestionIn
       return correctAnswers.every((answer) => input.selection.includes(answer.id)) ? multipleChoice.points : 0
     },
     onDragDrop: function (dragDrop: DragDropQuestion, input) {
-      const correctAnswers = dragDrop.answers.sort((a, b) => a.position - b.position)
+      const correctAnswers = dragDrop.answers.toSorted((a, b) => a.position - b.position)
 
       return correctAnswers.every((answer, index) => input.input.length === correctAnswers.length && input.input[index] === answer.id) ? dragDrop.points : 0
     },
