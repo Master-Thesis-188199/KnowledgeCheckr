@@ -33,6 +33,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table'
+import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import { differenceInMinutes } from 'date-fns'
 import isEqual from 'lodash/isEqual'
 import { EyeIcon } from 'lucide-react'
@@ -51,6 +52,7 @@ import { Separator } from '@/components/shadcn/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
+import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
 const ExamAttemptItemSchema = z.object({
@@ -153,7 +155,6 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
         </div>
       )
     },
-    enableHiding: false,
   },
   {
     id: 'actions',
@@ -248,6 +249,53 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  // #region Automatic ** hiding **  of columns when table overflows (re-appearance is not automatic). Disabled once user makes manual changes
+  const tableRef = React.useRef<HTMLTableElement>(null)
+  const size = useWindowSize()
+  const orientation = useOrientation()
+  const prevOrientation = usePrevious(orientation.type)
+  const prevSize = usePrevious(size)
+  const [columnHidingPolicy, setColumnHidingPolicy] = React.useState<'automatic' | 'manual'>('automatic')
+
+  React.useEffect(() => {
+    if (prevOrientation === orientation.type) return
+    console.log('Orientation changed.')
+    setColumnHidingPolicy('automatic')
+    setColumnVisibility({})
+  }, [orientation])
+
+  React.useEffect(() => {
+    if (columnHidingPolicy !== 'automatic') {
+      console.warn('Aborting automatic resizing --> manual mode')
+      return
+    }
+
+    // initial render
+    if ((prevSize === null || prevSize.width === null) && prevOrientation === orientation.type) return
+
+    // unchanged
+    if (prevSize === size && prevOrientation === orientation.type) return
+
+    if (!tableRef.current) return
+
+    const el = tableRef.current
+    const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight
+
+    const columnHideOrder = ['status', 'type', 'duration', 'totalScore', 'action-details']
+    const disabled = getKeys(columnVisibility).filter((key) => !columnVisibility[key])
+
+    if (!isOverflowing) return
+
+    const next = columnHideOrder.filter((colId) => !disabled.includes(colId))[0]
+    if (!next) return
+
+    // hide respective column
+    table.getColumn(next)?.toggleVisibility()
+
+    console.log(`Table is overflowing.... hiding "${next}" column.`)
+  }, [size, columnVisibility, orientation, columnHidingPolicy])
+  // #endregion
+
   React.useEffect(() => {
     if (isEqual(data, initialData)) return
 
@@ -309,7 +357,14 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
                 .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
                 .map((column) => {
                   return (
-                    <DropdownMenuCheckboxItem key={column.id} className='capitalize' checked={column.getIsVisible()} onCheckedChange={(value) => column.toggleVisibility(!!value)}>
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => {
+                        column.toggleVisibility(!!value)
+                        setColumnHidingPolicy('manual')
+                      }}>
                       {column.id}
                     </DropdownMenuCheckboxItem>
                   )
@@ -321,7 +376,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
       <div className='relative flex flex-col gap-4 overflow-auto px-4 lg:px-6'>
         <div className='overflow-hidden rounded-lg border'>
           <DndContext collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd} sensors={sensors} id={sortableId}>
-            <Table>
+            <Table tableContainerRef={tableRef}>
               <TableHeader className='sticky top-0 z-10 bg-neutral-200/70 dark:bg-neutral-900/70'>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className={cn('*:[th[id=username]]:w-full', sharedClasses)}>
