@@ -146,7 +146,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     ),
   },
   {
-    accessorKey: 'action-details',
+    accessorKey: 'preview-action',
     header: undefined,
     cell: ({ row }) => {
       return (
@@ -180,7 +180,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
 
 // gap between columns (padding) except for action columns
 const sharedClasses =
-  '*:[th]:not-data-[column-id^=action]:px-5 *:[td]:not-data-[column-id^=action]:px-5 *:[th]:not-data-[column-id^=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit'
+  '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit'
 
 function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -281,7 +281,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
     const el = tableRef.current
     const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight
 
-    const columnHideOrder = ['status', 'type', 'duration', 'totalScore', 'action-details']
+    const columnHideOrder = ['status', 'type', 'duration', 'totalScore', 'preview-action']
     const disabled = getKeys(columnVisibility).filter((key) => !columnVisibility[key])
 
     if (!isOverflowing) return
