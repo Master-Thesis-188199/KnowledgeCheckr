@@ -1,7 +1,7 @@
 'use client'
 
 import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
-import { Area, AreaChart, CartesianGrid, Legend, Margin, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts'
 
 export default function ExampleAreaChart() {
   const size = useWindowSize()
@@ -13,6 +13,14 @@ export default function ExampleAreaChart() {
     return true
   }
 
+  //* Margin type is not exported by recharts @^2.0.0, but is accessbile in @^3.0.0
+  type Margin = {
+    left?: number
+    right?: number
+    bottom?: number
+    top?: number
+  }
+
   const margin: Margin = {
     left: 0,
     right: 0,
@@ -22,7 +30,7 @@ export default function ExampleAreaChart() {
 
   return (
     <AreaChart
-      responsive
+      // responsive  // is not exported by recharts @^2.0.0, but is accessbile in @^3.0.0
       className=''
       accessibilityLayer
       barCategoryGap='10%'
@@ -79,11 +87,15 @@ export default function ExampleAreaChart() {
       syncMethod='index'>
       <CartesianGrid strokeDasharray='3 3' className='dark:stroke-neutral-500' />
       <XAxis dataKey='name' />
-      <YAxis width={'auto'} />
+      <YAxis />
+      {/* `width` property does not exist in recharts @^2.0.0, but does in @^3.0.0  */}
+      {/* <YAxis width={'auto'} /> */}
       <Area animationBegin={0} isAnimationActive={!hasResized()} dataKey='uv' fill='rgba(136,132,216,0.47)' stackId='1' stroke='#8884d8' strokeWidth={3} type='monotone' />
       <Area animationBegin={300} isAnimationActive={!hasResized()} dataKey='pv' fill='rgba(130,202,157,0.47)' stackId='1' stroke='#82ca9d' strokeWidth={3} type='monotone' />
       <Area animationBegin={600} isAnimationActive={!hasResized()} dataKey='amt' fill='rgba(255,198,88,0.47)' stackId='1' stroke='#ffc658' strokeWidth={3} type='monotone' />
-      <Legend align='center' width={'stretch'} wrapperStyle={{ left: margin.left, right: margin.right }} />
+      <Legend align='center' wrapperStyle={{ left: margin.left, right: margin.right }} />
+      {/* `width` property does not exist in recharts @^2.0.0, but does in @^3.0.0  */}
+      {/* <Legend align='center' width={'stretch'} wrapperStyle={{ left: margin.left, right: margin.right }} /> */}
     </AreaChart>
   )
 }

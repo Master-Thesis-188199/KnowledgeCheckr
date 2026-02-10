@@ -1,6 +1,6 @@
 'use client'
 import { usePrevious, useWindowSize } from '@uidotdev/usehooks'
-import { CartesianGrid, Legend, Line, LineChart, Margin, Tooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Any } from '@/types'
 
 // #region Sample data
@@ -106,6 +106,14 @@ export default function ExemplaryLineChart() {
     },
   ]
 
+  //* Margin type is not exported by recharts @^2.0.0, but is accessbile in @^3.0.0
+  type Margin = {
+    left?: number
+    right?: number
+    bottom?: number
+    top?: number
+  }
+
   const margin: Margin = {
     left: 0,
     right: 0,
@@ -114,11 +122,20 @@ export default function ExemplaryLineChart() {
   }
 
   return (
-    <LineChart responsive style={{ width: '100%', aspectRatio: 1.418 }} margin={margin} data={data} className='*:[svg]:outline-none'>
+    <LineChart
+      // responsive  // is not exported by recharts @^2.0.0, but is accessbile in @^3.0.0
+      style={{ width: '100%', aspectRatio: 1.418 }}
+      margin={margin}
+      data={data}
+      className='*:[svg]:outline-none'>
       <CartesianGrid className='dark:stroke-neutral-500' />
       <XAxis dataKey='name' />
-      <YAxis width={'auto'} />
-      <Legend align='center' width={'stretch'} wrapperStyle={{ left: margin.left, right: margin.right }} />
+      <YAxis />
+      {/* `width` property does not exist in recharts @^2.0.0, but does in @^3.0.0  */}
+      {/* <YAxis width={'auto'} /> */}
+      <Legend align='center' wrapperStyle={{ left: margin.left, right: margin.right }} />
+      {/* `width` property does not exist in recharts @^2.0.0, but does in @^3.0.0  */}
+      {/* <Legend align='center' wrapperStyle={{ left: margin.left, right: margin.right }} /> */}
 
       <Tooltip content={CustomTooltip} />
 
