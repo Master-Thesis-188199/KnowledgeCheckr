@@ -1,7 +1,6 @@
 'use client'
 
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
-import isEmpty from 'lodash/isEmpty'
 import { CheckCheckIcon } from 'lucide-react'
 import { redirect, RedirectType } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -13,6 +12,7 @@ import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExami
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
   const { knowledgeCheck, ...examinationState } = useExaminationStore((state) => state)
@@ -78,5 +78,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
 }
 
 function isQuestionAnswered(results: ExaminationSchema['results'], id: Question['id']) {
-  return !isEmpty(results.find((r) => r.question_id === id)?.answer ?? {})
+  const parseResult = safeParseQuestionInput(results.find((r) => r.question_id === id) ?? {})
+  // when the user has not made a selection / input then the (saved-) result will not satisfy the schema constraints
+  return parseResult.success
 }
