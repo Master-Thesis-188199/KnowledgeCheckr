@@ -315,9 +315,9 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
   }
 
   return (
-    <div className='flex w-full flex-col justify-start gap-6'>
+    <div className='@container/table flex w-full flex-col justify-start gap-6'>
       <div className='-mb-2 flex items-center justify-between px-4 lg:px-6'>
-        <div className='ml-2 hidden items-center gap-2 lg:flex'>
+        <div className='ml-2 hidden items-center gap-2 @sm/table:flex'>
           <Label htmlFor='rows-per-page' className='text-sm font-medium'>
             Rows per page
           </Label>
