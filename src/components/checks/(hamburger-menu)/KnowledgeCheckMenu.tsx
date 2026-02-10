@@ -160,7 +160,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
-                const pageHeading = document.querySelector('main h1')
+                const pageHeading = document.querySelector('main #page-heading')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
                 toast(t('remove_share_token.toast_deletion_successful'), { type: 'success' })
               })
@@ -192,7 +192,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
-                const pageHeading = document.querySelector('main h1')
+                const pageHeading = document.querySelector('main #page-heading')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
                 toast(t('delete_knowledgeCheck.toast_deletion_successful'), { type: 'success' })
               })

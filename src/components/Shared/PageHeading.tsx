@@ -6,7 +6,9 @@ export default async function PageHeading({ title, className, showBreadcrumbs = 
     <>
       <GenericBreadcrumb show={showBreadcrumbs} />
       <div className='mt-4 mb-8 flex flex-col gap-2'>
-        <h1 className={twMerge('text-[22px] font-semibold tracking-wider', className)}>{title}</h1>
+        <h1 id='page-heading' className={twMerge('text-[22px] font-semibold tracking-wider', className)}>
+          {title}
+        </h1>
         {description && (
           <p aria-label='page description' className='text-neutral-500 dark:text-neutral-400'>
             {description}
