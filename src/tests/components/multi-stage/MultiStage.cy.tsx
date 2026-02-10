@@ -9,7 +9,7 @@ describe('Multi-Stage Test Suite: ', () => {
     cy.viewport(1200, 150)
 
     cy.mount(
-      <I18nProvider>
+      <I18nProvider locale='en'>
         <RootProviders>
           <div className='p-12'>
             <MultiStageStoreProvider
