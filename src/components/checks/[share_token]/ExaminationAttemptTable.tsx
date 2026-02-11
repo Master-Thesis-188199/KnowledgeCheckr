@@ -26,7 +26,7 @@ import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import { differenceInMinutes, format } from 'date-fns'
 import { deAT, enUS } from 'date-fns/locale'
 import isEqual from 'lodash/isEqual'
-import { ChevronRightIcon, EyeIcon } from 'lucide-react'
+import { ChartColumnIcon, ChevronRightIcon, EyeIcon, TrashIcon } from 'lucide-react'
 import { z } from 'zod'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
@@ -165,12 +165,16 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
             <span className='sr-only'>Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-32'>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
+        <DropdownMenuContent align='end' className='w-40'>
+          <DropdownMenuItem className='justify-between'>
+            Show Results
+            <ChartColumnIcon className='size-3.5' />
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
+          <DropdownMenuItem variant='destructive' className='justify-between'>
+            Delete Attempt
+            <TrashIcon className='size-3.5' />
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
