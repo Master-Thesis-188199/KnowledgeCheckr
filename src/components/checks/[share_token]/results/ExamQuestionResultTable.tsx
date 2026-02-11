@@ -21,6 +21,7 @@ type QuestionItem = {
   position: number
   questionText: string
   score: number
+  grade?: string
   points: Question['points']
   category: Question['category']
 }
@@ -87,6 +88,19 @@ export default function ExamQuestionResultTable() {
       accessorKey: 'points',
       header: 'Points',
       cell: ({ row }) => <div className='flex justify-center'>{row.original.points}</div>,
+    },
+    {
+      accessorKey: 'grade',
+      header: 'Grade',
+      cell: ({ row }) => (
+        <div className='flex justify-center'>
+          <Input
+            defaultValue={row.original.grade}
+            placeholder='N/A'
+            className='dark:border-ring-subtle/70 border-ring-subtle/70 h-fit w-12 bg-transparent px-0 py-1.5 text-center text-xs dark:bg-transparent [&::-webkit-inner-spin-button]:-translate-x-1 [&::-webkit-inner-spin-button]:scale-75'
+          />
+        </div>
+      ),
     },
     {
       id: 'preview-action',
