@@ -13,8 +13,7 @@ import { Input } from '@/src/components/shadcn/input'
 import { Label } from '@/src/components/shadcn/label'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
 import { useIsMobile } from '@/src/hooks/use-mobile'
-import { getUUID } from '@/src/lib/Shared/getUUID'
-import { Question } from '@/src/schemas/QuestionSchema'
+import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 type QuestionItem = {
   id: string
@@ -143,12 +142,24 @@ export default function ExamQuestionResultTable() {
       ),
     },
   ]
-  const data: QuestionItem[] = [
-    { id: getUUID(), category: 'general', points: 8, position: 1, questionText: 'What is capital of France?', score: 5 },
-    { id: getUUID(), category: 'geogaphy', points: 10, position: 2, questionText: 'What is round and shaped like a sphere?', score: 5 },
-  ]
 
-  return <DataTable data={data} columns={columns} />
+  const dummySize = 15
+
+  const data: QuestionItem[] = Array.from({ length: dummySize }, (_, i) => {
+    const { id, category, points, question } = instantiateQuestion()
+
+    return {
+      id,
+      category,
+      points,
+      questionText: question,
+      position: i + 1,
+      // eslint-disable-next-line react-hooks/purity
+      score: Math.round(Math.random() * points),
+    }
+  })
+
+  return <DataTable data={data} columns={columns} columnHideOrder={['answer status', 'category', 'position', 'points', 'preview-action', 'type', 'score']} />
 }
 
 function DrawerActionTableCell({ item, children }: { item: QuestionItem; children: React.ReactNode }) {
