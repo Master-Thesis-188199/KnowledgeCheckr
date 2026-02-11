@@ -30,7 +30,6 @@ import { ChevronRightIcon, EyeIcon } from 'lucide-react'
 import { z } from 'zod'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
-import { type ChartConfig } from '@/components/shadcn/chart'
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/shadcn/drawer'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
@@ -446,26 +445,6 @@ function TableFooter({ table }: { table: TableType<ExamAttemptItem> }) {
     </div>
   )
 }
-
-const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 },
-]
-
-const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'var(--primary)',
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'var(--primary)',
-  },
-} satisfies ChartConfig
 
 function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; children: React.ReactNode }) {
   const isMobile = useIsMobile()
