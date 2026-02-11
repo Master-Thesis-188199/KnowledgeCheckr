@@ -23,9 +23,10 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table'
 import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
-import { differenceInMinutes } from 'date-fns'
+import { differenceInMinutes, format } from 'date-fns'
+import { deAT, enUS } from 'date-fns/locale'
 import isEqual from 'lodash/isEqual'
-import { EyeIcon } from 'lucide-react'
+import { ChevronRightIcon, EyeIcon } from 'lucide-react'
 import { z } from 'zod'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
@@ -39,6 +40,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
+import { useCurrentLocale } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -467,34 +469,60 @@ const chartConfig = {
 
 function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; children: React.ReactNode }) {
   const isMobile = useIsMobile()
+  const currentLocale = useCurrentLocale()
 
   return (
     <Drawer direction={isMobile ? 'bottom' : 'right'}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className='data-[vaul-drawer-direction=right]:*:data-close:flex'>
+        <div data-close className='absolute top-0 bottom-0 -left-2.5 hidden items-center'>
+          <DrawerClose asChild>
+            <Button variant='ghost' size='icon' className='bg-background size-4 text-neutral-600 hover:scale-115 dark:text-neutral-300'>
+              <ChevronRightIcon className='' />
+            </Button>
+          </DrawerClose>
+        </div>
         <DrawerHeader className='mb-6 gap-1 border-b'>
           <DrawerTitle>Examination Attempt - {item.username}</DrawerTitle>
-          <DrawerDescription>Showing details of {item.username}&apos;s examaination attempt.</DrawerDescription>
+          <DrawerDescription>Showing basics about {item.username}&apos;s examaination attempt.</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
           <QuestionScoresLineChart />
-          <form className='flex flex-col gap-4'>
-            <div className='flex flex-col gap-3'>
-              <Label htmlFor='username'>Username</Label>
-              <Input id='username' readOnly defaultValue={item.username} />
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='flex flex-col gap-3'>
+          <form className='mt-4 flex flex-col gap-6'>
+            <div className='grid-container [--grid-column-count:2] [--grid-desired-gap-x:48px] [--grid-desired-gap:24px] [--grid-item-min-width:80px]'>
+              <div className='col-span-2 flex flex-2 flex-col gap-3'>
+                <Label htmlFor='username'>Username</Label>
+                <Input id='username' readOnly defaultValue={item.username} />
+              </div>
+
+              <div className='flex flex-1 flex-col gap-3'>
                 <Label htmlFor='score'>User Score</Label>
                 <Input id='score' type='number' defaultValue={item.score} />
+              </div>
+              <div className='flex flex-1 flex-col gap-3'>
+                <Label htmlFor='startedAt'>Start Time</Label>
+                <Input id='startedAt' readOnly defaultValue={format(item.startedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
+              </div>
+              <div className='flex flex-col gap-3'>
+                <Label htmlFor='duration'>Duration</Label>
+                <Input id='duration' readOnly defaultValue={differenceInMinutes(item.finishedAt, item.startedAt) + ' minutes'} />
+              </div>
+              <div className='flex flex-1 flex-col gap-3'>
+                <Label htmlFor='finishedAt'>End Time</Label>
+                <Input id='finishedAt' readOnly defaultValue={format(item.startedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
               </div>
             </div>
           </form>
         </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
+        <DrawerFooter className='grid grid-cols-2 gap-12'>
           <DrawerClose asChild>
-            <Button variant='outline'>Done</Button>
+            <Button className='' variant='outline'>
+              Close
+            </Button>
+          </DrawerClose>
+
+          <DrawerClose asChild>
+            <Button className=''>Save Changes</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
