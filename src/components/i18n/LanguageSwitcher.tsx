@@ -1,18 +1,16 @@
 'use client'
 
-import { useContext } from 'react'
 import DE from 'country-flag-icons/react/3x2/DE'
 import US from 'country-flag-icons/react/3x2/US'
 import { FileQuestionIcon } from 'lucide-react'
 import { Button } from '@/src/components/shadcn/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
-import { I18nClientContext, useChangeLocale } from '@/src/i18n/client-localization'
-import i18nConfig, { i18nLocale, locales } from '@/src/i18n/i18nConfig'
+import { useChangeLocale, useCurrentLocale } from '@/src/i18n/client-localization'
+import { i18nLocale, locales } from '@/src/i18n/i18nConfig'
 
 export default function LanguageSwitcher() {
-  const ctx = useContext(I18nClientContext)
-  // const currentLocale = useCurrentLocale()
-  const { Icon } = useLocale((ctx?.locale as (typeof i18nConfig.locales)[number]) ?? 'en', 'size-6')
+  const currentLocale = useCurrentLocale()
+  const { Icon } = useLocale(currentLocale, 'size-6')
 
   return (
     <Popover>
