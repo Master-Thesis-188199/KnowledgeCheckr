@@ -141,7 +141,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     ),
   },
   {
-    accessorKey: 'preview-action',
+    id: 'preview-action',
     header: undefined,
     cell: ({ row }) => {
       return (
