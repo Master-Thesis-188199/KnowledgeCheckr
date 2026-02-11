@@ -27,6 +27,7 @@ import { differenceInMinutes, format } from 'date-fns'
 import { deAT, enUS } from 'date-fns/locale'
 import isEqual from 'lodash/isEqual'
 import { ChartColumnIcon, ChevronRightIcon, EyeIcon, TrashIcon } from 'lucide-react'
+import Link from 'next/link'
 import { z } from 'zod'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
@@ -157,7 +158,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
   },
   {
     id: 'actions',
-    cell: () => (
+    cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
@@ -166,10 +167,12 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-40'>
-          <DropdownMenuItem className='justify-between'>
-            Show Results
-            <ChartColumnIcon className='size-3.5' />
-          </DropdownMenuItem>
+          <Link href={`results/${row.original.id}`}>
+            <DropdownMenuItem className='justify-between'>
+              Show Results
+              <ChartColumnIcon className='size-3.5' />
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant='destructive' className='justify-between'>
             Delete Attempt
