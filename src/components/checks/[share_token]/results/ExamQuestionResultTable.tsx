@@ -1,8 +1,8 @@
 'use client'
 
-import { IconDotsVertical } from '@tabler/icons-react'
+import { IconCircleCheckFilled, IconDotsVertical } from '@tabler/icons-react'
 import { ColumnDef } from '@tanstack/react-table'
-import { ChartColumnIcon, CheckIcon, ChevronRightIcon, EyeIcon, TrashIcon } from 'lucide-react'
+import { ChartColumnIcon, CheckIcon, ChevronRightIcon, EyeIcon, TrashIcon, XIcon } from 'lucide-react'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { Badge } from '@/src/components/shadcn/badge'
 import { Button } from '@/src/components/shadcn/button'
@@ -18,6 +18,7 @@ import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 type QuestionItem = {
   id: string
   position: number
+  type: Question['type']
   questionText: string
   score: number
   grade?: string
@@ -67,16 +68,45 @@ export default function ExamQuestionResultTable() {
 
     {
       accessorKey: 'category',
-      header: () => <div className='w-full text-center'>Category</div>,
+      header: () => <div className='text-center'>Category</div>,
       cell: ({ row }) => (
         <Badge variant='outline' className='text-muted-foreground px-1.5'>
           {row.original.category}
         </Badge>
       ),
     },
+
+    {
+      accessorKey: 'answer status',
+      header: () => <div className='text-center'>Answer Status</div>,
+      cell: () => (
+        <Badge variant='outline' className='text-muted-foreground px-1.5'>
+          {Math.random() > 0.25 ? (
+            <>
+              <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' />
+              Answered
+            </>
+          ) : (
+            <>
+              <XIcon className='stroke-red-500 dark:stroke-red-400' />
+              not Answered
+            </>
+          )}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: 'type',
+      header: () => <div className='text-center'>Type</div>,
+      cell: ({ row }) => (
+        <Badge variant='outline' className='text-muted-foreground px-1.5'>
+          {row.original.type}
+        </Badge>
+      ),
+    },
     {
       accessorKey: 'score',
-      header: () => <div className='w-full text-center'>Score</div>,
+      header: () => <div className='text-center'>Score</div>,
       cell: ({ row }) => (
         <div className='text-foreground text-center text-xs' id={`${row.original.id}-score`}>
           {row.original.score}
@@ -146,11 +176,12 @@ export default function ExamQuestionResultTable() {
   const dummySize = 15
 
   const data: QuestionItem[] = Array.from({ length: dummySize }, (_, i) => {
-    const { id, category, points, question } = instantiateQuestion()
+    const { id, category, points, question, type } = instantiateQuestion()
 
     return {
       id,
       category,
+      type,
       points,
       questionText: question,
       position: i + 1,
