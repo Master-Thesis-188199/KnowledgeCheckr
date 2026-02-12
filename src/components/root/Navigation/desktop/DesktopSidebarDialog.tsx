@@ -5,7 +5,7 @@ import { twMerge as tw } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 
 export default function DesktopSidebarDialog({ children, visibilityBreakpoints }: { children: React.ReactNode; visibilityBreakpoints?: string }) {
-  const { isOpen, isPinned, debounceClosure } = useSidebarStore((state) => state)
+  const { isOpen, isPinned, canDeviceHover, debounceClosure } = useSidebarStore((state) => state)
 
   return (
     <motion.div
@@ -14,8 +14,8 @@ export default function DesktopSidebarDialog({ children, visibilityBreakpoints }
       animate={{
         width: !isPinned ? (isOpen ? '300px' : '60px') : '300px',
       }}
-      onMouseEnter={() => debounceClosure(true)}
-      onMouseLeave={() => debounceClosure(false)}>
+      onMouseEnter={() => (canDeviceHover ? debounceClosure(true) : null)}
+      onMouseLeave={() => (canDeviceHover ? debounceClosure(false) : null)}>
       {children}
     </motion.div>
   )
