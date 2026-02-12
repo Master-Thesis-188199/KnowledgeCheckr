@@ -154,7 +154,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
     table.getColumn(next)?.toggleVisibility()
 
     console.log(`Table is overflowing.... hiding "${next}" column.`)
-  }, [size, columnVisibility, orientation, columnHidingPolicy])
+  }, [size, columnVisibility, orientation, columnHidingPolicy, pagination])
   // #endregion
 
   React.useEffect(() => {
