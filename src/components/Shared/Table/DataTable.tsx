@@ -112,7 +112,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
   const [columnHidingPolicy, setColumnHidingPolicy] = React.useState<'automatic' | 'manual'>('automatic')
 
   React.useEffect(() => {
-    if (prevOrientation === orientation.type) return
+    if (prevOrientation === orientation.type || prevOrientation === null) return
     console.log('Orientation changed.')
     setColumnHidingPolicy('automatic')
     setColumnVisibility({})

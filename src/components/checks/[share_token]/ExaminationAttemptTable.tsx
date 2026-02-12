@@ -264,8 +264,8 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
   const [columnHidingPolicy, setColumnHidingPolicy] = React.useState<'automatic' | 'manual'>('automatic')
 
   React.useEffect(() => {
-    if (prevOrientation === orientation.type) return
-    console.log('Orientation changed.')
+    if (prevOrientation === orientation.type || prevOrientation === null) return
+    console.log('Orientation changed.', prevOrientation, orientation.type)
     setColumnHidingPolicy('automatic')
     setColumnVisibility({})
   }, [orientation])
