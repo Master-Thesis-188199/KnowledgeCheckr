@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { IconCircleCheckFilled, IconDotsVertical } from '@tabler/icons-react'
 import { ColumnDef } from '@tanstack/react-table'
 import { ChartColumnIcon, CheckIcon, ChevronRightIcon, EyeIcon, TrashIcon, XIcon } from 'lucide-react'
@@ -11,6 +12,7 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dr
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 import { Input } from '@/src/components/shadcn/input'
 import { Label } from '@/src/components/shadcn/label'
+import { Slider } from '@/src/components/shadcn/slider'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
 import { useIsMobile } from '@/src/hooks/use-mobile'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
@@ -195,6 +197,7 @@ export default function ExamQuestionResultTable() {
 
 function DrawerActionTableCell({ item, children }: { item: QuestionItem; children: React.ReactNode }) {
   const isMobile = useIsMobile()
+  const [slideValue, setSliderValue] = useState([item.score])
 
   return (
     <Drawer direction={isMobile ? 'bottom' : 'right'}>
@@ -217,6 +220,21 @@ function DrawerActionTableCell({ item, children }: { item: QuestionItem; childre
             <div className='col-span-2 flex flex-2 flex-col gap-3'>
               <Label htmlFor='question'>Question</Label>
               <Input id='question' readOnly defaultValue={item.questionText} />
+            </div>
+
+            <div className='flex justify-between gap-6'>
+              <div className='flex flex-2 flex-col gap-3'>
+                <div className='flex items-center justify-between'>
+                  <Label htmlFor='slider'>Question Score</Label>
+                  <span className='text-muted-foreground text-sm'>{slideValue[0]} points</span>
+                </div>
+                <Slider id='slider' max={item.points} min={0} onValueChange={setSliderValue} onPointerDown={(e) => e.stopPropagation()} value={slideValue} />
+                <div className='text-muted-foreground flex items-center justify-between text-xs'>
+                  <span>0 points</span>
+                  <span>{item.points} points</span>
+                </div>
+              </div>
+              <div className='flex-1' />
             </div>
 
             <div className='flex flex-col gap-3'>
