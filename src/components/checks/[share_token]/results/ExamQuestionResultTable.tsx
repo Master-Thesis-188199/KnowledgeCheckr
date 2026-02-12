@@ -217,7 +217,7 @@ function DrawerActionTableCell({ item, children }: { item: QuestionItem; childre
           <DrawerDescription>Showing user answers for question {item.position}.</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
-          <QuestionScoresLineChart />
+          <QuestionScoresLineChart className='h-[175px]' />
           <form className='mt-4 flex flex-col gap-6'>
             <div className='col-span-2 flex flex-2 flex-col gap-3'>
               <Label htmlFor='question'>Question</Label>
