@@ -213,8 +213,8 @@ function DrawerActionTableCell({ item, children }: { item: QuestionItem; childre
           </DrawerClose>
         </div>
         <DrawerHeader className='mb-6 gap-1 border-b'>
-          <DrawerTitle>Answers for: {item.questionText}</DrawerTitle>
-          <DrawerDescription>Showing user answers for question {item.position}.</DrawerDescription>
+          <DrawerTitle className='capitalize'>Preview user question answer</DrawerTitle>
+          <DrawerDescription>Viewing question {item.position} of the users respective examination attempt.</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
           <QuestionScoresLineChart className='h-[175px]' />
