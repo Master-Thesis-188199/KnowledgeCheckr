@@ -76,13 +76,13 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
  */
 export function CloseMobileSidebarLink({ ...props }: { children: React.ReactNode; className?: string } & Omit<LinkProps, 'onNavigate'>) {
   const { breakpoint } = useBreakpoint(BREAKPOINTS, 'xs')
-  const { toggleSidebar } = useSidebarStore((state) => state)
+  const { setOpen, isOpen } = useSidebarStore((state) => state)
 
   const closeOnNavigate = () => {
     //? Don't close sidebar for desktop screens
     if (breakpoint != 'xs' && breakpoint != 'sm' && breakpoint != 'md') return
 
-    toggleSidebar()
+    if (isOpen) setOpen(false)
   }
 
   return <Link {...props} onNavigate={closeOnNavigate} />
