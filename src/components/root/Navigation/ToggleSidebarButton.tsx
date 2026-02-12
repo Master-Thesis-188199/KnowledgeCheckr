@@ -7,7 +7,7 @@ import { Button } from '@/src/components/shadcn/button'
 export default function ToggleSidebarButton() {
   const { toggleSidebar } = useSidebarStore((store) => store)
   return (
-    <Button variant='ghost' size='icon' className='size-7 p-0' onClick={() => toggleSidebar({ updatePinState: true })}>
+    <Button aria-label='Toggle sidebar' variant='ghost' size='icon' className='size-7 p-0' onClick={() => toggleSidebar({ updatePinState: true })}>
       <PanelLeftIcon />
     </Button>
   )
