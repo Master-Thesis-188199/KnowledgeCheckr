@@ -28,7 +28,11 @@ function OpenButton() {
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   return (
-    <button type='button' aria-label='open mobile sidebar' className='group inline-block transition-transform hover:cursor-pointer active:scale-105 active:stroke-2 md:hidden' onClick={toggleSidebar}>
+    <button
+      type='button'
+      aria-label='open mobile sidebar'
+      className='group inline-block transition-transform hover:cursor-pointer active:scale-105 active:stroke-2 md:hidden'
+      onClick={() => toggleSidebar()}>
       <motion.div animate={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.6 }}>
         <Transition show={true} enter='transition duration-300' enterFrom='-rotate-20 opacity-50' enterTo='rotate-0 opacity-100' leave='hidden'>
           <Bars3Icon className={tw('size-6 group-hover:stroke-black group-hover:stroke-2 dark:group-hover:stroke-white')} />
@@ -42,7 +46,11 @@ export function MobileCloseButton() {
   const { toggleSidebar } = useSidebarStore((state) => state)
 
   return (
-    <button type='button' aria-label='close mobile sidebar' className='group inline-block transition-transform hover:cursor-pointer active:scale-110 active:stroke-3 md:hidden' onClick={toggleSidebar}>
+    <button
+      type='button'
+      aria-label='close mobile sidebar'
+      className='group inline-block transition-transform hover:cursor-pointer active:scale-110 active:stroke-3 md:hidden'
+      onClick={() => toggleSidebar()}>
       <motion.div animate={{ opacity: 1, scale: 1 }} initial={{ opacity: 0, scale: 0.6 }}>
         <Transition show={true} enter='transition duration-300' enterFrom='-rotate-20 opacity-50' enterTo='rotate-0 opacity-100' leave='hidden'>
           <XMarkIcon className={tw('size-6 group-hover:scale-105 group-hover:stroke-red-400 group-hover:stroke-2')} />

@@ -9,7 +9,7 @@ export type SidebarState = {
 }
 
 export type SidebarActions = {
-  toggleSidebar: () => void
+  toggleSidebar: (options?: { updatePinState?: boolean }) => void
   togglePinned: () => void
   setOpen: (state: boolean) => void
   debounceClosure: (new_open_state: boolean) => void
@@ -34,7 +34,8 @@ export const createSidebarStore: WithCaching<ZustandStore<SidebarStore>> = ({ in
 
       return {
         ...initialState,
-        toggleSidebar: () => set((state) => (!state.isPinned ? { isOpen: !state.isOpen } : {})),
+        toggleSidebar: ({ updatePinState }: NonNullable<Parameters<SidebarActions['toggleSidebar']>['0']> = {}) =>
+          set((state) => ({ isOpen: !state.isOpen, isPinned: updatePinState ? !state.isOpen : state.isPinned })),
         togglePinned: () => set((state) => ({ isPinned: !state.isPinned })),
         setOpen: (open_state) => set(() => ({ isOpen: open_state })),
         debounceClosure: (new_open_state) => {

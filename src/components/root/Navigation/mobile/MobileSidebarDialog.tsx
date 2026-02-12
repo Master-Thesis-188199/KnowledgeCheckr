@@ -52,7 +52,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
             leave='transition-opacity ease-linear duration-300'
             leaveFrom='opacity-100'
             leaveTo='opacity-0'>
-            <div className='fixed inset-0 bg-neutral-900/80 dark:bg-neutral-900/80' onClick={toggleSidebar} />
+            <div className='fixed inset-0 bg-neutral-900/80 dark:bg-neutral-900/80' onClick={() => toggleSidebar()} />
           </Transition.Child>
         </div>
       </Transition.Root>
@@ -64,7 +64,7 @@ export default function MobileSideBarDialog({ children, visibilityBreakpoints }:
         <motion.div id='mobile-sidebar-dialog' className='relative flex w-full max-w-xs flex-10 sm:max-w-sm' initial={{ translateX: '-100%' }} ref={scope}>
           {children}
         </motion.div>
-        <div className='flex-1' onClick={toggleSidebar} />
+        <div className='flex-1' onClick={() => toggleSidebar()} />
       </motion.div>
     </>
   )
