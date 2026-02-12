@@ -37,8 +37,8 @@ const sharedClasses = cn(
   '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit',
   //* ensure primary column takes up free space (w-full) but the content-width is limited to 40% of screen width.
   //* That way the column may not require more than 40% of screen width based on content.
-  // todo find a way to soften the max screen width restriction when column is larger than that.
-  '*:[td]:data-[column-id=primary]:*:max-w-[40vw] *:[th]:data-[column-id=primary]:*:max-w-[40vw]',
+  //* Hence, the column may take up all the free space (w-full) but if the other table columns require space, then the primary column will not enforce its width above 40% screen width
+  '*:[td]:data-[column-id=primary]:max-w-[40vw] ',
   ' *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td]:data-[column-id=primary]:*:truncate',
 )
 
