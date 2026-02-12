@@ -151,7 +151,7 @@ export default function ExamQuestionResultTable() {
     },
     {
       id: 'actions',
-      cell: () => (
+      cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
@@ -160,10 +160,12 @@ export default function ExamQuestionResultTable() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='w-40'>
-            <DropdownMenuItem className='justify-between'>
-              Show Answers
-              <ChartColumnIcon className='size-3.5' />
-            </DropdownMenuItem>
+            <DrawerActionTableCell item={row.original}>
+              <DropdownMenuItem className='justify-between' onSelect={(e) => e.preventDefault()}>
+                Show Answers
+                <ChartColumnIcon className='size-3.5' />
+              </DropdownMenuItem>
+            </DrawerActionTableCell>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant='destructive' className='justify-between'>
               Delete Answer
