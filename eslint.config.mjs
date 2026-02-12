@@ -1,6 +1,7 @@
 import { defineConfig } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
 import requireColorModeStyles from './config/eslint_rules/color-mode-styles/require-color-mode-styles.js'
@@ -11,6 +12,12 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    extends: [eslintPluginBetterTailwindcss.configs.recommended],
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/app/globals.css',
+      },
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       'prefer-spread': 0,
