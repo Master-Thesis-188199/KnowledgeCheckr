@@ -33,8 +33,14 @@ import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
 // gap between columns (padding) except for action columns
-const sharedClasses =
-  '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit'
+const sharedClasses = cn(
+  '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit',
+  //* ensure primary column takes up free space (w-full) but the content-width is limited to 40% of screen width.
+  //* That way the column may not require more than 40% of screen width based on content.
+  // todo find a way to soften the max screen width restriction when column is larger than that.
+  '*:[td]:data-[column-id=primary]:*:max-w-[40vw] *:[th]:data-[column-id=primary]:*:max-w-[40vw]',
+  ' *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td]:data-[column-id=primary]:*:truncate',
+)
 
 function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -235,7 +241,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
             <Table tableContainerRef={tableRef}>
               <TableHeader className='sticky top-0 z-10 bg-neutral-200/70 dark:bg-neutral-900/70'>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className={cn('*:[th[id=primary]]:w-full', sharedClasses)}>
+                  <TableRow key={headerGroup.id} className={cn('', sharedClasses)}>
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead data-column-id={header.id} key={header.id} id={header.id} colSpan={header.colSpan}>
