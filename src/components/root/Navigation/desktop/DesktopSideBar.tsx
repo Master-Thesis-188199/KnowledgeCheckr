@@ -38,7 +38,7 @@ function MenuBar() {
       <div className='2 flex items-center gap-4'>
         <div className='flex items-center gap-2'>
           <ToggleSidebarButton />
-          <Separator orientation='vertical' className='!min-h-5' />
+          <Separator orientation='vertical' className='min-h-5!' />
         </div>
 
         <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-8' />
