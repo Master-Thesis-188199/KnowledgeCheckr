@@ -4,15 +4,14 @@ import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 export type SidebarState = {
   isOpen: boolean
   canDeviceHover: boolean
-  isAnimationEnabled: boolean
+  isPinned: boolean
   // config: SideBarProps
 }
 
 export type SidebarActions = {
   toggleSidebar: () => void
-  toggleAnimation: () => void
+  togglePinned: () => void
   setOpen: (state: boolean) => void
-  setAnimation: (state: boolean) => void
   debounceClosure: (new_open_state: boolean) => void
   setDeviceHoverable: (hoverable: boolean) => void
 }
@@ -21,7 +20,7 @@ export type SidebarStore = SidebarState & SidebarActions
 
 export const defaultInitState: SidebarState = {
   isOpen: false,
-  isAnimationEnabled: true,
+  isPinned: false,
   canDeviceHover: true,
 }
 
@@ -35,10 +34,9 @@ export const createSidebarStore: WithCaching<ZustandStore<SidebarStore>> = ({ in
 
       return {
         ...initialState,
-        toggleSidebar: () => set((state) => (!state.isAnimationEnabled ? state : { isOpen: !state.isOpen })),
-        toggleAnimation: () => set((state) => ({ isAnimationEnabled: state.canDeviceHover ? !state.isAnimationEnabled : state.isAnimationEnabled })),
+        toggleSidebar: () => set((state) => (!state.isPinned ? { isOpen: !state.isOpen } : {})),
+        togglePinned: () => set((state) => ({ isPinned: !state.isPinned })),
         setOpen: (open_state) => set(() => ({ isOpen: open_state })),
-        setAnimation: (animation_state) => set(() => ({ isAnimationEnabled: animation_state })),
         debounceClosure: (new_open_state) => {
           if (new_open_state) {
             // When opening, cancel any pending close timer and update state immediately.
@@ -53,11 +51,12 @@ export const createSidebarStore: WithCaching<ZustandStore<SidebarStore>> = ({ in
               clearTimeout(closeTimer)
             }
             closeTimer = setTimeout(() => {
-              set((state) => ({ isOpen: state.isAnimationEnabled ? false : state.isOpen }))
+              // close the sidebar after the debounce time unless it is pinned
+              set((state) => ({ isOpen: state.isPinned ? state.isOpen : false }))
             }, clousureDebounceTime)
           }
         },
-        setDeviceHoverable: (hoverable) => set(() => ({ isAnimationEnabled: hoverable, canDeviceHover: hoverable })),
+        setDeviceHoverable: (hoverable) => set(() => ({ canDeviceHover: hoverable })),
       }
     },
   })
