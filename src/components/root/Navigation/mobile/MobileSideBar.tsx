@@ -16,7 +16,7 @@ export default function MobileSideBar({ children, visibilityBreakpoints }: { vis
 
       <MobileSideBarDialog visibilityBreakpoints={visibilityBreakpoints}>
         <div className='flex grow flex-col overflow-y-auto bg-white pb-2 dark:bg-neutral-800'>
-          <div className='flex shrink-0 items-center justify-between border-solid border-gray-400 bg-neutral-200/70 px-2 py-4 pl-4 shadow shadow-neutral-500 dark:border-gray-200 dark:bg-neutral-900 dark:shadow-neutral-400'>
+          <div className='flex shrink-0 items-center justify-between border-solid border-gray-400 bg-neutral-200/70 px-2 py-4 pl-4 shadow-sm shadow-neutral-500 dark:border-gray-200 dark:bg-neutral-900 dark:shadow-neutral-400'>
             <ArrowDownNarrowWide className='size-6' />
             <span className='flex-1 pr-4 text-center text-lg leading-6 font-semibold text-gray-700 dark:text-gray-200'>Navigation</span>
             <MobileCloseButton />
