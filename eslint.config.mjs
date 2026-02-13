@@ -30,6 +30,17 @@ const eslintConfig = defineConfig([
           destructuring: 'all',
         },
       ],
+
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/enforce-consistent-class-order': 'off',
+      'better-tailwindcss/no-unknown-classes': 'warn', // default error
+    },
+  },
+  {
+    // Keep all other lint rules for tests, but disable better-tailwindcss unknown classes rule in tests, since classes are often used as selectors.
+    files: ['**/__tests__/**/*.{js,jsx,ts,tsx}', '**/*.{test,spec}.{js,jsx,ts,tsx}', '**/test/**/*.{js,jsx,ts,tsx}', '**/tests/**/*.{js,jsx,ts,tsx}'],
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'off',
     },
   },
   {
