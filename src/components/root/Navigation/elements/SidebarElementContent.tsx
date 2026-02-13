@@ -17,7 +17,7 @@ export default function SidebarElementContent({ children }: { children: React.Re
         display: isOpen ? 'inline-block' : 'none',
         opacity: isOpen ? 1 : 0.0,
       }}
-      className={twMerge('!m-0 inline-block overflow-hidden !p-0 text-sm whitespace-pre text-neutral-700 transition-transform duration-300 group-hover/sidebar:translate-x-1 dark:text-neutral-200')}>
+      className={twMerge('m-0! inline-block overflow-hidden p-0! text-sm whitespace-pre text-neutral-700 transition-transform duration-300 group-hover/sidebar:translate-x-1 dark:text-neutral-200')}>
       {children}
     </motion.div>
   )

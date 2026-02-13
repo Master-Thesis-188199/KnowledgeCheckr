@@ -97,7 +97,7 @@ export function DiscoverFilterFields() {
                 }}
                 defaultPressed={isCaseSensitive}
                 variant='outline'
-                className='group data-[state=on]:bg-background-z-1 relative mr-0.5 data-[state=off]:*:[div]:block data-[state=on]:*:[div]:hidden data-[state=off]:*:[svg]:stroke-neutral-500 data-[state=on]:*:[svg]:stroke-neutral-700 dark:data-[state=off]:*:[svg]:stroke-neutral-400 dark:data-[state=on]:*:[svg]:stroke-neutral-300'>
+                className='group relative mr-0.5 data-[state=on]:bg-background-z-1 data-[state=off]:*:[div]:block data-[state=on]:*:[div]:hidden data-[state=off]:*:[svg]:stroke-neutral-500 data-[state=on]:*:[svg]:stroke-neutral-700 dark:data-[state=off]:*:[svg]:stroke-neutral-400 dark:data-[state=on]:*:[svg]:stroke-neutral-300'>
                 <div className='absolute top-0 right-1 bottom-0 left-1 flex'>
                   <div className='mt-2.5 h-[1.5px] w-full rotate-325 rounded-xs bg-red-500/50 dark:bg-red-400/70' />
                 </div>

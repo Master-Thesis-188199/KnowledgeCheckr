@@ -116,7 +116,7 @@ export default function Field<Values extends FieldValues>({
                       aria-label='Show field description'
                       role='button'
                       className={cn(
-                        'text-muted-foreground absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline hover:cursor-pointer hover:text-current dark:hover:text-current',
+                        'absolute inset-y-0 top-2.75 right-3 z-10 flex items-baseline text-muted-foreground hover:cursor-pointer hover:text-current dark:hover:text-current',
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
@@ -135,7 +135,7 @@ export default function Field<Values extends FieldValues>({
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     key='error-icon'
                     className={cn(
-                      'text-destructive absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline',
+                      'absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline text-destructive',
                       // positions the icon next to the checkbox
                       props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
                     )}>

@@ -13,7 +13,7 @@ export function MobileMenubar() {
   return (
     <div
       id='mobile-sidebar-menubar'
-      className='sticky inset-x-0 top-0 z-50 flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
+      className='sticky inset-x-0 top-0 z-50 flex w-full flex-row items-center justify-between bg-white px-4 py-3 text-neutral-600 shadow-sm shadow-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:shadow-neutral-600'>
       <OpenButton />
       <span className='tracking-widest'>{sideBarConfiguration.title}</span>
       <div className='flex items-center gap-4'>
