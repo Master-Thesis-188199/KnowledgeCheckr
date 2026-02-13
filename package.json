@@ -141,6 +141,7 @@
     "typescript": "^5",
     "wait-on": "^8.0.2"
   },
+  "packageManager": "pnpm@10.28.0",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
