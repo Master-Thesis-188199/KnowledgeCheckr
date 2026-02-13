@@ -10,8 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: cn(
-          'shadow-xs enabled:hover:ring-[1.5px] ',
-          'bg-neutral-500 ring-neutral-600 shadow-neutral-400 text-white enabled:hover:bg-neutral-500/80 ',
+          'shadow-xs enabled:hover:ring-[1.5px]',
+          'bg-neutral-500 ring-neutral-600 shadow-neutral-400 text-white enabled:hover:bg-neutral-500/80',
           'enabled:active:!bg-neutral-600/95 enabled:active:scale-[101%]',
           'dark:shadow-neutral-800 dark:bg-black dark:ring-neutral-600 dark:text-neutral-200 dark:enabled:hover:bg-neutral-900 dark:enabled:active:!bg-neutral-700 dark:!enabled:active:bg-primary/70',
         ),
@@ -25,7 +25,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 enabled:hover:underline',
         base: cn(
           'bg-neutral-100/80 dark:bg-neutral-700/40 ring-ring-subtle ring-1',
-          'enabled:hover:ring-ring enabled:hover:bg-neutral-50/80 enabled:active:bg-neutral-200/90 enabled:active:ring-ring-focus dark:enabled:hover:bg-neutral-700/70 dark:enabled:active:bg-neutral-700/90 ',
+          'enabled:hover:ring-ring enabled:hover:bg-neutral-50/80 enabled:active:bg-neutral-200/90 enabled:active:ring-ring-focus dark:enabled:hover:bg-neutral-700/70 dark:enabled:active:bg-neutral-700/90',
         ),
         input: cn(
           'bg-input border border-input-ring',

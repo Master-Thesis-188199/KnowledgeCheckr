@@ -10,8 +10,8 @@ export function PracticeCategorySelection({ questions, share_token }: { question
   const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
 
   const optionClasses = cn(
-    'cursor-pointer px-3 py-1.5 hover:ring-1 hover:rounded-md hover:bg-neutral-200/90 dark:ring-neutral-400/70 dark:hover:bg-neutral-800 ',
-    'dark:active:bg-neutral-700 active:bg-neutral-300/80 ',
+    'cursor-pointer px-3 py-1.5 hover:ring-1 hover:rounded-md hover:bg-neutral-200/90 dark:ring-neutral-400/70 dark:hover:bg-neutral-800',
+    'dark:active:bg-neutral-700 active:bg-neutral-300/80',
     'hover:ring-ring-hover dark:hover:ring-ring-hover',
     'last:border-b-0 border-b border-ring-subtle dark:border-neutral-600 first:border-b-3 first:hover:border-b-transparent',
   )
