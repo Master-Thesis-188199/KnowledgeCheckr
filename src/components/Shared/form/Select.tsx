@@ -147,7 +147,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             'disabled:cursor-not-allowed disabled:opacity-50 disabled:ring-ring-subtle dark:disabled:ring-ring-subtle',
             selectTriggerClassname,
           )}>
-          {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.label || 'Select option...'}
+          {isLoading ? <Loader2Icon className='size-4 animate-spin' /> : state.label || 'Select option...'}
           <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
