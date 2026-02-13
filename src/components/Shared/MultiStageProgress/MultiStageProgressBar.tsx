@@ -144,7 +144,7 @@ function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
         'text-neutral-400 dark:text-inherit',
         isCompleted(stage) && 'text-blue-500/80 dark:text-blue-400/80',
         'duration-initial',
-        animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]',
+        animateFromDirection !== 'left' && 'transition-colors duration-1250',
         !showOnSmallScreens && 'hidden @sm:flex',
       )}
     />

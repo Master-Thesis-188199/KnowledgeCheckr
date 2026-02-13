@@ -91,7 +91,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
               router.push(`${window.location.origin}/checks/${token}/practice`)
             })}>
             {t('start_practice.label')}
-            <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400' />
+            <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400' />
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -103,7 +103,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
               router.push(`${window.location.origin}/checks/${token}`)
             })}>
             {t('start_examination.label')}
-            <ArrowUpRightIcon className='text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
+            <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -140,12 +140,12 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
           <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_check.tooltip') }}>
             <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
               {t('edit_check.label')}
-              <SquarePenIcon className='size-3.5 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
+              <SquarePenIcon className='size-3.5 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='justify-between' disabled>
             {t('clone_check.label')}
-            <CopyPlusIcon className='size-4 text-neutral-600 group-data-[disabled]:text-inherit dark:text-neutral-400 dark:group-data-[disabled]:text-inherit' />
+            <CopyPlusIcon className='size-4 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
           <DropdownMenuItem disabled>{t('inspect_statistics.label')}</DropdownMenuItem>
         </DropdownMenuGroup>
