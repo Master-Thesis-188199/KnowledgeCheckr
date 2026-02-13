@@ -12,11 +12,11 @@ const buttonVariants = cva(
         primary: cn(
           'shadow-xs enabled:hover:ring-[1.5px]',
           'bg-neutral-500 text-white shadow-neutral-400 ring-neutral-600 enabled:hover:bg-neutral-500/80',
-          'enabled:active:scale-[101%] enabled:active:!bg-neutral-600/95',
-          'dark:!enabled:active:bg-primary/70 dark:bg-black dark:text-neutral-200 dark:shadow-neutral-800 dark:ring-neutral-600 dark:enabled:hover:bg-neutral-900 dark:enabled:active:!bg-neutral-700',
+          'enabled:active:scale-[101%] enabled:active:bg-neutral-600/95!',
+          'dark:!enabled:active:bg-primary/70 dark:bg-black dark:text-neutral-200 dark:shadow-neutral-800 dark:ring-neutral-600 dark:enabled:hover:bg-neutral-900 dark:enabled:active:bg-neutral-700!',
         ),
         destructive:
-          'bg-destructive text-white shadow-xs focus-visible:ring-destructive/20 enabled:hover:bg-destructive/80 enabled:active:!bg-destructive/90 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
+          'bg-destructive text-white shadow-xs focus-visible:ring-destructive/20 enabled:hover:bg-destructive/80 enabled:active:bg-destructive/90! dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
         outline:
           'bg-transparent text-secondary-foreground shadow-xs ring-1 ring-input-ring enabled:hover:bg-secondary/80 disabled:ring-neutral-300 dark:text-neutral-200 dark:ring-input-ring dark:enabled:hover:bg-neutral-700 dark:disabled:ring-neutral-500',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
