@@ -64,4 +64,9 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
+
+  sourcemaps: {
+    assets: ['.next/static/chunks/**/*.js', '.next/static/chunks/**/*.js.map', '.next/server/**/*.js', '.next/server/**/*.js.map'],
+    ignore: ['**/node_modules/**', '**/.pnpm/**'],
+  },
 })
