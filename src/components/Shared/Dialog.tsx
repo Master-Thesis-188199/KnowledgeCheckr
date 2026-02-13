@@ -26,7 +26,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
     <DialogPrimitive.Overlay
       data-slot='dialog-overlay'
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-[0.7px]',
+        'fixed inset-0 z-50 bg-black/50 backdrop-blur-[0.7px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
         className,
       )}
       {...props}
@@ -44,7 +44,7 @@ function DialogContent({ className, children, onClose, ...props }: React.Compone
           'border bg-neutral-200 shadow-lg dark:bg-neutral-800',
           'border-neutral-300 dark:border-neutral-600',
           'fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg p-6 duration-200 sm:max-w-lg',
-          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           className,
         )}
         {...props}>
@@ -52,7 +52,7 @@ function DialogContent({ className, children, onClose, ...props }: React.Compone
         <DialogPrimitive.Close
           aria-label='close'
           onClick={onClose}
-          className="ring-offset-background focus:ring-ring-focus data-[state=open]:bg-accent data-[state=open]:text-muted-foreground dark:focus:ring-ring-focus absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:scale-110 hover:cursor-pointer hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
+          className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:scale-110 hover:cursor-pointer hover:opacity-100 focus:ring-2 focus:ring-ring-focus focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground dark:focus:ring-ring-focus [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
           <XIcon />
           <span className='sr-only'>Close</span>
         </DialogPrimitive.Close>
@@ -74,7 +74,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
 }
 
 function DialogDescription({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) {
-  return <DialogPrimitive.Description data-slot='dialog-description' className={cn('text-muted-foreground text-sm', className)} {...props} />
+  return <DialogPrimitive.Description data-slot='dialog-description' className={cn('text-sm text-muted-foreground', className)} {...props} />
 }
 
 export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger }

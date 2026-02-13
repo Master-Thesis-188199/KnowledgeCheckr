@@ -35,7 +35,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
               {knowledgeCheck.questions.map((q, i) => (
                 <div
                   className={cn(
-                    'dark:ring-ring ring-ring relative flex w-9 rounded-md py-1 text-center ring-1',
+                    'relative flex w-9 rounded-md py-1 text-center ring-1 ring-ring dark:ring-ring',
                     isQuestionAnswered(examinationState.results, q.id) && 'bg-green-700/20 dark:bg-green-800/60',
                   )}
                   key={i}>
@@ -50,7 +50,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
           </div>
           <div className='flex justify-between'>
             <DialogClose asChild>
-              <Button variant='outline' className='dark:ring-ring-subtle ring-ring rounded-md px-4 py-1.5 ring-1'>
+              <Button variant='outline' className='rounded-md px-4 py-1.5 ring-1 ring-ring dark:ring-ring-subtle'>
                 Cancel
               </Button>
             </DialogClose>
@@ -67,7 +67,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                     redirect('/checks', RedirectType.replace)
                   })
               }
-              className='dark:ring-ring-subtle ring-ring-subtle rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] dark:bg-black'>
+              className='rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] ring-ring-subtle dark:bg-black dark:ring-ring-subtle'>
               Submit
             </Button>
           </div>
