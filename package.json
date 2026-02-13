@@ -142,6 +142,11 @@
     "wait-on": "^8.0.2"
   },
   "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "cypress"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
