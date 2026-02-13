@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package.json .
 COPY pnpm-lock.yaml .
 
+RUN corepack enable
 RUN pnpm install --frozen-lockfile
 
 # Second Step - Build the application
@@ -15,6 +16,7 @@ WORKDIR /app
 COPY --from=package-installer /app/node_modules /app/node_modules
 COPY . .
 
+RUN corepack enable
 RUN pnpm run build
 
 # Final Stage: Run the Application
