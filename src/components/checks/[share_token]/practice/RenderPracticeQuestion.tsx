@@ -109,7 +109,7 @@ export function RenderPracticeQuestion() {
           <span className='text-neutral-600 dark:text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
         </div>
 
-        <div id='answer-options' className={cn('ring-ring dark:ring-ring grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1', question?.type === 'open-question' && 'grid-cols-1')}>
+        <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-ring dark:ring-ring', question?.type === 'open-question' && 'grid-cols-1')}>
           {question.type === 'multiple-choice' && (
             <ChoiceAnswerOption type='checkbox' registerKey={(i) => `selection.${i}`} question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />
           )}
@@ -135,7 +135,7 @@ export function RenderPracticeQuestion() {
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
             hidden={isSubmitted && isSubmitSuccessful && !isPending}
-            className='enabled:ring-ring-subtle enabled:hover:ring-ring dark:enabled:hover:ring-ring mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:hover:bg-neutral-300 dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600'
+            className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
             variant='secondary'
             type='submit'>
             <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
@@ -242,11 +242,11 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         key={a.id}
         className={cn(
           'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover has-enabled:hover:cursor-pointer',
-          'has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus has-enabled:focus:ring-[1.2px]',
+          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
+          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
           'flex items-center justify-center',
           'resize-none select-none',
-          'has-enabled:has-checked:ring-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+          'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
           isEvaluated &&

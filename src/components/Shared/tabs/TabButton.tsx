@@ -21,7 +21,7 @@ export function TabButton({ tab }: { tab: Tab }) {
       <tab.icon
         className={cn(
           isActive ? 'stroke-2 text-neutral-600 dark:text-neutral-200' : 'text-neutral-400 group-hover:text-neutral-500 dark:text-neutral-500 dark:group-hover:text-neutral-400',
-          'mr-2 -ml-0.5 h-5 w-5',
+          'mr-2 -ml-0.5 size-5',
         )}
         aria-hidden='true'
       />
