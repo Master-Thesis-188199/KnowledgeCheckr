@@ -45,6 +45,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
       @[48rem]/stages:hidden (8 stages)
       @[52rem]/stages:hidden (9 stages)
       */}
+      {/* eslint-disable-next-line better-tailwindcss/no-unknown-classes */}
       <ol id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden`, className)}>
         {stages
           .filter((s) => condensedStages.includes(s.stage))

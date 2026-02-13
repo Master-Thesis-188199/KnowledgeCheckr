@@ -27,7 +27,7 @@ export default async function AccountPage() {
       <PageHeading title='Account Information' />
 
       <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
-        <Card as='form' disableInteractions className='dark: flex min-w-sm flex-col gap-8 rounded-md p-6'>
+        <Card as='form' disableInteractions className='flex min-w-sm flex-col gap-8 rounded-md p-6'>
           <div className='flex flex-col items-center gap-5'>
             <UserAvatar user={user} className='m-0 size-16 self-center' />
             <div className='flex flex-col items-center gap-2'>
