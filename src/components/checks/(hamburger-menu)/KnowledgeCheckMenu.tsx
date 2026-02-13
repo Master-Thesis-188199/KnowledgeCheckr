@@ -74,7 +74,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   return (
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='hover:ring-ring-hover h-auto w-auto px-1 py-0.5 hover:ring-1'>
+        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='h-auto w-auto px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </DropdownMenuTrigger>

@@ -97,7 +97,7 @@ function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: 
               variant='base'
               type='button'
               disabled={disabled}
-              className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+              className='group my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] hover:ring-ring-hover dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-ring-hover'>
               <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
             </Button>
           </CreateQuestionDialog>
@@ -108,7 +108,7 @@ function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: 
             type='button'
             disabled={disabled}
             onClick={() => removeQuestion(question.id)}
-            className='group dark:hover:ring-ring-hover hover:ring-ring-hover my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] dark:bg-neutral-700 dark:ring-neutral-600'>
+            className='group my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] hover:ring-ring-hover dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-ring-hover'>
             <Trash2 className='size-4 text-red-600/70 group-hover:stroke-[2.5] dark:text-red-400/70' />
           </Button>
         </Card>

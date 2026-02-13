@@ -44,7 +44,7 @@ export default function RenderExamQuestion() {
 
   return (
     <Form {...form}>
-      <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]'>
+      <form className='relative grid gap-6 rounded-md p-4 ring-[1.5px] ring-ring-subtle dark:ring-ring-subtle'>
         <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
 
         {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswers question={question as ChoiceQuestion} />}
@@ -66,7 +66,7 @@ function QuestionHeader({ title, index, variant = 'inline' }: { title: string; i
 function HeaderLeftInline({ title, index }: { title: string; index: number }) {
   return (
     <div className='-mt-4 -ml-4 grid grid-cols-[auto_1fr] gap-3'>
-      <div className='ring-ring dark:ring-ring flex max-h-10 items-center rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='flex max-h-10 items-center rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 ring-ring dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <p className='mt-[0.4rem] text-lg font-semibold text-neutral-800 dark:text-neutral-200' children={title} />
     </div>
   )
@@ -75,7 +75,7 @@ function HeaderLeftInline({ title, index }: { title: string; index: number }) {
 function HeaderAbsolute({ title, index }: { title: string; index: number }) {
   return (
     <>
-      <div className='ring-ring dark:ring-ring absolute top-0 left-0 rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='absolute top-0 left-0 rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 ring-ring dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <input name='question' readOnly disabled className='mt-8 w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />{' '}
     </>
   )
@@ -84,7 +84,7 @@ function HeaderAbsolute({ title, index }: { title: string; index: number }) {
 function HeaderInline({ title, index }: { title: string; index: number }) {
   return (
     <div className='flex gap-3'>
-      <div className='ring-ring-hover dark:ring-ring rounded-full bg-neutral-300 px-2.5 py-0.5 tabular-nums ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='rounded-full bg-neutral-300 px-2.5 py-0.5 tabular-nums ring-1 ring-ring-hover dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <input name='question' readOnly disabled className='w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />
     </div>
   )

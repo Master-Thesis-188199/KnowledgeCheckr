@@ -139,7 +139,7 @@ function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
     <Line
       dashed={dashed}
       animateFromDirection={animateFromDirection}
-      animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80 text-blue-500/80', animateFromDirection === 'right' && 'dark:text-neutral-400 text-neutral-700')}
+      animateStrokeColor={cn(animateFromDirection === 'left' && 'text-blue-500/80 dark:text-blue-400/80', animateFromDirection === 'right' && 'text-neutral-700 dark:text-neutral-400')}
       className={cn(
         'text-neutral-400 dark:text-inherit',
         isCompleted(stage) && 'text-blue-500/80 dark:text-blue-400/80',
