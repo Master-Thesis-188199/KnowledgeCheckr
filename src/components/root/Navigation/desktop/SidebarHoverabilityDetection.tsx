@@ -9,7 +9,7 @@ import { SidebarState } from '@/src/hooks/root/SidebarStore'
 
 export default function SidebarHoverabilityDetection() {
   const { getStoredValue } = useSessionStorageContext()
-  const { setDeviceHoverable } = useSidebarStore((state) => state)
+  const { setDeviceHoverable, setOpen } = useSidebarStore((state) => state)
   const primaryPointer = usePrimaryPointerQuery()
   const hasStylus = useStylusPointerQuery()
 
@@ -29,6 +29,9 @@ export default function SidebarHoverabilityDetection() {
     } else {
       // Prevent re-rendering if the state is already set
       if (sidebarStore && !sidebarStore.canDeviceHover) return
+
+      // when a device can no longer hover (mainly in dev-environment) then the sidebar is automatically opened.
+      setOpen(true)
       setDeviceHoverable(false)
       console.info(`Your device does not support hovering ${primaryPointer} -> hover animations are disabled.`)
     }

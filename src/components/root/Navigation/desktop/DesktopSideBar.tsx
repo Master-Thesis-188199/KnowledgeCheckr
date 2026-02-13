@@ -9,6 +9,8 @@ import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import AppVersion from '@/components/Shared/AppVersion'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import LanguageSwitcher from '@/src/components/i18n/LanguageSwitcher'
+import ToggleSidebarButton from '@/src/components/root/Navigation/ToggleSidebarButton'
+import { Separator } from '@/src/components/shadcn/separator'
 
 export const DesktopSidebar = ({ className, children }: { children: React.ReactNode; className?: string }) => {
   return (
@@ -34,6 +36,11 @@ function MenuBar() {
   return (
     <div className='flex items-center justify-between bg-white px-4 py-3 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-200'>
       <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-2'>
+          <ToggleSidebarButton />
+          <Separator orientation='vertical' className='min-h-5!' />
+        </div>
+
         <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-8' />
         <span className='tracking-widest'>KnowledgeCheckr</span>
       </div>
