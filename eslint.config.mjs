@@ -32,7 +32,6 @@ const eslintConfig = defineConfig([
       ],
 
       'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
-      'better-tailwindcss/enforce-consistent-class-order': 'off',
       'better-tailwindcss/no-unknown-classes': 'warn', // default error
     },
   },
