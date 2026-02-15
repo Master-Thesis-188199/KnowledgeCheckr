@@ -1,9 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import type { VariantProps } from 'class-variance-authority'
 import { type HTMLMotionProps, motion, type Transition } from 'motion/react'
-import { buttonVariants } from '@/src/components/shadcn/button'
+import { buttonVariants, SimpleButtonProps } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
 
 interface Ripple {
@@ -12,8 +11,7 @@ interface Ripple {
   y: number
 }
 
-interface RippleButtonProps extends HTMLMotionProps<'button'>, VariantProps<typeof buttonVariants> {
-  children: React.ReactNode
+interface RippleButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>, SimpleButtonProps {
   scale?: number
   transition?: Transition
 }

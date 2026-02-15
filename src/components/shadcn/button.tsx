@@ -49,19 +49,13 @@ const buttonVariants = cva(
   },
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  isLoading,
-  children,
-  ...props
-}: React.ComponentProps<'button'> &
+export type SimpleButtonProps = Omit<React.ComponentProps<'button'>, 'onAnimationStart' | 'onDrag' | 'onDragEnd' | 'onDragStart' | 'style'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
     isLoading?: boolean
-  }) {
+  }
+
+function Button({ className, variant, size, asChild = false, isLoading, children, ...props }: SimpleButtonProps) {
   const Comp = asChild ? Slot : 'button'
 
   const LoadingIndicator = <LoaderCircleIcon className='size-4 animate-spin' />
