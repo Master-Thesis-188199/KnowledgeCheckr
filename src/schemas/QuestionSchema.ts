@@ -187,7 +187,7 @@ function generateRandomQuestion(): z.infer<typeof baseQuestion> & z.infer<typeof
   return {
     id: getUUID(),
     category: 'general',
-    points: Math.round(Math.random() * 15),
+    points: Math.max(Math.round(Math.random() * 15), 1),
     accessibility: 'all',
     ...generateRandomQuestionType(),
   }
