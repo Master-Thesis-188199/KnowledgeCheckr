@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { LoaderCircleIcon } from 'lucide-react'
 import { type HTMLMotionProps, motion, type Transition } from 'motion/react'
 import { buttonVariants, SimpleButtonProps } from '@/src/components/shadcn/button'
 import { cn } from '@/src/lib/Shared/utils'
@@ -16,7 +17,7 @@ interface RippleButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>,
   transition?: Transition
 }
 
-function RippleButton({ ref, children, onClick, className, variant, size, scale = 10, transition = { duration: 0.6, ease: 'easeOut' }, ...props }: RippleButtonProps) {
+function RippleButton({ ref, isLoading, children, onClick, className, variant, size, scale = 10, transition = { duration: 0.6, ease: 'easeOut' }, ...props }: RippleButtonProps) {
   const [ripples, setRipples] = React.useState<Ripple[]>([])
   const buttonRef = React.useRef<HTMLButtonElement>(null)
 
@@ -57,6 +58,7 @@ function RippleButton({ ref, children, onClick, className, variant, size, scale 
 
   return (
     <motion.button ref={buttonRef} data-slot='ripple-button' onClick={handleClick} className={cn(buttonVariants({ variant, size }), 'relative overflow-hidden', className)} {...props}>
+      {isLoading ? <LoaderCircleIcon className='size-4 animate-spin' /> : null}
       {children}
       {ripples.map((ripple) => (
         <motion.span
