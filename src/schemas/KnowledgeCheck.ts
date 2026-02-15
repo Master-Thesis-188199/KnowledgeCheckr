@@ -71,6 +71,24 @@ export const KnowledgeCheckSchema = z
 
     */
   })
+  //* Declares missing question-catgegories in `questionCategories`
+  .transform((check) => {
+    const questionCategories = check.questionCategories
+
+    // declare missing question categories
+    Array.from(new Set(check.questions.map((q) => q.category)))
+      .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
+      .forEach((missingCategoryName) => {
+        questionCategories.push({
+          id: getUUID(),
+          name: missingCategoryName,
+          prequisiteCategoryId: null,
+          skipOnMissingPrequisite: false,
+        })
+      })
+
+    return check
+  })
   .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',
   })
