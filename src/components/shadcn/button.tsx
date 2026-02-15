@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { LoaderCircleIcon } from 'lucide-react'
 import { cn } from '@/lib/Shared/utils'
@@ -51,20 +50,17 @@ const buttonVariants = cva(
 
 export type SimpleButtonProps = Omit<React.ComponentProps<'button'>, 'onAnimationStart' | 'onDrag' | 'onDragEnd' | 'onDragStart' | 'style'> &
   VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
     isLoading?: boolean
   }
 
-function Button({ className, variant, size, asChild = false, isLoading, children, ...props }: SimpleButtonProps) {
-  const Comp = asChild ? Slot : 'button'
-
+function Button({ className, variant, size, isLoading, children, ...props }: SimpleButtonProps) {
   const LoadingIndicator = <LoaderCircleIcon className='size-4 animate-spin' />
 
   return (
-    <Comp data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props}>
+    <button data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props}>
       {isLoading ? LoadingIndicator : null}
       {children}
-    </Comp>
+    </button>
   )
 }
 
