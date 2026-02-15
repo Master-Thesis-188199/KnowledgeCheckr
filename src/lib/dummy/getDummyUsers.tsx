@@ -28,7 +28,7 @@ export const DummyUserSchema = z
   .object({
     name: NameSchema,
     email: z.string().default(() => `${getRandomName().split(' ').join('.').toLowerCase()}@example.com`),
-    id: z.string().default(() => getUUID()),
+    id: IdSchema,
     picture: PictureSchema,
   })
   .transform(
@@ -38,7 +38,7 @@ export const DummyUserSchema = z
       updatedAt: new Date(Date.now()),
       image: user.picture.thumbnail,
       isAnonymous: !!Math.round(Math.random()),
-      id: user.id,
+      id: user.id.value,
       email: user.email,
       name: `${user.name.first} ${user.name.last}`,
     }),
