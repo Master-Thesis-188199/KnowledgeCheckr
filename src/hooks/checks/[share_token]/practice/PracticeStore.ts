@@ -1,13 +1,12 @@
+import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
-import { PracticeData } from '@/src/schemas/practice/PracticeSchema'
+import { instantiatePracticeData, PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
-import { ZustandStore } from '@/types/Shared/ZustandStore'
+import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
-export type PracticeState = {
-  unfilteredQuestions: Question[]
+export type PracticeState = PracticeData & {
   practiceQuestions: Question[]
   currentQuestionIndex: number
-  answers: Array<{ questionId: Question['id'] } & PracticeData>
 }
 
 export type PracticeActions = {
@@ -23,24 +22,26 @@ export type PracticeActions = {
   previousQuestion: (looping?: boolean) => void
   navigateToQuestion: (index: number) => void
   getQuestion: () => Question | null
-  storeAnswer: (question: PracticeState['answers'][number]) => void
+  storeAnswer: (question: PracticeState['results'][number]) => void
   updatePracticeQuestions: (questions: Question[]) => void
 }
 
 export type PracticeStore = PracticeState & PracticeActions
 
 const defaultInitState: PracticeState = {
+  ...instantiatePracticeData(),
+  startedAt: new Date(Date.now()),
   practiceQuestions: [],
-  unfilteredQuestions: [],
   currentQuestionIndex: 0,
-  answers: [],
 }
-export const createPracticeStore: ZustandStore<PracticeStore, Partial<PracticeState>> = ({ initialState = defaultInitState }) =>
+export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState = defaultInitState, options }) =>
   createZustandStore({
-    caching: false,
+    caching: true,
+    options,
     initializer: (set, get) => {
       return {
         ...defaultInitState,
+        startedAt: new Date(Date.now()),
         ...initialState,
 
         getQuestion: () => get().practiceQuestions.at(get().currentQuestionIndex) ?? null,
@@ -66,9 +67,15 @@ export const createPracticeStore: ZustandStore<PracticeStore, Partial<PracticeSt
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
-            const exists = prev.answers.find((r) => r.questionId === question.questionId)
+            const exists = prev.results.find((r) => r.question_id === question.question_id)
 
-            return { ...prev, answers: exists ? prev.answers.map((r) => (r.questionId === question.questionId ? question : r)) : prev.answers.concat([question]) }
+            const update: typeof prev = {
+              ...prev,
+              results: exists ? prev.results.map((r) => (r.question_id === question.question_id ? question : r)) : prev.results.concat([question]),
+            }
+            savePracticeResults({ knowledgeCheckId: update.checkId, results: update.results, startedAt: update.startedAt, score: 0 })
+
+            return update
           }),
         updatePracticeQuestions: (questions) => set((prev) => ({ ...prev, practiceQuestions: questions })),
       }

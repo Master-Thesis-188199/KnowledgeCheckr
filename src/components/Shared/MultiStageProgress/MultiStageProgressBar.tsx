@@ -45,7 +45,8 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
       @[48rem]/stages:hidden (8 stages)
       @[52rem]/stages:hidden (9 stages)
       */}
-      <ol id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden `, className)}>
+      {/* eslint-disable-next-line better-tailwindcss/no-unknown-classes */}
+      <ol id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden`, className)}>
         {stages
           .filter((s) => condensedStages.includes(s.stage))
           .map((stage, i) => (
@@ -139,12 +140,12 @@ function RingConnector({ stage, dashed }: Stage & { dashed?: boolean }) {
     <Line
       dashed={dashed}
       animateFromDirection={animateFromDirection}
-      animateStrokeColor={cn(animateFromDirection === 'left' && 'dark:text-blue-400/80 text-blue-500/80', animateFromDirection === 'right' && 'dark:text-neutral-400 text-neutral-700')}
+      animateStrokeColor={cn(animateFromDirection === 'left' && 'text-blue-500/80 dark:text-blue-400/80', animateFromDirection === 'right' && 'text-neutral-700 dark:text-neutral-400')}
       className={cn(
         'text-neutral-400 dark:text-inherit',
         isCompleted(stage) && 'text-blue-500/80 dark:text-blue-400/80',
         'duration-initial',
-        animateFromDirection !== 'left' && 'transition-colors duration-[1250ms]',
+        animateFromDirection !== 'left' && 'transition-colors duration-1250',
         !showOnSmallScreens && 'hidden @sm:flex',
       )}
     />

@@ -39,8 +39,11 @@ jobs:
         with:
           node-version: 24.11.1
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Run semantice release
         run: |

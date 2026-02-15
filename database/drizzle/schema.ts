@@ -3,6 +3,7 @@ import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum,
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
   .notNull()
@@ -307,12 +308,13 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
+    type: mysqlEnum(['practice', 'examination']).notNull(),
     userId: varchar('user_id', { length: 36 }).notNull(),
     knowledgeCheckId: varchar('knowledgeCheck_id', { length: 36 }).notNull(),
     startedAt: datetime({ mode: 'string' }).notNull(),
     finishedAt: datetime({ mode: 'string' }).notNull(),
     score: int().notNull(),
-    results: json().notNull(),
+    results: json().$type<QuestionInput[]>().notNull(),
   },
   (table) => [
     index('fk_user_has_KnowledgeCheck_KnowledgeCheck2_idx').on(table.knowledgeCheckId),

@@ -15,11 +15,15 @@ interface StoreProviderProps<TStore extends object> {
 export type PracticeStoreApi = ReturnType<typeof createPracticeStore>
 export const PracticeStoreContext = createContext<PracticeStoreApi | undefined>(undefined)
 
-export function PracticeStoreProvider({ children, initialStoreProps }: Omit<StoreProviderProps<PracticeStore>, 'options'>) {
+export function PracticeStoreProvider({ children, initialStoreProps, options = { cacheKey: 'practice-store' } }: StoreProviderProps<PracticeStore>) {
   const props = useZustandStore({
-    caching: false,
+    caching: true,
     createStoreFunc: createPracticeStore,
     initialStoreProps,
+    options: {
+      discardCache: (cache) => cache.checkId !== initialStoreProps?.checkId,
+      ...options,
+    },
   })
 
   return <PracticeStoreContext.Provider value={props}>{children}</PracticeStoreContext.Provider>

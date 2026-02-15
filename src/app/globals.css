@@ -191,7 +191,10 @@ html[data-theme='dark'] {
 }
 
 input[type='number']::-webkit-inner-spin-button {
-  opacity: 0.8;
+  opacity: 1; /* without explicitly setting opacity > 0 the spin-button is not shown */
+}
+html[data-theme='light'] input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0.7; /* unified color intensity with spin-button in light-mode */
 }
 
 input.hidden-spin-button::-webkit-inner-spin-button,

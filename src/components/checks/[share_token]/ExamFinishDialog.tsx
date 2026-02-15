@@ -1,7 +1,6 @@
 'use client'
 
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
-import isEmpty from 'lodash/isEmpty'
 import { CheckCheckIcon } from 'lucide-react'
 import { redirect, RedirectType } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -13,6 +12,7 @@ import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExami
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
+import { safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
   const { knowledgeCheck, ...examinationState } = useExaminationStore((state) => state)
@@ -35,7 +35,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
               {knowledgeCheck.questions.map((q, i) => (
                 <div
                   className={cn(
-                    'dark:ring-ring ring-ring relative flex w-9 rounded-md py-1 text-center ring-1',
+                    'relative flex w-9 rounded-md py-1 text-center ring-1 ring-ring dark:ring-ring',
                     isQuestionAnswered(examinationState.results, q.id) && 'bg-green-700/20 dark:bg-green-800/60',
                   )}
                   key={i}>
@@ -50,7 +50,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
           </div>
           <div className='flex justify-between'>
             <DialogClose asChild>
-              <Button variant='outline' className='dark:ring-ring-subtle ring-ring rounded-md px-4 py-1.5 ring-1'>
+              <Button variant='outline' className='rounded-md px-4 py-1.5 ring-1 ring-ring dark:ring-ring-subtle'>
                 Cancel
               </Button>
             </DialogClose>
@@ -67,7 +67,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                     redirect('/checks', RedirectType.replace)
                   })
               }
-              className='dark:ring-ring-subtle ring-ring-subtle rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] dark:bg-black'>
+              className='rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] ring-ring-subtle dark:bg-black dark:ring-ring-subtle'>
               Submit
             </Button>
           </div>
@@ -78,5 +78,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
 }
 
 function isQuestionAnswered(results: ExaminationSchema['results'], id: Question['id']) {
-  return !isEmpty(results.find((r) => r.question_id === id)?.answer ?? {})
+  const parseResult = safeParseQuestionInput(results.find((r) => r.question_id === id) ?? {})
+  // when the user has not made a selection / input then the (saved-) result will not satisfy the schema constraints
+  return parseResult.success
 }

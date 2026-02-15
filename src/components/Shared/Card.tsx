@@ -30,7 +30,7 @@ export default function Card<C extends ElementType = 'div'>({ as, disableInterac
         !disableInteractions &&
           cn(
             'hover:ring-2 focus:ring-2',
-            'enabled:focus:ring-ring-focus enabled:hover:bg-neutral-200/80 enabled:focus:bg-neutral-200/60 dark:enabled:hover:bg-neutral-700/60 enabled:focus:dark:bg-neutral-700/60 enabled:focus:dark:ring-neutral-500',
+            'enabled:hover:bg-neutral-200/80 enabled:focus:bg-neutral-200/60 enabled:focus:ring-ring-focus dark:enabled:hover:bg-neutral-700/60 enabled:focus:dark:bg-neutral-700/60 enabled:focus:dark:ring-neutral-500',
           ),
         className,
       )}

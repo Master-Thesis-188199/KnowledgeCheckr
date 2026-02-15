@@ -60,7 +60,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <Card
         className={cn(
           'flex max-w-md flex-1 flex-col gap-6 rounded-md p-6',
-          'bg-gradient-to-b from-neutral-200/40 via-neutral-200/70 to-neutral-200/40 dark:from-neutral-800 dark:via-neutral-800/70 dark:to-neutral-800',
+          'bg-linear-to-b from-neutral-200/40 via-neutral-200/70 to-neutral-200/40 dark:from-neutral-800 dark:via-neutral-800/70 dark:to-neutral-800',
         )}
         disableInteractions>
         <div className='flex flex-col gap-6'>
@@ -76,11 +76,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
           <div className='relative'>
             <div className='absolute inset-0 inset-x-12 flex items-center' aria-hidden='true'>
-              <div className='h-[1px] w-full bg-gradient-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500 dark:to-neutral-700' />
+              <div className='h-px w-full bg-linear-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500 dark:to-neutral-700' />
             </div>
 
             <div className='relative flex justify-center'>
-              <p className='flex gap-2 bg-[#EBECED] px-3 text-sm leading-6 tracking-widest text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'>
+              <p className='flex gap-2 bg-[#EBECED] px-3 text-sm/6 tracking-widest text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'>
                 <span className=''>or</span>
               </p>
             </div>
@@ -109,11 +109,11 @@ function SocialProviderSection({ callbackUrl, label }: { callbackUrl?: string; l
     <>
       <div className='relative'>
         <div className='absolute inset-0 flex items-center' aria-hidden='true'>
-          <div className='h-[1px] w-full bg-gradient-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500 dark:to-neutral-700' />
+          <div className='h-px w-full bg-linear-to-r from-neutral-400/50 via-neutral-500 to-neutral-400/50 dark:from-neutral-700 dark:via-neutral-500 dark:to-neutral-700' />
         </div>
 
         <div className='relative flex justify-center'>
-          <p className='flex gap-2 bg-[#EBECED] px-3 text-sm leading-6 tracking-widest text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'>
+          <p className='flex gap-2 bg-[#EBECED] px-3 text-sm/6 tracking-widest text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'>
             <span className='capitalize'>{label}</span>
             <span>via</span>
           </p>

@@ -1,53 +1,79 @@
+import { format } from 'date-fns'
 import { useFormContext, useWatch } from 'react-hook-form'
 import Field from '@/src/components/Shared/form/Field'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typeof useRHF<typeof KnowledgeCheckSettingsSchema>>, 'baseFieldProps'>) {
+  const t = useScopedI18n('Checks.Create.SettingSection.ExaminationSettings')
   const {
     control,
     formState: { errors },
   } = useFormContext<KnowledgeCheckSettings>()
 
   const { examination } = useWatch({ control })
-  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations } = examination!
+  const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations, allowAnonymous } = examination!
+  const humanReadableTimeFrame = useHumanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)
 
   return (
-    <div
-      className={cn('grid grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-4 *:odd:mt-3 *:odd:first:mt-0', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0')}>
-      <Field
-        {...baseFieldProps}
-        name='examination.enableExaminations'
-        label='Enable Examination Attempts'
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        checked={enableExaminations}
-      />
+    <div className={cn('@container grid grid-cols-1 items-baseline gap-3', '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7')}>
+      <div
+        className={cn(
+          'grid grid-cols-2 items-center gap-7 gap-x-7 @md:col-span-2',
+          // 2 columns with 'justify-between' mimic
+          '*:odd:my-auto @xl:grid-cols-[max-content_minmax(50px,1fr)_max-content_minmax(50px,auto)]',
+          // 3 columns with 'justify-between' mimic
+          '@4xl:grid-cols-[max-content_minmax(50px,1fr)_max-content_minmax(50px,1fr)_max-content_minmax(50px,auto)]',
+        )}>
+        <Field
+          {...baseFieldProps}
+          name='examination.enableExaminations'
+          label={t('enableExaminations_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={enableExaminations}
+        />
 
-      <Field
-        {...baseFieldProps}
-        disabled={!enableExaminations}
-        name='examination.questionOrder'
-        label='Randomize Question Order'
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-        checked={questionOrder === 'random'}
-      />
-      <Field
-        {...baseFieldProps}
-        disabled={!enableExaminations}
-        name='examination.answerOrder'
-        label='Randomize Answer Order'
-        labelClassname='mt-0.5'
-        className='place-self-start'
-        type='checkbox'
-        onChange={({ checked }) => (checked ? 'random' : 'create-order')}
-        checked={answerOrder === 'random'}
-      />
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.allowAnonymous'
+          label={t('allowAnonymous_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          checked={allowAnonymous}
+        />
+
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.questionOrder'
+          label={t('questionOrder_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+          checked={questionOrder === 'random'}
+        />
+
+        <Field
+          {...baseFieldProps}
+          disabled={!enableExaminations}
+          name='examination.answerOrder'
+          label={t('answerOrder_label')}
+          labelClassname='mt-0.5'
+          className='place-self-start'
+          type='checkbox'
+          onChange={({ checked }) => (checked ? 'random' : 'create-order')}
+          checked={answerOrder === 'random'}
+        />
+      </div>
+      {/* needed for < @md layouts to satisfy even/odd selectors */}
+      <div className='@md:hidden' />
 
       <Field
         {...baseFieldProps}
@@ -65,22 +91,46 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
         }}
         type='time'
         name='examination.examTimeFrameSeconds'
-        label='Examination Time Frame'
+        label={t('examTimeFrameSeconds_label')}
         list='time-values'>
-        <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableDuration(examTimeFrameSeconds, !!errors.examination?.examTimeFrameSeconds)}</span>
+        <span className='pt-1 pl-3 text-sm tracking-wider text-neutral-500/80 dark:text-neutral-400'>{humanReadableTimeFrame}</span>
+
+        <datalist id='time-values'>
+          <option value='00:30' label='30 minutes'></option>
+          <option value='00:45' label='45 minutes'></option>
+          <option value='01:00' label='60 minutes'></option>
+          <option value='01:30' label='90 minutes'></option>
+        </datalist>
       </Field>
 
-      <datalist id='time-values'>
-        <option value='00:30' label='30 minutes'></option>
-        <option value='00:45' label='45 minutes'></option>
-        <option value='01:00' label='60 minutes'></option>
-        <option value='01:30' label='90 minutes'></option>
-      </datalist>
+      <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label={t('examinationAttemptCount_label')} type='number' min={0} />
 
-      <Field {...baseFieldProps} disabled={!enableExaminations} name='examination.examinationAttemptCount' label='Examination Attempt Count' type='number' min={0} />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('startDate_label')}
+        modifyValue={(date) => {
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
 
-      <Field {...baseFieldProps} disabled={!enableExaminations} label='Start Date' name='examination.startDate' type='datetime-local' />
-      <Field {...baseFieldProps} disabled={!enableExaminations} label='End Date' name='examination.endDate' type='datetime-local' />
+          return date
+        }}
+        name='examination.startDate'
+        type='datetime-local'
+      />
+      <Field
+        {...baseFieldProps}
+        disabled={!enableExaminations}
+        label={t('endDate_label')}
+        modifyValue={(date) => {
+          if (date === null) return ''
+
+          if (date instanceof Date) return format(date, 'yyyy-MM-dd hh:mm')
+
+          return date
+        }}
+        name='examination.endDate'
+        type='datetime-local'
+      />
     </div>
   )
 }
@@ -91,15 +141,16 @@ export function ExaminationSettings({ baseFieldProps }: {} & Pick<ReturnType<typ
  * @param isErrorneous When set to true the function will return null
  * @returns A human readable string or nothing when `isErrorneous` is set to true or `seconds` is undefined.
  */
-function humanReadableDuration(seconds?: number, isErrorneous?: boolean) {
+function useHumanReadableDuration(seconds?: number, isErrorneous?: boolean) {
+  const t = useScopedI18n('Shared.Timestamp')
   if (isErrorneous || seconds === undefined) return null
 
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
 
   const segments: string[] = []
-  if (hours > 0) segments.push(`${hours} hour${hours > 1 ? 's' : ''}`)
-  if (minutes > 0) segments.push(`${minutes} minute${minutes > 1 ? 's' : ''}`)
+  if (hours > 0) segments.push(t('hour', { count: hours }))
+  if (minutes > 0) segments.push(t('minute', { count: minutes }))
 
-  return segments.join(' and ')
+  return segments.join(` ${t('join_word')} `)
 }
