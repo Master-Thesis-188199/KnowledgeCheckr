@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shadcn/card'
 import { type ChartConfig, ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from '@/shadcn/chart'
+import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
 
 type ChartData = {
@@ -48,9 +49,9 @@ export function QuestionScoresLineChartCard({ title, description }: { title: str
   )
 }
 
-export function QuestionScoresLineChart({ data: initialData = data }: { data?: ChartData[] }) {
+export function QuestionScoresLineChart({ data: initialData = data, className }: { data?: ChartData[]; className?: string }) {
   return (
-    <ChartContainer config={chartConfig} className='aspect-auto h-[250px] w-full'>
+    <ChartContainer config={chartConfig} className={cn('aspect-auto h-[250px] w-full', className)}>
       <AreaChart
         accessibilityLayer
         data={initialData}

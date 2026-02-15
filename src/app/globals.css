@@ -9,15 +9,17 @@
 @layer components {
   .grid-container {
     --grid-desired-gap: 56px;
+    --grid-desired-gap-x: var(--grid-desired-gap);
     --grid-column-count: 3;
     --grid-item-min-width: 140px;
 
     --gap-count: calc(var(--grid-column-count) - 1);
-    --total-gap-width: calc(var(--gap-count) * var(--grid-desired-gap));
+    --total-gap-width: calc(var(--gap-count) * var(--grid-desired-gap-x));
     --grid-item-max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
 
     display: grid;
     gap: var(--grid-desired-gap);
+    column-gap: var(--grid-desired-gap-x);
 
     /* auto-fit collapses unused tracks (prevents “empty columns”) */
     grid-template-columns: repeat(auto-fit, minmax(max(var(--grid-item-min-width), var(--grid-item-max-width)), 1fr));
