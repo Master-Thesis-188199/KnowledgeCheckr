@@ -66,7 +66,7 @@ function RippleButton({ ref, children, onClick, className, variant, size, scale 
           initial={{ scale: 0, opacity: 0.5 }}
           animate={{ scale, opacity: 0 }}
           transition={transition}
-          className='pointer-events-none absolute size-5 rounded-full bg-current'
+          className='pointer-events-none absolute size-5 rounded-full bg-current/60'
           style={{
             top: ripple.y - 10,
             left: ripple.x - 10,
