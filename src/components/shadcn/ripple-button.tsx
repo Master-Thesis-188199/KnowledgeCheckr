@@ -4,10 +4,11 @@ import * as React from 'react'
 import { LoaderCircleIcon } from 'lucide-react'
 import { type HTMLMotionProps, motion, type Transition } from 'motion/react'
 import { buttonVariants, SimpleButtonProps } from '@/src/components/shadcn/button'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 
 interface Ripple {
-  id: number
+  id: number | string
   x: number
   y: number
 }
@@ -33,7 +34,7 @@ function RippleButton({ ref, isLoading, children, onClick, className, variant, s
     const y = event.clientY - rect.top
 
     const newRipple: Ripple = {
-      id: Date.now(),
+      id: getUUID(),
       x,
       y,
     }
