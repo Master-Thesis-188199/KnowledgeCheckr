@@ -48,7 +48,7 @@ export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string;
       isDisabled={safeParse.success}
       content={
         <div className='flex items-center gap-1.5'>
-          <InfoIcon className='text-destructive size-4' />
+          <InfoIcon className='size-4 text-destructive' />
           This check cannot be saved at this moment, because it violates internal schema definitions.
         </div>
       }

@@ -55,7 +55,7 @@ export function FinishAttemptButton({ className }: { className?: string }) {
   const { isLastQuestion } = useExaminationStore((store) => store)
 
   return (
-    <ExamFinishDialog triggerClassname={cn('ml-auto text-sm hover:cursor-pointer ', isLastQuestion ? 'block' : 'hidden', className)}>
+    <ExamFinishDialog triggerClassname={cn('ml-auto text-sm hover:cursor-pointer', isLastQuestion ? 'block' : 'hidden', className)}>
       <Button>Finish Attempt</Button>
     </ExamFinishDialog>
   )

@@ -139,7 +139,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
             <input {...register('id')} id='id' value={watch('id')} className='hidden' />
 
             <div className='grid items-center gap-2'>
-              <Field form={form} name='question' label={tQuestion('question_label')} placeholder={t('placeholders.question')} labelClassname={cn('text-base -ml-1', label_classes)} />
+              <Field form={form} name='question' label={tQuestion('question_label')} placeholder={t('placeholders.question')} labelClassname={cn('-ml-1 text-base', label_classes)} />
             </div>
 
             <div className={cn('flex items-baseline gap-x-10', errors.points && 'gap-x-6')}>
@@ -150,7 +150,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   label={tQuestion('points_label')}
                   type='number'
                   onChange={({ valueAsNumber }) => valueAsNumber}
-                  labelClassname={cn('text-base -ml-1', label_classes)}
+                  labelClassname={cn('-ml-1 text-base', label_classes)}
                 />
               </div>
               <div className='grid items-center gap-2'>
@@ -497,7 +497,7 @@ function CircleAnswer_IndicatorInput({
       <Tooltip tabIndex={-1} content={tooltipContent}>
         <label
           tabIndex={-1} // prevents the label from being accessible, instead users can access the input itself, even though it is not visible
-          className='has-focus:ring-ring-focus dark:has-focus:ring-ring-focus flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer has-focus:ring-[1.2px] dark:bg-transparent dark:ring-neutral-500'>
+          className='flex size-6 items-center justify-center rounded-full bg-neutral-100/90 p-1 ring-1 ring-neutral-400 outline-0 hover:cursor-pointer has-focus:ring-[1.2px] has-focus:ring-ring-focus dark:bg-transparent dark:ring-neutral-500 dark:has-focus:ring-ring-focus'>
           {children}
           <input type={inputType} value={value} {...register(...registerProps)} className='appearance-none' />
         </label>
