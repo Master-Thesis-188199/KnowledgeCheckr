@@ -88,11 +88,11 @@ jobs:
 
       - name: Run Instrumented Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn build:instrumented
+        run: pnpm build:instrumented
 
       - name: Run Cypress Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && yarn test:component
+        run: pnpm start & npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }} && pnpm test:component
 
       - name: Upload Coverage to Codecov
         if: needs.check-file-changes.outputs.relevant == 'true'
@@ -146,7 +146,7 @@ jobs:
 
       - name: Run Jest Tests
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn jest
+        run: pnpm jest
 
   build:
     name: Production Build
@@ -184,7 +184,7 @@ jobs:
 
       - name: Run Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn build
+        run: pnpm build
 
   setup:
     name: Setup Test Chunks
@@ -274,13 +274,13 @@ jobs:
 
       - name: Run Instrumented Build-Script
         if: needs.check-file-changes.outputs.relevant == 'true'
-        run: yarn build:instrumented
+        run: pnpm build:instrumented
 
       - name: Cypress run 🧪
         if: needs.check-file-changes.outputs.relevant == 'true'
         uses: cypress-io/github-action@v3
         with:
-          start: yarn start
+          start: pnpm start
           wait-on: "npx wait-on --timeout 120000 ${{ env.NEXT_PUBLIC_BASE_URL }}"
           wait-on-timeout: 120
 
