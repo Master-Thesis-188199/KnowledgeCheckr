@@ -1,17 +1,10 @@
 'use client'
 
-import { ButtonHTMLAttributes } from 'react'
-import { VariantProps } from 'class-variance-authority'
-import { Button, buttonVariants } from '@/src/components/shadcn/button'
+import { Button, SimpleButtonProps } from '@/src/components/shadcn/button'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import Tooltip from '@/src/components/Shared/Tooltip'
 
-export function MultiStageNextButton({
-  ...props
-}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+export function MultiStageNextButton({ ...props }: Omit<SimpleButtonProps, 'onClick' | 'type'>) {
   const { nextStage, stage, stages, enabled, reason } = useMultiStageStore((store) => store)
 
   return (
@@ -21,12 +14,7 @@ export function MultiStageNextButton({
   )
 }
 
-export function MultiStageBackButton({
-  ...props
-}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+export function MultiStageBackButton({ ...props }: Omit<SimpleButtonProps, 'onClick' | 'type'>) {
   const { previousStage, stage, enabled, reason } = useMultiStageStore((store) => store)
 
   return (
