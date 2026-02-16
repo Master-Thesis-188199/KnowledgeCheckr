@@ -387,7 +387,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: 'What organelle aids in synthesis of DNA in cells?',
-      category: 'Science &amp; Nature',
+      category: 'Science & Nature',
       answers: [
         {
           answer: 'Ribosomes',
@@ -495,7 +495,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: "Who created the Cartoon Network series 'Adventure Time'?",
-      category: 'Entertainment: Cartoon &amp; Animations',
+      category: 'Entertainment: Cartoon & Animations',
       answers: [
         {
           answer: 'Pendleton Ward',
@@ -603,7 +603,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: "How does the character Dragowizard, Qinus Axia's from the anime \'Buddyfight\' differ between the Japanese and English dubs?",
-      category: 'Entertainment: Japanese Anime &amp; Manga',
+      category: 'Entertainment: Japanese Anime & Manga',
       answers: [
         {
           answer: 'Different Gender',
@@ -900,7 +900,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: 'What was the first organic compound to be synthesized from inorganic compounds?',
-      category: 'Science &amp; Nature',
+      category: 'Science & Nature',
       answers: [
         {
           answer: 'Urea',
@@ -1070,7 +1070,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
           id: getUUID(),
         },
         {
-          answer: "Bill &amp; Ted's Excellent Adventure",
+          answer: "Bill & Ted's Excellent Adventure",
           correct: false,
           id: getUUID(),
         },
@@ -1305,7 +1305,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: "What is the lowest layer of the Earth's atmosphere named?",
-      category: 'Science &amp; Nature',
+      category: 'Science & Nature',
       answers: [
         {
           answer: 'Troposphere',
@@ -1331,7 +1331,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     },
     {
       type: 'multiple-choice',
-      question: "Which band had hits in 1975 with the songs, 'One Of These Nights' &amp; 'Lyin Eyes'?",
+      question: "Which band had hits in 1975 with the songs, 'One Of These Nights' & 'Lyin Eyes'?",
       category: 'Entertainment: Music',
       answers: [
         {
@@ -1359,7 +1359,7 @@ function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pic
     {
       type: 'multiple-choice',
       question: "In \'Future Diary\', what is the name of Yuno Gasai's Phone Diary?",
-      category: 'Entertainment: Japanese Anime &amp; Manga',
+      category: 'Entertainment: Japanese Anime & Manga',
       answers: [
         {
           answer: 'Yukiteru Diary',
