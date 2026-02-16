@@ -2,7 +2,6 @@ import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['import-in-the-middle', 'require-in-the-middle'],
   experimental: {
     authInterrupts: true,
   },

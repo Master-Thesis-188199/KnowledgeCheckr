@@ -36,7 +36,7 @@ if echo "$CHANGED_FILES" | grep -E "$EXTENSIONS_REGEX" > /dev/null; then
       kill -9 $(lsof -ti:3000)
   fi
 
-  if pnpm test:parallel; then
+  if yarn test:parallel; then
     echo "Tests passed."
     # Check if running on macOS for notifications
     if [ "$(uname)" = "Darwin" ]; then
