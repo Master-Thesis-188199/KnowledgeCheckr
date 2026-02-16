@@ -60,7 +60,7 @@ export const KnowledgeCheckSchema = z
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
 
-    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'),
+    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
     collaborators: z.array(z.string()).default([]),
 
     settings: KnowledgeCheckSettingsSchema,
