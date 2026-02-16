@@ -14,27 +14,20 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
-    - uses: pnpm/action-setup@v4
-      name: Install pnpm
-
     - name: Cache apt packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
 
-    - name: Cache Cypress binary
-      uses: actions/cache@v4
+    - name: Cache node_modules + Cypress
+      uses: actions/cache@v3
       with:
         path: |
+          node_modules
           ~/.cache/Cypress
-        key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: |
-          cypress-${{ runner.os }}-
+        key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: node_modules-
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
-
-    - name: Ensure Cypress binary is installed
-      shell: bash
-      run: pnpm exec cypress install
+      run: yarn install --frozen-lockfile
