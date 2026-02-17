@@ -10,7 +10,9 @@ import { Checkbox } from '@/src/components/shadcn/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 import { Input } from '@/src/components/shadcn/input'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
+import createDummyQuestionInput from '@/src/lib/dummy/createDummyUserInput'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export type PreviewQuestionResult_QuestionItem = {
   id: string
@@ -21,6 +23,8 @@ export type PreviewQuestionResult_QuestionItem = {
   grade?: string
   points: Question['points']
   category: Question['category']
+  rawQuestion: Question
+  userInput?: QuestionInput
 }
 
 export default function ExamQuestionResultTable() {
@@ -175,7 +179,8 @@ export default function ExamQuestionResultTable() {
   const dummySize = 15
 
   const data: PreviewQuestionResult_QuestionItem[] = Array.from({ length: dummySize }, (_, i) => {
-    const { id, category, points, question, type } = instantiateQuestion()
+    const rawQuestion = instantiateQuestion()
+    const { id, category, points, question, type } = rawQuestion
 
     return {
       id,
@@ -186,6 +191,8 @@ export default function ExamQuestionResultTable() {
       position: i + 1,
       // eslint-disable-next-line react-hooks/purity
       score: Math.round(Math.random() * points),
+      rawQuestion,
+      userInput: createDummyQuestionInput(rawQuestion),
     }
   })
 

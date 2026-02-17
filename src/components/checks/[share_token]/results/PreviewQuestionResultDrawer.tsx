@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { CheckIcon, ChevronRightIcon } from 'lucide-react'
+import React, { useState } from 'react'
+import { ChevronRightIcon, UserCheckIcon, UserIcon } from 'lucide-react'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { PreviewQuestionResult_QuestionItem } from '@/src/components/checks/[share_token]/results/ExamQuestionResultTable'
 import { Button } from '@/src/components/shadcn/button'
@@ -9,7 +9,11 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dr
 import { Input } from '@/src/components/shadcn/input'
 import { Label } from '@/src/components/shadcn/label'
 import { Slider } from '@/src/components/shadcn/slider'
+import { Textarea } from '@/src/components/shadcn/textarea'
 import { useIsMobile } from '@/src/hooks/use-mobile'
+import { cn } from '@/src/lib/Shared/utils'
+import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default function ShowAnswerDrawer_TableCell({ item, children }: { item: PreviewQuestionResult_QuestionItem; children: React.ReactNode }) {
   const isMobile = useIsMobile()
@@ -64,15 +68,8 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
             </div>
 
             <div className='flex flex-col gap-3'>
-              <Label htmlFor='answers'>Answers</Label>
-              <div className='grid-container mx-3 [--grid-column-count:2] [--grid-desired-gap-x:36px] [--grid-desired-gap:24px] [--grid-item-min-width:80px]'>
-                {Array.from({ length: 4 }, (_, i) => (
-                  <div key={i} className='relative flex h-10 w-full items-center justify-center rounded-md bg-neutral-200 dark:bg-neutral-700'>
-                    {(i === 0 || i === 3) && <CheckIcon className='absolute top-0.5 right-0.5 size-3.5' />}
-                    Answer {i + 1}
-                  </div>
-                ))}
-              </div>
+              <Label>{item.type !== 'open-question' ? 'Answers' : 'Answer'}</Label>
+              <ShowQuestionAnswerResults item={item} />
             </div>
           </form>
         </div>
@@ -89,5 +86,110 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
+  )
+}
+
+function ShowQuestionAnswerResults({ item }: { item: PreviewQuestionResult_QuestionItem }) {
+  const baseGridClasses = 'grid-container mx-3 pt-1 [--grid-desired-gap-x:36px] [--grid-desired-gap:24px] [--grid-item-min-width:80px]'
+  switch (item.type) {
+    case 'single-choice':
+      return (
+        <div className={cn(baseGridClasses, '[--grid-column-count:2]')}>
+          <ChoiceAnswerResults item={item} />
+        </div>
+      )
+    case 'multiple-choice':
+      return (
+        <div className={cn(baseGridClasses, '[--grid-column-count:2]')}>
+          <ChoiceAnswerResults item={item} />
+        </div>
+      )
+    case 'drag-drop':
+      return (
+        <div className={cn(baseGridClasses, '[--grid-column-count:1]')}>
+          <DragDropAnswerResults item={item} />
+        </div>
+      )
+    case 'open-question':
+      return OpenQuestionAnswerResults({ item })
+  }
+}
+
+function DragDropAnswerResults({ item: { rawQuestion, userInput } }: { item: PreviewQuestionResult_QuestionItem }) {
+  const question = rawQuestion as DragDropQuestion
+  const { answers } = question
+  const { input } = (userInput as Extract<QuestionInput, { type: (typeof question)['type'] }> | undefined) ?? { input: undefined }
+
+  const isCorrect = (answer: (typeof question)['answers'][number], positionIndex: number) => answers.findIndex((a) => a.id === answer.id) === positionIndex
+
+  if (!input || input.length === 0)
+    return answers.map((a) => (
+      <AnswerResultLabel label={a.answer} key={a.id} className='col-span-2'>
+        Nothing...
+      </AnswerResultLabel>
+    ))
+
+  return answers.map((a) => {
+    const userPosition = input.findIndex((id) => a.id === id)
+
+    return (
+      <AnswerResultLabel
+        label={a.answer}
+        key={a.id}
+        className={cn(
+          // eslint-disable-next-line require-color-modes/require-color-mode-styles
+          isCorrect(a, userPosition) && 'text-muted-foreground opacity-85 ring-2 ring-green-600/50',
+          !isCorrect(a, userPosition) && 'ring-[3px] ring-red-600/25 dark:ring-red-400/25',
+        )}>
+        <div className={cn('absolute top-0 bottom-0 left-3 flex h-full items-center gap-1 text-muted-foreground', !isCorrect(a, userPosition) ? 'font-semibold dark:text-red-400/80' : '')}>
+          <UserIcon className='size-3.5' />
+          <span>{input.findIndex((id) => a.id === id) + 1}.</span>
+        </div>
+      </AnswerResultLabel>
+    )
+  })
+}
+
+function ChoiceAnswerResults({ item: { rawQuestion, userInput } }: { item: PreviewQuestionResult_QuestionItem }) {
+  const question = rawQuestion as ChoiceQuestion
+  const { answers } = question
+  const input = userInput as Extract<QuestionInput, { type: (typeof question)['type'] }> | undefined
+
+  const isSelected = (answer: ChoiceQuestion['answers'][number]) => (question.type === 'single-choice' ? input?.selection === answer.id : input?.selection.includes(answer.id))
+
+  return answers.map((a) => (
+    <AnswerResultLabel
+      label={a.answer}
+      key={a.id}
+      className={cn(
+        '',
+        isSelected(a) && 'border-2 border-neutral-400 bg-neutral-300/60 dark:border-ring-hover/30 dark:bg-neutral-600/60',
+        a.correct && 'ring-[3px] ring-green-600/50',
+        isSelected(a) && !a.correct && 'ring-[3px] ring-red-600/25 dark:ring-red-400/25',
+        !isSelected(a) && 'text-muted-foreground opacity-75',
+      )}>
+      <div className='absolute top-0.5 right-0.5 flex items-center gap-2 *:[svg]:size-4'>
+        <UserCheckIcon className={cn('hidden', isSelected(a) && 'block')} />
+      </div>
+    </AnswerResultLabel>
+  ))
+}
+
+function OpenQuestionAnswerResults({ item: { rawQuestion, userInput } }: { item: PreviewQuestionResult_QuestionItem }) {
+  const question = rawQuestion as OpenQuestion
+  const input = userInput as Extract<QuestionInput, { type: (typeof question)['type'] }> | undefined
+
+  return (
+    <>
+      <Textarea defaultValue={input?.input} readOnly />
+    </>
+  )
+}
+function AnswerResultLabel({ label, children, className }: { label: string; children?: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn('relative flex h-10 w-full items-center justify-center rounded-md bg-neutral-200 dark:bg-neutral-700', className)}>
+      {children}
+      {label}
+    </div>
   )
 }
