@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { ChevronRightIcon, UserCheckIcon, UserIcon } from 'lucide-react'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import { PreviewQuestionResult_QuestionItem } from '@/src/components/checks/[share_token]/results/ExamQuestionResultTable'
@@ -15,12 +15,22 @@ import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
-export default function ShowAnswerDrawer_TableCell({ item, children }: { item: PreviewQuestionResult_QuestionItem; children: React.ReactNode }) {
+export default function ShowAnswerDrawer_TableCell({
+  item,
+  children,
+  open,
+  setOpenAction,
+}: {
+  item: PreviewQuestionResult_QuestionItem
+  children?: React.ReactNode
+  open?: boolean
+  setOpenAction?: Dispatch<SetStateAction<boolean>>
+}) {
   const isMobile = useIsMobile()
   const [slideValue, setSliderValue] = useState([item.score])
 
   return (
-    <Drawer direction={isMobile ? 'bottom' : 'right'}>
+    <Drawer direction={isMobile ? 'bottom' : 'right'} open={open} onOpenChange={setOpenAction}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent className='data-[vaul-drawer-direction=right]:*:data-close:flex'>
         <div data-close className='absolute inset-y-0 -left-2.5 hidden items-center'>
