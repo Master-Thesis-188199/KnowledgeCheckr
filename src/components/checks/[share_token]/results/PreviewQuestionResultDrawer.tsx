@@ -39,7 +39,7 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
               <h2 className='text-base/6 font-medium tracking-wide'>{item.questionText}</h2>
             </div>
 
-            <div className='flex justify-between gap-6'>
+            <div className='flex justify-center gap-6'>
               <div className='flex flex-2 flex-col gap-3'>
                 <div className='flex items-center justify-between'>
                   <Label htmlFor='slider'>Question Score</Label>
@@ -51,7 +51,6 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
                   <span>{item.points} points</span>
                 </div>
               </div>
-              <div className='flex-1' />
             </div>
 
             <div className='flex flex-col gap-3'>
