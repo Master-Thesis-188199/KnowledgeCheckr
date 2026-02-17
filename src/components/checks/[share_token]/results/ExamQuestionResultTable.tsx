@@ -1,13 +1,13 @@
 'use client'
 
-import { IconCircleCheckFilled, IconDotsVertical } from '@tabler/icons-react'
+import { IconCircleCheckFilled } from '@tabler/icons-react'
 import { ColumnDef } from '@tanstack/react-table'
-import { ChartColumnIcon, EyeIcon, TrashIcon, XIcon } from 'lucide-react'
+import { EyeIcon, XIcon } from 'lucide-react'
+import ExamQuestionTable_ActionMenu from '@/src/components/checks/[share_token]/results/ExamQuestionTable_ActionMenu'
 import ShowAnswerDrawer_TableCell from '@/src/components/checks/[share_token]/results/PreviewQuestionResultDrawer'
 import { Badge } from '@/src/components/shadcn/badge'
 import { Button } from '@/src/components/shadcn/button'
 import { Checkbox } from '@/src/components/shadcn/checkbox'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 import { Input } from '@/src/components/shadcn/input'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
 import createDummyQuestionInput from '@/src/lib/dummy/createDummyUserInput'
@@ -150,29 +150,7 @@ export default function ExamQuestionResultTable() {
     },
     {
       id: 'actions',
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
-              <IconDotsVertical />
-              <span className='sr-only'>Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='w-40'>
-            <ShowAnswerDrawer_TableCell item={row.original}>
-              <DropdownMenuItem className='justify-between' onSelect={(e) => e.preventDefault()}>
-                Show Answers
-                <ChartColumnIcon className='size-3.5' />
-              </DropdownMenuItem>
-            </ShowAnswerDrawer_TableCell>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant='destructive' className='justify-between'>
-              Delete Answer
-              <TrashIcon className='size-3.5' />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => <ExamQuestionTable_ActionMenu row={row} />,
     },
   ]
 
