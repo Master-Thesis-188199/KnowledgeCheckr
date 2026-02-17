@@ -42,7 +42,7 @@ export default function ShowAnswerDrawer_TableCell({
         </div>
         <DrawerHeader className='mb-6 gap-1 border-b'>
           <DrawerTitle className='capitalize'>Preview user question answer</DrawerTitle>
-          <DrawerDescription>Viewing question {item.position} of the users respective examination attempt.</DrawerDescription>
+          <DrawerDescription>Shows details about a given question and its results.</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
           <QuestionScoresLineChart className='h-[175px] min-h-[175px]' />
