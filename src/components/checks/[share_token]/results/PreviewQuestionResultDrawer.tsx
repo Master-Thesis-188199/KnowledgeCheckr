@@ -35,8 +35,8 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
           <DrawerDescription>Viewing question {item.position} of the users respective examination attempt.</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
-          <QuestionScoresLineChart className='h-[175px]' />
-          <form className='mt-4 flex flex-col gap-10'>
+          <QuestionScoresLineChart className='h-[175px] min-h-[175px]' />
+          <form className='mt-4 flex flex-col gap-10 pb-8'>
             <div className='col-span-2 flex flex-2 flex-col gap-2'>
               <Label htmlFor='question' className='text-xs text-muted-foreground capitalize'>
                 {item.type.replace('-', ' ')} Question
@@ -94,13 +94,13 @@ function ShowQuestionAnswerResults({ item }: { item: PreviewQuestionResult_Quest
   switch (item.type) {
     case 'single-choice':
       return (
-        <div className={cn(baseGridClasses, '[--grid-column-count:2]')}>
+        <div className={cn(baseGridClasses, '[--grid-column-count:1] @lg:[--grid-column-count:2]')}>
           <ChoiceAnswerResults item={item} />
         </div>
       )
     case 'multiple-choice':
       return (
-        <div className={cn(baseGridClasses, '[--grid-column-count:2]')}>
+        <div className={cn(baseGridClasses, '[--grid-column-count:1] @lg:[--grid-column-count:2]')}>
           <ChoiceAnswerResults item={item} />
         </div>
       )
