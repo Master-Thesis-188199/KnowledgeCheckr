@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { IconDotsVertical } from '@tabler/icons-react'
 import { Row } from '@tanstack/react-table'
 import { ChartColumnIcon, TrashIcon } from 'lucide-react'
@@ -7,27 +8,31 @@ import { Button } from '@/src/components/shadcn/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 
 export default function ExamQuestionTable_ActionMenu({ row }: { row: Row<PreviewQuestionResult_QuestionItem> }) {
+  const [drawerOpenState, setDrawerOpenState] = useState(false)
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
-          <IconDotsVertical />
-          <span className='sr-only'>Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-40'>
-        <ShowAnswerDrawer_TableCell item={row.original}>
-          <DropdownMenuItem className='justify-between' onSelect={(e) => e.preventDefault()}>
+    <>
+      <ShowAnswerDrawer_TableCell item={row.original} open={drawerOpenState} setOpenAction={setDrawerOpenState} />
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
+            <IconDotsVertical />
+            <span className='sr-only'>Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end' className='w-40'>
+          <DropdownMenuItem className='justify-between' onSelect={() => requestAnimationFrame(() => setDrawerOpenState(true))}>
             Show Answers
             <ChartColumnIcon className='size-3.5' />
           </DropdownMenuItem>
-        </ShowAnswerDrawer_TableCell>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant='destructive' className='justify-between'>
-          Delete Answer
-          <TrashIcon className='size-3.5' />
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant='destructive' className='justify-between'>
+            Delete Answer
+            <TrashIcon className='size-3.5' />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }
