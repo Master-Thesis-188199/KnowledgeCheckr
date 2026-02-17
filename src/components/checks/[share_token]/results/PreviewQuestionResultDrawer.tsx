@@ -6,6 +6,7 @@ import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresL
 import { PreviewQuestionResult_QuestionItem } from '@/src/components/checks/[share_token]/results/ExamQuestionResultTable'
 import { Button } from '@/src/components/shadcn/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/shadcn/drawer'
+import { Input } from '@/src/components/shadcn/input'
 import { Label } from '@/src/components/shadcn/label'
 import { Slider } from '@/src/components/shadcn/slider'
 import { useIsMobile } from '@/src/hooks/use-mobile'
@@ -39,8 +40,8 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
               <h2 className='text-base/6 font-medium tracking-wide'>{item.questionText}</h2>
             </div>
 
-            <div className='flex justify-center gap-6'>
-              <div className='flex flex-2 flex-col gap-3'>
+            <div className='flex justify-center gap-10 px-2'>
+              <div className='flex flex-1 flex-col gap-3'>
                 <div className='flex items-center justify-between'>
                   <Label htmlFor='slider'>Question Score</Label>
                   <span className='text-sm text-muted-foreground'>{slideValue[0]} points</span>
@@ -50,6 +51,15 @@ export default function ShowAnswerDrawer_TableCell({ item, children }: { item: P
                   <span>0 points</span>
                   <span>{item.points} points</span>
                 </div>
+              </div>
+
+              <div className='flex flex-col gap-3'>
+                <Label>Grade</Label>
+                <Input
+                  defaultValue={item.grade}
+                  placeholder='N/A'
+                  className='h-fit w-24 border-ring-subtle/70 bg-transparent px-0 py-1.5 text-center dark:border-ring-subtle/70 dark:bg-transparent [&::-webkit-inner-spin-button]:-translate-x-1 [&::-webkit-inner-spin-button]:scale-75'
+                />
               </div>
             </div>
 
