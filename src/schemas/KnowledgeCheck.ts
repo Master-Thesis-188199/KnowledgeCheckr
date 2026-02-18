@@ -60,7 +60,7 @@ export const KnowledgeCheckSchema = z
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
 
-    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'),
+    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
     collaborators: z.array(z.string()).default([]),
 
     settings: KnowledgeCheckSettingsSchema,
@@ -70,6 +70,24 @@ export const KnowledgeCheckSchema = z
       - question-answer-type: 'drag-drop', 'select', ....
 
     */
+  })
+  //* Declares missing question-catgegories in `questionCategories`
+  .transform((check) => {
+    const questionCategories = check.questionCategories
+
+    // declare missing question categories
+    Array.from(new Set(check.questions.map((q) => q.category)))
+      .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
+      .forEach((missingCategoryName) => {
+        questionCategories.push({
+          id: getUUID(),
+          name: missingCategoryName,
+          prequisiteCategoryId: null,
+          skipOnMissingPrequisite: false,
+        })
+      })
+
+    return check
   })
   .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',

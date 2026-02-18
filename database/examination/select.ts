@@ -16,6 +16,25 @@ export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'
   return attempts
 }
 
+export async function getExaminationAttemptById(attemptId: typeof db_userHasDoneKnowledgeCheck.$inferSelect.id, options?: DatabaseOptions) {
+  const db = await getDatabase()
+
+  const [attempt] = await db.query.db_userHasDoneKnowledgeCheck.findMany({
+    columns: {
+      knowledgeCheckId: false,
+      userId: false,
+    },
+    with: {
+      user: true,
+    },
+    where: eq(db_userHasDoneKnowledgeCheck.id, attemptId),
+    limit: options?.limit ?? 100,
+    offset: options?.offset ?? 0,
+  })
+
+  return attempt as typeof attempt | undefined
+}
+
 export async function getKnowledgeCheckExaminationAttempts(checkId: KnowledgeCheck['id'], options?: DatabaseOptions) {
   const db = await getDatabase()
 
