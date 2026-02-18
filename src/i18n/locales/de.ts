@@ -227,6 +227,10 @@ export default {
           score_accessorKey: 'Punktzahl',
           type_accessorKey: 'Typ'
         }
+      },
+      ExamAttemptResultPage: {
+        description: 'Zeigt alle Details zum jeweiligen Prüfungsversuch von {name}',
+        title: 'Ergebnisse des Prüfungsversuchs'
       }
     }
   },

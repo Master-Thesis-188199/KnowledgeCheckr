@@ -227,6 +227,10 @@ export default {
           score_label: 'Score',
           maxScore_label: 'max Score'
         }
+      },
+      ExamAttemptResultPage: {
+        title: 'Examination Attempt Results',
+        description: 'Shows all the details of the respective examination attempt of {name}'
       }
     }
   },
