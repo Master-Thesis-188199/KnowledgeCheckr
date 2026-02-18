@@ -1,10 +1,12 @@
 import * as React from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import { cn } from '@/lib/Shared/utils'
 
-function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+function Textarea({ className, ...props }: React.ComponentProps<typeof TextareaAutosize>) {
   return (
-    <textarea
+    <TextareaAutosize
       data-slot='textarea'
+      maxRows={6}
       {...props}
       disabled={props.disabled || props.readOnly}
       className={cn(

@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import TextareaAutosize from 'react-textarea-autosize'
 import { Button } from '@/components/shadcn/button'
 import { Input } from '@/components/shadcn/input'
 import { Textarea } from '@/components/shadcn/textarea'
@@ -99,7 +100,7 @@ function InputGroupInput({ className, ...props }: React.ComponentProps<'input'>)
   return <Input data-slot='input-group-control' className={cn('flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent', className)} {...props} />
 }
 
-function InputGroupTextarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+function InputGroupTextarea({ className, ...props }: React.ComponentProps<typeof TextareaAutosize>) {
   return (
     <Textarea
       data-slot='input-group-control'
