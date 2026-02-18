@@ -10,6 +10,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { Checkbox } from '@/src/components/shadcn/checkbox'
 import { Input } from '@/src/components/shadcn/input'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import createDummyQuestionInput from '@/src/lib/dummy/createDummyUserInput'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
@@ -28,6 +29,9 @@ export type PreviewQuestionResult_QuestionItem = {
 }
 
 export default function ExamQuestionResultTable() {
+  const tShared = useScopedI18n('Shared.Question')
+  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationQuestionTable')
+
   const columns: ColumnDef<PreviewQuestionResult_QuestionItem>[] = [
     {
       id: 'select',
@@ -59,8 +63,8 @@ export default function ExamQuestionResultTable() {
     },
     {
       id: 'primary',
-      accessorKey: 'question',
-      header: 'Question',
+      accessorKey: t('columns.question_accessorKey'),
+      header: t('columns.question_accessorKey'),
       cell: ({ row }) => {
         return <div className='text-left text-foreground'>{row.original.questionText}</div>
       },
@@ -68,8 +72,9 @@ export default function ExamQuestionResultTable() {
     },
 
     {
-      accessorKey: 'category',
-      header: () => <div className='text-center'>Category</div>,
+      id: 'category',
+      accessorKey: t('columns.category_accessorKey'),
+      header: () => <div className='text-center'>{t('columns.category_accessorKey')}</div>,
       cell: ({ row }) => (
         <Badge variant='outline' className='px-1.5 text-muted-foreground'>
           {row.original.category}
@@ -78,36 +83,39 @@ export default function ExamQuestionResultTable() {
     },
 
     {
-      accessorKey: 'answer status',
-      header: () => <div className='text-center'>Answer Status</div>,
+      id: 'answer status',
+      accessorKey: t('columns.answer_status_accessorKey'),
+      header: () => <div className='text-center'>{t('columns.answer_status_accessorKey')}</div>,
       cell: () => (
         <Badge variant='outline' className='px-1.5 text-muted-foreground'>
           {Math.random() > 0.25 ? (
             <>
               <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' />
-              Answered
+              {t('columns.answer_status_cell_answered')}
             </>
           ) : (
             <>
               <XIcon className='stroke-red-500 dark:stroke-red-400' />
-              not Answered
+              {t('columns.answer_status_cell_unanswered')}
             </>
           )}
         </Badge>
       ),
     },
     {
-      accessorKey: 'type',
-      header: () => <div className='text-center'>Type</div>,
+      id: 'type',
+      accessorKey: t('columns.type_accessorKey'),
+      header: () => <div className='text-center'>{t('columns.type_accessorKey')}</div>,
       cell: ({ row }) => (
-        <Badge variant='outline' className='px-1.5 text-muted-foreground'>
-          {row.original.type}
+        <Badge variant='outline' className='px-1.5 text-muted-foreground lowercase'>
+          {tShared(`type.${row.original.type}`)}
         </Badge>
       ),
     },
     {
-      accessorKey: 'score',
-      header: () => <div className='text-center'>Score</div>,
+      id: 'score',
+      accessorKey: t('columns.score_accessorKey'),
+      header: () => <div className='text-center'>{t('columns.score_accessorKey')}</div>,
       cell: ({ row }) => (
         <div className='text-center text-xs text-foreground' id={`${row.original.id}-score`}>
           {row.original.score}
@@ -115,13 +123,15 @@ export default function ExamQuestionResultTable() {
       ),
     },
     {
-      accessorKey: 'points',
-      header: 'Points',
+      id: 'points',
+      accessorKey: t('columns.points_accessorKey'),
+      header: t('columns.points_accessorKey'),
       cell: ({ row }) => <div className='flex justify-center'>{row.original.points}</div>,
     },
     {
-      accessorKey: 'grade',
-      header: 'Grade',
+      id: 'grade',
+      accessorKey: t('columns.grade_accessorKey'),
+      header: () => <div className='text-center'>{t('columns.grade_accessorKey')}</div>,
       cell: ({ row }) => (
         <div className='flex justify-center'>
           <Input
@@ -141,7 +151,7 @@ export default function ExamQuestionResultTable() {
             <ShowAnswerDrawer_TableCell item={row.original}>
               <Button variant='link' size='sm' className='text-foreground/50'>
                 <EyeIcon />
-                Show Answers
+                {t('columns.preview_action_cell')}
               </Button>
             </ShowAnswerDrawer_TableCell>
           </div>

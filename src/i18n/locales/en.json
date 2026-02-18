@@ -177,6 +177,21 @@
         "user_type_anonynmous": "anonymous"
       },
 
+      "ExaminationQuestionTable": {
+        "columns": {
+          "question_accessorKey": "Question",
+          "category_accessorKey": "Category",
+          "answer_status_accessorKey": "Answer Status",
+          "type_accessorKey": "Type",
+          "score_accessorKey": "Score",
+          "points_accessorKey": "Points",
+          "grade_accessorKey": "Grade",
+          "answer_status_cell_answered": "Answered",
+          "answer_status_cell_unanswered": "not Answered",
+          "preview_action_cell": "Show Answers"
+        }
+      },
+
       "Charts": {
         "UserTypePieChart": {
           "title": "Examinations by User types",

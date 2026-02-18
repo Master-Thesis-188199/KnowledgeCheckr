@@ -147,8 +147,7 @@ export default {
     },
     Discover: {
       title: 'Entdecken Sie neue Wissenschecks',
-      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' +
-        'Erstellen Sie Ihren eigenen KnowledgeCheck',
+      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' + 'Erstellen Sie Ihren eigenen KnowledgeCheck',
       no_checks_found_link: 'hier',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operatoren',
@@ -214,7 +213,21 @@ export default {
         user_type_normal: 'normal'
       },
       description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',
-      title: 'Prüfungsergebnisse'
+      title: 'Prüfungsergebnisse',
+      ExaminationQuestionTable: {
+        columns: {
+          answer_status_accessorKey: 'Antwortstatus',
+          answer_status_cell_answered: 'Beantwortet',
+          answer_status_cell_unanswered: 'nicht beantwortet',
+          category_accessorKey: 'Kategorie',
+          grade_accessorKey: 'Note',
+          points_accessorKey: 'Punkte',
+          preview_action_cell: 'Antworten anzeigen',
+          question_accessorKey: 'Frage',
+          score_accessorKey: 'Punktzahl',
+          type_accessorKey: 'Typ'
+        }
+      }
     }
   },
   Examination: {
@@ -288,15 +301,14 @@ export default {
       },
       remove_share_token: {
         tooltip: 'Dieser Check hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
       delete_knowledgeCheck: {
         label: 'Check löschen',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        confirmation_dialog_body:
+          'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
         toast_deletion_successful: 'KnowledgeCheck erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des KnowledgeChecks fehlgeschlagen!'
       },
@@ -307,8 +319,7 @@ export default {
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     },

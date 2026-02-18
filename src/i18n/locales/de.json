@@ -212,7 +212,21 @@
         "user_type_normal": "normal"
       },
       "description": "Schauen Sie sich die Prüfungsversuche der Nutzer an.",
-      "title": "Prüfungsergebnisse"
+      "title": "Prüfungsergebnisse",
+      "ExaminationQuestionTable": {
+        "columns": {
+          "answer_status_accessorKey": "Antwortstatus",
+          "answer_status_cell_answered": "Beantwortet",
+          "answer_status_cell_unanswered": "nicht beantwortet",
+          "category_accessorKey": "Kategorie",
+          "grade_accessorKey": "Note",
+          "points_accessorKey": "Punkte",
+          "preview_action_cell": "Antworten anzeigen",
+          "question_accessorKey": "Frage",
+          "score_accessorKey": "Punktzahl",
+          "type_accessorKey": "Typ"
+        }
+      }
     }
   },
   "Examination": {
