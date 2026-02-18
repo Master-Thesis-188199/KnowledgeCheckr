@@ -175,7 +175,10 @@ export default {
       Charts: {
         UserTypePieChart: {
           title: 'Examinations by User types',
-          description: 'Shows examination attempts by user type'
+          description: 'Shows examination attempts by user type',
+          user_type_normal: 'Normal',
+          user_type_anonynmous: 'Anonymous',
+          inner_label: 'Users'
         },
         ExamQuestionDurationChart: {
           title: 'Average Question time difference',

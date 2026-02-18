@@ -178,7 +178,10 @@ export default {
         },
         UserTypePieChart: {
           description: 'Zeigt Prüfungsversuche nach Benutzertyp',
-          title: 'Prüfungen nach Benutzertypen'
+          title: 'Prüfungen nach Benutzertypen',
+          user_type_normal: 'Normal',
+          user_type_anonynmous: 'Anonym',
+          inner_label: 'Benutzer'
         }
       },
       ExaminationAttemptTable: {

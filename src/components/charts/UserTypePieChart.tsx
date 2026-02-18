@@ -5,9 +5,11 @@ import React from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { BetterAuthUser } from '@/src/lib/auth/server'
 
 export function UserTypePieChart({ title, description, users }: { title: string; description?: string; users?: BetterAuthUser[] }) {
+  const t = useScopedI18n('Checks.ExaminatonResults.Charts.UserTypePieChart')
   const total = Math.max(Math.round(Math.random() * 150), Math.round(Math.max(48, Math.random() * 120)))
   const normalRate = Math.min(0.95, Math.max(0.6, Math.random()))
 
@@ -27,11 +29,11 @@ export function UserTypePieChart({ title, description, users }: { title: string;
   const chartConfig = React.useMemo(
     (): ChartConfig => ({
       normal: {
-        label: 'Normal',
+        label: t('user_type_normal'),
         color: 'var(--chart-3)',
       },
       anonymous: {
-        label: 'Anonymous',
+        label: t('user_type_anonynmous'),
         color: 'var(--chart-1)',
       },
     }),
@@ -62,7 +64,7 @@ export function UserTypePieChart({ title, description, users }: { title: string;
                           {totalUsers.toLocaleString()}
                         </tspan>
                         <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className='fill-muted-foreground'>
-                          Users
+                          {t('inner_label')}
                         </tspan>
                       </text>
                     )
