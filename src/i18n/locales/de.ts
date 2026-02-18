@@ -226,6 +226,11 @@ export default {
           question_accessorKey: 'Frage',
           score_accessorKey: 'Punktzahl',
           type_accessorKey: 'Typ'
+        },
+        ActionMenu: {
+          delete_answer_label: 'Antwort löschen',
+          show_answers_label: 'Antworten anzeigen',
+          sr_only_trigger: 'Menü öffnen'
         }
       },
       ExamAttemptResultPage: {

@@ -189,6 +189,11 @@
           "answer_status_cell_answered": "Answered",
           "answer_status_cell_unanswered": "not Answered",
           "preview_action_cell": "Show Answers"
+        },
+        "ActionMenu": {
+          "sr_only_trigger": "Open Menu",
+          "show_answers_label": "Show Answers",
+          "delete_answer_label": "Delete Answer"
         }
       },
 
