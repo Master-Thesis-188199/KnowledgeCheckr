@@ -311,6 +311,22 @@
       "default_body": "This action cannot be undone. This will permanently delete this element from your account and remove its data from our servers.",
       "default_cancel_label": "Cancel",
       "default_confirm_label": "Continue"
+    },
+    "DataTable": {
+      "page_size_label": "Rows per page",
+      "customize_columns_label_long": "Customize Columns",
+      "customize_columns_label_short": "Columns",
+      "no_results_label": "No results.",
+      "Pagination": {
+        "selection_label": "{selected} of {total} rows selected.",
+        "current_page_label": "Page {page} of {total}",
+        "sr_only": {
+          "go_first_page": "Go to first page",
+          "go_next_page": "Go to next page",
+          "go_previous_page": "Go to previous page",
+          "go_last_page": "Go to last page"
+        }
+      }
     }
   }
 }

@@ -311,6 +311,22 @@ export default {
         'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
+    },
+    DataTable: {
+      Pagination: {
+        current_page_label: 'Seite {page} von {total}',
+        selection_label: '{selected} von {total} Zeilen ausgewählt.',
+        sr_only: {
+          go_first_page: 'Gehe zur ersten Seite',
+          go_last_page: 'Gehe zur letzten Seite',
+          go_next_page: 'Gehe zur nächsten Seite',
+          go_previous_page: 'Gehe zur vorherigen Seite'
+        }
+      },
+      customize_columns_label_long: 'Spalten anpassen',
+      customize_columns_label_short: 'Spalten',
+      no_results_label: 'Keine Ergebnisse.',
+      page_size_label: 'Zeilen pro Seite'
     }
   }
 } as const
