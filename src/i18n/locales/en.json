@@ -209,7 +209,10 @@
         },
         "QuestionScoresLineChartCard": {
           "title": "Average question score by question",
-          "description": "Shows the variance between average question score and max-score by question"
+          "description": "Shows the variance between average question score and max-score by question",
+          "x_axis_label": "Questions",
+          "score_label": "Score",
+          "maxScore_label": "max Score"
         }
       }
     }

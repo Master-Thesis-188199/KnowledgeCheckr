@@ -190,7 +190,10 @@
         },
         "QuestionScoresLineChartCard": {
           "description": "Zeigt die Varianz zwischen der durchschnittlichen Fragepunktzahl und der Höchstpunktzahl pro Frage an",
-          "title": "Durchschnittliche Fragepunktzahl pro Frage"
+          "title": "Durchschnittliche Fragepunktzahl pro Frage",
+          "x_axis_label": "Fragen",
+          "score_label": "Punkte",
+          "maxScore_label": "max Punkte"
         },
         "UserTypePieChart": {
           "description": "Zeigt Prüfungsversuche nach Benutzertyp",

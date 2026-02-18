@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shadcn/card'
 import { type ChartConfig, ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from '@/shadcn/chart'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { Any } from '@/types'
 
@@ -31,8 +32,6 @@ const data: ChartData[] = [
   { questionIndex: 14, score: 10, maxScore: 14 },
 ]
 
-const chartConfig = {} satisfies ChartConfig
-
 export function QuestionScoresLineChartCard({ title, description }: { title: string; description?: string }) {
   return (
     <Card>
@@ -50,6 +49,19 @@ export function QuestionScoresLineChartCard({ title, description }: { title: str
 }
 
 export function QuestionScoresLineChart({ data: initialData = data, className }: { data?: ChartData[]; className?: string }) {
+  const t = useScopedI18n('Checks.ExaminatonResults.Charts.QuestionScoresLineChartCard')
+
+  const chartConfig = React.useMemo(
+    (): ChartConfig => ({
+      maxScore: {
+        label: t('maxScore_label'),
+      },
+      score: {
+        label: t('score_label'),
+      },
+    }),
+    [t],
+  )
   return (
     <ChartContainer config={chartConfig} className={cn('aspect-auto h-[250px] w-full', className)}>
       <AreaChart
@@ -74,7 +86,7 @@ export function QuestionScoresLineChart({ data: initialData = data, className }:
           }}
           label={({ viewBox: { x, y, width, height } }: Any) => (
             <text x={x + width / 2 - 20} y={y + height + 3} className='' fill='gray'>
-              Questions
+              {t('x_axis_label')}
             </text>
           )}
           dataKey='questionIndex'
@@ -91,10 +103,10 @@ export function QuestionScoresLineChart({ data: initialData = data, className }:
           </linearGradient>
         </defs>
 
-        <ChartTooltip content={<ChartTooltipContent className='w-[150px]' nameKey='score' />} />
+        <ChartTooltip content={<ChartTooltipContent hideLabel className='w-[150px]' />} />
         <Area type='bumpX' dataKey={'score'} stroke={`var(--chart-2)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillScore)' />
         <Area type='bumpX' label={'Question Points'} dataKey={'maxScore'} stroke={`var(--chart-3)`} strokeWidth={3} stackId='a' dot={true} fill='url(#fillMaxScore)' />
-        <ChartLegend wrapperStyle={{ bottom: '-10px', left: '25px', margin: '0px 15px 0px 25px', width: 'stretch' }} />
+        <ChartLegend formatter={(val: 'score' | 'maxScore') => t(`${val}_label`)} wrapperStyle={{ bottom: '-10px', left: '25px', margin: '0px 15px 0px 25px', width: 'stretch' }} />
       </AreaChart>
     </ChartContainer>
   )

@@ -200,13 +200,18 @@ export default {
         ExaminationSuccessPieChart: {
           title: 'Examinations Success Rate',
           description: 'Shows how many users have passd / failed.',
+          'inner_label#one': 'Attempt',
+          'inner_label#other': 'Attempts',
           inner_label: 'Attempts',
           passed_label: 'Passed',
           failed_label: 'Failed'
         },
         QuestionScoresLineChartCard: {
           title: 'Average question score by question',
-          description: 'Shows the variance between average question score and max-score by question'
+          description: 'Shows the variance between average question score and max-score by question',
+          x_axis_label: 'Questions',
+          score_label: 'Score',
+          maxScore_label: 'max Score'
         }
       }
     }
