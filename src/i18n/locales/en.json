@@ -28,7 +28,11 @@
       "minute#other": "{count} minutes",
       "join_word": "and",
       "hour": "{count} hours",
-      "minute": "{count} minutes"
+      "minute": "{count} minutes",
+      "minute_label#one": "minute",
+      "minute_label#zero": "minutes",
+      "minute_label#other": "minutes",
+      "minute_label": "minutes"
     },
     "jump_back_button_label": "Jump back"
   },
@@ -183,7 +187,16 @@
         },
         "ExamQuestionDurationChart": {
           "title": "Average Question time difference",
-          "description": "Shows the variance in actual and estimated answer-time"
+          "description": "Shows the variance in actual and estimated answer-time",
+          "x_axis_label": "Questions",
+          "y_axis_label": "Time spent",
+          "tooltip": {
+            "title": "Question {count}",
+            "estimated_time_label": "Estimated Time",
+            "actual_time_label": "Time needed",
+            "total_faster_label": "Faster by",
+            "total_slower_label": "Slower by"
+          }
         },
         "ExaminationSuccessPieChart": {
           "title": "Examinations Success Rate",

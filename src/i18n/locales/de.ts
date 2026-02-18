@@ -29,7 +29,11 @@ export default {
       'minute#other': '{count} minuten',
       join_word: 'und',
       hour: '{count} stunden',
-      minute: '{count} minuten'
+      minute: '{count} minuten',
+      'minute_label#one': 'minute',
+      'minute_label#zero': 'minuten',
+      'minute_label#other': 'minuten',
+      minute_label: 'minuten'
     },
     jump_back_button_label: 'Bearbeiten'
   },
@@ -166,7 +170,16 @@ export default {
       Charts: {
         ExamQuestionDurationChart: {
           description: 'Zeigt die Abweichung zwischen tatsächlicher und geschätzter Antwortzeit an',
-          title: 'Durchschnittlicher Zeitunterschied bei Fragen'
+          title: 'Durchschnittlicher Zeitunterschied bei Fragen',
+          tooltip: {
+            title: 'Frage {count}',
+            actual_time_label: 'tatsächliche Zeit',
+            estimated_time_label: 'geschätzte Zeit',
+            total_faster_label: 'Schneller um',
+            total_slower_label: 'Langsamer um'
+          },
+          x_axis_label: 'Fragen',
+          y_axis_label: 'Zeitaufwand'
         },
         ExaminationSuccessPieChart: {
           description: 'Zeigt an, wie viele Benutzer bestanden/fehlgeschlagen sind.',
