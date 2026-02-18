@@ -199,7 +199,10 @@ export default {
         },
         ExaminationSuccessPieChart: {
           title: 'Examinations Success Rate',
-          description: 'Shows how many users have passd / failed.'
+          description: 'Shows how many users have passd / failed.',
+          inner_label: 'Attempts',
+          passed_label: 'Passed',
+          failed_label: 'Failed'
         },
         QuestionScoresLineChartCard: {
           title: 'Average question score by question',

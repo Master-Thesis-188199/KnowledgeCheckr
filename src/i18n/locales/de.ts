@@ -183,7 +183,12 @@ export default {
         },
         ExaminationSuccessPieChart: {
           description: 'Zeigt an, wie viele Benutzer bestanden/fehlgeschlagen sind.',
-          title: 'Erfolgsquote der Prüfungen'
+          title: 'Erfolgsquote der Prüfungen',
+          'inner_label#one': 'Antritt',
+          'inner_label#other': 'Antritte',
+          inner_label: 'Antritte',
+          passed_label: 'Positiv',
+          failed_label: 'Negativ'
         },
         QuestionScoresLineChartCard: {
           description: 'Zeigt die Varianz zwischen der durchschnittlichen Fragepunktzahl und der Höchstpunktzahl pro Frage an',
