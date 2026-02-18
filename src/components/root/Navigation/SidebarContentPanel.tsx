@@ -7,7 +7,7 @@ export default function SidebarContentPanel({ children, className }: { children?
         className={cn(
           '@container',
           'px-4 py-5 md:p-8',
-          'flex flex-1 flex-col gap-2 overflow-auto md:rounded-tl-2xl md:rounded-bl-2xl md:border md:border-neutral-200 md:bg-gray-100 md:dark:border-neutral-700 md:dark:bg-neutral-900/60',
+          'flex flex-1 flex-col gap-2 overflow-auto md:rounded-l-2xl md:border md:border-neutral-200 md:bg-gray-100 md:dark:border-neutral-700 md:dark:bg-neutral-900/60',
           className,
         )}>
         {children}
