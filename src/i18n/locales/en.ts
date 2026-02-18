@@ -160,6 +160,36 @@ export default {
           eq_filter_operand: 'Equals'
         }
       }
+    },
+    ExaminatonResults: {
+      title: 'Examination Results',
+      description: 'Look at the examination attempts of users.',
+      ExaminationAttemptTable: {
+        title: 'Examination Attempts',
+        description: 'Shows a detailed list of all examination attempts for this check',
+        status_done: 'Done',
+        status_in_progress: 'in-progress',
+        user_type_normal: 'normal',
+        user_type_anonynmous: 'anonymous'
+      },
+      Charts: {
+        UserTypePieChart: {
+          title: 'Examinations by User types',
+          description: 'Shows examination attempts by user type'
+        },
+        ExamQuestionDurationChart: {
+          title: 'Average Question time difference',
+          description: 'Shows the variance in actual and estimated answer-time'
+        },
+        ExaminationSuccessPieChart: {
+          title: 'Examinations Success Rate',
+          description: 'Shows how many users have passd / failed.'
+        },
+        QuestionScoresLineChartCard: {
+          title: 'Average question score by question',
+          description: 'Shows the variance between average question score and max-score by question'
+        }
+      }
     }
   },
   Examination: {

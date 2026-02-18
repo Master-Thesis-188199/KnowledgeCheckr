@@ -94,7 +94,6 @@
           "startDate_label": "Start Datum",
           "endDate_label": "Abschluss Datum"
         },
-
         "ShareSettings": {
           "title": "Freigabe Einstellungen",
           "shareAccessibility": "Öffentlich auffindbar"
@@ -160,6 +159,36 @@
           "eq_filter_operand": "Gleich"
         }
       }
+    },
+    "ExaminatonResults": {
+      "Charts": {
+        "ExamQuestionDurationChart": {
+          "description": "Zeigt die Abweichung zwischen tatsächlicher und geschätzter Antwortzeit an",
+          "title": "Durchschnittlicher Zeitunterschied bei Fragen"
+        },
+        "ExaminationSuccessPieChart": {
+          "description": "Zeigt an, wie viele Benutzer bestanden/fehlgeschlagen sind.",
+          "title": "Erfolgsquote der Prüfungen"
+        },
+        "QuestionScoresLineChartCard": {
+          "description": "Zeigt die Varianz zwischen der durchschnittlichen Fragepunktzahl und der Höchstpunktzahl pro Frage an",
+          "title": "Durchschnittliche Fragepunktzahl pro Frage"
+        },
+        "UserTypePieChart": {
+          "description": "Zeigt Prüfungsversuche nach Benutzertyp",
+          "title": "Prüfungen nach Benutzertypen"
+        }
+      },
+      "ExaminationAttemptTable": {
+        "description": "Zeigt eine detaillierte Liste aller Prüfungsversuche für diese Prüfung",
+        "status_done": "Erledigt",
+        "status_in_progress": "läuft",
+        "title": "Prüfungsversuche",
+        "user_type_anonynmous": "anonym",
+        "user_type_normal": "normal"
+      },
+      "description": "Schauen Sie sich die Prüfungsversuche der Nutzer an.",
+      "title": "Prüfungsergebnisse"
     }
   },
   "Examination": {

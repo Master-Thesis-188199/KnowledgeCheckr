@@ -11,6 +11,7 @@ import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { ExaminationAttemptTable } from '@/src/components/checks/[share_token]/ExaminationAttemptTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
@@ -35,29 +36,30 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   if (!hasCollaborativePermissions(check, user.id)) forbidden()
 
   const dummyAttempts = await getDummyExamAttempts(50)
+  const t = await getScopedI18n('Checks.ExaminatonResults')
 
   return (
     <>
-      <PageHeading title='Examination Results' description='Look at the examination attempts of users.' />
+      <PageHeading title={t('title')} description={t('description')} />
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>
         <div className='mx-0 flex flex-col gap-16'>
           <div className='grid-container [--grid-column-count:3] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[360px]:[--grid-item-min-width:340px]'>
-            <UserTypePieChart title='Examinations by User types' description='Shows examination attempts by user type' />
-            <ExamQuestionDurationChart title='Average Question time differences' description='Shows the variance in actual and estimated answer-time ' />
-            <ExaminationSuccessPieChart title='Examinations Success Rate' description='Shows how many users have passed / failed.' />
+            <UserTypePieChart title={t('Charts.UserTypePieChart.title')} description={t('Charts.UserTypePieChart.description')} />
+            <ExamQuestionDurationChart title={t('Charts.ExamQuestionDurationChart.title')} description={t('Charts.ExamQuestionDurationChart.description')} />
+            <ExaminationSuccessPieChart title={t('Charts.ExaminationSuccessPieChart.title')} description={t('Charts.ExaminationSuccessPieChart.description')} />
           </div>
 
           <div className='grid-container [--grid-column-count:2] [--grid-desired-gap:70px] [--grid-item-min-width:280px] @[550px]:[--grid-item-min-width:500px]'>
-            <QuestionScoresLineChartCard title='Average question score by question' description='Shows the variance between average question score and max-score by question' />
+            <QuestionScoresLineChartCard title={t('Charts.QuestionScoresLineChartCard.title')} description={t('Charts.QuestionScoresLineChartCard.description')} />
           </div>
         </div>
 
         <Card>
-          <CardHeader className='bg-card -mt-6 flex flex-col items-stretch border-b pt-6 sm:flex-row'>
+          <CardHeader className='-mt-6 flex flex-col items-stretch border-b bg-card pt-6 sm:flex-row'>
             <div className='flex flex-1 flex-col justify-center gap-1 pb-3 sm:pb-0'>
-              <CardTitle>Examation Attempts</CardTitle>
-              <CardDescription>Shows a detailed list of all examination attempts for this check</CardDescription>
+              <CardTitle>{t('ExaminationAttemptTable.title')}</CardTitle>
+              <CardDescription>{t('ExaminationAttemptTable.description')}</CardDescription>
             </div>
           </CardHeader>
           <CardContent className='mt-auto px-0'>
@@ -67,9 +69,9 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
                 score: attempt.score,
                 startedAt: new Date(Date.parse(attempt.startedAt)),
                 finishedAt: new Date(Date.parse(attempt.finishedAt)),
-                status: i % 4 !== 0 ? 'Done' : 'in-progress',
+                status: i % 4 !== 0 ? t('ExaminationAttemptTable.status_done') : t('ExaminationAttemptTable.status_in_progress'),
                 totalCheckScore: 100,
-                type: i % 5 !== 0 ? 'normal' : 'anonymous',
+                type: i % 5 !== 0 ? t('ExaminationAttemptTable.user_type_normal') : t('ExaminationAttemptTable.user_type_anonynmous'),
                 username: attempt.user.name,
               }))}
             />
@@ -102,9 +104,9 @@ function StatisticElement({ label, value, title, className }: { label: string; v
   title ||= label
 
   return (
-    <div className={cn('ring-ring-subtle flex flex-col justify-center gap-2 rounded-md ring-1 dark:bg-neutral-800/70', className)}>
+    <div className={cn('flex flex-col justify-center gap-2 rounded-md ring-1 ring-ring-subtle dark:bg-neutral-800/70', className)}>
       {title && (
-        <h3 className='bg-input border-b-input-ring flex justify-between rounded-t-md border-b px-3 py-1.5 text-sm font-medium dark:text-neutral-300/80'>
+        <h3 className='flex justify-between rounded-t-md border-b border-b-input-ring bg-input px-3 py-1.5 text-sm font-medium dark:text-neutral-300/80'>
           {title}
 
           <EllipsisIcon className='' />

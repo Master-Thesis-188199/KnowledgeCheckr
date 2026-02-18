@@ -143,7 +143,8 @@ export default {
     },
     Discover: {
       title: 'Entdecken Sie neue Wissenschecks',
-      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' + 'Erstellen Sie Ihren eigenen KnowledgeCheck',
+      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' +
+        'Erstellen Sie Ihren eigenen KnowledgeCheck',
       no_checks_found_link: 'hier',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operatoren',
@@ -160,6 +161,36 @@ export default {
           eq_filter_operand: 'Gleich'
         }
       }
+    },
+    ExaminatonResults: {
+      Charts: {
+        ExamQuestionDurationChart: {
+          description: 'Zeigt die Abweichung zwischen tatsächlicher und geschätzter Antwortzeit an',
+          title: 'Durchschnittlicher Zeitunterschied bei Fragen'
+        },
+        ExaminationSuccessPieChart: {
+          description: 'Zeigt an, wie viele Benutzer bestanden/fehlgeschlagen sind.',
+          title: 'Erfolgsquote der Prüfungen'
+        },
+        QuestionScoresLineChartCard: {
+          description: 'Zeigt die Varianz zwischen der durchschnittlichen Fragepunktzahl und der Höchstpunktzahl pro Frage an',
+          title: 'Durchschnittliche Fragepunktzahl pro Frage'
+        },
+        UserTypePieChart: {
+          description: 'Zeigt Prüfungsversuche nach Benutzertyp',
+          title: 'Prüfungen nach Benutzertypen'
+        }
+      },
+      ExaminationAttemptTable: {
+        description: 'Zeigt eine detaillierte Liste aller Prüfungsversuche für diese Prüfung',
+        status_done: 'Erledigt',
+        status_in_progress: 'läuft',
+        title: 'Prüfungsversuche',
+        user_type_anonynmous: 'anonym',
+        user_type_normal: 'normal'
+      },
+      description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',
+      title: 'Prüfungsergebnisse'
     }
   },
   Examination: {
@@ -233,14 +264,15 @@ export default {
       },
       remove_share_token: {
         tooltip: 'Dieser Check hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
       delete_knowledgeCheck: {
         label: 'Check löschen',
-        confirmation_dialog_body:
-          'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
         toast_deletion_successful: 'KnowledgeCheck erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des KnowledgeChecks fehlgeschlagen!'
       },
@@ -251,7 +283,8 @@ export default {
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     }
