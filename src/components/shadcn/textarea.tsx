@@ -8,7 +8,7 @@ function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
       {...props}
       disabled={props.disabled || props.readOnly}
       className={cn(
-        'rounded-md border border-input-ring bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:disabled:opacity-75',
+        'rounded-md border border-input-ring bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:disabled:opacity-75',
         'focus-visible:border-ring-hover focus-visible:ring-[3px] focus-visible:ring-ring-hover/50',
 
         'px-3 py-1.5',
