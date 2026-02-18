@@ -9,19 +9,23 @@ import CollaboratorSelection from '@/src/components/checks/create/(sections)/Col
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { Form, FormLabel } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
+import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
-export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
+export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
   const now = useCallback(() => new Date(Date.now()), [])()
+
+  const t = useScopedI18n('Checks.Create.GeneralSection')
 
   const { form, baseFieldProps } = useRHF(KnowledgeCheckSchema, {
     defaultValues: () => ({
@@ -84,11 +88,12 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
           console.debug('Updating store with:', values)
           updateCheck(values)
         }}
-        className='@container flex flex-col gap-8 p-3'
+        className='@container relative flex flex-col gap-8 p-3'
         disableInteractions>
+        {jumpBackButton && <CardStageJumpButton targetStage={1} />}
         <div className='header -m-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
           <div className='flex items-center justify-between'>
-            <h2 className=''>General Information</h2>
+            <h2 className=''>{t('title')}</h2>
           </div>
         </div>
 
@@ -101,13 +106,13 @@ export default function GeneralSection(config: {} & Omit<UseFormProps<KnowledgeC
             'dark:**:[&::-webkit-calendar-picker-indicator]:brightness-80',
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
-          <Field {...baseFieldProps} name='name' type='text' placeholder='Science Fiction Check' />
-          <Field {...baseFieldProps} name='description' placeholder='Learn about science fiction' type='text' />
-          <Field {...baseFieldProps} name='difficulty' min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
-          <Field {...baseFieldProps} label='Start Date' name='openDate' type='date' />
-          <Field {...baseFieldProps} label='Deadline' name='closeDate' type='date' />
+          <Field {...baseFieldProps} name='name' type='text' label={t('name_label')} placeholder={t('name_placeholder')} />
+          <Field {...baseFieldProps} name='description' label={t('description_label')} placeholder={t('description_placeholder')} type='text' />
+          <Field {...baseFieldProps} name='difficulty' label={t('difficulty_label')} min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
+          <Field {...baseFieldProps} label={t('openDate_label')} name='openDate' type='date' />
+          <Field {...baseFieldProps} label={t('closeDate_label')} name='closeDate' type='date' />
           <>
-            <FormLabel>Collaborators</FormLabel>
+            <FormLabel>{t('collaborators_label')}</FormLabel>
             <CollaboratorSelection />
           </>
         </div>
@@ -126,7 +131,7 @@ export function InputGroup<E extends ComponentType>({ label, as, ...props }: { l
         placeholder='Enter some text'
         {...props}
         className={twMerge(
-          'focus:ring-ring-focus dark:focus:ring-ring-focus hover:ring-ring-hover dark:hover:ring-ring-hover rounded-md px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text focus:ring-[1.2px] dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+          'rounded-md px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text hover:ring-ring-hover focus:ring-[1.2px] focus:ring-ring-focus dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50 dark:hover:ring-ring-hover dark:focus:ring-ring-focus',
           props.className,
         )}
       />

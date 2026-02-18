@@ -1,47 +1,58 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleIcon } from 'lucide-react'
-import { useForm, UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
+import { useIsFirstRender } from '@uidotdev/usehooks'
+import { useForm, useFormContext, useWatch } from 'react-hook-form'
+import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
+import { OpenQuestionAnswer } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
+import { Button } from '@/src/components/shadcn/button'
+import { Form } from '@/src/components/shadcn/form'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/checks/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
-import { getUUID } from '@/src/lib/Shared/getUUID'
-import { cn } from '@/src/lib/Shared/utils'
-import { ExaminationSchema } from '@/src/schemas/ExaminationSchema'
-import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
+import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function RenderExamQuestion() {
+  const isFirstRender = useIsFirstRender()
   const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
   const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
 
-  const {
-    reset: resetInputs,
-    setValue,
-    getValues,
-  } = useForm<ExaminationSchema>({
-    resolver: zodResolver(ExaminationSchema),
-    defaultValues: state,
+  const form = useForm<QuestionInput>({
+    resolver: zodResolver(QuestionInputSchema),
+    defaultValues: {
+      ...state.results[currentQuestionIndex],
+      question_id: question.id,
+      type: question.type as Any,
+    },
   })
 
   const debounceSave = useMemo(() => debounceFunction(saveAnswer, 750), [saveAnswer])
+  const values = useWatch({ control: form.control })
+
+  useEffect(() => {
+    if (isFirstRender) return
+
+    console.debug('Examination input detected and saved.')
+    debounceSave(form.getValues())
+  }, [values])
 
   return (
-    <form className='dark:ring-ring-subtle ring-ring-subtle relative grid gap-6 rounded-md p-4 ring-[1.5px]' onChange={() => debounceSave(getValues().results.at(currentQuestionIndex)!)}>
-      <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
+    <Form {...form}>
+      <form className='relative grid gap-6 rounded-md p-4 ring-[1.5px] ring-ring-subtle dark:ring-ring-subtle'>
+        <QuestionHeader title={question.question} index={currentQuestionIndex} variant={'inline-left'} />
 
-      {(question.type === 'single-choice' || question.type === 'multiple-choice') && (
-        <ExamChoiceAnswer getValues={getValues} setValue={setValue} reset={resetInputs} question={question as ChoiceQuestion} />
-      )}
-      {question.type === 'open-question' && <ExamOpenQuestionAnswer setValue={setValue} reset={resetInputs} />}
-      {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} getValues={getValues} setValue={setValue} reset={resetInputs} />}
-    </form>
+        {(question.type === 'single-choice' || question.type === 'multiple-choice') && <ExamChoiceAnswers question={question as ChoiceQuestion} />}
+
+        {question.type === 'open-question' && <OpenQuestionAnswer />}
+        {question.type === 'drag-drop' && <DragDropAnswers debounceSave={debounceSave} question={question} />}
+      </form>
+    </Form>
   )
 }
 
@@ -55,7 +66,7 @@ function QuestionHeader({ title, index, variant = 'inline' }: { title: string; i
 function HeaderLeftInline({ title, index }: { title: string; index: number }) {
   return (
     <div className='-mt-4 -ml-4 grid grid-cols-[auto_1fr] gap-3'>
-      <div className='ring-ring dark:ring-ring flex max-h-10 items-center rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='flex max-h-10 items-center rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 ring-ring dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <p className='mt-[0.4rem] text-lg font-semibold text-neutral-800 dark:text-neutral-200' children={title} />
     </div>
   )
@@ -64,7 +75,7 @@ function HeaderLeftInline({ title, index }: { title: string; index: number }) {
 function HeaderAbsolute({ title, index }: { title: string; index: number }) {
   return (
     <>
-      <div className='ring-ring dark:ring-ring absolute top-0 left-0 rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='absolute top-0 left-0 rounded-tl-md rounded-br-md bg-neutral-300 px-3.5 py-1.5 ring-1 ring-ring dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <input name='question' readOnly disabled className='mt-8 w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />{' '}
     </>
   )
@@ -73,95 +84,73 @@ function HeaderAbsolute({ title, index }: { title: string; index: number }) {
 function HeaderInline({ title, index }: { title: string; index: number }) {
   return (
     <div className='flex gap-3'>
-      <div className='ring-ring-hover dark:ring-ring rounded-full bg-neutral-300 px-2.5 py-0.5 tabular-nums ring-1 dark:bg-neutral-600/60'>{index + 1}</div>
+      <div className='rounded-full bg-neutral-300 px-2.5 py-0.5 tabular-nums ring-1 ring-ring-hover dark:bg-neutral-600/60 dark:ring-ring'>{index + 1}</div>
       <input name='question' readOnly disabled className='w-full text-lg font-semibold text-neutral-800 dark:text-neutral-200' value={title} />
     </div>
   )
 }
 
-function ExamChoiceAnswer({ question, reset, setValue }: { question: ChoiceQuestion; reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema>; getValues: () => Any }) {
-  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
-  const answers = results.at(currentQuestionIndex)!.answer
-
+function ExamChoiceAnswers({ question }: { question: ChoiceQuestion }) {
   return (
     <ul className='group flex flex-col gap-4 px-4'>
-      {question.answers.map((answer, index, array) => (
-        <label className='flex items-center gap-2 hover:cursor-pointer' key={getUUID()}>
-          <input
-            type={question.type === 'multiple-choice' ? 'checkbox' : 'radio'}
-            name={question.type === 'single-choice' ? 'answer.correct' : (`answers.${index}.correct` as const)}
-            defaultChecked={answers.at(index)?.selected}
-            onChange={(e) => {
-              setValue(`results.${currentQuestionIndex}.answer.${index}.selected` as const, e.target.checked)
+      {question.answers.map((answer, index) =>
+        // prettier-ignore
+        <DisplayChoiceQuestionAnswer
+          answer={answer}
+          registerKey={question.type === 'single-choice' ? 'selection' : `selection.${index}`}
+          key={answer.id}
+          type={question.type}
+        />,
+      )}
 
-              //* Ensure single-choice questions only have a single answer
-              if (question.type !== 'single-choice') return
-              for (let i = 0; i < array.length; i++) {
-                if (i === index) continue
-                setValue(`results.${currentQuestionIndex}.answer.${i}.selected` as const, false)
-              }
-            }}
-            className='peer hidden'
-          />
-          <CircleIcon className='size-4.5 peer-checked:fill-neutral-400 dark:peer-checked:fill-neutral-300' />
-          {answer.answer}
-        </label>
-      ))}
-      <button type='button' className='hidden text-neutral-500 underline-offset-2 group-has-[:checked]:flex hover:cursor-pointer hover:underline dark:text-neutral-400' onClick={() => reset()}>
-        Reset
-      </button>
+      <ResetButton />
     </ul>
   )
 }
 
-function ExamOpenQuestionAnswer({ setValue }: { reset: UseFormReset<ExaminationSchema>; setValue: UseFormSetValue<ExaminationSchema> }) {
-  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
+function ResetButton() {
+  const { reset, control } = useFormContext<QuestionInput>()
 
   return (
-    <TextareaAutosize
-      maxRows={10}
-      name='answer'
-      defaultValue={results.at(currentQuestionIndex)?.answer.at(0)?.text ?? ''}
-      onChange={(e) => {
-        setValue(`results.${currentQuestionIndex}.answer.0.text` as const, e.target.value)
-      }}
-      className={cn(
-        'focus:ring-ring-focus dark:focus:ring-ring-focus hover:ring-ring-hover dark:hover:ring-ring-hover rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 hover:cursor-text focus:ring-[1.2px] dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-        'resize-none',
-      )}
-    />
+    <Button
+      variant='link'
+      type='button'
+      className='-m-3 -ml-4 hidden w-fit text-sm text-neutral-500 underline-offset-2 group-has-checked:flex dark:text-neutral-400'
+      onClick={() => reset({ question_id: control._defaultValues.question_id, type: control._defaultValues.type as Any })}>
+      Reset
+    </Button>
   )
 }
 
-function DragDropAnswers({
-  setValue,
-  debounceSave,
-  getValues,
-}: {
-  reset: UseFormReset<ExaminationSchema>
-  setValue: UseFormSetValue<ExaminationSchema>
-  getValues: UseFormGetValues<ExaminationSchema>
-  debounceSave: ReturnType<typeof debounceFunction<ExaminationActions['saveAnswer']>>
-}) {
-  const { currentQuestionIndex, results } = useExaminationStore((state) => state)
+function DragDropAnswers({ debounceSave, question }: { question: DragDropQuestion; debounceSave: ReturnType<typeof debounceFunction<ExaminationActions['saveAnswer']>> }) {
+  const { setValue, getValues } = useFormContext<Extract<QuestionInput, { type: DragDropQuestion['type'] }>>()
+
+  let answers: DragDropQuestion['answers'] = question.answers.map((a, i) => ({ ...a, position: i }))
+
+  //* Re-apply drag drop positions
+  if (getValues()?.input?.length === question.answers.length) {
+    answers = getValues().input.map((id, position) => ({
+      answer: question.answers.find((a) => a.id === id)!.answer,
+      position,
+      id,
+    }))
+  }
 
   return (
     <DragDropContainer
+      key={answers.map((a) => a.id).join(',')} // <-- forces container to re-render when its children change
+      enabled
       onSwapStart={() => {
         debounceSave.abort()
       }}
       onSwapEnd={(e) => {
-        e.slotItemMap.asArray.map((el, i) => setValue(`results.${currentQuestionIndex}.answer.${i}` as const, { position: i, label: el.item }))
-        debounceSave(getValues().results.at(currentQuestionIndex)!)
+        e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
+        debounceSave(getValues())
       }}
-      className='flex flex-col gap-4'
-      key={results
-        .at(currentQuestionIndex)!
-        .answer.map((a, i) => (a.position ?? i) + (a.label ?? ''))
-        .join('')}>
-      {results.at(currentQuestionIndex)!.answer.map((a, i, array) => (
-        <DragDropItem name={a.label} key={(a.label ?? '') + a.position} initialIndex={a.position ? a.position : i} showPositionCounter>
-          <span className='flex-1'>{array.at(a.position ?? i)?.label}</span>
+      className='flex flex-col gap-4'>
+      {answers.map((a, i, array) => (
+        <DragDropItem name={a.id} key={a.id + a.position} initialIndex={a.position} showPositionCounter>
+          <span className='flex-1'>{array.at(a.position)?.answer}</span>
         </DragDropItem>
       ))}
     </DragDropContainer>

@@ -1,5 +1,6 @@
 import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
 import { CheckStoreProvider } from '@/src/components/checks/create/CreateCheckProvider'
+import { I18nProvider } from '@/src/components/root/I18nProvider'
 import RootProviders from '@/src/components/root/RootProviders'
 
 describe('<CreateQuestionDialog />', () => {
@@ -7,11 +8,13 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <CheckStoreProvider>
-          <CreateQuestionDialog>
-            <div className='trigger'>Trigger</div>
-          </CreateQuestionDialog>
-        </CheckStoreProvider>
+        <I18nProvider>
+          <CheckStoreProvider>
+            <CreateQuestionDialog>
+              <div className='trigger'>Trigger</div>
+            </CreateQuestionDialog>
+          </CheckStoreProvider>
+        </I18nProvider>
       </RootProviders>,
     )
 
@@ -26,13 +29,16 @@ describe('<CreateQuestionDialog />', () => {
   it('Verify that create-question-dialog resets all inuts when the user presses Escape', () => {
     cy.viewport(800, 980)
     cy.mount(
-      <RootProviders>
-        <CheckStoreProvider>
-          <CreateQuestionDialog>
-            <div className='trigger'>Trigger</div>
-          </CreateQuestionDialog>
-        </CheckStoreProvider>
-      </RootProviders>,
+      <I18nProvider>
+        <RootProviders>
+          <CheckStoreProvider>
+            <CreateQuestionDialog>
+              <div className='trigger'>Trigger</div>
+            </CreateQuestionDialog>
+          </CheckStoreProvider>
+        </RootProviders>
+        ,
+      </I18nProvider>,
     )
 
     cy.get('#question-dialog').should('not.exist')
@@ -52,13 +58,15 @@ describe('<CreateQuestionDialog />', () => {
   it("Verify that create-question-dialog closes when the user clicks outside the dialog's content area", () => {
     cy.viewport(800, 980)
     cy.mount(
-      <RootProviders>
-        <CheckStoreProvider>
-          <CreateQuestionDialog>
-            <div className='trigger'>Trigger</div>
-          </CreateQuestionDialog>
-        </CheckStoreProvider>
-      </RootProviders>,
+      <I18nProvider>
+        <RootProviders>
+          <CheckStoreProvider>
+            <CreateQuestionDialog>
+              <div className='trigger'>Trigger</div>
+            </CreateQuestionDialog>
+          </CheckStoreProvider>
+        </RootProviders>
+      </I18nProvider>,
     )
 
     cy.get('#question-dialog').should('not.exist')
@@ -74,13 +82,15 @@ describe('<CreateQuestionDialog />', () => {
   it('Verify that users can switch between question types in the create-question-dialog', () => {
     cy.viewport(800, 980)
     cy.mount(
-      <RootProviders>
-        <CheckStoreProvider>
-          <CreateQuestionDialog>
-            <div className='trigger'>Trigger</div>
-          </CreateQuestionDialog>
-        </CheckStoreProvider>
-      </RootProviders>,
+      <I18nProvider>
+        <RootProviders>
+          <CheckStoreProvider>
+            <CreateQuestionDialog>
+              <div className='trigger'>Trigger</div>
+            </CreateQuestionDialog>
+          </CheckStoreProvider>
+        </RootProviders>
+      </I18nProvider>,
     )
 
     cy.get('#question-dialog').should('not.exist')

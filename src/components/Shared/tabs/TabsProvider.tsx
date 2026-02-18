@@ -5,6 +5,7 @@ import { Any } from '@/types'
 
 export interface Tab extends Record<string, Any> {
   name: string
+  key: string
 }
 
 interface TabsContextProps {
@@ -26,8 +27,8 @@ export function useTabsContext() {
 }
 
 export default function TabsProvider({ children, tabs, initialValue }: { children: React.ReactNode; tabs: Array<Tab>; initialValue?: Tab }) {
-  const defaultValue = tabs.at(0)?.name ?? ''
-  const [currentTab, setCurrentTab] = useState<Tab['name']>(initialValue?.name ?? defaultValue)
+  const defaultValue = tabs.at(0)?.key ?? ''
+  const [currentTab, setCurrentTab] = useState<Tab['name']>(initialValue?.key ?? defaultValue)
 
   return <Context.Provider value={{ currentTab, setCurrentTab, tabs }}>{children}</Context.Provider>
 }

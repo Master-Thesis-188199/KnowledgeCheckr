@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/shadcn/alert-dialog'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 type Props = {
   children: React.ReactNode
@@ -23,6 +24,7 @@ type Props = {
 }
 
 export default function ConfirmationDialog({ children, title, body, confirmAction, onConfirmSuccess, confirmLabel, cancelLabel, onCancelClose }: Props) {
+  const t = useScopedI18n('Components.ConfirmationDialog')
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -32,8 +34,8 @@ export default function ConfirmationDialog({ children, title, body, confirmActio
       </AlertDialogTrigger>
       <AlertDialogContent onInteractionOutside={() => setOpen(false)}>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title ?? 'Are you absolutely sure?'}</AlertDialogTitle>
-          <AlertDialogDescription>{body ?? 'This action cannot be undone. This will permanently delete this element from your account and remove its data from our servers.'}</AlertDialogDescription>
+          <AlertDialogTitle>{title ?? t('default_title')}</AlertDialogTitle>
+          <AlertDialogDescription>{body ?? t('default_body')}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
@@ -41,7 +43,7 @@ export default function ConfirmationDialog({ children, title, body, confirmActio
               onCancelClose?.()
               setOpen(false)
             }}>
-            {cancelLabel ?? 'Cancel'}
+            {cancelLabel ?? t('default_cancel_label')}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
@@ -49,7 +51,7 @@ export default function ConfirmationDialog({ children, title, body, confirmActio
               setOpen(false)
               onConfirmSuccess?.()
             }}>
-            {confirmLabel ?? 'Continue'}
+            {confirmLabel ?? t('default_confirm_label')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

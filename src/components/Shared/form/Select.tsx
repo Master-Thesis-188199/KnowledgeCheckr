@@ -32,6 +32,7 @@ interface Classnames {
 
 interface State {
   open: boolean
+  label: string
   value: string
   query: string
   newOptions: Option[]
@@ -39,7 +40,7 @@ interface State {
 
 type Action =
   | { type: 'SET_OPEN'; payload: boolean }
-  | { type: 'SET_VALUE'; payload: string }
+  | { type: 'SET_VALUE'; value: string; label: string }
   | { type: 'SET_QUERY'; payload: string }
   | { type: 'SET_NEW_OPTIONS'; payload: Option[] }
   | { type: 'ADD_OPTION'; payload: Option }
@@ -51,7 +52,7 @@ function reducer(state: State, action: Action): State {
     case 'SET_OPEN':
       return { ...state, open: action.payload }
     case 'SET_VALUE':
-      return { ...state, value: action.payload }
+      return { ...state, value: action.value, label: action.label }
     case 'SET_QUERY':
       return { ...state, query: action.payload }
     case 'SET_NEW_OPTIONS':
@@ -61,6 +62,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         newOptions: [...state.newOptions, action.payload],
         value: action.payload.value,
+        label: action.payload.label,
       }
     default:
       return state
@@ -72,7 +74,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
 
   const initialState: State = {
     open: false,
-    value: defaultValue?.value || '',
+    label: defaultValue?.label ?? '',
+    value: defaultValue?.value ?? '',
     query: '',
     newOptions: options,
   }
@@ -84,7 +87,8 @@ export default function Select({ options, defaultValue, isLoading = false, name,
     const items = state.query ? state.newOptions.filter((option) => option.label.toLowerCase().includes(state.query.toLowerCase())) : state.newOptions
     if (items.length === 0) return
 
-    dispatch({ type: 'SET_VALUE', payload: items.at(keySelection % items.length)!.value })
+    const option = items.at(keySelection % items.length)!
+    dispatch({ type: 'SET_VALUE', value: option?.value, label: option?.label })
   }, [keySelection, state.query])
 
   React.useEffect(() => {
@@ -95,7 +99,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
 
   React.useEffect(() => {
     // WHen re-rendered e.g. dialog in which it is used is re-rendered => reset to default value
-    dispatch({ type: 'SET_VALUE', payload: defaultValue?.value || '' })
+    dispatch({ type: 'SET_VALUE', value: defaultValue?.value ?? '', label: defaultValue?.label ?? '' })
   }, [])
 
   const createOption = () => {
@@ -126,23 +130,24 @@ export default function Select({ options, defaultValue, isLoading = false, name,
           aria-label={`popover-trigger-${name}`}
           role='combobox'
           aria-expanded={state.open}
+          data-selected-key={state.value}
           disabled={isLoading || disabled}
           className={cn(
             'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize placeholder:text-[15px] hover:cursor-pointer',
-            'border-input-ring border transition-[color,box-shadow] outline-none',
+            'border border-input-ring transition-[color,box-shadow] outline-none',
             'bg-input text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:border-ring-hover focus:border-ring-focus dark:hover:border-ring-hover dark:focus:border-ring-focus',
-            state.open && 'border-ring-focus dark:border-ring-focus ring-ring-hover/50 dark:ring-ring-hover/50 ring-[3px]',
+            state.open && 'border-ring-focus ring-[3px] ring-ring-hover/50 dark:border-ring-focus dark:ring-ring-hover/50',
 
             // outline like styles for focus: and focus-visible
-            // eslint-disable-next-line require-color-modes/require-color-mode-styles
-            'focus-visible:border-ring-hover focus-visible:ring-ring-hover/50 focus-visible:ring-[3px]',
-            // eslint-disable-next-line require-color-modes/require-color-mode-styles
-            'focus:border-ring-hover focus:ring-ring-hover/50 focus:ring-[3px]',
-            'disabled:ring-ring-subtle dark:disabled:ring-ring-subtle disabled:cursor-not-allowed disabled:opacity-50',
+
+            'focus-visible:border-ring-hover focus-visible:ring-[3px] focus-visible:ring-ring-hover/50',
+
+            'focus:border-ring-hover focus:ring-[3px] focus:ring-ring-hover/50',
+            'disabled:cursor-not-allowed disabled:opacity-50 disabled:ring-ring-subtle dark:disabled:ring-ring-subtle',
             selectTriggerClassname,
           )}>
-          {isLoading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : state.value || 'Select option...'}
+          {isLoading ? <Loader2Icon className='size-4 animate-spin' /> : state.label || 'Select option...'}
           <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
@@ -180,7 +185,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
-                      'hover:ring-ring dark:hover:ring-ring cursor-pointer text-sm text-neutral-500 hover:ring-1 data-[selected="true"]:hover:bg-neutral-200/50 dark:text-neutral-400/80 dark:data-[selected="true"]:hover:bg-neutral-700/50',
+                      'cursor-pointer text-sm text-neutral-500 hover:ring-1 hover:ring-ring data-[selected="true"]:hover:bg-neutral-200/50 dark:text-neutral-400/80 dark:hover:ring-ring dark:data-[selected="true"]:hover:bg-neutral-700/50',
                       // disable / set selected-styles to mimic default styles ^^^   (because the selection is still displayed when element is no longer hovered and is not displayed when select-modal is opened)
                       'data-[selected=true]:bg-transparent data-[selected=true]:text-neutral-500 dark:data-[selected=true]:bg-transparent dark:data-[selected=true]:text-neutral-400/80',
 
@@ -213,7 +218,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   className={cn(
                     'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 hover:cursor-pointer hover:ring-1',
                     'border-neutral-400/80 text-neutral-800 dark:border-neutral-500 dark:text-neutral-300/90',
-                    'dark:hover:ring-ring hover:ring-ring hover:bg-neutral-300 dark:hover:bg-neutral-600',
+                    'hover:bg-neutral-300 hover:ring-ring dark:hover:bg-neutral-600 dark:hover:ring-ring',
                   )}
                   onSelect={() => createOption()}>
                   Create category &quot;{state.query}&quot;

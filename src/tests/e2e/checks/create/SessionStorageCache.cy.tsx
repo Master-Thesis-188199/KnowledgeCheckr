@@ -52,28 +52,11 @@ describe('SessionStorageCache', () => {
         expect(safeParseKnowledgeCheck(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
       })
 
-    cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS))
+    cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS), ['Date'])
+    cy.visit('/checks/create')
 
-    //* Overrides the implementation of `performance.timeOrigin` (caused by `cy.clock`) from () => undefined to Date.now(); see https://github.com/Master-Thesis-188199/KnowledgeCheckr/issues/186 for more details.
-    cy.visit('/checks/create', {
-      onBeforeLoad(win) {
-        // This runs before Sentry runs, thus ensuring that `createUnixTimestampInSecondsFunc` uses an actual implementation of `performance.timeOrigin` when `cy.clock` is used.
-        if (win.performance) {
-          const perf = win.performance
-          const value = typeof perf.timeOrigin === 'number' ? perf.timeOrigin : Date.now() // or 0, doesn't matter much for tests
-
-          try {
-            Object.defineProperty(perf, 'timeOrigin', {
-              configurable: true,
-              writable: true,
-              value,
-            })
-          } catch {
-            console.error('Failed to override `performance.timeOrigin` to Date.now()')
-          }
-        }
-      },
-    })
+    // wait for deletion of session-item
+    cy.wait(750)
 
     cy.getAllSessionStorage().then((storage) => {
       const sessionCache = storage[baseUrl] ?? {}

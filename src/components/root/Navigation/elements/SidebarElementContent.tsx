@@ -5,19 +5,19 @@ import { twMerge } from 'tailwind-merge'
 import { useSidebarStore } from '@/components/root/Navigation/SidebarStoreProvider'
 
 export default function SidebarElementContent({ children }: { children: React.ReactNode }) {
-  const { isOpen, isAnimationEnabled } = useSidebarStore((state) => state)
+  const { isOpen } = useSidebarStore((state) => state)
 
   return (
     <motion.div
       initial={{
         display: isOpen ? 'inline-block' : 'none',
-        opacity: isAnimationEnabled ? (isOpen ? 1 : 0.0) : 1,
+        opacity: isOpen ? 1 : 0.0,
       }}
       animate={{
         display: isOpen ? 'inline-block' : 'none',
-        opacity: isAnimationEnabled ? (isOpen ? 1 : 0.0) : 1,
+        opacity: isOpen ? 1 : 0.0,
       }}
-      className={twMerge('!m-0 inline-block overflow-hidden !p-0 text-sm whitespace-pre text-neutral-700 transition-transform duration-300 group-hover/sidebar:translate-x-1 dark:text-neutral-200')}>
+      className={twMerge('m-0! inline-block overflow-hidden p-0! text-sm whitespace-pre text-neutral-700 transition-transform duration-300 group-hover/sidebar:translate-x-1 dark:text-neutral-200')}>
       {children}
     </motion.div>
   )

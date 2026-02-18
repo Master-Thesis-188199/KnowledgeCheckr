@@ -11,7 +11,12 @@ import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgres
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import _logger from '@/src/lib/log/Logger'
+import getReferer from '@/src/lib/Shared/getReferer'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
   Partial<Pick<CheckStoreProviderProps, 'options'>> & {
@@ -26,6 +31,11 @@ type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
 export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   const { user } = await requireAuthentication()
   const users = await getUsers()
+  const tButtons = await getScopedI18n('Shared')
+  const t = await getScopedI18n('Checks.Create.MultiStages')
+
+  // when users start editing from e.g. '/discover', '/checks' redirect them back to that page after save. When creating new checks redirect to '/checks'
+  const callbackPath = mode === 'edit' ? await getReferer() : '/checks'
 
   return (
     <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
@@ -33,10 +43,10 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
         cacheOptions={{ cacheKey: 'create-check-stages' }}
         initialStoreProps={{
           stages: [
-            { stage: 1, title: 'Basic Information' },
-            { stage: 2, title: 'Questions' },
-            { stage: 3, title: 'Settings' },
-            { stage: 4, title: 'Conclusion' },
+            { stage: 1, title: t('basic-information') },
+            { stage: 2, title: t('questions') },
+            { stage: 3, title: t('settings') },
+            { stage: 4, title: t('conclusion') },
           ],
         }}>
         <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps?.name}`} />
@@ -61,12 +71,12 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
           </CollaboratorProviderContext>
         </div>
         <div className='mx-[1.5%] mt-4 flex justify-between'>
-          <MultiStageBackButton variant='outline' children='Back' />
-          <MultiStageNextButton variant='primary' children='Next' />
+          <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
+          <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
         </div>
         <MutliStageRenderer stage={4}>
           <form className='mt-4 flex justify-center gap-4'>
-            <SaveCheckButton />
+            <SaveCheckButton callbackPath={callbackPath} />
           </form>
         </MutliStageRenderer>
         <div />

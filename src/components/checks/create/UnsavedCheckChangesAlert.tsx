@@ -3,8 +3,10 @@
 import { useEffect } from 'react'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function UnsavedCheckChangesAlert() {
+  const t = useScopedI18n('Checks.Create.UnsavedChangesAlert')
   const { unsavedChanges } = useCheckStore((state) => state)
   const { enableNavigationAbort } = useNavigationAbort()
 
@@ -12,10 +14,10 @@ export default function UnsavedCheckChangesAlert() {
     if (!unsavedChanges) return
 
     enableNavigationAbort({
-      title: 'You have unsaved changes. Discard?',
-      description: 'By leaving the page now the changes you have made will be permanently lost.',
-      dismissLabel: 'Continue Editing',
-      continueLabel: 'Proceed without saving',
+      title: t('title'),
+      description: t('description'),
+      dismissLabel: t('dismissLabel'),
+      continueLabel: t('continueLabel'),
     })
   }, [unsavedChanges])
 

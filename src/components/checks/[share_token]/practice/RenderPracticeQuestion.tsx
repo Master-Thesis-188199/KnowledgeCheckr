@@ -7,24 +7,25 @@ import isEmpty from 'lodash/isEmpty'
 import { LoaderCircleIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
-import { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { z } from 'zod'
+import { useFormContext } from 'react-hook-form'
+import { UseFormRegister } from 'react-hook-form'
+import { FeedbackOpenQuestion } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
-import { OpenQuestion } from '@/src/components/checks/[share_token]/practice/OpenQuestion'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
+import { Form } from '@/src/components/shadcn/form'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
-import { PracticeData, PracticeSchema } from '@/src/schemas/practice/PracticeSchema'
 import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const { practiceQuestions: questions, unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
@@ -38,32 +39,27 @@ export function RenderPracticeQuestion() {
   }
 
   const {
-    form: {
-      register,
-      reset,
-      handleSubmit,
-      setValue,
-      trigger,
-      watch,
-      getValues,
-      formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
-    },
+    form,
     isServerValidationPending: isPending,
     state,
     runServerValidation,
   } = useRHF(
-    PracticeSchema,
+    QuestionInputSchema,
     {
       defaultValues: () => ({ question_id: question.id, type: question.type }),
     },
     { serverAction: EvaluateAnswer, initialActionState: { success: false } },
   )
+  const {
+    watch,
+    formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
+  } = form
 
   const nextRandomQuestion = () =>
     questions.length > 1
       ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
       : // allow the same (only) question to be answered again and again.
-        reset()
+        form.reset()
 
   useEffect(() => {
     if (!isSubmitSuccessful) return
@@ -71,7 +67,7 @@ export function RenderPracticeQuestion() {
     if (isSubmitting) return
 
     console.info(question.question, ' has been answered & submitted')
-    storeAnswer({ questionId: question.id, ...getValues() })
+    storeAnswer({ ...form.getValues(), question_id: question.id })
   }, [isSubmitSuccessful, isPending, isSubmitting])
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
@@ -82,12 +78,12 @@ export function RenderPracticeQuestion() {
     if (watch('type') === question.type && watch('question_id') === question.id) return
     else {
       //* When the question is changed reset the form (and set the new question id and type)
-      reset({ question_id: question.id, type: question.type as Any })
+      form.reset({ question_id: question.id, type: question.type as Any })
       return
     }
   }, [question.id, question.type])
 
-  const onSubmit = (_data: z.infer<typeof PracticeSchema>) => {
+  const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
     runServerValidation(_data)
   }
@@ -103,69 +99,55 @@ export function RenderPracticeQuestion() {
   if (!isEmpty(errors)) console.log('error', errors)
 
   return (
-    <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
-      <div className='my-8 flex flex-col items-center justify-center gap-2'>
-        <div className='flex items-center gap-4'>
-          <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-700 dark:ring-neutral-200'>{currentQuestionIndex + 1}</div>
-          <h2 className='text-2xl font-semibold'>{question.question}</h2>
+    <Form {...form}>
+      <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={form.handleSubmit(onSubmit)}>
+        <div className='my-8 flex flex-col items-center justify-center gap-2'>
+          <div className='flex items-center gap-4'>
+            <div className='flex size-6 items-center justify-center rounded-full p-1.5 text-sm font-semibold ring-1 ring-neutral-700 dark:ring-neutral-200'>{currentQuestionIndex + 1}</div>
+            <h2 className='text-2xl font-semibold'>{question.question}</h2>
+          </div>
+          <span className='text-neutral-600 dark:text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
         </div>
-        <span className='text-neutral-600 dark:text-neutral-300'>{getQuestionActionDescriptor(question.type)}</span>
-      </div>
 
-      <div id='answer-options' className={cn('ring-ring dark:ring-ring grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1', question?.type === 'open-question' && 'grid-cols-1')}>
-        {question.type === 'multiple-choice' && (
-          <ChoiceAnswerOption
-            type='checkbox'
-            registerKey={(i) => `selection.${i}`}
-            errors={errors}
-            question={question}
-            getFeedbackEvaluation={getFeedbackEvaluation}
-            isEvaluated={isEvaluated}
-            register={register}
-          />
-        )}
+        <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-ring dark:ring-ring', question?.type === 'open-question' && 'grid-cols-1')}>
+          {question.type === 'multiple-choice' && (
+            <ChoiceAnswerOption type='checkbox' registerKey={(i) => `selection.${i}`} question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />
+          )}
 
-        {question.type === 'single-choice' && (
-          <ChoiceAnswerOption
-            type='radio'
-            registerKey={() => 'selection'}
-            errors={errors}
-            question={question}
-            getFeedbackEvaluation={getFeedbackEvaluation}
-            isEvaluated={isEvaluated}
-            register={register}
-          />
-        )}
+          {question.type === 'single-choice' && (
+            <ChoiceAnswerOption type='radio' registerKey={() => 'selection'} question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />
+          )}
 
-        {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} setValue={setValue} trigger={trigger} />}
+          {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} />}
 
-        {question.type === 'open-question' && (
-          <OpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} register={register} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
-        )}
-      </div>
+          {question.type === 'open-question' && (
+            <FeedbackOpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
+          )}
+        </div>
 
-      <FeedbackLegend
-        disabled={(!isEvaluated && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
-        show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')}
-      />
+        <FeedbackLegend
+          disabled={(!isEvaluated && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
+          show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')}
+        />
 
-      <div className='flex justify-center'>
-        <Button
-          title={!isValid ? 'Before checking this question you must first answer it' : undefined}
-          disabled={!isValid}
-          hidden={isSubmitted && isSubmitSuccessful && !isPending}
-          className='enabled:ring-ring-subtle enabled:hover:ring-ring dark:enabled:hover:ring-ring mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:hover:bg-neutral-300 dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600'
-          variant='secondary'
-          type='submit'>
-          <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
-          Check Answer
-        </Button>
+        <div className='flex justify-center'>
+          <Button
+            title={!isValid ? 'Before checking this question you must first answer it' : undefined}
+            disabled={!isValid}
+            hidden={isSubmitted && isSubmitSuccessful && !isPending}
+            className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
+            variant='secondary'
+            type='submit'>
+            <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
+            Check Answer
+          </Button>
 
-        <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 bg-green-500/60 dark:bg-green-800' variant='secondary' onClick={nextRandomQuestion} type='button'>
-          Continue
-        </Button>
-      </div>
-    </form>
+          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 bg-green-500/60 dark:bg-green-800' variant='secondary' onClick={nextRandomQuestion} type='button'>
+            Continue
+          </Button>
+        </div>
+      </form>
+    </Form>
   )
 }
 
@@ -235,22 +217,23 @@ function FeedbackIndicators({ correctlySelected, missingSelection, falslySelecte
  * This component renders the answer-options for ChoiceQuestions as they are almost identical, to reduce code duplication
  */
 function ChoiceAnswerOption<Q extends ChoiceQuestion>({
-  register,
   registerKey,
   question,
   getFeedbackEvaluation,
-  errors,
   isEvaluated,
   type,
 }: {
   isEvaluated: boolean
-  register: UseFormRegister<PracticeData>
-  errors: FieldErrors<PracticeData>
   type: Required<HTMLProps<HTMLInputElement>['type']>
-  registerKey: (index: number) => Parameters<UseFormRegister<PracticeData>>['0']
+  registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0']
   question: Q
   getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
 }) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<QuestionInput>()
+
   return question.answers.map((a, i) => {
     const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
 
@@ -259,11 +242,11 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         key={a.id}
         className={cn(
           'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover has-enabled:hover:cursor-pointer',
-          'has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus has-enabled:focus:ring-[1.2px]',
+          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
+          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
           'flex items-center justify-center',
           'resize-none select-none',
-          'has-enabled:has-checked:ring-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+          'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
           isEvaluated &&

@@ -10,7 +10,7 @@ import { saveAction } from '@/src/lib/checks/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
 import { safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
-export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
+export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string; callbackPath?: string }) {
   const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const safeParse = safeParseKnowledgeCheck(store)
@@ -22,7 +22,7 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
   const formAction = () => {
     if (!safeParse.success) return undefined
 
-    saveAction({ check: safeParse.data }).catch((e) => {
+    saveAction({ check: safeParse.data, callbackPath: callbackPath ?? '/checks' }).catch((e) => {
       if (isRedirectError(e)) {
         const key = cacheKey ?? 'check-store'
         const hasCache = !!sessionStorage.getItem(key)
@@ -48,7 +48,7 @@ export function SaveCheckButton({ cacheKey }: { cacheKey?: string }) {
       isDisabled={safeParse.success}
       content={
         <div className='flex items-center gap-1.5'>
-          <InfoIcon className='text-destructive size-4' />
+          <InfoIcon className='size-4 text-destructive' />
           This check cannot be saved at this moment, because it violates internal schema definitions.
         </div>
       }

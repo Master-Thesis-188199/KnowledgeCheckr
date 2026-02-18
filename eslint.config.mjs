@@ -1,6 +1,7 @@
 import { defineConfig } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
 import requireColorModeStyles from './config/eslint_rules/color-mode-styles/require-color-mode-styles.js'
@@ -11,6 +12,13 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    extends: [eslintPluginBetterTailwindcss.configs.recommended],
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/app/globals.css',
+        detectComponentClasses: true,
+      },
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       'prefer-spread': 0,
@@ -23,6 +31,16 @@ const eslintConfig = defineConfig([
           destructuring: 'all',
         },
       ],
+
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/no-unknown-classes': 'warn', // default error
+    },
+  },
+  {
+    // Keep all other lint rules for tests, but disable better-tailwindcss unknown classes rule in tests, since classes are often used as selectors.
+    files: ['**/__tests__/**/*.{js,jsx,ts,tsx}', '**/*.{test,spec}.{js,jsx,ts,tsx}', '**/test/**/*.{js,jsx,ts,tsx}', '**/tests/**/*.{js,jsx,ts,tsx}'],
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'off',
     },
   },
   {
