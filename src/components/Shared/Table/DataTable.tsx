@@ -219,7 +219,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
             <DropdownMenuContent align='end' className='w-56'>
               {table
                 .getAllColumns()
-                .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+                .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide() && column.columnDef.header)
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
@@ -230,8 +230,10 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                         column.toggleVisibility(!!value)
                         setColumnHidingPolicy('manual')
                       }}>
-                      {/* @ts-expect-error Expect accessorKey to be not recognized even though it exists */}
-                      {column.columnDef.accessorKey ?? column.id}
+                      {/* renders the column-header instead of (id / accessorKey) to re-use the same localized value */}
+                      {typeof column.columnDef.header === 'function'
+                        ? column.columnDef.header({ table, column, header: table.getFlatHeaders().find((h) => h.id === column.id)! })
+                        : column.columnDef.header}
                     </DropdownMenuCheckboxItem>
                   )
                 })}
