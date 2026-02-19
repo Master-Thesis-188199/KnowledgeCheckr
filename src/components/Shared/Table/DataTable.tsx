@@ -5,7 +5,7 @@ import { closestCenter, DndContext, type DragEndEvent, KeyboardSensor, MouseSens
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconLayoutColumns } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconLayoutColumns, IconSortAscending, IconSortDescending } from '@tabler/icons-react'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -25,7 +25,7 @@ import {
 import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import isEqual from 'lodash/isEqual'
 import { Button } from '@/components/shadcn/button'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
 import { Label } from '@/components/shadcn/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
@@ -98,6 +98,8 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
+    enableSorting: true,
+    enableSortingRemoval: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -247,7 +249,57 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead data-column-id={header.id} key={header.id} id={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                            <div className='flex items-center gap-1'>
+                              {/*
+                                Primary behavior: click on header label toggles sorting (asc <-> desc ).
+                                Secondary behavior: use the dropdown to explicitly choose direction
+                              */}
+                              <button
+                                type='button'
+                                onClick={header.column.getToggleSortingHandler()}
+                                className='inline-flex flex-1 items-center justify-between gap-2 select-none hover:cursor-pointer'
+                                aria-label={`Sort by ${header.id}`}>
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+
+                                {header.column.getIsSorted() === 'asc' ? (
+                                  <IconSortAscending className='size-4 opacity-80' title='Sorting rows in ascending order' />
+                                ) : header.column.getIsSorted() === 'desc' ? (
+                                  <IconSortDescending className='size-4 opacity-80' title='Sorting rows in descending order' />
+                                ) : (
+                                  <></>
+                                )}
+                              </button>
+
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    className={cn('size-5 opacity-65', header.column.getIsSorted() && 'hidden')}
+                                    aria-label='Open sort menu'
+                                    onClick={(e) => {
+                                      // Prevent the header toggle click from firing when opening the menu.
+                                      e.stopPropagation()
+                                    }}>
+                                    <IconChevronDown className='size-4 opacity-60' />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align='start' className='w-44'>
+                                  <DropdownMenuItem onClick={() => header.column.toggleSorting(false, false)}>
+                                    <IconSortAscending className='mr-2 size-4' />
+                                    Sort ascending
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => header.column.toggleSorting(true, false)}>
+                                    <IconSortDescending className='mr-2 size-4' />
+                                    Sort descending
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
                         </TableHead>
                       )
                     })}
