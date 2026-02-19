@@ -51,6 +51,8 @@ html[data-theme='dark'] {
   --accent: var(--color-neutral-600);
   --accent-foreground: var(--color-neutral-100);
 
+  --tooltip: oklch(40% 0 0);
+
   --card: oklch(28% 0 240);
   --card-foreground: oklch(0.985 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -106,6 +108,8 @@ html[data-theme='dark'] {
 
   --accent: var(--color-neutral-300);
   --accent-foreground: var(--color-neutral-800);
+
+  --tooltip: oklch(90% 0 0);
 
   --card: oklch(0.205 0 0);
   --radius: 0.625rem;
@@ -182,6 +186,8 @@ html[data-theme='dark'] {
 
   --color-input: var(--input);
   --color-input-ring: var(--input-ring);
+
+  --color-tooltip: var(--tooltip);
 
   @keyframes accordion-down {
     from {
