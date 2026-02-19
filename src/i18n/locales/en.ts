@@ -178,7 +178,18 @@ export default {
         status_done: 'Done',
         status_in_progress: 'in-progress',
         user_type_normal: 'normal',
-        user_type_anonynmous: 'anonymous'
+        user_type_anonynmous: 'anonymous',
+        Drawer: {
+          title: 'Examination Attempt - {username}',
+          description: "Showing basics about {username}'s examination attempt.",
+          username_label: 'Username',
+          user_score_label: 'User Score',
+          start_time_label: 'Start Time',
+          duration_label: 'Duration',
+          end_time_label: 'End Time',
+          close_button_label: 'Close',
+          submit_button_label: 'Save Changes'
+        }
       },
       ExaminationQuestionTable: {
         columns: {

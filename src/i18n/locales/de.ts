@@ -214,7 +214,18 @@ export default {
         status_in_progress: 'läuft',
         title: 'Prüfungsversuche',
         user_type_anonynmous: 'anonym',
-        user_type_normal: 'normal'
+        user_type_normal: 'normal',
+        Drawer: {
+          close_button_label: 'Schließen',
+          description: 'Zeigt Informationen zum Prüfungsversuch von {username}.',
+          duration_label: 'Dauer',
+          end_time_label: 'Endzeit',
+          start_time_label: 'Startzeit',
+          submit_button_label: 'Änderungen speichern',
+          title: 'Prüfungsversuch – {username}',
+          user_score_label: 'Benutzerbewertung',
+          username_label: 'Benutzername'
+        }
       },
       description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',
       title: 'Prüfungsergebnisse',

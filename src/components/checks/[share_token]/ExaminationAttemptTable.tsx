@@ -40,7 +40,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
-import { useCurrentLocale } from '@/src/i18n/client-localization'
+import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -83,7 +83,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     cell: ({ row }) => {
       return (
         <DrawerActionTableCell item={row.original}>
-          <Button variant='link' className='text-foreground w-fit px-0 text-left'>
+          <Button variant='link' className='w-fit px-0 text-left text-foreground'>
             {row.original.username}
           </Button>
         </DrawerActionTableCell>
@@ -96,8 +96,8 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
-      <Badge variant='outline' className='text-muted-foreground px-1.5'>
-        {row.original.status === 'Done' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' /> : <IconLoader />}
+      <Badge variant='outline' className='px-1.5 text-muted-foreground'>
+        {row.original.status === 'Done' || row.original.status === 'Erledigt' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' /> : <IconLoader />}
         {row.original.status}
       </Badge>
     ),
@@ -116,7 +116,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     header: 'User Type',
     cell: ({ row }) => (
       <div className='w-fit'>
-        <Badge variant='outline' className='text-muted-foreground px-1.5'>
+        <Badge variant='outline' className='px-1.5 text-muted-foreground'>
           {row.original.type}
         </Badge>
       </div>
@@ -126,7 +126,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     accessorKey: 'score',
     header: () => <div className='w-full text-center'>Score</div>,
     cell: ({ row }) => (
-      <div className='text-foreground text-center text-xs' id={`${row.original.id}-score`}>
+      <div className='text-center text-xs text-foreground' id={`${row.original.id}-score`}>
         {row.original.score}
       </div>
     ),
@@ -161,7 +161,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
+          <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
             <IconDotsVertical />
             <span className='sr-only'>Open menu</span>
           </Button>
@@ -216,6 +216,7 @@ function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
 }
 
 export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttemptItem[] }) {
+  const t = useScopedI18n('Components.DataTable')
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -325,7 +326,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
       <div className='-mb-2 flex items-center justify-between px-4 lg:px-6'>
         <div className='ml-2 hidden items-center gap-2 @sm/table:flex'>
           <Label htmlFor='rows-per-page' className='text-sm font-medium'>
-            Rows per page
+            {t('page_size_label')}
           </Label>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -334,7 +335,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
             }}>
             <SelectTrigger
               size='sm'
-              className='dark:border-ring-subtle border-ring-subtle !h-7 w-fit bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
+              className='h-7! w-fit border-ring-subtle bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:border-ring-subtle dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
               id='rows-per-page'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -352,8 +353,8 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
             <DropdownMenuTrigger asChild>
               <Button variant='outline' size='sm'>
                 <IconLayoutColumns />
-                <span className='hidden lg:inline'>Customize Columns</span>
-                <span className='lg:hidden'>Columns</span>
+                <span className='hidden lg:inline'>{t('customize_columns_label_long')}</span>
+                <span className='lg:hidden'>{t('customize_columns_label_short')}</span>
                 <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -406,7 +407,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      No results.
+                      {t('no_results_label')}
                     </TableCell>
                   </TableRow>
                 )}
@@ -421,30 +422,29 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
 }
 
 function TableFooter({ table }: { table: TableType<ExamAttemptItem> }) {
+  const t = useScopedI18n('Components.DataTable.Pagination')
   return (
     <div className='flex items-center justify-between px-4'>
-      <div className='text-muted-foreground hidden flex-1 text-sm lg:flex'>
-        {table.getFilteredSelectedRowModel().rows.length > 0 && `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`}
+      <div className='hidden flex-1 text-sm text-muted-foreground lg:flex'>
+        {table.getFilteredSelectedRowModel().rows.length > 0 && t('selection_label', { selected: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
       </div>
       <div className='mb-0.25 flex w-full items-center gap-8 lg:w-fit'>
-        <div className='flex w-fit items-center justify-center text-sm font-medium'>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>
+        <div className='flex w-fit items-center justify-center text-sm font-medium'>{t('current_page_label', { page: table.getState().pagination.pageIndex + 1, total: table.getPageCount() })}</div>
         <div className='ml-auto flex items-center gap-2 lg:ml-0'>
           <Button variant='outline' className='hidden h-8 w-8 p-0 lg:flex' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-            <span className='sr-only'>Go to first page</span>
+            <span className='sr-only'>{t('sr_only.go_first_page')}</span>
             <IconChevronsLeft />
           </Button>
           <Button variant='outline' className='size-8' size='icon' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            <span className='sr-only'>Go to previous page</span>
+            <span className='sr-only'>{t('sr_only.go_previous_page')}</span>
             <IconChevronLeft />
           </Button>
           <Button variant='outline' className='size-8' size='icon' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            <span className='sr-only'>Go to next page</span>
+            <span className='sr-only'>{t('sr_only.go_next_page')}</span>
             <IconChevronRight />
           </Button>
           <Button variant='outline' className='mb-0 hidden size-8 lg:flex' size='icon' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-            <span className='sr-only'>Go to last page</span>
+            <span className='sr-only'>{t('sr_only.go_last_page')}</span>
             <IconChevronsRight />
           </Button>
         </div>
@@ -454,6 +454,7 @@ function TableFooter({ table }: { table: TableType<ExamAttemptItem> }) {
 }
 
 function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; children: React.ReactNode }) {
+  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable.Drawer')
   const isMobile = useIsMobile()
   const currentLocale = useCurrentLocale()
 
@@ -463,38 +464,38 @@ function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; chil
       <DrawerContent className='data-[vaul-drawer-direction=right]:*:data-close:flex'>
         <div data-close className='absolute top-0 bottom-0 -left-2.5 hidden items-center'>
           <DrawerClose asChild>
-            <Button variant='ghost' size='icon' className='bg-background size-4 text-neutral-600 hover:scale-115 dark:text-neutral-300'>
+            <Button variant='ghost' size='icon' className='size-4 bg-background text-neutral-600 hover:scale-115 dark:text-neutral-300'>
               <ChevronRightIcon className='' />
             </Button>
           </DrawerClose>
         </div>
         <DrawerHeader className='mb-6 gap-1 border-b'>
-          <DrawerTitle>Examination Attempt - {item.username}</DrawerTitle>
-          <DrawerDescription>Showing basics about {item.username}&apos;s examaination attempt.</DrawerDescription>
+          <DrawerTitle>{t('title', { username: item.username })}</DrawerTitle>
+          <DrawerDescription>{t('description', { username: item.username })}</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
           <QuestionScoresLineChart />
           <form className='mt-4 flex flex-col gap-6'>
             <div className='grid-container [--grid-column-count:2] [--grid-desired-gap-x:48px] [--grid-desired-gap:24px] [--grid-item-min-width:80px]'>
               <div className='col-span-2 flex flex-2 flex-col gap-3'>
-                <Label htmlFor='username'>Username</Label>
+                <Label htmlFor='username'>{t('username_label')}</Label>
                 <Input id='username' readOnly defaultValue={item.username} />
               </div>
 
               <div className='flex flex-1 flex-col gap-3'>
-                <Label htmlFor='score'>User Score</Label>
+                <Label htmlFor='score'>{t('user_score_label')}</Label>
                 <Input id='score' type='number' defaultValue={item.score} />
               </div>
               <div className='flex flex-1 flex-col gap-3'>
-                <Label htmlFor='startedAt'>Start Time</Label>
+                <Label htmlFor='startedAt'>{t('start_time_label')}</Label>
                 <Input id='startedAt' readOnly defaultValue={format(item.startedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
               </div>
               <div className='flex flex-col gap-3'>
-                <Label htmlFor='duration'>Duration</Label>
+                <Label htmlFor='duration'>{t('duration_label')}</Label>
                 <Input id='duration' readOnly defaultValue={differenceInMinutes(item.finishedAt, item.startedAt) + ' minutes'} />
               </div>
               <div className='flex flex-1 flex-col gap-3'>
-                <Label htmlFor='finishedAt'>End Time</Label>
+                <Label htmlFor='finishedAt'>{t('end_time_label')}</Label>
                 <Input id='finishedAt' readOnly defaultValue={format(item.startedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
               </div>
             </div>
@@ -503,12 +504,12 @@ function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; chil
         <DrawerFooter className='grid grid-cols-2 gap-12'>
           <DrawerClose asChild>
             <Button className='' variant='outline'>
-              Close
+              {t('close_button_label')}
             </Button>
           </DrawerClose>
 
           <DrawerClose asChild>
-            <Button className=''>Save Changes</Button>
+            <Button className=''>{t('submit_button_label')}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
