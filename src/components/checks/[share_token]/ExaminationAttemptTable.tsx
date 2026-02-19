@@ -91,6 +91,7 @@ function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
 export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttemptItem[] }) {
   const currentLocale = useCurrentLocale()
   const tDataTable = useScopedI18n('Components.DataTable')
+  const tShared = useScopedI18n('Shared.Timestamp')
   const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable')
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -160,7 +161,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
         header: () => <div className=''>{t('columns.duration_header')}</div>,
         cell: ({ row }) => (
           <div className='text-foreground' id={`${row.original.id}-duration`}>
-            {differenceInMinutes(row.original.finishedAt, row.original.startedAt)} minutes
+            {tShared('minute', { count: differenceInMinutes(row.original.finishedAt, row.original.startedAt) })}
           </div>
         ),
       },
@@ -240,7 +241,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
       },
     ]
     return columns
-  }, [t, tDataTable, currentLocale])
+  }, [t, tDataTable, tShared, currentLocale])
 
   const table = useReactTable({
     data,
@@ -466,6 +467,7 @@ function TableFooter({ table }: { table: TableType<ExamAttemptItem> }) {
 }
 
 function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; children: React.ReactNode }) {
+  const tShared = useScopedI18n('Shared.Timestamp')
   const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable.Drawer')
   const isMobile = useIsMobile()
   const currentLocale = useCurrentLocale()
@@ -504,7 +506,7 @@ function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; chil
               </div>
               <div className='flex flex-col gap-3'>
                 <Label htmlFor='duration'>{t('duration_label')}</Label>
-                <Input id='duration' readOnly defaultValue={differenceInMinutes(item.finishedAt, item.startedAt) + ' minutes'} />
+                <Input id='duration' readOnly defaultValue={tShared('minute', { count: differenceInMinutes(item.finishedAt, item.startedAt) })} />
               </div>
               <div className='flex flex-1 flex-col gap-3'>
                 <Label htmlFor='finishedAt'>{t('end_time_label')}</Label>
