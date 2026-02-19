@@ -495,7 +495,7 @@ function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; chil
               </div>
               <div className='flex flex-1 flex-col gap-3'>
                 <Label htmlFor='finishedAt'>End Time</Label>
-                <Input id='finishedAt' readOnly defaultValue={format(item.startedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
+                <Input id='finishedAt' readOnly defaultValue={format(item.finishedAt, 'P pp', { locale: currentLocale === 'en' ? enUS : deAT })} />
               </div>
             </div>
           </form>
