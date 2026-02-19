@@ -224,6 +224,20 @@
           "title": "Prüfungsversuch – {username}",
           "user_score_label": "Benutzerbewertung",
           "username_label": "Benutzername"
+        },
+        "columns": {
+          "username_header": "Benutzername",
+          "status_header": "Status",
+          "duration_header": "Dauer",
+          "user_type_header": "Benutzertyp",
+          "score_header": "Punktzahl",
+          "totalScore_header": "Maximale Punktzahl",
+          "preview_action_cell": "Vorschau",
+          "actions_menu": {
+            "delete_attempt_label": "Versuch löschen",
+            "show_results_label": "Ergebnisse anzeigen",
+            "sr_only_trigger": "Menü öffnen"
+          }
         }
       },
       "description": "Schauen Sie sich die Prüfungsversuche der Nutzer an.",

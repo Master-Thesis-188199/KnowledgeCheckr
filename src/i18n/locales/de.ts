@@ -225,6 +225,20 @@ export default {
           title: 'Prüfungsversuch – {username}',
           user_score_label: 'Benutzerbewertung',
           username_label: 'Benutzername'
+        },
+        columns: {
+          actions_menu: {
+            delete_attempt_label: 'Versuch löschen',
+            show_results_label: 'Ergebnisse anzeigen',
+            sr_only_trigger: 'Menü öffnen'
+          },
+          duration_header: 'Dauer',
+          preview_action_cell: 'Vorschau',
+          score_header: 'Punktzahl',
+          status_header: 'Status',
+          totalScore_header: 'Maximale Punktzahl',
+          user_type_header: 'Benutzertyp',
+          username_header: 'Benutzername'
         }
       },
       description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',

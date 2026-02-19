@@ -57,133 +57,6 @@ const ExamAttemptItemSchema = z.object({
 
 type ExamAttemptItem = z.infer<typeof ExamAttemptItemSchema>
 
-const columns: ColumnDef<ExamAttemptItem>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <div className='flex items-center justify-center'>
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className='flex items-center justify-center'>
-        <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label='Select row' />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'username',
-    header: 'Username',
-    cell: ({ row }) => {
-      return (
-        <DrawerActionTableCell item={row.original}>
-          <Button variant='link' className='w-fit px-0 text-left text-foreground'>
-            {row.original.username}
-          </Button>
-        </DrawerActionTableCell>
-      )
-    },
-    enableHiding: false,
-  },
-
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <Badge variant='outline' className='px-1.5 text-muted-foreground'>
-        {row.original.status === 'Done' || row.original.status === 'Erledigt' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' /> : <IconLoader />}
-        {row.original.status}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: 'duration',
-    header: () => <div className=''>Duration</div>,
-    cell: ({ row }) => (
-      <div className='text-foreground' id={`${row.original.id}-duration`}>
-        {differenceInMinutes(row.original.finishedAt, row.original.startedAt)} minutes
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'type',
-    header: 'User Type',
-    cell: ({ row }) => (
-      <div className='w-fit'>
-        <Badge variant='outline' className='px-1.5 text-muted-foreground'>
-          {row.original.type}
-        </Badge>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'score',
-    header: () => <div className='w-full text-center'>Score</div>,
-    cell: ({ row }) => (
-      <div className='text-center text-xs text-foreground' id={`${row.original.id}-score`}>
-        {row.original.score}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'totalScore',
-    header: () => <div className='w-full text-center'>Max Score</div>,
-    cell: ({ row }) => (
-      <div className='text--foreground text-center text-xs' id={`${row.original.id}-total-check-score`}>
-        {row.original.totalCheckScore}
-      </div>
-    ),
-  },
-  {
-    id: 'preview-action',
-    header: undefined,
-    cell: ({ row }) => {
-      return (
-        <div className='flex justify-center'>
-          <DrawerActionTableCell item={row.original}>
-            <Button variant='link' size='sm' className='text-foreground/50'>
-              <EyeIcon />
-              Preview
-            </Button>
-          </DrawerActionTableCell>
-        </div>
-      )
-    },
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
-            <IconDotsVertical />
-            <span className='sr-only'>Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-40'>
-          <Link href={`results/${row.original.id}`}>
-            <DropdownMenuItem className='justify-between'>
-              Show Results
-              <ChartColumnIcon className='size-3.5' />
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive' className='justify-between'>
-            Delete Attempt
-            <TrashIcon className='size-3.5' />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-]
-
 // gap between columns (padding) except for action columns
 const sharedClasses =
   '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit'
@@ -216,7 +89,9 @@ function DraggableRow({ row }: { row: Row<ExamAttemptItem> }) {
 }
 
 export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttemptItem[] }) {
-  const t = useScopedI18n('Components.DataTable')
+  const currentLocale = useCurrentLocale()
+  const tDataTable = useScopedI18n('Components.DataTable')
+  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable')
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -230,6 +105,142 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}))
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
+
+  const columns = React.useMemo(() => {
+    const columns: ColumnDef<ExamAttemptItem>[] = [
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <div className='flex items-center justify-center'>
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label='Select all'
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className='flex items-center justify-center'>
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label='Select row' />
+          </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        id: 'username',
+        accessorKey: t('columns.username_header'),
+        header: t('columns.username_header'),
+        cell: ({ row }) => {
+          return (
+            <DrawerActionTableCell item={row.original}>
+              <Button variant='link' className='w-fit px-0 text-left text-foreground'>
+                {row.original.username}
+              </Button>
+            </DrawerActionTableCell>
+          )
+        },
+        enableHiding: false,
+      },
+
+      {
+        id: 'status',
+        accessorKey: t('columns.status_header'),
+        header: t('columns.status_header'),
+        cell: ({ row }) => (
+          <Badge variant='outline' className='px-1.5 text-muted-foreground'>
+            {row.original.status === 'Done' || row.original.status === 'Erledigt' ? <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400/70' /> : <IconLoader />}
+            {row.original.status}
+          </Badge>
+        ),
+      },
+      {
+        id: 'duration',
+        accessorKey: t('columns.duration_header'),
+        header: () => <div className=''>{t('columns.duration_header')}</div>,
+        cell: ({ row }) => (
+          <div className='text-foreground' id={`${row.original.id}-duration`}>
+            {differenceInMinutes(row.original.finishedAt, row.original.startedAt)} minutes
+          </div>
+        ),
+      },
+      {
+        id: 'type',
+        accessorKey: t('columns.user_type_header'),
+        header: t('columns.user_type_header'),
+        cell: ({ row }) => (
+          <div className='w-fit'>
+            <Badge variant='outline' className='px-1.5 text-muted-foreground'>
+              {row.original.type}
+            </Badge>
+          </div>
+        ),
+      },
+      {
+        id: 'score',
+        accessorKey: t('columns.score_header'),
+        header: () => <div className='w-full text-center'>{t('columns.score_header')}</div>,
+        cell: ({ row }) => (
+          <div className='text-center text-xs text-foreground' id={`${row.original.id}-score`}>
+            {row.original.score}
+          </div>
+        ),
+      },
+      {
+        id: 'totalScore',
+        accessorKey: t('columns.totalScore_header'),
+        header: () => <div className='w-full text-center'>{t('columns.totalScore_header')}</div>,
+        cell: ({ row }) => (
+          <div className='text--foreground text-center text-xs' id={`${row.original.id}-total-check-score`}>
+            {row.original.totalCheckScore}
+          </div>
+        ),
+      },
+      {
+        id: 'preview-action',
+        header: undefined,
+        cell: ({ row }) => {
+          return (
+            <div className='flex justify-center'>
+              <DrawerActionTableCell item={row.original}>
+                <Button variant='link' size='sm' className='text-foreground/50'>
+                  <EyeIcon />
+                  {t('columns.preview_action_cell')}
+                </Button>
+              </DrawerActionTableCell>
+            </div>
+          )
+        },
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' className='flex size-8 text-muted-foreground data-[state=open]:bg-muted' size='icon'>
+                <IconDotsVertical />
+                <span className='sr-only'>{t('columns.actions_menu.sr_only_trigger')}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className={cn('w-40', currentLocale === 'de' && 'w-48')}>
+              <Link href={`results/${row.original.id}`}>
+                <DropdownMenuItem className='justify-between'>
+                  {t('columns.actions_menu.show_results_label')}
+                  <ChartColumnIcon className='size-3.5' />
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant='destructive' className='justify-between'>
+                {t('columns.actions_menu.delete_attempt_label')}
+                <TrashIcon className='size-3.5' />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ]
+    return columns
+  }, [t, tDataTable, currentLocale])
 
   const table = useReactTable({
     data,
@@ -326,7 +337,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
       <div className='-mb-2 flex items-center justify-between px-4 lg:px-6'>
         <div className='ml-2 hidden items-center gap-2 @sm/table:flex'>
           <Label htmlFor='rows-per-page' className='text-sm font-medium'>
-            {t('page_size_label')}
+            {tDataTable('page_size_label')}
           </Label>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -353,8 +364,8 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
             <DropdownMenuTrigger asChild>
               <Button variant='outline' size='sm'>
                 <IconLayoutColumns />
-                <span className='hidden lg:inline'>{t('customize_columns_label_long')}</span>
-                <span className='lg:hidden'>{t('customize_columns_label_short')}</span>
+                <span className='hidden lg:inline'>{tDataTable('customize_columns_label_long')}</span>
+                <span className='lg:hidden'>{tDataTable('customize_columns_label_short')}</span>
                 <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -372,7 +383,8 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
                         column.toggleVisibility(!!value)
                         setColumnHidingPolicy('manual')
                       }}>
-                      {column.id}
+                      {/* @ts-expect-error Expect accessorKey to be not recognized even though it exists */}
+                      {column.columnDef.accessorKey ?? column.id}
                     </DropdownMenuCheckboxItem>
                   )
                 })}
@@ -407,7 +419,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      {t('no_results_label')}
+                      {tDataTable('no_results_label')}
                     </TableCell>
                   </TableRow>
                 )}

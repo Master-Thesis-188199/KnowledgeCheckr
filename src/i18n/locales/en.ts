@@ -173,6 +173,20 @@ export default {
       title: 'Examination Results',
       description: 'Look at the examination attempts of users.',
       ExaminationAttemptTable: {
+        columns: {
+          username_header: 'Username',
+          status_header: 'Status',
+          duration_header: 'Duration',
+          user_type_header: 'User Type',
+          score_header: 'Score',
+          totalScore_header: 'Max Score',
+          preview_action_cell: 'Preview',
+          actions_menu: {
+            sr_only_trigger: 'Open menu',
+            show_results_label: 'Show Results',
+            delete_attempt_label: 'Delete Attempt'
+          }
+        },
         title: 'Examination Attempts',
         description: 'Shows a detailed list of all examination attempts for this check',
         status_done: 'Done',
