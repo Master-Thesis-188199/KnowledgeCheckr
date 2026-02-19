@@ -12,6 +12,10 @@
         "drag-drop": "Drag-Drop"
       },
       "points_label": "Points",
+      "points#one": "{count} point",
+      "points#zero": "{count} points",
+      "points#other": "{count} points",
+      "points": "{count} points",
       "accessibility_label": "Accessibility",
       "accessibility": {
         "all": "Universal",
@@ -167,7 +171,6 @@
     "ExaminatonResults": {
       "title": "Examination Results",
       "description": "Look at the examination attempts of users.",
-
       "ExaminationAttemptTable": {
         "title": "Examination Attempts",
         "description": "Shows a detailed list of all examination attempts for this check",
@@ -176,7 +179,6 @@
         "user_type_normal": "normal",
         "user_type_anonynmous": "anonymous"
       },
-
       "ExaminationQuestionTable": {
         "columns": {
           "question_accessorKey": "Question",
@@ -196,7 +198,16 @@
           "delete_answer_label": "Delete Answer"
         }
       },
-
+      "ShowAnswerDrawer_TableCell": {
+        "title": "Preview User Question Answer",
+        "description": "Shows details about a given question and its results.",
+        "score_slider_label": "Question Score",
+        "grade_label": "Grade",
+        "answers_array_label": "Answers",
+        "answer_open_question_label": "Answer",
+        "drawer_close_button_label": "Close",
+        "drawer_submit_button_label": "Save Changes"
+      },
       "Charts": {
         "UserTypePieChart": {
           "title": "Examinations by User types",
@@ -280,7 +291,6 @@
     "KnowledgeCheckCardMenu": {
       "menu_label": "Actions",
       "invite_to_submenu_label": "Invite users to",
-
       "copy_practice": {
         "label": "Copy Practice Link",
         "toast_success": "Successfully saved practice url to clipboard.",
@@ -301,12 +311,10 @@
         "tooltip": "This check has no questions, examination disabled.",
         "toast": "Unable to start Practice"
       },
-
       "edit_check": {
         "label": "Edit KnowledgeCheck",
         "tooltip": "You are not allowed to edit this check!"
       },
-
       "clone_check": {
         "label": "Clone KnowledgeCheck"
       },

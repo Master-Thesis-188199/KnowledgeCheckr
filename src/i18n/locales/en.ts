@@ -13,6 +13,10 @@ export default {
         'drag-drop': 'Drag-Drop'
       },
       points_label: 'Points',
+      'points#one': '{count} point',
+      'points#zero': '{count} points',
+      'points#other': '{count} points',
+      points: '{count} points',
       accessibility_label: 'Accessibility',
       accessibility: {
         all: 'Universal',
@@ -194,6 +198,16 @@ export default {
           show_answers_label: 'Show Answers',
           delete_answer_label: 'Delete Answer'
         }
+      },
+      ShowAnswerDrawer_TableCell: {
+        title: 'Preview User Question Answer',
+        description: 'Shows details about a given question and its results.',
+        score_slider_label: 'Question Score',
+        grade_label: 'Grade',
+        answers_array_label: 'Answers',
+        answer_open_question_label: 'Answer',
+        drawer_close_button_label: 'Close',
+        drawer_submit_button_label: 'Save Changes'
       },
       Charts: {
         UserTypePieChart: {

@@ -11,6 +11,7 @@ import { Label } from '@/src/components/shadcn/label'
 import { Slider } from '@/src/components/shadcn/slider'
 import { Textarea } from '@/src/components/shadcn/textarea'
 import { useIsMobile } from '@/src/hooks/use-mobile'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
@@ -26,6 +27,8 @@ export default function ShowAnswerDrawer_TableCell({
   open?: boolean
   setOpenAction?: Dispatch<SetStateAction<boolean>>
 }) {
+  const tShared = useScopedI18n('Shared.Question')
+  const t = useScopedI18n('Checks.ExaminatonResults.ShowAnswerDrawer_TableCell')
   const isMobile = useIsMobile()
   const [slideValue, setSliderValue] = useState([item.score])
 
@@ -41,15 +44,15 @@ export default function ShowAnswerDrawer_TableCell({
           </DrawerClose>
         </div>
         <DrawerHeader className='mb-6 gap-1 border-b'>
-          <DrawerTitle className='capitalize'>Preview user question answer</DrawerTitle>
-          <DrawerDescription>Shows details about a given question and its results.</DrawerDescription>
+          <DrawerTitle className=''>{t('title')}</DrawerTitle>
+          <DrawerDescription>{t('description')}</DrawerDescription>
         </DrawerHeader>
         <div className='flex flex-1 flex-col gap-4 overflow-y-auto px-4 text-sm'>
           <QuestionScoresLineChart className='h-[175px] min-h-[175px]' />
           <form className='mt-4 flex flex-col gap-10 pb-8'>
             <div className='col-span-2 flex flex-2 flex-col gap-2'>
               <Label htmlFor='question' className='text-xs text-muted-foreground capitalize'>
-                {item.type.replace('-', ' ')} Question
+                {tShared(`type.${item.type}`).replace('-', ' ')} {tShared('question_label')}
               </Label>
               <h2 className='text-base/6 font-medium tracking-wide'>{item.questionText}</h2>
             </div>
@@ -57,18 +60,18 @@ export default function ShowAnswerDrawer_TableCell({
             <div className='flex justify-center gap-10 px-2'>
               <div className='flex flex-1 flex-col gap-3'>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='slider'>Question Score</Label>
-                  <span className='text-sm text-muted-foreground'>{slideValue[0]} points</span>
+                  <Label htmlFor='slider'>{t('score_slider_label')}</Label>
+                  <span className='text-sm text-muted-foreground'>{tShared('points', { count: slideValue[0] })}</span>
                 </div>
                 <Slider id='slider' max={item.points} min={0} onValueChange={setSliderValue} onPointerDown={(e) => e.stopPropagation()} value={slideValue} />
                 <div className='flex items-center justify-between text-xs text-muted-foreground'>
-                  <span>0 points</span>
-                  <span>{item.points} points</span>
+                  <span>{tShared('points', { count: 0 })}</span>
+                  <span>{tShared('points', { count: item.points })}</span>
                 </div>
               </div>
 
               <div className='flex flex-col gap-3'>
-                <Label>Grade</Label>
+                <Label>{t('grade_label')}</Label>
                 <Input
                   defaultValue={item.grade}
                   placeholder='N/A'
@@ -78,7 +81,7 @@ export default function ShowAnswerDrawer_TableCell({
             </div>
 
             <div className='flex flex-col gap-3'>
-              <Label>{item.type !== 'open-question' ? 'Answers' : 'Answer'}</Label>
+              <Label>{item.type !== 'open-question' ? t('answers_array_label') : t('answer_open_question_label')}</Label>
               <ShowQuestionAnswerResults item={item} />
             </div>
           </form>
@@ -86,12 +89,12 @@ export default function ShowAnswerDrawer_TableCell({
         <DrawerFooter className='grid grid-cols-2 gap-12'>
           <DrawerClose asChild>
             <Button className='' variant='outline'>
-              Close
+              {t('drawer_close_button_label')}
             </Button>
           </DrawerClose>
 
           <DrawerClose asChild>
-            <Button className=''>Save Changes</Button>
+            <Button className=''>{t('drawer_submit_button_label')}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

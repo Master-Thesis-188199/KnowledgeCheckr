@@ -19,7 +19,11 @@
         "exam-only": "Prüfungs Frage"
       },
       "category_label": "Kategorie",
-      "answers_label": "Antworten"
+      "answers_label": "Antworten",
+      "points#one": "{count} Punkt",
+      "points#zero": "{count} Punkte",
+      "points#other": "{count} Punkte",
+      "points": "{count} Punkte"
     },
     "Timestamp": {
       "hour#one": "{count} stunde",
@@ -235,6 +239,16 @@
       "ExamAttemptResultPage": {
         "description": "Zeigt alle Details zum jeweiligen Prüfungsversuch von {name}",
         "title": "Ergebnisse des Prüfungsversuchs"
+      },
+      "ShowAnswerDrawer_TableCell": {
+        "answer_open_question_label": "Antwort",
+        "answers_array_label": "Antworten",
+        "description": "Zeigt Details zu einer bestimmten Frage und ihren Ergebnissen an.",
+        "drawer_close_button_label": "Schließen",
+        "drawer_submit_button_label": "Änderungen speichern",
+        "grade_label": "Note",
+        "score_slider_label": "Fragenergebnis",
+        "title": "Details zur Antwort auf die Prüfungsfrage"
       }
     }
   },
