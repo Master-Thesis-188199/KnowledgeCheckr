@@ -13,6 +13,10 @@ export default {
         'drag-drop': 'Drag-Drop'
       },
       points_label: 'Points',
+      'points#one': '{count} point',
+      'points#zero': '{count} points',
+      'points#other': '{count} points',
+      points: '{count} points',
       accessibility_label: 'Accessibility',
       accessibility: {
         all: 'Universal',
@@ -29,7 +33,11 @@ export default {
       'minute#other': '{count} minutes',
       join_word: 'and',
       hour: '{count} hours',
-      minute: '{count} minutes'
+      minute: '{count} minutes',
+      'minute_label#one': 'minute',
+      'minute_label#zero': 'minutes',
+      'minute_label#other': 'minutes',
+      minute_label: 'minutes'
     },
     jump_back_button_label: 'Jump back'
   },
@@ -160,6 +168,114 @@ export default {
           eq_filter_operand: 'Equals'
         }
       }
+    },
+    ExaminatonResults: {
+      title: 'Examination Results',
+      description: 'Look at the examination attempts of users.',
+      ExaminationAttemptTable: {
+        columns: {
+          username_header: 'Username',
+          status_header: 'Status',
+          duration_header: 'Duration',
+          user_type_header: 'User Type',
+          score_header: 'Score',
+          totalScore_header: 'Max Score',
+          preview_action_cell: 'Preview',
+          actions_menu: {
+            sr_only_trigger: 'Open menu',
+            show_results_label: 'Show Results',
+            delete_attempt_label: 'Delete Attempt'
+          }
+        },
+        title: 'Examination Attempts',
+        description: 'Shows a detailed list of all examination attempts for this check',
+        status_done: 'Done',
+        status_in_progress: 'in-progress',
+        user_type_normal: 'normal',
+        user_type_anonynmous: 'anonymous',
+        Drawer: {
+          title: 'Examination Attempt - {username}',
+          description: "Showing basics about {username}'s examination attempt.",
+          username_label: 'Username',
+          user_score_label: 'User Score',
+          start_time_label: 'Start Time',
+          duration_label: 'Duration',
+          end_time_label: 'End Time',
+          close_button_label: 'Close',
+          submit_button_label: 'Save Changes'
+        }
+      },
+      ExaminationQuestionTable: {
+        columns: {
+          question_accessorKey: 'Question',
+          category_accessorKey: 'Category',
+          answer_status_accessorKey: 'Answer Status',
+          type_accessorKey: 'Type',
+          score_accessorKey: 'Score',
+          points_accessorKey: 'Points',
+          grade_accessorKey: 'Grade',
+          answer_status_cell_answered: 'Answered',
+          answer_status_cell_unanswered: 'not Answered',
+          preview_action_cell: 'Show Answers'
+        },
+        ActionMenu: {
+          sr_only_trigger: 'Open Menu',
+          show_answers_label: 'Show Answers',
+          delete_answer_label: 'Delete Answer'
+        }
+      },
+      ShowAnswerDrawer_TableCell: {
+        title: 'Preview User Question Answer',
+        description: 'Shows details about a given question and its results.',
+        score_slider_label: 'Question Score',
+        grade_label: 'Grade',
+        answers_array_label: 'Answers',
+        answer_open_question_label: 'Answer',
+        drawer_close_button_label: 'Close',
+        drawer_submit_button_label: 'Save Changes'
+      },
+      Charts: {
+        UserTypePieChart: {
+          title: 'Examinations by User types',
+          description: 'Shows examination attempts by user type',
+          user_type_normal: 'Normal',
+          user_type_anonynmous: 'Anonymous',
+          inner_label: 'Users'
+        },
+        ExamQuestionDurationChart: {
+          title: 'Average Question time difference',
+          description: 'Shows the variance in actual and estimated answer-time',
+          x_axis_label: 'Questions',
+          y_axis_label: 'Time spent',
+          tooltip: {
+            title: 'Question {count}',
+            estimated_time_label: 'Estimated Time',
+            actual_time_label: 'Time needed',
+            total_faster_label: 'Faster by',
+            total_slower_label: 'Slower by'
+          }
+        },
+        ExaminationSuccessPieChart: {
+          title: 'Examinations Success Rate',
+          description: 'Shows how many users have passed / failed.',
+          'inner_label#one': 'Attempt',
+          'inner_label#other': 'Attempts',
+          inner_label: 'Attempts',
+          passed_label: 'Passed',
+          failed_label: 'Failed'
+        },
+        QuestionScoresLineChartCard: {
+          title: 'Average question score by question',
+          description: 'Shows the variance between average question score and max-score by question',
+          x_axis_label: 'Questions',
+          score_label: 'Score',
+          maxScore_label: 'max Score'
+        }
+      },
+      ExamAttemptResultPage: {
+        title: 'Examination Attempt Results',
+        description: 'Shows all the details of the respective examination attempt of {name}'
+      }
     }
   },
   Examination: {
@@ -253,6 +369,22 @@ export default {
       default_body: 'This action cannot be undone. This will permanently delete this element from your account and remove its data from our servers.',
       default_cancel_label: 'Cancel',
       default_confirm_label: 'Continue'
+    },
+    DataTable: {
+      page_size_label: 'Rows per page',
+      customize_columns_label_long: 'Customize Columns',
+      customize_columns_label_short: 'Columns',
+      no_results_label: 'No results.',
+      Pagination: {
+        selection_label: '{selected} of {total} rows selected.',
+        current_page_label: 'Page {page} of {total}',
+        sr_only: {
+          go_first_page: 'Go to first page',
+          go_next_page: 'Go to next page',
+          go_previous_page: 'Go to previous page',
+          go_last_page: 'Go to last page'
+        }
+      }
     }
   }
 } as const

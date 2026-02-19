@@ -3,12 +3,14 @@ import { getExaminationAttemptById } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 import ExamQuestionResultTable from '../../../../../../components/checks/[share_token]/results/ExamQuestionResultTable'
 
 export default async function ExamAttemptResultPage({ params }: { params: Promise<{ share_token: string; attemptId: string }> }) {
+  const t = await getScopedI18n('Checks.ExaminatonResults.ExamAttemptResultPage')
   const { share_token, attemptId } = await params
   const { user } = await requireAuthentication()
 
@@ -22,7 +24,7 @@ export default async function ExamAttemptResultPage({ params }: { params: Promis
 
   return (
     <>
-      <PageHeading title='Examination Attempt Results' description={`Shows all the details of the a given examination attempt of ${attempt.user.name}`} />
+      <PageHeading title={t('title')} description={t('description', { name: attempt.user.name })} />
 
       <div className='flex flex-col gap-14'>
         <QuestionScoresLineChart />
