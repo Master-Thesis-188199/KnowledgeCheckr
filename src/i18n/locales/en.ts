@@ -257,7 +257,7 @@ export default {
         },
         ExaminationSuccessPieChart: {
           title: 'Examinations Success Rate',
-          description: 'Shows how many users have passd / failed.',
+          description: 'Shows how many users have passed / failed.',
           'inner_label#one': 'Attempt',
           'inner_label#other': 'Attempts',
           inner_label: 'Attempts',
