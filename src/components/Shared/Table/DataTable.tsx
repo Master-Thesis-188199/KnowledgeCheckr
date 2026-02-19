@@ -231,9 +231,12 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                         setColumnHidingPolicy('manual')
                       }}>
                       {/* renders the column-header instead of (id / accessorKey) to re-use the same localized value */}
-                      {typeof column.columnDef.header === 'function'
-                        ? column.columnDef.header({ table, column, header: table.getFlatHeaders().find((h) => h.id === column.id)! })
-                        : column.columnDef.header}
+                      {typeof column.columnDef.header === 'function' ? (
+                        // by wrapping header [() => ReactNode] in a wrapper-div, styles like `w-full text-center` will no longer work as expected
+                        <div>{column.columnDef.header({ table, column, header: table.getFlatHeaders().find((h) => h.id === column.id)! })}</div>
+                      ) : (
+                        column.columnDef.header
+                      )}
                     </DropdownMenuCheckboxItem>
                   )
                 })}
