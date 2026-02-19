@@ -29,17 +29,18 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Label } from '@/components/shadcn/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
 // gap between columns (padding) except for action columns
 const sharedClasses = cn(
-  '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit',
+  '*:[td]:not-data-[column-id*=action]:px-5 *:[th]:border-neutral-300 *:[th]:not-data-[column-id*=action]:border-x *:[th]:not-data-[column-id*=action]:px-5 dark:*:[th]:border-inherit',
   //* ensure primary column takes up free space (w-full) but the content-width is limited to 40% of screen width.
   //* That way the column may not require more than 40% of screen width based on content.
   //* Hence, the column may take up all the free space (w-full) but if the other table columns require space, then the primary column will not enforce its width above 40% screen width
-  '*:[td]:data-[column-id=primary]:max-w-[40vw] ',
-  ' *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td]:data-[column-id=primary]:*:truncate',
+  '*:[td]:data-[column-id=primary]:max-w-[40vw]',
+  '*:[td]:data-[column-id=primary]:*:truncate *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full',
 )
 
 function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> }) {
@@ -70,6 +71,7 @@ function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> 
 }
 
 export function DataTable<T extends I[], I extends { id: string | number }>({ data: initialData, columns, columnHideOrder }: { data: T; columns: ColumnDef<I>[]; columnHideOrder?: string[] }) {
+  const t = useScopedI18n('Components.DataTable')
   const [data, setData] = React.useState<I[]>(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -180,7 +182,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
       <div className='-mb-2 flex items-center justify-between'>
         <div className='ml-2 hidden items-center gap-2 @sm/table:flex'>
           <Label htmlFor='rows-per-page' className='text-sm font-medium'>
-            Rows per page
+            {t('page_size_label')}
           </Label>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -189,7 +191,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
             }}>
             <SelectTrigger
               size='sm'
-              className='dark:border-ring-subtle border-ring-subtle !h-7 w-fit bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
+              className='h-7! w-fit border-ring-subtle bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:border-ring-subtle dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
               id='rows-per-page'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -207,8 +209,8 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
             <DropdownMenuTrigger asChild>
               <Button variant='outline' size='sm'>
                 <IconLayoutColumns />
-                <span className='hidden lg:inline'>Customize Columns</span>
-                <span className='lg:hidden'>Columns</span>
+                <span className='hidden lg:inline'>{t('customize_columns_label_long')}</span>
+                <span className='lg:hidden'>{t('customize_columns_label_short')}</span>
                 <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -262,7 +264,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      No results.
+                      {t('no_results_label')}
                     </TableCell>
                   </TableRow>
                 )}
@@ -277,30 +279,30 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
 }
 
 function TableFooter<I extends { id: string | number }>({ table }: { table: TableType<I> }) {
+  const t = useScopedI18n('Components.DataTable.Pagination')
+
   return (
     <div className='flex items-center justify-between px-4'>
-      <div className={cn('text-muted-foreground hidden flex-1 text-sm transition-opacity lg:flex', table.getFilteredSelectedRowModel().rows.length === 0 && 'opacity-0')}>
-        {table.getFilteredSelectedRowModel().rows.length > 0 && `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`}
+      <div className={cn('hidden flex-1 text-sm text-muted-foreground transition-opacity lg:flex', table.getFilteredSelectedRowModel().rows.length === 0 && 'opacity-0')}>
+        {table.getFilteredSelectedRowModel().rows.length > 0 && t('selection_label', { selected: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
       </div>
       <div className='mb-0.25 flex w-full items-center gap-8 lg:w-fit'>
-        <div className='flex w-fit items-center justify-center text-sm font-medium'>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>
+        <div className='flex w-fit items-center justify-center text-sm font-medium'>{t('current_page_label', { page: table.getState().pagination.pageIndex + 1, total: table.getPageCount() })}</div>
         <div className='ml-auto flex items-center gap-2 lg:ml-0'>
           <Button variant='outline' className='hidden h-8 w-8 p-0 lg:flex' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-            <span className='sr-only'>Go to first page</span>
+            <span className='sr-only'>{t('sr_only.go_first_page')}</span>
             <IconChevronsLeft />
           </Button>
           <Button variant='outline' className='size-8' size='icon' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            <span className='sr-only'>Go to previous page</span>
+            <span className='sr-only'>{t('sr_only.go_previous_page')}</span>
             <IconChevronLeft />
           </Button>
           <Button variant='outline' className='size-8' size='icon' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            <span className='sr-only'>Go to next page</span>
+            <span className='sr-only'>{t('sr_only.go_next_page')}</span>
             <IconChevronRight />
           </Button>
           <Button variant='outline' className='mb-0 hidden size-8 lg:flex' size='icon' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-            <span className='sr-only'>Go to last page</span>
+            <span className='sr-only'>{t('sr_only.go_last_page')}</span>
             <IconChevronsRight />
           </Button>
         </div>

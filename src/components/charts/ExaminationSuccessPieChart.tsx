@@ -5,8 +5,10 @@ import React from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export function ExaminationSuccessPieChart({ title, description }: { title: string; description?: string }) {
+  const t = useScopedI18n('Checks.ExaminatonResults.Charts.ExaminationSuccessPieChart')
   const total = Math.max(Math.round(Math.random() * 150), Math.round(Math.max(48, Math.random() * 120)))
   const passedRate = Math.min(0.95, Math.max(0.6, Math.random()))
 
@@ -24,12 +26,12 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
     (): ChartConfig => ({
       pass: {
         // label: 'Passed Examination',
-        label: 'Passed',
+        label: t('passed_label'),
         color: 'var(--chart-2)',
       },
       fail: {
         // label: 'Failed Examination',
-        label: 'Failed',
+        label: t('failed_label'),
         color: 'var(--chart-5)',
       },
     }),
@@ -61,7 +63,7 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
                           <div className='flex items-center justify-between gap-4'>
                             <div className='flex items-center gap-2'>
                               <div
-                                className='h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)'
+                                className='size-2.5 shrink-0 rounded-[2px] bg-(--color-bg)'
                                 style={
                                   {
                                     '--color-bg': `var(--color-${name})`,
@@ -70,9 +72,9 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
                               />
                               {chartConfig[name as keyof typeof chartConfig]?.label || name}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {value}
-                              <span className='text-muted-foreground font-normal'>attempts</span>
+                              <span className='font-normal text-muted-foreground lowercase'>{t('inner_label', { count: +value })}</span>
                             </div>
                           </div>
                         </div>
@@ -91,8 +93,8 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
                         <tspan x={viewBox.cx} y={viewBox.cy} className='fill-foreground text-3xl font-bold'>
                           {totalUsers.toLocaleString()}
                         </tspan>
-                        <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className='fill-muted-foreground'>
-                          Attempts
+                        <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className='fill-muted-foreground capitalize'>
+                          {t('inner_label', { count: totalUsers })}
                         </tspan>
                       </text>
                     )

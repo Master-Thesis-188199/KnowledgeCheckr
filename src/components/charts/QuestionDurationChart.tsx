@@ -4,12 +4,15 @@ import React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import randomRange from '@/src/lib/Shared/randomRange'
 import { cn } from '@/src/lib/Shared/utils'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 export function ExamQuestionDurationChart({ title, description, questions }: { title: string; description?: string; questions?: Question[] }) {
+  const tShared = useScopedI18n('Shared.Timestamp')
+  const t = useScopedI18n('Checks.ExaminatonResults.Charts.ExamQuestionDurationChart')
   if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion())
 
   const dataQuestions = React.useMemo(() => {
@@ -65,50 +68,47 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               cursor={false}
               content={
                 <ChartTooltipContent
-                  label='Time Difference'
                   formatter={(value, name, item, index) => {
                     return (
                       <div className='mt-2 flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>
                           <div className='flex items-center justify-between gap-4'>
                             <div className='flex items-center gap-2'>
-                              <div className={cn('h-2.5 w-2.5 shrink-0 rounded-[2px]', 'bg-chart-2')} />
-                              Estimated Time
+                              <div className={cn('size-2.5 shrink-0 rounded-[2px]', 'bg-chart-2')} />
+                              {t('tooltip.estimated_time_label')}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {item.payload.estimated}
-                              <span className='text-muted-foreground font-normal'>minutes</span>
+                              <span className='font-normal text-muted-foreground'>{tShared('minute_label', { count: item.payload.estimated })}</span>
                             </div>
                           </div>
                           <div className='flex items-center justify-between gap-4'>
                             <div className='flex items-center gap-2'>
-                              <div className={cn('h-2.5 w-2.5 shrink-0 rounded-[2px]', 'bg-chart-3')} />
-                              Time needed
+                              <div className={cn('size-2.5 shrink-0 rounded-[2px]', 'bg-chart-3')} />
+                              {t('tooltip.actual_time_label')}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {item.payload.actualTime}
-                              <span className='text-muted-foreground font-normal'>minutes</span>
+                              <span className='font-normal text-muted-foreground'>{tShared('minute_label', { count: item.payload.actualTime })}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className='text-foreground mt-1.5 flex items-center border-t pt-1.5 text-xs font-medium'>
+                        <div className='mt-1.5 flex items-center border-t pt-1.5 text-xs font-medium text-foreground'>
                           {item.payload.difference > 0 ? (
-                            <span className='text-[oklch(59.2%_0.309_151.711)] dark:text-[oklch(79.2%_0.209_151.711)]'>Faster by</span>
+                            <span className='text-[oklch(59.2%_0.309_151.711)] dark:text-green-400'>{t('tooltip.total_faster_label')}</span>
                           ) : (
                             // eslint-disable-next-line require-color-modes/require-color-mode-styles
-                            <span className='text-red-400'>Slower by</span>
+                            <span className='text-red-400'>{t('tooltip.total_slower_label')}</span>
                           )}
-                          <div className='text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums'>
-                            <span className={cn(item.payload.difference > 0 ? 'text-[oklch(59.2%_0.309_151.711)] dark:text-[oklch(79.2%_0.209_151.711)]' : 'text-red-400')}>
-                              {Math.abs(item.payload.difference)}
-                            </span>
+                          <div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium text-foreground tabular-nums'>
+                            <span className={cn(item.payload.difference > 0 ? 'text-[oklch(59.2%_0.309_151.711)] dark:text-green-400' : 'text-red-400')}>{Math.abs(item.payload.difference)}</span>
                             <span
                               className={cn(
                                 'font-normal',
                                 item.payload.difference > 0 ? 'text-[oklch(59.2%_0.309_151.711)]/50 dark:text-[oklch(79.2%_0.07_151.711)]' : 'text-[oklch(70.4%_0.07_22.216)]',
                               )}>
-                              minutes
+                              {tShared('minute_label', { count: Math.abs(item.payload.difference) })}
                             </span>
                           </div>
                         </div>
@@ -117,7 +117,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
                   }}
                 />
               }
-              labelFormatter={(_, payload) => `Question ${payload[0].payload.name}`}
+              labelFormatter={(_, payload) => t('tooltip.title', { count: payload[0].payload.name })}
             />
             <defs>
               <linearGradient id='splitColor' x1='0' y1='0' x2='0' y2='1'>
@@ -140,7 +140,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               }}
               label={({ viewBox: { x, y, width, height } }: Any) => (
                 <text x={x + width / 2 - 20} y={y + height + 3} className='' fill='gray'>
-                  Questions
+                  {t('x_axis_label')}
                 </text>
               )}
             />
@@ -151,7 +151,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
                 // console.log('Normalized domain', ...updatedDomain, 'min: ', dataMin, 'max: ', dataMax)
                 return updatedDomain
               }}
-              label={<AxisLabel>Time spent</AxisLabel>}
+              label={<AxisLabel>{t('y_axis_label')}</AxisLabel>}
             />
             <Area type='monotone' dataKey='difference' className='text-neutral-400 dark:text-neutral-500' stroke='currentColor' fill='url(#splitColor)' />
           </AreaChart>
