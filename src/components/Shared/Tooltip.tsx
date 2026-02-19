@@ -1,4 +1,5 @@
-import { Tooltip as HerouiTooltip, TooltipProps as HerouiTooltipProps } from '@heroui/tooltip'
+import { TooltipProps as HerouiTooltipProps } from '@heroui/tooltip'
+import { Tooltip as ShadcnTooltip, TooltipContent, TooltipTrigger } from '@/src/components/shadcn/tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 
 type BaseTooltipProps = {
@@ -8,19 +9,17 @@ type BaseTooltipProps = {
 
 export type TooltipProps = BaseTooltipProps & HerouiTooltipProps
 
-export default function Tooltip({ showsWarning, showsError, ...props }: TooltipProps) {
+export default function Tooltip({ delay = 250, showsWarning, showsError, ...props }: TooltipProps) {
   return (
-    <HerouiTooltip
-      delay={250}
-      offset={8}
-      closeDelay={0}
-      shouldFlip
-      {...props}
-      className={cn(
-        'rounded-md border-t border-r border-l border-neutral-300 bg-neutral-100 p-2 text-sm text-neutral-600 shadow-sm shadow-neutral-400 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300/90 dark:shadow-neutral-700',
-        showsWarning && 'text-[#BF8415] shadow-orange-500/20 dark:text-orange-400 dark:shadow-orange-400/40',
-        showsError && 'text-[#D44D35] shadow-red-500/30 dark:text-red-400/90 dark:shadow-red-400/40',
-      )}
-    />
+    <ShadcnTooltip delayDuration={delay}>
+      <TooltipTrigger asChild>{props.children}</TooltipTrigger>
+      <TooltipContent
+        className={cn(
+          showsWarning && 'text-[#BF8415] shadow-orange-500/20 dark:text-orange-400 dark:shadow-orange-400/40',
+          showsError && 'text-destructive shadow-red-500/30 dark:text-destructive dark:shadow-red-400/40',
+        )}>
+        {props.content}
+      </TooltipContent>
+    </ShadcnTooltip>
   )
 }
