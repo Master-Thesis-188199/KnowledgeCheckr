@@ -62,7 +62,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
               <CardDescription>{t('ExaminationAttemptTable.description')}</CardDescription>
             </div>
           </CardHeader>
-          <CardContent className='mt-auto px-0'>
+          <CardContent className='mt-auto'>
             <ExaminationAttemptTable
               data={dummyAttempts.map((attempt, i) => ({
                 id: attempt.id,
