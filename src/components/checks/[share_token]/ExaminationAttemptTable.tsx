@@ -135,7 +135,7 @@ const columns: ColumnDef<ExamAttemptItem>[] = [
     accessorKey: 'totalScore',
     header: () => <div className='w-full text-center'>Max Score</div>,
     cell: ({ row }) => (
-      <div className='text--foreground text-center text-xs' id={`${row.original.id}-total-check-score`}>
+      <div className='text-foreground text-center text-xs' id={`${row.original.id}-total-check-score`}>
         {row.original.totalCheckScore}
       </div>
     ),
