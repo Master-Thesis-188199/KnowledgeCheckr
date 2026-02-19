@@ -70,7 +70,17 @@ function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> 
   )
 }
 
-export function DataTable<T extends I[], I extends { id: string | number }>({ data: initialData, columns, columnHideOrder }: { data: T; columns: ColumnDef<I>[]; columnHideOrder?: string[] }) {
+export function DataTable<T extends I[], I extends { id: string | number }>({
+  data: initialData,
+  columns,
+  columnHideOrder,
+  enableSorting = true,
+}: {
+  data: T
+  columns: ColumnDef<I>[]
+  columnHideOrder?: string[]
+  enableSorting?: boolean
+}) {
   const t = useScopedI18n('Components.DataTable')
   const [data, setData] = React.useState<I[]>(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -98,7 +108,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
-    enableSorting: true,
+    enableSorting: enableSorting,
     enableSortingRemoval: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
