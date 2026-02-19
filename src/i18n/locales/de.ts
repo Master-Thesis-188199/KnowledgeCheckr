@@ -227,18 +227,18 @@ export default {
           username_label: 'Benutzername'
         },
         columns: {
+          username_header: 'Benutzername',
+          status_header: 'Status',
+          duration_header: 'Dauer',
+          user_type_header: 'Benutzertyp',
+          score_header: 'Punktzahl',
+          totalScore_header: 'Maximale Punktzahl',
+          preview_action_cell: 'Vorschau',
           actions_menu: {
             delete_attempt_label: 'Versuch löschen',
             show_results_label: 'Ergebnisse anzeigen',
             sr_only_trigger: 'Menü öffnen'
-          },
-          duration_header: 'Dauer',
-          preview_action_cell: 'Vorschau',
-          score_header: 'Punktzahl',
-          status_header: 'Status',
-          totalScore_header: 'Maximale Punktzahl',
-          user_type_header: 'Benutzertyp',
-          username_header: 'Benutzername'
+          }
         }
       },
       description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',
@@ -385,7 +385,15 @@ export default {
       customize_columns_label_long: 'Spalten anpassen',
       customize_columns_label_short: 'Spalten',
       no_results_label: 'Keine Ergebnisse.',
-      page_size_label: 'Zeilen pro Seite'
+      page_size_label: 'Zeilen pro Seite',
+      Sorting: {
+        ascending_order_label: 'Aufsteigend sortieren',
+        ascending_order_title: 'Zeilen in aufsteigender Reihenfolge sortieren',
+        descending_order_label: 'Absteigend sortieren',
+        descending_order_title: 'Zeilen in absteigender Reihenfolge sortieren',
+        column_sort_button_aria_label: 'Sortieren nach {columnId}',
+        dropdown_sr_only_trigger_label: 'Sortiermenü öffnen'
+      }
     }
   }
 } as const

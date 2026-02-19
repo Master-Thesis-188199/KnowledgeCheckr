@@ -29,7 +29,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Label } from '@/components/shadcn/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -82,6 +82,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
   enableSorting?: boolean
 }) {
   const t = useScopedI18n('Components.DataTable')
+  const currentLocale = useCurrentLocale()
   const [data, setData] = React.useState<I[]>(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -274,13 +275,13 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                 type='button'
                                 onClick={header.column.getToggleSortingHandler()}
                                 className='inline-flex flex-1 items-center justify-between gap-2 select-none hover:cursor-pointer'
-                                aria-label={`Sort by ${header.id}`}>
+                                aria-label={t('Sorting.column_sort_button_aria_label', { columnId: header.column.id })}>
                                 {flexRender(header.column.columnDef.header, header.getContext())}
 
                                 {header.column.getIsSorted() === 'asc' ? (
-                                  <IconSortAscending className='size-4 opacity-80' title='Sorting rows in ascending order' />
+                                  <IconSortAscending className='size-4 opacity-80' title={t('Sorting.ascending_order_title')} />
                                 ) : header.column.getIsSorted() === 'desc' ? (
-                                  <IconSortDescending className='size-4 opacity-80' title='Sorting rows in descending order' />
+                                  <IconSortDescending className='size-4 opacity-80' title={t('Sorting.descending_order_title')} />
                                 ) : (
                                   <></>
                                 )}
@@ -292,7 +293,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                     variant='ghost'
                                     size='icon'
                                     className={cn('size-5 opacity-65', header.column.getIsSorted() && 'hidden')}
-                                    aria-label='Open sort menu'
+                                    aria-label={t('Sorting.dropdown_sr_only_trigger_label')}
                                     onClick={(e) => {
                                       // Prevent the header toggle click from firing when opening the menu.
                                       e.stopPropagation()
@@ -300,14 +301,14 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                     <IconChevronDown className='size-4 opacity-60' />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align='start' className='w-44'>
+                                <DropdownMenuContent align='start' className={cn('w-44', currentLocale === 'de' && 'w-50')}>
                                   <DropdownMenuItem onClick={() => header.column.toggleSorting(false, false)}>
                                     <IconSortAscending className='mr-2 size-4' />
-                                    Sort ascending
+                                    {t('Sorting.ascending_order_label')}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => header.column.toggleSorting(true, false)}>
                                     <IconSortDescending className='mr-2 size-4' />
-                                    Sort descending
+                                    {t('Sorting.descending_order_label')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
