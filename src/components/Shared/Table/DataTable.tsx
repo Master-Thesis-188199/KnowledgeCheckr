@@ -29,6 +29,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Label } from '@/components/shadcn/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
@@ -279,9 +280,13 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                 {flexRender(header.column.columnDef.header, header.getContext())}
 
                                 {header.column.getIsSorted() === 'asc' ? (
-                                  <IconSortAscending className='size-4 opacity-80' title={t('Sorting.ascending_order_title')} />
+                                  <Tooltip content={t('Sorting.ascending_order_title')}>
+                                    <IconSortAscending className='size-4 opacity-80' />
+                                  </Tooltip>
                                 ) : header.column.getIsSorted() === 'desc' ? (
-                                  <IconSortDescending className='size-4 opacity-80' title={t('Sorting.descending_order_title')} />
+                                  <Tooltip content={t('Sorting.descending_order_title')}>
+                                    <IconSortDescending className='size-4 opacity-80' />
+                                  </Tooltip>
                                 ) : (
                                   <></>
                                 )}
