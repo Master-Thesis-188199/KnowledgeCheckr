@@ -18,6 +18,7 @@ export default function Tooltip({ disabled, config = {}, delay = 250, variant = 
       <TooltipContent
         {...props}
         className={cn(
+          'shadow-md shadow-accent dark:shadow-card',
           variant === 'warning' && 'text-[#BF8415] shadow-orange-500/20 dark:text-orange-400 dark:shadow-orange-400/40',
           variant === 'destructive' && 'text-destructive shadow-red-500/30 dark:text-destructive dark:shadow-red-400/40',
           props.className,
