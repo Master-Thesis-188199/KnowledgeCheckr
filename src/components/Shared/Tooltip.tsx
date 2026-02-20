@@ -13,7 +13,7 @@ export type TooltipProps = Omit<React.ComponentProps<typeof TooltipPrimitive.Con
 
 export default function Tooltip({ disabled, config = {}, delay = 250, variant = 'normal', ...props }: TooltipProps) {
   return (
-    <ShadcnTooltip delayDuration={delay} {...config} open={disabled !== undefined && disabled === true ? false : config.open}>
+    <ShadcnTooltip delayDuration={delay} {...config} open={disabled === true ? false : config.open}>
       <TooltipTrigger asChild>{props.children}</TooltipTrigger>
       <TooltipContent
         {...props}
