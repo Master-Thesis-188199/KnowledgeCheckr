@@ -11,10 +11,10 @@ export type TooltipProps = Omit<React.ComponentProps<typeof TooltipPrimitive.Con
   disabled?: boolean
 }
 
-export default function Tooltip({ disabled, config = {}, delay = 250, variant = 'normal', ...props }: TooltipProps) {
+export default function Tooltip({ disabled, config = {}, delay = 250, variant = 'normal', content, children, ...props }: TooltipProps) {
   return (
     <ShadcnTooltip delayDuration={delay} {...config} open={disabled === true ? false : config.open}>
-      <TooltipTrigger asChild>{props.children}</TooltipTrigger>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
         {...props}
         className={cn(
@@ -23,7 +23,7 @@ export default function Tooltip({ disabled, config = {}, delay = 250, variant = 
           variant === 'destructive' && 'text-destructive shadow-red-500/30 dark:text-destructive dark:shadow-red-400/40',
           props.className,
         )}>
-        {props.content}
+        {content}
       </TooltipContent>
     </ShadcnTooltip>
   )
