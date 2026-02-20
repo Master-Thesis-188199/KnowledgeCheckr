@@ -292,7 +292,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                   <Button
                                     variant='ghost'
                                     size='icon'
-                                    className={cn('size-5 opacity-65', header.column.getIsSorted() && 'hidden')}
+                                    className={cn('size-5 opacity-65')}
                                     aria-label={t('Sorting.dropdown_sr_only_trigger_label')}
                                     onClick={(e) => {
                                       // Prevent the header toggle click from firing when opening the menu.
