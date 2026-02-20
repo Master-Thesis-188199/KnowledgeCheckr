@@ -385,5 +385,14 @@
       "no_results_label": "Keine Ergebnisse.",
       "page_size_label": "Zeilen pro Seite"
     }
+  },
+  "AccountPage": {
+    "LinkAccountSection": {
+      "description": "Um Ihre Daten nach dem Abmelden oder Schließen dieses Tabs zu behalten, können Sie sich über einen sozialen Anbieter wie Google oder GitHub anmelden.",
+      "title": "Verknüpfen Sie Ihr Konto"
+    },
+    "signout_button_label": "Abmelden",
+    "signout_delete_notice": "Daten löschen",
+    "title": "Kontoinformationen"
   }
 }

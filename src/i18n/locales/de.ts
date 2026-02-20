@@ -227,18 +227,18 @@ export default {
           username_label: 'Benutzername'
         },
         columns: {
+          username_header: 'Benutzername',
+          status_header: 'Status',
+          duration_header: 'Dauer',
+          user_type_header: 'Benutzertyp',
+          score_header: 'Punktzahl',
+          totalScore_header: 'Maximale Punktzahl',
+          preview_action_cell: 'Vorschau',
           actions_menu: {
             delete_attempt_label: 'Versuch löschen',
             show_results_label: 'Ergebnisse anzeigen',
             sr_only_trigger: 'Menü öffnen'
-          },
-          duration_header: 'Dauer',
-          preview_action_cell: 'Vorschau',
-          score_header: 'Punktzahl',
-          status_header: 'Status',
-          totalScore_header: 'Maximale Punktzahl',
-          user_type_header: 'Benutzertyp',
-          username_header: 'Benutzername'
+          }
         }
       },
       description: 'Schauen Sie sich die Prüfungsversuche der Nutzer an.',
@@ -387,5 +387,14 @@ export default {
       no_results_label: 'Keine Ergebnisse.',
       page_size_label: 'Zeilen pro Seite'
     }
+  },
+  AccountPage: {
+    LinkAccountSection: {
+      description: 'Um Ihre Daten nach dem Abmelden oder Schließen dieses Tabs zu behalten, können Sie sich über einen sozialen Anbieter wie Google oder GitHub anmelden.',
+      title: 'Verknüpfen Sie Ihr Konto'
+    },
+    signout_button_label: 'Abmelden',
+    signout_delete_notice: 'Daten löschen',
+    title: 'Kontoinformationen'
   }
 } as const
