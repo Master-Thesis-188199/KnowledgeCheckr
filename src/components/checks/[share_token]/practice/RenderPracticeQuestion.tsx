@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
 import isEmpty from 'lodash/isEmpty'
@@ -15,6 +15,7 @@ import { usePracticeStore } from '@/src/components/checks/[share_token]/practice
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
@@ -142,7 +143,7 @@ export function RenderPracticeQuestion() {
             Check Answer
           </Button>
 
-          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 ' variant='success' onClick={nextRandomQuestion} type='button'>
+          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
             Continue
           </Button>
         </div>
@@ -233,48 +234,56 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
     register,
     formState: { errors },
   } = useFormContext<QuestionInput>()
+  const [openFeedbacks, setOpenFeedbacks] = useState<ChoiceQuestion['answers'][number]['id'][]>([])
 
   return question.answers.map((a, i) => {
     const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
 
     return (
-      <label
-        key={a.id}
-        className={cn(
-          'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
-          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
-          'flex items-center justify-center',
-          'resize-none select-none',
-          'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+      <Tooltip
+        className='max-w-[25vw] text-wrap'
+        disabled={!isEvaluated}
+        config={{ open: openFeedbacks.includes(a.id) ? true : undefined }}
+        content={reasoning?.at(i)}
+        side={i % 2 === 1 ? 'right' : 'left'}
+        key={a.id}>
+        <label
+          onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
+          className={cn(
+            'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+            'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
+            'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
+            'flex items-center justify-center',
+            'resize-none select-none',
+            'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
-          isEvaluated && 'relative ring-2',
-          isEvaluated &&
-            isCorrectlySelected(a) &&
-            'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
-          isEvaluated &&
-            isFalslySelected(a) &&
-            'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
-          isEvaluated && isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
-        )}
-        title={isCorrectlySelected(a) ? undefined : isFalslySelected(a) ? reasoning?.at(i) : isMissingSelection(a) ? reasoning?.at(i) : undefined}
-        htmlFor={a.id}>
-        {a.answer}
+            isEvaluated && 'relative ring-2',
+            isEvaluated &&
+              isCorrectlySelected(a) &&
+              'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+            isEvaluated &&
+              isFalslySelected(a) &&
+              'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+            isEvaluated && isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+          )}
+          htmlFor={a.id}>
+          {a.answer}
 
-        <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
+          <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
 
-        <input
-          className='hidden'
-          id={a.id}
-          type={type}
-          {...register(registerKey(i))}
-          disabled={isEvaluated}
-          value={a.id}
-          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
-        />
+          <input
+            className='hidden'
+            id={a.id}
+            type={type}
+            {...register(registerKey(i))}
+            disabled={isEvaluated}
+            value={a.id}
+            data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
+          />
 
-        <FormFieldError field={registerKey(i)} errors={errors} />
-      </label>
+          <FormFieldError field={registerKey(i)} errors={errors} />
+        </label>
+      </Tooltip>
     )
   })
 }
