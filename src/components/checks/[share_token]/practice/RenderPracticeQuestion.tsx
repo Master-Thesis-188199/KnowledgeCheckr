@@ -11,11 +11,11 @@ import { useFormContext } from 'react-hook-form'
 import { UseFormRegister } from 'react-hook-form'
 import { FeedbackOpenQuestion } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
+import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
-import Tooltip from '@/src/components/Shared/Tooltip'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
@@ -207,9 +207,9 @@ function FeedbackLegend({ show, disabled }: { show: boolean; disabled?: boolean 
 function FeedbackIndicators({ correctlySelected, missingSelection, falslySelected }: { correctlySelected?: boolean; missingSelection?: boolean; falslySelected?: boolean }) {
   return (
     <>
-      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-green-400 dark:text-green-500', correctlySelected && 'block')} />
-      <XIcon className={cn('absolute top-1 right-1 hidden size-5 text-red-400 dark:text-red-500', falslySelected && 'block')} />
-      <CheckIcon className={cn('absolute top-1 right-1 hidden size-5 text-yellow-400/80 dark:text-yellow-500/80', missingSelection && 'block')} />
+      <CheckIcon className={cn('hidden size-5 text-green-400 dark:text-green-500', correctlySelected && 'block')} />
+      <XIcon className={cn('hidden size-5 text-red-400 dark:text-red-500', falslySelected && 'block')} />
+      <CheckIcon className={cn('hidden size-5 text-yellow-400/80 dark:text-yellow-500/80', missingSelection && 'block')} />
     </>
   )
 }
@@ -240,13 +240,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
     const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
 
     return (
-      <Tooltip
-        className='max-w-[25vw] text-wrap'
-        disabled={!isEvaluated}
-        config={{ open: openFeedbacks.includes(a.id) ? true : undefined }}
-        content={reasoning?.at(i)}
-        side={i % 2 === 1 ? 'right' : 'left'}
-        key={a.id}>
+      <DisplayFeedbackText disabled={!isEvaluated} open={openFeedbacks.includes(a.id) ? true : undefined} feedback={reasoning?.at(i)} side={i % 2 === 1 ? 'right' : 'left'} key={a.id}>
         <label
           onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
           className={cn(
@@ -283,7 +277,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
 
           <FormFieldError field={registerKey(i)} errors={errors} />
         </label>
-      </Tooltip>
+      </DisplayFeedbackText>
     )
   })
 }
