@@ -271,9 +271,9 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         {a.answer}
 
         <DisplayFeedbackText disabled={!isEvaluated} open={openFeedbacks.includes(a.id) ? true : undefined} feedback={reasoning?.at(i)} side={i % 2 === 1 ? 'right' : 'left'}>
-          <div className={cn('absolute top-1 right-1 flex gap-2')}>
+          <div className={cn('absolute top-1 right-1.5 flex gap-1.5', i % 2 === 0 && 'left-1.5 flex-row-reverse justify-between')}>
             <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
-            <MessageCircleQuestionIcon className='size-5 text-warning' />
+            <MessageCircleQuestionIcon className='size-4.5 text-warning' />
           </div>
         </DisplayFeedbackText>
 
