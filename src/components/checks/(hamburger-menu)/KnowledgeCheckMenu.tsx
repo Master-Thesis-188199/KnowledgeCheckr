@@ -56,7 +56,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
    * @param callback The callback function which is used when a) a share-key exists or b) after a new token was generated and stored.
    * @returns a callable onClick handler
    */
-  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => (_: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => () => {
     if (share_key) {
       callback(share_key)
       return
@@ -74,7 +74,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   return (
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='h-auto w-auto px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
+        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='size-auto  px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </DropdownMenuTrigger>

@@ -56,7 +56,7 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
               content={
                 <ChartTooltipContent
                   hideLabel
-                  formatter={(value, name, item, index) => {
+                  formatter={(value, name) => {
                     return (
                       <div className='flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>

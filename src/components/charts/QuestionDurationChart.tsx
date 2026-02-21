@@ -68,7 +68,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               cursor={false}
               content={
                 <ChartTooltipContent
-                  formatter={(value, name, item, index) => {
+                  formatter={(value, name, item) => {
                     return (
                       <div className='mt-2 flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>
@@ -160,7 +160,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
     </Card>
   )
 }
-const AxisLabel = ({ children, viewBox: { x, y, width, height }, ...props }: Any) => {
+const AxisLabel = ({ children, viewBox: { x, y, width, height } }: Any) => {
   const isVert = true
   const cx = isVert ? x : x + width / 2
   const cy = isVert ? height / 2 + y : y + height + 10
