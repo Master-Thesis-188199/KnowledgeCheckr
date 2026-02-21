@@ -318,7 +318,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     enableTooltip={header.column.getIsSorted() === false}
-                                    tooltipOptions={{ content: 'This column is currently not being sorted.', variant: 'destructive', side: 'right' }}
+                                    tooltipOptions={{ content: t('Sorting.reset_sorting_disabled_tooltip'), variant: 'destructive', side: 'right' }}
                                     className='data-disabled:cursor-not-allowed!'
                                     disabled={header.column.getIsSorted() === false}
                                     onClick={() => header.column.clearSorting()}>

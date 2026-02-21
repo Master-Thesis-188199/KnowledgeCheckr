@@ -392,6 +392,7 @@ export default {
         descending_order_label: 'Absteigend sortieren',
         descending_order_title: 'Zeilen in absteigender Reihenfolge sortieren',
         reset_sorting_label: 'Sortierung entfernen',
+        reset_sorting_disabled_tooltip: 'Diese Spalte wird derzeit nicht sortiert.',
         column_sort_button_aria_label: 'Sortieren nach {columnId}',
         dropdown_sr_only_trigger_label: 'Sortiermenü öffnen'
       }

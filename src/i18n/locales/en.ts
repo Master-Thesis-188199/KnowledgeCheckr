@@ -391,6 +391,7 @@ export default {
         descending_order_title: 'Sorting rows in descending order',
         descending_order_label: 'Sort descending',
         reset_sorting_label: 'Reset Sorting',
+        reset_sorting_disabled_tooltip: 'This column is currently not being sorted.',
         dropdown_sr_only_trigger_label: 'Open sort menu',
         column_sort_button_aria_label: 'Sort by {columnId}'
       }
