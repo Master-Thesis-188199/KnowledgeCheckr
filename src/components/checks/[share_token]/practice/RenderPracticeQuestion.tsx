@@ -259,13 +259,14 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
           'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
 
           isEvaluated && 'relative ring-2',
+          isEvaluated && !!reasoning?.at(i) && 'group cursor-pointer',
           isEvaluated &&
             isCorrectlySelected(a) &&
             'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
           isEvaluated &&
             isFalslySelected(a) &&
-            'cursor-help from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
-          isEvaluated && isMissingSelection(a) && 'cursor-help ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+            'from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+          isEvaluated && isMissingSelection(a) && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
         )}
         htmlFor={a.id}>
         {a.answer}
@@ -273,7 +274,7 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         <DisplayFeedbackText disabled={!isEvaluated} open={openFeedbacks.includes(a.id) ? true : undefined} feedback={reasoning?.at(i)} side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('absolute top-1 right-1.5 flex gap-1.5', i % 2 === 0 && 'left-1.5 flex-row-reverse justify-between')}>
             <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
-            <MessageCircleQuestionIcon className='size-4.5 text-warning' />
+            <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !openFeedbacks.includes(a.id) ? 'group-hover:animate-scale' : 'scale-110')} />
           </div>
         </DisplayFeedbackText>
 
