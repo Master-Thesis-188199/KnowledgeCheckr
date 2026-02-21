@@ -255,9 +255,9 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
         {a.answer}
 
         <DisplayFeedbackText disabled={!isEvaluated} open={openFeedbacks.includes(a.id) ? true : undefined} feedback={reasoning?.at(i)} side={i % 2 === 1 ? 'right' : 'left'}>
-          <div className={cn('absolute top-1 right-1.5 flex gap-1.5', i % 2 === 0 && 'left-1.5 flex-row-reverse justify-between')}>
-            <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
+          <div className={cn('absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !openFeedbacks.includes(a.id) ? 'group-hover:animate-scale' : 'scale-110')} />
+            <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
           </div>
         </DisplayFeedbackText>
 
