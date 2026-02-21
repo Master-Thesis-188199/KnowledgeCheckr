@@ -43,9 +43,8 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   const hasQuestions = questions.length > 0
 
   const baseTooltipOptions: Partial<TooltipProps> = {
-    showsError: true,
-    offset: 0,
-    placement: 'right-end',
+    variant: 'destructive',
+    side: 'right',
   }
 
   /**
@@ -74,7 +73,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   return (
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='size-auto  px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
+        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='size-auto px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </DropdownMenuTrigger>

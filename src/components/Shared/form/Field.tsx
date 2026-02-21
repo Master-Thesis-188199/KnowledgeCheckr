@@ -103,7 +103,7 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <Tooltip isDisabled={hasError || !description} offset={props.type === 'checkbox' ? 12 : 0} content={description}>
+                  <Tooltip disabled={hasError || !description} content={description}>
                     <motion.div
                       data-disabled={field.disabled || props.disabled}
                       exit={{ opacity: 0 }}
@@ -120,7 +120,7 @@ export default function Field<Values extends FieldValues>({
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
-                        props.type === 'checkbox' && 'inset-y-0 right-auto  left-7 items-center',
+                        props.type === 'checkbox' && 'inset-y-0 right-auto left-7 items-center',
                         !description && 'hidden',
                       )}>
                       <InfoIcon className={cn('size-4')} />

@@ -87,7 +87,7 @@ export function DiscoverFilterFields() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Tooltip offset={12} placement='right' size='sm' content={isCaseSensitive ? t('FilterFields.tooltips.filter_case_sensitive') : t('FilterFields.tooltips.filter_case_ignored')}>
+            <Tooltip side='right' content={isCaseSensitive ? t('FilterFields.tooltips.filter_case_sensitive') : t('FilterFields.tooltips.filter_case_ignored')}>
               <Toggle
                 aria-label='Toggle Case Sensitivity'
                 size='xs'
