@@ -24,6 +24,7 @@ import {
 } from '@tanstack/react-table'
 import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import isEqual from 'lodash/isEqual'
+import { EraserIcon } from 'lucide-react'
 import { Button } from '@/components/shadcn/button'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
 import { Label } from '@/components/shadcn/label'
@@ -314,6 +315,10 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                   <DropdownMenuItem onClick={() => header.column.toggleSorting(true, false)}>
                                     <IconSortDescending className='mr-2 size-4' />
                                     {t('Sorting.descending_order_label')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem disabled={header.column.getIsSorted() === false} onClick={() => header.column.clearSorting()}>
+                                    <EraserIcon className='mr-2 size-4' />
+                                    {t('Sorting.reset_sorting_label')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
