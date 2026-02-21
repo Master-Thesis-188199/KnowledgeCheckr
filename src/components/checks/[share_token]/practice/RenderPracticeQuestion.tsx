@@ -247,27 +247,14 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
 
   return question.answers.map((a, i) => {
     return (
-      <label
+      <ChoiceOption
         key={a.id}
         onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
-        className={cn(
-          'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
-          'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
-          'flex items-center justify-center',
-          'resize-none select-none',
-          'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
-
-          isEvaluated && 'relative ring-2',
-          isEvaluated && !!reasoning?.at(i) && 'group cursor-pointer',
-          isEvaluated &&
-            isCorrectlySelected(a) &&
-            'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
-          isEvaluated &&
-            isFalslySelected(a) &&
-            'from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
-          isEvaluated && isMissingSelection(a) && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
-        )}
+        mode={isEvaluated ? 'feedback' : 'input'}
+        isCorrect={isEvaluated && isCorrectlySelected(a)}
+        isWrong={isEvaluated && isFalslySelected(a)}
+        isMissing={isEvaluated && isMissingSelection(a)}
+        feedbackText={reasoning?.at(i)}
         htmlFor={a.id}>
         {a.answer}
 
@@ -289,7 +276,49 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
         />
 
         <FormFieldError field={registerKey(i)} errors={errors} />
-      </label>
+      </ChoiceOption>
     )
   })
+}
+
+function ChoiceOption({
+  mode,
+  feedbackText,
+  isCorrect,
+  isWrong,
+  isMissing,
+  ...props
+}: React.ComponentProps<'label'> & {
+  mode: 'feedback' | 'input'
+  feedbackText?: string
+  isCorrect?: boolean
+  isWrong?: boolean
+  isMissing?: boolean
+}) {
+  return (
+    <label
+      {...props}
+      className={cn(
+        'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
+        'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
+        'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
+        'flex items-center justify-center',
+        'resize-none select-none',
+        'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+
+        mode === 'feedback' &&
+          cn(
+            'relative ring-2',
+            !!feedbackText && 'group cursor-pointer',
+            isCorrect &&
+              'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+
+            isWrong &&
+              'from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+
+            isMissing && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+          ),
+      )}
+    />
+  )
 }
