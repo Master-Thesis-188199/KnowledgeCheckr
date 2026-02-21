@@ -383,6 +383,16 @@
           "go_previous_page": "Go to previous page",
           "go_last_page": "Go to last page"
         }
+      },
+      "Sorting": {
+        "ascending_order_title": "Sorting rows in ascending order",
+        "ascending_order_label": "Sort ascending",
+        "descending_order_title": "Sorting rows in descending order",
+        "descending_order_label": "Sort descending",
+        "reset_sorting_label": "Reset Sorting",
+        "reset_sorting_disabled_tooltip": "This column is currently not being sorted.",
+        "dropdown_sr_only_trigger_label": "Open sort menu",
+        "column_sort_button_aria_label": "Sort by {columnId}"
       }
     }
   }

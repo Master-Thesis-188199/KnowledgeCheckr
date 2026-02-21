@@ -5,7 +5,7 @@ import { closestCenter, DndContext, type DragEndEvent, KeyboardSensor, MouseSens
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconLayoutColumns } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconLayoutColumns, IconSortAscending, IconSortDescending } from '@tabler/icons-react'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -24,12 +24,14 @@ import {
 } from '@tanstack/react-table'
 import { useOrientation, usePrevious, useWindowSize } from '@uidotdev/usehooks'
 import isEqual from 'lodash/isEqual'
+import { EraserIcon } from 'lucide-react'
 import { Button } from '@/components/shadcn/button'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu'
 import { Label } from '@/components/shadcn/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import Tooltip from '@/src/components/Shared/Tooltip'
+import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import getKeys from '@/src/lib/Shared/Keys'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -70,8 +72,19 @@ function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> 
   )
 }
 
-export function DataTable<T extends I[], I extends { id: string | number }>({ data: initialData, columns, columnHideOrder }: { data: T; columns: ColumnDef<I>[]; columnHideOrder?: string[] }) {
+export function DataTable<T extends I[], I extends { id: string | number }>({
+  data: initialData,
+  columns,
+  columnHideOrder,
+  enableSorting = true,
+}: {
+  data: T
+  columns: ColumnDef<I>[]
+  columnHideOrder?: string[]
+  enableSorting?: boolean
+}) {
   const t = useScopedI18n('Components.DataTable')
+  const currentLocale = useCurrentLocale()
   const [data, setData] = React.useState<I[]>(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -98,6 +111,8 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
+    enableSorting: enableSorting,
+    enableSortingRemoval: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -217,7 +232,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
             <DropdownMenuContent align='end' className='w-56'>
               {table
                 .getAllColumns()
-                .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+                .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide() && column.columnDef.header)
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
@@ -228,8 +243,13 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                         column.toggleVisibility(!!value)
                         setColumnHidingPolicy('manual')
                       }}>
-                      {/* @ts-expect-error Expect accessorKey to be not recognized even though it exists */}
-                      {column.columnDef.accessorKey ?? column.id}
+                      {/* renders the column-header instead of (id / accessorKey) to re-use the same localized value */}
+                      {typeof column.columnDef.header === 'function' ? (
+                        // by wrapping header [() => ReactNode] in a wrapper-div, styles like `w-full text-center` will no longer work as expected
+                        <div>{column.columnDef.header({ table, column, header: table.getFlatHeaders().find((h) => h.id === column.id)! })}</div>
+                      ) : (
+                        column.columnDef.header
+                      )}
                     </DropdownMenuCheckboxItem>
                   )
                 })}
@@ -247,7 +267,70 @@ export function DataTable<T extends I[], I extends { id: string | number }>({ da
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead data-column-id={header.id} key={header.id} id={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                            <div className='flex items-center gap-1'>
+                              {/*
+                                Primary behavior: click on header label toggles sorting (asc <-> desc ).
+                                Secondary behavior: use the dropdown to explicitly choose direction
+                              */}
+                              <button
+                                type='button'
+                                onClick={header.column.getToggleSortingHandler()}
+                                className='inline-flex flex-1 items-center justify-between gap-2 select-none hover:cursor-pointer'
+                                aria-label={t('Sorting.column_sort_button_aria_label', { columnId: header.column.id })}>
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+
+                                {header.column.getIsSorted() === 'asc' ? (
+                                  <Tooltip content={t('Sorting.ascending_order_title')}>
+                                    <IconSortAscending className='size-4 opacity-80' />
+                                  </Tooltip>
+                                ) : header.column.getIsSorted() === 'desc' ? (
+                                  <Tooltip content={t('Sorting.descending_order_title')}>
+                                    <IconSortDescending className='size-4 opacity-80' />
+                                  </Tooltip>
+                                ) : (
+                                  <></>
+                                )}
+                              </button>
+
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    className={cn('size-5 opacity-65')}
+                                    aria-label={t('Sorting.dropdown_sr_only_trigger_label')}
+                                    onClick={(e) => {
+                                      // Prevent the header toggle click from firing when opening the menu.
+                                      e.stopPropagation()
+                                    }}>
+                                    <IconChevronDown className='size-4 opacity-60' />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align='start' className={cn('w-44', currentLocale === 'de' && 'w-50')}>
+                                  <DropdownMenuItem onClick={() => header.column.toggleSorting(false, false)}>
+                                    <IconSortAscending className='mr-2 size-4' />
+                                    {t('Sorting.ascending_order_label')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => header.column.toggleSorting(true, false)}>
+                                    <IconSortDescending className='mr-2 size-4' />
+                                    {t('Sorting.descending_order_label')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    enableTooltip={header.column.getIsSorted() === false}
+                                    tooltipOptions={{ content: t('Sorting.reset_sorting_disabled_tooltip'), variant: 'destructive', side: 'right' }}
+                                    className='data-disabled:cursor-not-allowed!'
+                                    disabled={header.column.getIsSorted() === false}
+                                    onClick={() => header.column.clearSorting()}>
+                                    <EraserIcon className='mr-2 size-4' />
+                                    {t('Sorting.reset_sorting_label')}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
                         </TableHead>
                       )
                     })}

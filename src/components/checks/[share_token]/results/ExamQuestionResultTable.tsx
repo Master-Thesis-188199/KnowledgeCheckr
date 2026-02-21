@@ -63,7 +63,7 @@ export default function ExamQuestionResultTable() {
     },
     {
       id: 'primary',
-      accessorKey: t('columns.question_accessorKey'),
+      accessorKey: 'questionText',
       header: t('columns.question_accessorKey'),
       cell: ({ row }) => {
         return <div className='text-left text-foreground'>{row.original.questionText}</div>
@@ -72,8 +72,7 @@ export default function ExamQuestionResultTable() {
     },
 
     {
-      id: 'category',
-      accessorKey: t('columns.category_accessorKey'),
+      accessorKey: 'category',
       header: () => <div className='text-center'>{t('columns.category_accessorKey')}</div>,
       cell: ({ row }) => (
         <Badge variant='outline' className='px-1.5 text-muted-foreground'>
@@ -83,8 +82,7 @@ export default function ExamQuestionResultTable() {
     },
 
     {
-      id: 'answer status',
-      accessorKey: t('columns.answer_status_accessorKey'),
+      accessorKey: 'answer status',
       header: () => <div className='text-center'>{t('columns.answer_status_accessorKey')}</div>,
       cell: () => (
         <Badge variant='outline' className='px-1.5 text-muted-foreground'>
@@ -103,8 +101,7 @@ export default function ExamQuestionResultTable() {
       ),
     },
     {
-      id: 'type',
-      accessorKey: t('columns.type_accessorKey'),
+      accessorKey: 'type',
       header: () => <div className='text-center'>{t('columns.type_accessorKey')}</div>,
       cell: ({ row }) => (
         <Badge variant='outline' className='px-1.5 text-muted-foreground lowercase'>
@@ -113,8 +110,7 @@ export default function ExamQuestionResultTable() {
       ),
     },
     {
-      id: 'score',
-      accessorKey: t('columns.score_accessorKey'),
+      accessorKey: 'score',
       header: () => <div className='text-center'>{t('columns.score_accessorKey')}</div>,
       cell: ({ row }) => (
         <div className='text-center text-xs text-foreground' id={`${row.original.id}-score`}>
@@ -123,14 +119,12 @@ export default function ExamQuestionResultTable() {
       ),
     },
     {
-      id: 'points',
-      accessorKey: t('columns.points_accessorKey'),
+      accessorKey: 'points',
       header: t('columns.points_accessorKey'),
       cell: ({ row }) => <div className='flex justify-center'>{row.original.points}</div>,
     },
     {
-      id: 'grade',
-      accessorKey: t('columns.grade_accessorKey'),
+      accessorKey: 'grade',
       header: () => <div className='text-center'>{t('columns.grade_accessorKey')}</div>,
       cell: ({ row }) => (
         <div className='flex justify-center'>

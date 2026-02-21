@@ -383,7 +383,17 @@
       "customize_columns_label_long": "Spalten anpassen",
       "customize_columns_label_short": "Spalten",
       "no_results_label": "Keine Ergebnisse.",
-      "page_size_label": "Zeilen pro Seite"
+      "page_size_label": "Zeilen pro Seite",
+      "Sorting": {
+        "ascending_order_label": "Aufsteigend sortieren",
+        "ascending_order_title": "Zeilen in aufsteigender Reihenfolge sortieren",
+        "descending_order_label": "Absteigend sortieren",
+        "descending_order_title": "Zeilen in absteigender Reihenfolge sortieren",
+        "reset_sorting_label": "Sortierung entfernen",
+        "reset_sorting_disabled_tooltip": "Diese Spalte wird derzeit nicht sortiert.",
+        "column_sort_button_aria_label": "Sortieren nach {columnId}",
+        "dropdown_sr_only_trigger_label": "Sortiermenü öffnen"
+      }
     }
   }
 }
