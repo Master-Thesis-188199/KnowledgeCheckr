@@ -8,7 +8,7 @@ export function MultiStageNextButton({ ...props }: Omit<SimpleButtonProps, 'onCl
   const { nextStage, stage, stages, enabled, reason } = useMultiStageStore((store) => store)
 
   return (
-    <Tooltip isDisabled={enabled} showsError content={reason}>
+    <Tooltip disabled={enabled} variant='destructive' content={reason}>
       <Button disabled={stage === stages.length || !enabled} {...props} type='button' onClick={() => nextStage()} />
     </Tooltip>
   )
@@ -18,7 +18,7 @@ export function MultiStageBackButton({ ...props }: Omit<SimpleButtonProps, 'onCl
   const { previousStage, stage, enabled, reason } = useMultiStageStore((store) => store)
 
   return (
-    <Tooltip isDisabled={enabled} showsError content={reason}>
+    <Tooltip disabled={enabled} variant='destructive' content={reason}>
       <Button {...props} disabled={stage === 1 || !enabled} type='button' onClick={() => previousStage()} />
     </Tooltip>
   )
