@@ -1,6 +1,5 @@
 'use server'
 
-import { EllipsisIcon } from 'lucide-react'
 import { forbidden, notFound } from 'next/navigation'
 import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
@@ -15,7 +14,6 @@ import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
-import { cn } from '@/src/lib/Shared/utils'
 
 type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]
 export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' | 'type'> & {
@@ -97,25 +95,5 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
         </Card> */}
       </div>
     </>
-  )
-}
-
-function StatisticElement({ label, value, title, className }: { label: string; value: React.ReactNode; title?: string; className?: string }) {
-  title ||= label
-
-  return (
-    <div className={cn('flex flex-col justify-center gap-2 rounded-md ring-1 ring-ring-subtle dark:bg-neutral-800/70', className)}>
-      {title && (
-        <h3 className='flex justify-between rounded-t-md border-b border-b-input-ring bg-input px-3 py-1.5 text-sm font-medium dark:text-neutral-300/80'>
-          {title}
-
-          <EllipsisIcon className='' />
-        </h3>
-      )}
-      <div className='flex flex-col items-center gap-1 p-4'>
-        <dt className='text-sm text-neutral-500 dark:text-neutral-400'>{label}</dt>
-        <dd className='order-first text-lg font-semibold tracking-tight text-neutral-600/90 dark:text-neutral-300'>{value}</dd>
-      </div>
-    </div>
   )
 }
