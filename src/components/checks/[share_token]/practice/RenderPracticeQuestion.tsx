@@ -21,7 +21,7 @@ import { useLogger } from '@/src/hooks/log/useLogger'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
-import { ChoiceQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
@@ -111,13 +111,9 @@ export function RenderPracticeQuestion() {
         </div>
 
         <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-ring dark:ring-ring', question?.type === 'open-question' && 'grid-cols-1')}>
-          {question.type === 'multiple-choice' && (
-            <ChoiceAnswerOption type='checkbox' registerKey={(i) => `selection.${i}`} question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />
-          )}
+          {question.type === 'multiple-choice' && <ChoiceAnswerOptions type='checkbox' question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />}
 
-          {question.type === 'single-choice' && (
-            <ChoiceAnswerOption type='radio' registerKey={() => 'selection'} question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />
-          )}
+          {question.type === 'single-choice' && <ChoiceAnswerOptions type='radio' question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />}
 
           {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} />}
 
@@ -217,8 +213,7 @@ function FeedbackIndicators({ correctlySelected, missingSelection, falslySelecte
 /**
  * This component renders the answer-options for ChoiceQuestions as they are almost identical, to reduce code duplication
  */
-function ChoiceAnswerOption<Q extends ChoiceQuestion>({
-  registerKey,
+function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
   question,
   getFeedbackEvaluation,
   isEvaluated,
@@ -226,7 +221,6 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
 }: {
   isEvaluated: boolean
   type: Required<HTMLProps<HTMLInputElement>['type']>
-  registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0']
   question: Q
   getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
 }) {
@@ -234,7 +228,9 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
     register,
     formState: { errors },
   } = useFormContext<QuestionInput>()
-  const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
+  const registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0'] = question.type === 'multiple-choice' ? (i) => `selection.${i}` : () => `selection`
+
+  const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question)
   const [openFeedbacks, setOpenFeedbacks] = useState<ChoiceQuestion['answers'][number]['id'][]>([])
 
   // auto-opens feedback-text tooltips for wrongfully selected answer-options
