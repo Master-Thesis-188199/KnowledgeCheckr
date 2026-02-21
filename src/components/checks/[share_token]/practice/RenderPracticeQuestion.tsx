@@ -234,11 +234,18 @@ function ChoiceAnswerOption<Q extends ChoiceQuestion>({
     register,
     formState: { errors },
   } = useFormContext<QuestionInput>()
+  const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
   const [openFeedbacks, setOpenFeedbacks] = useState<ChoiceQuestion['answers'][number]['id'][]>([])
 
-  return question.answers.map((a, i) => {
-    const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question as SingleChoice)
+  // auto-opens feedback-text tooltips for wrongfully selected answer-options
+  useEffect(() => {
+    if (openFeedbacks.length > 0) return
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpenFeedbacks([...question.answers.filter((a) => isFalslySelected(a)).map((a) => a.id)])
+  }, [isEvaluated])
+
+  return question.answers.map((a, i) => {
     return (
       <label
         key={a.id}
