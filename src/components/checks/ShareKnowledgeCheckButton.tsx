@@ -27,7 +27,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
 
   return (
     <Tooltip
-      showsError={isEmpty}
+      variant={isEmpty ? 'destructive' : 'normal'}
       content={
         <div className='flex items-center gap-1.5'>
           <InfoIcon className='size-4' />
