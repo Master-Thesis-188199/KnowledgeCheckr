@@ -316,7 +316,12 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
                                     <IconSortDescending className='mr-2 size-4' />
                                     {t('Sorting.descending_order_label')}
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem disabled={header.column.getIsSorted() === false} onClick={() => header.column.clearSorting()}>
+                                  <DropdownMenuItem
+                                    enableTooltip={header.column.getIsSorted() === false}
+                                    tooltipOptions={{ content: 'This column is currently not being sorted.', variant: 'destructive', side: 'right' }}
+                                    className='data-disabled:cursor-not-allowed!'
+                                    disabled={header.column.getIsSorted() === false}
+                                    onClick={() => header.column.clearSorting()}>
                                     <EraserIcon className='mr-2 size-4' />
                                     {t('Sorting.reset_sorting_label')}
                                   </DropdownMenuItem>
