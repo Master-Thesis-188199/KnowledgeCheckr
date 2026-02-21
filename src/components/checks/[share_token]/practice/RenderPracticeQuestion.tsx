@@ -142,7 +142,7 @@ export function RenderPracticeQuestion() {
             Check Answer
           </Button>
 
-          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 bg-green-500/60 dark:bg-green-800' variant='secondary' onClick={nextRandomQuestion} type='button'>
+          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2 ' variant='success' onClick={nextRandomQuestion} type='button'>
             Continue
           </Button>
         </div>
