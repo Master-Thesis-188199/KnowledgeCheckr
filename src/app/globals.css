@@ -4,6 +4,17 @@
 
 @theme {
   --breakpoint-3xl: 120rem;
+
+  --animate-scale: scale 1.15s ease-in-out infinite;
+  @keyframes scale {
+    0%,
+    100% {
+      transform: scale(1.1);
+    }
+    50% {
+      transform: scale(0.9);
+    }
+  }
 }
 
 @layer components {
