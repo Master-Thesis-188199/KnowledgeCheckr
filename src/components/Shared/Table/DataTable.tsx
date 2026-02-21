@@ -37,12 +37,12 @@ import { cn } from '@/src/lib/Shared/utils'
 
 // gap between columns (padding) except for action columns
 const sharedClasses = cn(
-  '*:[th]:not-data-[column-id*=action]:px-5 *:[td]:not-data-[column-id*=action]:px-5 *:[th]:not-data-[column-id*=action]:border-x *:[th]:border-neutral-300 dark:*:[th]:border-inherit',
+  '*:[td]:not-data-[column-id*=action]:px-5 *:[th]:border-neutral-300 *:[th]:not-data-[column-id*=action]:border-x *:[th]:not-data-[column-id*=action]:px-5 dark:*:[th]:border-inherit',
   //* ensure primary column takes up free space (w-full) but the content-width is limited to 40% of screen width.
   //* That way the column may not require more than 40% of screen width based on content.
   //* Hence, the column may take up all the free space (w-full) but if the other table columns require space, then the primary column will not enforce its width above 40% screen width
-  '*:[td]:data-[column-id=primary]:max-w-[40vw] ',
-  ' *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td]:data-[column-id=primary]:*:truncate',
+  '*:[td]:data-[column-id=primary]:max-w-[40vw]',
+  '*:[td]:data-[column-id=primary]:*:truncate *:[td]:data-[column-id=primary]:*:whitespace-nowrap *:[td[id=primary]]:w-full *:[th[id=primary]]:w-full',
 )
 
 function DraggableRow<I extends { id: string | number }>({ row }: { row: Row<I> }) {
@@ -206,7 +206,7 @@ export function DataTable<T extends I[], I extends { id: string | number }>({
             }}>
             <SelectTrigger
               size='sm'
-              className='dark:border-ring-subtle border-ring-subtle h-7! w-fit bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
+              className='h-7! w-fit border-ring-subtle bg-neutral-200/70 hover:cursor-pointer hover:bg-neutral-200 dark:border-ring-subtle dark:bg-neutral-700 dark:hover:bg-neutral-600/80'
               id='rows-per-page'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -366,7 +366,7 @@ function TableFooter<I extends { id: string | number }>({ table }: { table: Tabl
 
   return (
     <div className='flex items-center justify-between px-4'>
-      <div className={cn('text-muted-foreground hidden flex-1 text-sm transition-opacity lg:flex', table.getFilteredSelectedRowModel().rows.length === 0 && 'opacity-0')}>
+      <div className={cn('hidden flex-1 text-sm text-muted-foreground transition-opacity lg:flex', table.getFilteredSelectedRowModel().rows.length === 0 && 'opacity-0')}>
         {table.getFilteredSelectedRowModel().rows.length > 0 && t('selection_label', { selected: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
       </div>
       <div className='mb-0.25 flex w-full items-center gap-8 lg:w-fit'>

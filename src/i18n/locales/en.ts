@@ -44,6 +44,15 @@ export default {
   Home: {
     description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
   },
+  AccountPage: {
+    title: 'Account Information',
+    signout_button_label: 'Signout',
+    signout_delete_notice: 'delete data',
+    LinkAccountSection: {
+      title: 'Link your Account',
+      description: 'To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.'
+    }
+  },
   Checks: {
     title: 'Your Checks',
     no_existing_checks: 'No checks found. Create a new one',

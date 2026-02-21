@@ -2,7 +2,7 @@ import { ChangeEvent, HTMLProps, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
-import { FormControl, FormDescription, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
+import { FormControl, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { cn } from '@/src/lib/Shared/utils'
@@ -120,7 +120,7 @@ export default function Field<Values extends FieldValues>({
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
-                        props.type === 'checkbox' && 'top-0 right-auto bottom-0 left-7 items-center',
+                        props.type === 'checkbox' && 'inset-y-0 right-auto left-7 items-center',
                         !description && 'hidden',
                       )}>
                       <InfoIcon className={cn('size-4')} />
@@ -169,51 +169,6 @@ function RenderInlineError({ animationDuration }: { animationDuration: number })
       <div className='min-h-6 pt-1'>
         <FormMessage />
       </div>
-    </motion.div>
-  )
-}
-
-function RenderInlineDescription({ description, animationDuration }: { description: string; animationDuration: number }) {
-  return (
-    <motion.div
-      key='desc'
-      initial={{ opacity: 0, height: 0, y: -4 }}
-      animate={{ opacity: 1, height: 'auto', y: 0 }}
-      exit={{ opacity: 0, height: 0, y: -4 }}
-      transition={{ duration: animationDuration, ease: 'easeOut' }}
-      className='overflow-hidden'>
-      <div className='min-h-6 pt-1'>
-        <FormDescription>{description}</FormDescription>
-      </div>
-    </motion.div>
-  )
-}
-
-function RenderAbsoluteError() {
-  return (
-    <motion.div
-      key='error'
-      className='absolute inset-0 top-1 left-1'
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 2 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      aria-live='polite'>
-      <FormMessage />
-    </motion.div>
-  )
-}
-
-function RenderAbsoluteDescription({ description }: { description: string }) {
-  return (
-    <motion.div
-      key='desc'
-      className='absolute inset-0 top-1 left-2 z-10'
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 2 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}>
-      <FormDescription className='-ml-2 bg-[#EEEEEF] px-2 pt-0 dark:bg-neutral-800'>{description}</FormDescription>
     </motion.div>
   )
 }

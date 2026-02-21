@@ -189,6 +189,7 @@ function ChoiceAnswerResults({ item: { rawQuestion, userInput } }: { item: Previ
 }
 
 function OpenQuestionAnswerResults({ item: { rawQuestion, userInput } }: { item: PreviewQuestionResult_QuestionItem }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const question = rawQuestion as OpenQuestion
   const input = userInput as Extract<QuestionInput, { type: (typeof question)['type'] }> | undefined
 

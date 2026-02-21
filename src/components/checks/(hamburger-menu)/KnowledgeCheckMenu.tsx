@@ -55,7 +55,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
    * @param callback The callback function which is used when a) a share-key exists or b) after a new token was generated and stored.
    * @returns a callable onClick handler
    */
-  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => (_: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => () => {
     if (share_key) {
       callback(share_key)
       return

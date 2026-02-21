@@ -397,5 +397,14 @@ export default {
         dropdown_sr_only_trigger_label: 'Sortiermenü öffnen'
       }
     }
+  },
+  AccountPage: {
+    LinkAccountSection: {
+      description: 'Um Ihre Daten nach dem Abmelden oder Schließen dieses Tabs zu behalten, können Sie sich über einen sozialen Anbieter wie Google oder GitHub anmelden.',
+      title: 'Verknüpfen Sie Ihr Konto'
+    },
+    signout_button_label: 'Abmelden',
+    signout_delete_notice: 'Daten löschen',
+    title: 'Kontoinformationen'
   }
 } as const
