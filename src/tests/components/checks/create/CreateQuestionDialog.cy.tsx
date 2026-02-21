@@ -8,7 +8,7 @@ describe('<CreateQuestionDialog />', () => {
     cy.viewport(800, 980)
     cy.mount(
       <RootProviders>
-        <I18nProvider>
+        <I18nProvider locale='en'>
           <CheckStoreProvider>
             <CreateQuestionDialog>
               <div className='trigger'>Trigger</div>
@@ -29,7 +29,7 @@ describe('<CreateQuestionDialog />', () => {
   it('Verify that create-question-dialog resets all inuts when the user presses Escape', () => {
     cy.viewport(800, 980)
     cy.mount(
-      <I18nProvider>
+      <I18nProvider locale='en'>
         <RootProviders>
           <CheckStoreProvider>
             <CreateQuestionDialog>
@@ -58,7 +58,7 @@ describe('<CreateQuestionDialog />', () => {
   it("Verify that create-question-dialog closes when the user clicks outside the dialog's content area", () => {
     cy.viewport(800, 980)
     cy.mount(
-      <I18nProvider>
+      <I18nProvider locale='en'>
         <RootProviders>
           <CheckStoreProvider>
             <CreateQuestionDialog>
@@ -82,7 +82,7 @@ describe('<CreateQuestionDialog />', () => {
   it('Verify that users can switch between question types in the create-question-dialog', () => {
     cy.viewport(800, 980)
     cy.mount(
-      <I18nProvider>
+      <I18nProvider locale='en'>
         <RootProviders>
           <CheckStoreProvider>
             <CreateQuestionDialog>

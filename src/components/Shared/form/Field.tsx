@@ -103,7 +103,7 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <Tooltip isDisabled={hasError || !description} offset={props.type === 'checkbox' ? 12 : 0} content={description}>
+                  <Tooltip disabled={hasError || !description} content={description}>
                     <motion.div
                       data-disabled={field.disabled || props.disabled}
                       exit={{ opacity: 0 }}

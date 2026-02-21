@@ -43,9 +43,8 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   const hasQuestions = questions.length > 0
 
   const baseTooltipOptions: Partial<TooltipProps> = {
-    showsError: true,
-    offset: 0,
-    placement: 'right-end',
+    variant: 'destructive',
+    side: 'right',
   }
 
   /**
@@ -74,7 +73,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
   return (
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='h-auto w-auto px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
+        <Button variant='ghost' size='icon' onClick={(e) => e.preventDefault()} className='size-auto px-1 py-0.5 hover:ring-1 hover:ring-ring-hover'>
           <EllipsisIcon className='size-5 text-neutral-500 dark:text-neutral-400' />
         </Button>
       </DropdownMenuTrigger>
@@ -160,7 +159,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
-                const pageHeading = document.querySelector('main h1')
+                const pageHeading = document.querySelector('main #page-heading')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
                 toast(t('remove_share_token.toast_deletion_successful'), { type: 'success' })
               })
@@ -192,7 +191,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
                 router.refresh()
-                const pageHeading = document.querySelector('main h1')
+                const pageHeading = document.querySelector('main #page-heading')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
                 toast(t('delete_knowledgeCheck.toast_deletion_successful'), { type: 'success' })
               })
