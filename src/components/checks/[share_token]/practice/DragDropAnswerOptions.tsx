@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
-import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
+import { DragDropFeedbackEvaluation, usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
@@ -49,28 +49,40 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     isSubmitting: false,
   })
 
-  const { isCorrectlyPositioned, isFalslyPositioned, getCorrectPosition, reasoning } = getFeedbackEvaluation(question)
+  const feedbackEvaluation = getFeedbackEvaluation(question)
 
   return options.map(({ id, answer, position }, i) => (
     <DragDropItem
       key={id}
       name={id}
-      title={isEvaluated ? reasoning?.at(i) : undefined}
+      title={isEvaluated ? feedbackEvaluation.reasoning?.at(i) : undefined}
       className={cn(isEvaluated && 'cursor-help')}
-      data-evaluation-result={isEvaluated ? (isCorrectlyPositioned(id) ? 'correct' : isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
+      data-evaluation-result={isEvaluated ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
-      <AnswerFeedback show={isEvaluated} correctPosition={getCorrectPosition(id)} isCorrect={isCorrectlyPositioned(id)} position={position} />
+      <AnswerFeedback show={isEvaluated} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
     </DragDropItem>
   ))
 }
 
-function AnswerFeedback({ show, position, correctPosition, isCorrect }: { show: boolean; position: number; correctPosition: number; isCorrect: boolean }) {
+function AnswerFeedback({
+  show,
+  position,
+  feedbackEvaluation,
+  id,
+}: {
+  show: boolean
+  id: DragDropQuestion['answers'][number]['id']
+  feedbackEvaluation: DragDropFeedbackEvaluation
+  position: number
+}) {
   if (!show) return null
+
+  const correctPosition = feedbackEvaluation.getCorrectPosition(id)
 
   return (
     <div className='drag-drop-feedback-indicators ml-auto flex items-center gap-2'>
-      {isCorrect ? (
+      {feedbackEvaluation.isCorrectlyPositioned(id) ? (
         <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
       ) : (
         <div className='flex items-center gap-4 text-red-600/70 dark:text-red-500/70'>

@@ -13,7 +13,7 @@ type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEva
   reasoning?: Extract<PracticeFeedback, { type: Type }>['reasoning']
 }
 
-type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
+export type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
   isCorrectlyPositioned: (answerId: string) => boolean
   isFalslyPositioned: (answerId: string) => boolean
   getCorrectPosition: (answerId: string) => number
