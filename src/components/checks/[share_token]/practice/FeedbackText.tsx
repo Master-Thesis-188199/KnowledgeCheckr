@@ -20,7 +20,7 @@ export default function DisplayFeedbackText({ feedback, pinned: isPinned, childr
   return (
     <Tooltip
       content={feedback}
-      className='max-w-[25vw] text-wrap'
+      className='max-w-[50vw] text-wrap lg:max-w-[25vw]'
       config={{
         open,
         onOpenChange: (next) => {
