@@ -17,6 +17,7 @@ export default function DragDropAnswers({ isEvaluated, ...props }: { question: D
 
   return (
     <DragDropContainer
+      hideMoveIndicators={isEvaluated}
       key={props.question.id + props.question.type + isEvaluated.toString()}
       className='col-span-2 my-auto space-y-6'
       enabled={!isEvaluated}
