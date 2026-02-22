@@ -1,5 +1,7 @@
-import { ArrowUpFromLineIcon, CheckIcon, XIcon } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowUpFromLineIcon, CheckIcon, MessageCircleQuestionIcon, XIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
+import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
@@ -50,17 +52,17 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
   })
 
   const feedbackEvaluation = getFeedbackEvaluation(question)
+  const [openFeedbacks, setOpenFeedbacks] = useState<DragDropQuestion['answers'][number]['id'][]>([])
 
   return options.map(({ id, answer, position }, i) => (
     <DragDropItem
       key={id}
       name={id}
-      title={isEvaluated ? feedbackEvaluation.reasoning?.at(i) : undefined}
-      className={cn(isEvaluated && 'cursor-help')}
+      onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
       data-evaluation-result={isEvaluated ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
-      <AnswerFeedback show={isEvaluated} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
+      <AnswerFeedback show={isEvaluated} isFeedbackPinned={openFeedbacks.includes(id)} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
     </DragDropItem>
   ))
 }
@@ -69,31 +71,37 @@ function AnswerFeedback({
   show,
   position,
   feedbackEvaluation,
+  isFeedbackPinned,
   id,
 }: {
   show: boolean
   id: DragDropQuestion['answers'][number]['id']
   feedbackEvaluation: DragDropFeedbackEvaluation
+  isFeedbackPinned?: boolean
   position: number
 }) {
   if (!show) return null
 
   const correctPosition = feedbackEvaluation.getCorrectPosition(id)
+  const answerFeedbackText = feedbackEvaluation.reasoning?.at(correctPosition)
 
   return (
-    <div className='drag-drop-feedback-indicators ml-auto flex items-center gap-2'>
-      {feedbackEvaluation.isCorrectlyPositioned(id) ? (
-        <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
-      ) : (
-        <div className='flex items-center gap-4 text-red-600/70 dark:text-red-500/70'>
-          <div className='flex items-center gap-1'>
-            {Array.from({ length: Math.abs(correctPosition - position) }).map((_, i) => (
-              <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPosition - position > 0 && 'rotate-180')} />
-            ))}
+    <DisplayFeedbackText feedback={answerFeedbackText} side='right' pinned={isFeedbackPinned}>
+      <div className='drag-drop-feedback-indicators group/tooltip ml-auto flex cursor-pointer items-center gap-2'>
+        {feedbackEvaluation.isCorrectlyPositioned(id) ? (
+          <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
+        ) : (
+          <div className='flex items-center gap-2 text-red-600/70 dark:text-red-500/70'>
+            <div className='flex items-center gap-1'>
+              {Array.from({ length: Math.abs(correctPosition - position) }).map((_, i) => (
+                <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPosition - position > 0 && 'rotate-180')} />
+              ))}
+            </div>
+            <XIcon className='size-4' />
           </div>
-          <XIcon className='size-4' />
-        </div>
-      )}
-    </div>
+        )}
+        <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isFeedbackPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110')} />
+      </div>
+    </DisplayFeedbackText>
   )
 }

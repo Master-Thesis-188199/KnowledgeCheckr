@@ -1,11 +1,11 @@
-import { HTMLProps, useEffect, useRef } from 'react'
+import React, { HTMLProps, useEffect, useRef } from 'react'
 import { cn } from '@heroui/theme'
 import { MoveIcon } from 'lucide-react'
 import { ItemSwapEvent } from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 
-interface DragDropItemProps {
+interface DragDropItemProps extends Pick<React.ComponentProps<'div'>, 'onClick'> {
   children: React.ReactNode
   className?: string
   onSwap?: (e: ItemSwapEvent) => void
