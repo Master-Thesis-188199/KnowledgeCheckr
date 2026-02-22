@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowUpFromLineIcon, CheckIcon, MessageCircleQuestionIcon, XIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
@@ -53,6 +53,14 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
 
   const feedbackEvaluation = getFeedbackEvaluation(question)
   const [openFeedbacks, setOpenFeedbacks] = useState<DragDropQuestion['answers'][number]['id'][]>([])
+
+  useEffect(() => {
+    if (!isEvaluated) return
+
+    // automatically display feedback texts for wrong positioned answers
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpenFeedbacks(options.filter((o) => feedbackEvaluation.isFalslyPositioned(o.id)).map((o) => o.id))
+  }, [isEvaluated])
 
   return options.map(({ id, answer, position }, i) => (
     <DragDropItem
