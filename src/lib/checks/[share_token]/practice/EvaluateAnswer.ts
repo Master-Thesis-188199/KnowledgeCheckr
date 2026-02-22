@@ -2,6 +2,7 @@
 
 import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questions/select'
 import _logger from '@/src/lib/log/Logger'
+import lorem from '@/src/lib/Shared/Lorem'
 import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 
@@ -58,7 +59,9 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
       return {
         type: answer.type,
         solution: question.answers.find((a) => a.correct)!.id,
-        reasoning: question.answers.map((answer, i) => (answer.correct ? `Answer ${i} is correct because...` : `Answer ${i} is false because..`)),
+        reasoning: question.answers.map((answer, i) =>
+          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
+        ),
       }
 
     case 'multiple-choice':
@@ -66,7 +69,9 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
       return {
         type: answer.type,
         solution: question.answers.filter((a) => a.correct).map((answer) => answer.id),
-        reasoning: question.answers.map((answer, i) => (answer.correct ? `Answer ${i} is correct because...` : `Answer ${i} is false because..`)),
+        reasoning: question.answers.map((answer, i) =>
+          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
+        ),
       }
 
     case 'open-question':
@@ -78,7 +83,7 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
       return {
         type: answer.type,
         solution: question.expectation,
-        reasoning: `This answer is ${degreeOfCorrectness >= 0.5 ? 'correct' : 'incorrect'} because...`,
+        reasoning: `This answer is ${degreeOfCorrectness >= 0.5 ? 'correct' : 'incorrect'} because ${lorem().split(' ').slice(0, 30).join(' ')}`,
         degreeOfCorrectness: degreeOfCorrectness,
       }
 
@@ -92,8 +97,8 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
         solution: correctlyOrdered,
         reasoning: correctlyOrdered.map((id, i) =>
           answer.input.at(i) === id
-            ? `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is correct because...`
-            : `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because..`,
+            ? `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}`
+            : `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
         ),
       }
   }
