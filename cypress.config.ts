@@ -45,7 +45,7 @@ export default defineConfig({
       // implement node event listeners here
       ccTask(on, config)
       installLogsPrinter(on, {
-        printLogsToConsole: 'always',
+        printLogsToConsole: 'onFail',
         outputRoot: config.projectRoot + '/cypress/logs/',
         outputTarget: {
           'out.txt': 'txt',

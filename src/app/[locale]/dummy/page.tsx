@@ -27,7 +27,7 @@ export default function DummyDataPage() {
 
 async function createPracticeCheck() {
   'use server'
-  const { user } = await requireAuthentication()
+  await requireAuthentication()
 
   const check = instantiateKnowledgeCheck()
 

@@ -151,7 +151,7 @@ export function MultiTabBarChart<T extends { dataKey: string }>({ title, descrip
 
   return (
     <Card className='@container'>
-      <CardHeader className='flex flex-col items-stretch gap-2 !p-0'>
+      <CardHeader className='flex flex-col items-stretch gap-2 p-0!'>
         <div className='mb-4 flex flex-1 flex-col justify-center gap-1 border-b px-6 pb-6'>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
@@ -163,9 +163,9 @@ export function MultiTabBarChart<T extends { dataKey: string }>({ title, descrip
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className='data-[active=true]:bg-accent/40 relative z-30 flex max-w-sm flex-col justify-center gap-1 rounded-md p-2 text-left @3xl:gap-2 @3xl:p-4'
+                className='relative z-30 flex max-w-sm flex-col justify-center gap-1 rounded-md p-2 text-left data-[active=true]:bg-accent/40 @3xl:gap-2 @3xl:p-4'
                 onClick={() => setActiveChart(chart)}>
-                <span className='text-muted-foreground text-center text-sm in-data-[active=true]:text-blue-400 @3xl:text-base dark:in-data-[active=true]:text-blue-500'>
+                <span className='text-center text-sm text-muted-foreground in-data-[active=true]:text-blue-400 @3xl:text-base dark:in-data-[active=true]:text-blue-500'>
                   {chartConfig[chart].label}
                 </span>
                 <div className='flex items-center justify-between gap-2 @3xl:gap-4'>

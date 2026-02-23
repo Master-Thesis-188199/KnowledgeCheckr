@@ -68,7 +68,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
               cursor={false}
               content={
                 <ChartTooltipContent
-                  formatter={(value, name, item, index) => {
+                  formatter={(value, name, item) => {
                     return (
                       <div className='mt-2 flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>
@@ -77,9 +77,9 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
                               <div className={cn('size-2.5 shrink-0 rounded-[2px]', 'bg-chart-2')} />
                               {t('tooltip.estimated_time_label')}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {item.payload.estimated}
-                              <span className='text-muted-foreground font-normal'>{tShared('minute_label', { count: item.payload.estimated })}</span>
+                              <span className='font-normal text-muted-foreground'>{tShared('minute_label', { count: item.payload.estimated })}</span>
                             </div>
                           </div>
                           <div className='flex items-center justify-between gap-4'>
@@ -87,21 +87,21 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
                               <div className={cn('size-2.5 shrink-0 rounded-[2px]', 'bg-chart-3')} />
                               {t('tooltip.actual_time_label')}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {item.payload.actualTime}
-                              <span className='text-muted-foreground font-normal'>{tShared('minute_label', { count: item.payload.actualTime })}</span>
+                              <span className='font-normal text-muted-foreground'>{tShared('minute_label', { count: item.payload.actualTime })}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className='text-foreground mt-1.5 flex items-center border-t pt-1.5 text-xs font-medium'>
+                        <div className='mt-1.5 flex items-center border-t pt-1.5 text-xs font-medium text-foreground'>
                           {item.payload.difference > 0 ? (
                             <span className='text-[oklch(59.2%_0.309_151.711)] dark:text-green-400'>{t('tooltip.total_faster_label')}</span>
                           ) : (
                             // eslint-disable-next-line require-color-modes/require-color-mode-styles
                             <span className='text-red-400'>{t('tooltip.total_slower_label')}</span>
                           )}
-                          <div className='text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums'>
+                          <div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium text-foreground tabular-nums'>
                             <span className={cn(item.payload.difference > 0 ? 'text-[oklch(59.2%_0.309_151.711)] dark:text-green-400' : 'text-red-400')}>{Math.abs(item.payload.difference)}</span>
                             <span
                               className={cn(
@@ -160,7 +160,7 @@ export function ExamQuestionDurationChart({ title, description, questions }: { t
     </Card>
   )
 }
-const AxisLabel = ({ children, viewBox: { x, y, width, height }, ...props }: Any) => {
+const AxisLabel = ({ children, viewBox: { x, y, width, height } }: Any) => {
   const isVert = true
   const cx = isVert ? x : x + width / 2
   const cy = isVert ? height / 2 + y : y + height + 10

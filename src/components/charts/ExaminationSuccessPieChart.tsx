@@ -56,7 +56,7 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
               content={
                 <ChartTooltipContent
                   hideLabel
-                  formatter={(value, name, item, index) => {
+                  formatter={(value, name) => {
                     return (
                       <div className='flex flex-col gap-1'>
                         <div className='flex flex-col gap-1.5'>
@@ -72,9 +72,9 @@ export function ExaminationSuccessPieChart({ title, description }: { title: stri
                               />
                               {chartConfig[name as keyof typeof chartConfig]?.label || name}
                             </div>
-                            <div className='text-foreground flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium tabular-nums'>
+                            <div className='flex flex-1 items-baseline justify-end gap-1 text-right font-mono font-medium text-foreground tabular-nums'>
                               {value}
-                              <span className='text-muted-foreground font-normal lowercase'>{t('inner_label', { count: +value })}</span>
+                              <span className='font-normal text-muted-foreground lowercase'>{t('inner_label', { count: +value })}</span>
                             </div>
                           </div>
                         </div>

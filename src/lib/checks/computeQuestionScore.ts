@@ -24,7 +24,7 @@ export function computeQuestionInputScore(question: Question, answer: QuestionIn
 
       return correctAnswers.every((answer, index) => input.input.length === correctAnswers.length && input.input[index] === answer.id) ? dragDrop.points : 0
     },
-    onOpenQuestion: function (openChoice: OpenQuestion) {
+    onOpenQuestion: function () {
       return -1
     },
   })
