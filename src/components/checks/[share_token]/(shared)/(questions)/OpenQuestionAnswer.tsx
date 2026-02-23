@@ -31,11 +31,13 @@ export function FeedbackOpenQuestion({
         isIncorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-red-500/20 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
         isEvaluated && 'pr-8',
       )}>
-      <DisplayFeedbackText disabled={!isEvaluated} pinned={isPinned} feedback={reasoning} side='right'>
-        <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5')}>
+      <div className={cn('group/tooltip absolute top-1 right-1.5 z-10 flex cursor-pointer flex-row-reverse gap-1.5')}>
+        <DisplayFeedbackText disabled={!isEvaluated} pinned={isPinned} feedback={reasoning} side='right'>
           <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !isEvaluated && 'hidden')} />
-        </div>
-      </DisplayFeedbackText>
+        </DisplayFeedbackText>
+      </div>
+      {/* overlay to detect click-events in text-area while disabled */}
+      {isEvaluated && <div className='absolute inset-0 cursor-pointer' onClick={() => setPinned((prev) => !prev)}></div>}
     </OpenQuestionAnswer>
   )
 }
@@ -44,7 +46,7 @@ export function OpenQuestionAnswer({ children, ...props }: { children?: React.Re
   const { register } = useFormContext<QuestionInput>()
 
   return (
-    <div className='relative *:w-full'>
+    <div className='group relative *:w-full'>
       <textarea
         {...props}
         {...register('input')}
