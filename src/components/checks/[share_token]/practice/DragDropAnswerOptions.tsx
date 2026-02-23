@@ -109,7 +109,7 @@ function AnswerFeedback({
             <XIcon className='size-4' />
           </div>
         )}
-        <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isFeedbackPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110')} />
+        <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isFeedbackPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !answerFeedbackText && 'hidden')} />
       </div>
     </DisplayFeedbackText>
   )

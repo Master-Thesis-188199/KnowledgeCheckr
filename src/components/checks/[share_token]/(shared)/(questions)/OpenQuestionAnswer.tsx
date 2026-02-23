@@ -41,7 +41,9 @@ export function FeedbackOpenQuestion({
       )}>
       <div className={cn('group/tooltip absolute top-1 right-1.5 z-10 flex cursor-pointer flex-row-reverse gap-1.5')}>
         <DisplayFeedbackText disabled={!isEvaluated} pinned={isPinned} feedback={reasoning} side='right'>
-          <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !isEvaluated && 'hidden')} />
+          <MessageCircleQuestionIcon
+            className={cn('size-4.5 text-warning', !isPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !isEvaluated && 'hidden', !reasoning && 'hidden')}
+          />
         </DisplayFeedbackText>
       </div>
       {/* overlay to detect click-events in text-area while disabled */}
