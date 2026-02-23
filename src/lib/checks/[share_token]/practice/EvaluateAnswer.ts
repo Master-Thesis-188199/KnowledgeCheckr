@@ -3,7 +3,7 @@
 import { getKnowledgeCheckQuestionById } from '@/database/knowledgeCheck/questions/select'
 import _logger from '@/src/lib/log/Logger'
 import lorem from '@/src/lib/Shared/Lorem'
-import { DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
+import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -33,13 +33,15 @@ export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: Quest
   return { success: true, values: data, feedback }
 }
 
-type SingleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'single-choice' }> & { reasoning?: string[]; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
-type MultipleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'multiple-choice' }> & { reasoning?: string[]; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
+type FeedbackMap = Map<ChoiceQuestion['answers'][number]['id'] | DragDropQuestion['answers'][number]['id'], string>
+
+type SingleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'single-choice' }> & { reasoning?: FeedbackMap; solution: string; type: 'single-choice' }, 'question_id' | 'selection'>
+type MultipleChoiceFeedback = Omit<Extract<QuestionInput, { type: 'multiple-choice' }> & { reasoning?: FeedbackMap; solution: string[]; type: 'multiple-choice' }, 'question_id' | 'selection'>
 type OpenQuestionFeedback = Omit<
   Extract<QuestionInput, { type: 'open-question' }> & { reasoning?: string; type: 'open-question'; degreeOfCorrectness: number; solution?: string },
   'question_id' | 'input'
 >
-type DragDropFeedback = Omit<Extract<QuestionInput, { type: 'drag-drop' }> & { reasoning?: string[]; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
+type DragDropFeedback = Omit<Extract<QuestionInput, { type: 'drag-drop' }> & { reasoning?: FeedbackMap; solution: string[]; type: 'drag-drop' }, 'question_id' | 'input'>
 
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
@@ -54,25 +56,42 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
   //todo: Generate question-feedback-reasoning using a local llm to explain the wrongful selection of answers to the user with a encouraging tone
 
   switch (answer.type) {
-    case 'single-choice':
+    case 'single-choice': {
       question = question as SingleChoice
+
+      const feedback: FeedbackMap = new Map()
+
+      question.answers.forEach((answer, i) =>
+        feedback.set(
+          answer.id,
+          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
+        ),
+      )
+
       return {
         type: answer.type,
         solution: question.answers.find((a) => a.correct)!.id,
-        reasoning: question.answers.map((answer, i) =>
+        reasoning: feedback,
+      }
+    }
+
+    case 'multiple-choice': {
+      question = question as MultipleChoice
+
+      const feedback: FeedbackMap = new Map()
+
+      question.answers.forEach((answer, i) =>
+        feedback.set(
+          answer.id,
           answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
         ),
-      }
-
-    case 'multiple-choice':
-      question = question as MultipleChoice
+      )
       return {
         type: answer.type,
         solution: question.answers.filter((a) => a.correct).map((answer) => answer.id),
-        reasoning: question.answers.map((answer, i) =>
-          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
-        ),
+        reasoning: feedback,
       }
+    }
 
     case 'open-question':
       question = question as OpenQuestion
@@ -92,14 +111,21 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
       const orderedAnswers = question.answers.toSorted((a, b) => a.position - b.position)
       const correctlyOrdered = orderedAnswers.map((a) => a.id)
 
-      return {
-        type: answer.type,
-        solution: correctlyOrdered,
-        reasoning: correctlyOrdered.map((id, i) =>
-          answer.input.at(i) === id
+      const feedback: FeedbackMap = new Map()
+
+      question.answers.forEach((a, i) =>
+        feedback.set(
+          a.id,
+          answer.input.at(i) === a.id
             ? `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}`
             : `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
         ),
+      )
+
+      return {
+        type: answer.type,
+        solution: correctlyOrdered,
+        reasoning: feedback,
       }
   }
 }

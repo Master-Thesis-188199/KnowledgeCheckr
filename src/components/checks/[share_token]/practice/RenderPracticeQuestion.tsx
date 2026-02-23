@@ -250,18 +250,18 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
         isCorrect={isEvaluated && isCorrectlySelected(a)}
         isWrong={isEvaluated && isFalslySelected(a)}
         isMissing={isEvaluated && isMissingSelection(a)}
-        feedbackText={reasoning?.at(i)}
+        feedbackText={reasoning?.get(a.id)}
         htmlFor={a.id}>
         {a.answer}
 
-        <DisplayFeedbackText disabled={!isEvaluated} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.at(i)} side={i % 2 === 1 ? 'right' : 'left'}>
+        <DisplayFeedbackText disabled={!isEvaluated} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon
               className={cn(
                 'size-4.5 text-warning',
                 !openFeedbacks.includes(a.id) ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110',
                 !isEvaluated && 'hidden',
-                !reasoning?.at(i) && 'hidden',
+                !reasoning?.get(a.id) && 'hidden',
               )}
             />
             <FeedbackIndicators correctlySelected={isCorrectlySelected(a)} missingSelection={isMissingSelection(a)} falslySelected={isFalslySelected(a)} />
