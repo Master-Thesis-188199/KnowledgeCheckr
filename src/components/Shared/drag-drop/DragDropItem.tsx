@@ -36,8 +36,8 @@ export function DragDropItem({ children, className, name, onSwap, initialIndex, 
         data-swapy-item={name || getUUID()}
         className={cn(
           'p-3 px-4',
-          // add padding when move icon is shown
-          'group-data-[hide-move-indicators=false]/drag-drop-container:pr-12',
+          // add padding-right to make space for move-icon when it is shown (thus not disabled `hide-move-indicators` set to true)
+          'group-not-data-[hide-move-indicators=true]/drag-drop-container:pr-12',
           'group relative flex items-center gap-4 rounded-md bg-neutral-300/40 ring-1 ring-neutral-400/50 select-none group-data-[enabled=true]/drag-drop-container:cursor-move group-data-[enabled=true]/drag-drop-container:hover:bg-neutral-300/60 group-data-[enabled=true]/drag-drop-container:active:bg-neutral-400/40 dark:bg-neutral-800 dark:ring-neutral-600/80 dark:group-data-[enabled=true]/drag-drop-container:hover:bg-neutral-700/60 dark:group-data-[enabled=true]/drag-drop-container:active:bg-neutral-700/60',
           className,
         )}>
