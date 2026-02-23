@@ -91,7 +91,8 @@ function AnswerFeedback({
   if (!show) return null
 
   const correctPosition = feedbackEvaluation.getCorrectPosition(id)
-  const answerFeedbackText = feedbackEvaluation.reasoning?.at(correctPosition)
+  // when a given answer is not found, -1 is returned as the correctPosition for that answer - which would lead to the last reasoning in the array to be used by default.
+  const answerFeedbackText = correctPosition >= 0 ? feedbackEvaluation.reasoning?.at(correctPosition) : undefined
 
   return (
     <DisplayFeedbackText feedback={answerFeedbackText} side='right' pinned={isFeedbackPinned}>
