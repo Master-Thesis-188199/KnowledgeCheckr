@@ -1,4 +1,4 @@
-import { HTMLProps, useState } from 'react'
+import { HTMLProps, useEffect, useState } from 'react'
 import { MessageCircleQuestionIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
@@ -19,6 +19,14 @@ export function FeedbackOpenQuestion({
 } & Pick<HTMLProps<HTMLTextAreaElement>, 'disabled'>) {
   const { isCorrect, isIncorrect, reasoning } = getFeedbackEvaluation(question)
   const [isPinned, setPinned] = useState(false)
+
+  useEffect(() => {
+    if (!isEvaluated || isCorrect) return
+
+    // toggle feedback-text display when answer is incorrect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPinned(true)
+  }, [isEvaluated])
 
   return (
     <OpenQuestionAnswer
