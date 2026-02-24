@@ -66,6 +66,7 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
     <DragDropItem
       key={id}
       name={id}
+      className={cn(isEvaluated && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer')}
       onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
       data-evaluation-result={isEvaluated ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
