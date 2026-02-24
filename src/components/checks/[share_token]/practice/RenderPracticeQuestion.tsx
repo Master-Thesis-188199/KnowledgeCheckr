@@ -93,9 +93,11 @@ export function RenderPracticeQuestion() {
         </div>
 
         <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-ring dark:ring-ring', question?.type === 'open-question' && 'grid-cols-1')}>
-          {question.type === 'multiple-choice' && <ChoiceAnswerOptions type='checkbox' question={question} getFeedbackEvaluation={getFeedbackEvaluation} />}
-
-          {question.type === 'single-choice' && <ChoiceAnswerOptions type='radio' question={question} getFeedbackEvaluation={getFeedbackEvaluation} />}
+          {
+            //prettier-ignore
+            (question.type === 'single-choice' || question.type === 'multiple-choice') && 
+              <ChoiceAnswerOptions type={question.type === 'single-choice' ? 'radio' : 'checkbox'} question={question} />
+          }
 
           {question.type === 'drag-drop' && <DragDropAnswers question={question} />}
 
@@ -195,23 +197,23 @@ function FeedbackIndicators({ correctlySelected, missingSelection, falslySelecte
 /**
  * This component renders the answer-options for ChoiceQuestions as they are almost identical, to reduce code duplication
  */
-function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
-  question,
-  getFeedbackEvaluation,
-  type,
-}: {
-  type: Required<HTMLProps<HTMLInputElement>['type']>
-  question: Q
-  getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
-}) {
+function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { type: Required<HTMLProps<HTMLInputElement>['type']>; question: Q }) {
   const {
     isValidationComplete,
+    state,
     form: {
       register,
       formState: { errors },
     },
   } = useRHFContext<QuestionInput>(true)
   const registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0'] = question.type === 'multiple-choice' ? (i) => `selection.${i}` : () => `selection`
+
+  const getFeedbackEvaluation = usePracticeFeeback(state, {
+    isSubmitSuccessful: isValidationComplete,
+    isSubmitted: isValidationComplete,
+    isPending: false,
+    isSubmitting: false,
+  })
 
   const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question)
   const [openFeedbacks, setOpenFeedbacks] = useState<ChoiceQuestion['answers'][number]['id'][]>([])
