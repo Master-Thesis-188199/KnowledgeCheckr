@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
-import isEmpty from 'lodash/isEmpty'
 import { MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
@@ -48,20 +47,22 @@ export function RenderPracticeQuestion() {
     { serverAction: EvaluateAnswer, initialActionState: { success: false } },
   )
 
-  const { form, isValidationComplete, isServerValidationPending: isPending, state, runServerValidation } = RHFForm
-
   const {
-    watch,
-    formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
-  } = form
+    form: {
+      formState: { isValid, isSubmitting },
+      ...form
+    },
+    isValidationComplete,
+    isServerValidationPending: isPending,
+    state,
+    runServerValidation,
+  } = RHFForm
 
   const nextRandomQuestion = () =>
     questions.length > 1
       ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
       : // allow the same (only) question to be answered again and again.
         form.reset({ question_id: question.id, type: question.type as Any })
-
-  const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
 
   const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
@@ -70,16 +71,6 @@ export function RenderPracticeQuestion() {
     storeAnswer({ ...form.getValues(), question_id: question.id })
     console.info(`[Submit] '${question.question}' has been answered & submitted`)
   }
-
-  useEffect(() => {
-    const sub = watch((values, { name }) => {
-      console.debug(`[${name ?? 'Form-State (validation)'}] changed`, values)
-    })
-
-    return () => sub.unsubscribe()
-  })
-
-  if (!isEmpty(errors)) console.log('error', errors)
 
   return (
     <RHFProvider {...RHFForm}>
