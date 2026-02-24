@@ -97,7 +97,7 @@ export function RenderPracticeQuestion() {
 
           {question.type === 'single-choice' && <ChoiceAnswerOptions type='radio' question={question} getFeedbackEvaluation={getFeedbackEvaluation} />}
 
-          {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isValidationComplete} state={state} />}
+          {question.type === 'drag-drop' && <DragDropAnswers question={question} />}
 
           {question.type === 'open-question' && (
             <FeedbackOpenQuestion isEvaluated={isValidationComplete} getFeedbackEvaluation={getFeedbackEvaluation} question={question} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
