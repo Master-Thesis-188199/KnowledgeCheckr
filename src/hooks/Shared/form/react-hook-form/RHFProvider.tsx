@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext } from 'react'
+import { Form } from '@/src/components/shadcn/form'
 import { RHFBaseReturn, RHFServerReturn } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { Any } from '@/types'
 
@@ -15,5 +16,9 @@ export const useRHFContext = <T extends object>() => {
 }
 
 export const RHFProvider = <T extends object>({ children, ...props }: { children: ReactNode } & RHFContext<T>) => {
-  return <RHFContext.Provider value={props}>{children}</RHFContext.Provider>
+  return (
+    <RHFContext.Provider value={props}>
+      <Form {...props.form}>{children}</Form>
+    </RHFContext.Provider>
+  )
 }
