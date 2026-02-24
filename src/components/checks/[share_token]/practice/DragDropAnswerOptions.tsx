@@ -91,7 +91,6 @@ function AnswerFeedback({
   if (!show) return null
 
   const correctPosition = feedbackEvaluation.getCorrectPosition(id)
-  // when a given answer is not found, -1 is returned as the correctPosition for that answer - which would lead to the last reasoning in the array to be used by default.
   const answerFeedbackText = feedbackEvaluation.reasoning?.get(id)
 
   return (
