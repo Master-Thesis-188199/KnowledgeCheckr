@@ -11,20 +11,20 @@ import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
  * Internal hook that encapsulates all server-action/useActionState wiring.
  * Keeps `useRHF` body focused on "schema + RHF init + return shape".
  */
-function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOptions<TSchema>): RHFServerReturn<TSchema> & { hasServerValidation: boolean } {
+function useServerValidation<Type extends object>(options?: UseRHFOptions<Type>): RHFServerReturn<Type> & { hasServerValidation: boolean } {
   const serverAction = options?.serverAction
-  const initialActionState = options?.initialActionState ?? ({} as RHFServerState<TSchema>)
+  const initialActionState = options?.initialActionState ?? ({} as RHFServerState<Type>)
   const hasServerValidation = isServerAction(serverAction)
 
   // Hooks must not be conditional; always provide an action function.
-  const actionForUseActionState = (serverAction ?? createNoopServerAction<TSchema>()) as RHFServerAction<TSchema>
+  const actionForUseActionState = (serverAction ?? createNoopServerAction<Type>()) as RHFServerAction<Type>
 
-  const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, initialActionState)
+  const [serverState, dispatchServerAction] = useActionState<RHFServerState<Type>, Type>(actionForUseActionState, initialActionState)
 
   const [isServerValidationPending, startTransition] = useTransition()
 
   const runServerValidation = useCallback(
-    (values: z.infer<TSchema>) => {
+    (values: Type) => {
       if (!hasServerValidation) return
       startTransition(() => {
         dispatchServerAction(values)
