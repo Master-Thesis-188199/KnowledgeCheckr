@@ -17,6 +17,9 @@ export function useRHFContext<T extends object>(serverValidation: boolean) {
 
   if (!serverValidation) return context as RHFBaseReturn<T>
 
+  if ((context as Partial<RHFServerReturn<T>>).runServerValidation === undefined)
+    throw new Error(`useRHFContext with 'serverValidation' enabled can only be used when the respective 'useRHF' declaration uses a server-action.`)
+
   return context as RHFServerReturn<T>
 }
 
