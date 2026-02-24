@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
-import { RHFServerAction, UseRHFFormProps } from '@/src/hooks/Shared/form/react-hook-form/type'
+import { RHFBaseReturn, RHFServerAction, UseRHFFormProps } from '@/src/hooks/Shared/form/react-hook-form/type'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { LoginSchema } from '@/src/schemas/AuthenticationSchema'
@@ -23,7 +23,7 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
   formProps?: UseRHFFormProps<z.infer<Schema>>
   formAction: RHFServerAction<z.infer<Schema>>
   refererCallbackUrl?: string
-  renderFields: (args: { form: ReturnType<typeof useRHF<Schema>>['form'] }) => React.ReactNode
+  renderFields: (args: { form: RHFBaseReturn<z.infer<Schema>>['form'] }) => React.ReactNode
 }) {
   const { form, runServerValidation, isServerValidationPending } = useRHF<Schema>(
     schema,
