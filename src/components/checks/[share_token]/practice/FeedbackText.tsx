@@ -9,9 +9,10 @@ export type DisplayFeedbackTextProps = Pick<TooltipProps, 'side' | 'sideOffset' 
    */
   pinned?: boolean
   children: React.ReactNode
+  answerIndex?: number
 }
 
-export default function DisplayFeedbackText({ feedback, pinned: isPinned, children, ...props }: DisplayFeedbackTextProps) {
+export default function DisplayFeedbackText({ feedback, pinned: isPinned, children, answerIndex = 0, ...props }: DisplayFeedbackTextProps) {
   const [hoverOpen, setHoverOpen] = useState(false)
   const open = isPinned || hoverOpen
 
@@ -19,7 +20,12 @@ export default function DisplayFeedbackText({ feedback, pinned: isPinned, childr
 
   return (
     <Tooltip
-      content={feedback}
+      content={
+        <div className='flex flex-col gap-1'>
+          <h2 className='text-sm font-medium'>Feedback for Answer {answerIndex + 1}</h2>
+          <p>{feedback}</p>
+        </div>
+      }
       className='max-w-[50vw] text-wrap lg:max-w-[25vw]'
       config={{
         open,

@@ -254,7 +254,7 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
         htmlFor={a.id}>
         {a.answer}
 
-        <DisplayFeedbackText disabled={!isEvaluated} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
+        <DisplayFeedbackText disabled={!isEvaluated} answerIndex={i} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon
               className={cn(

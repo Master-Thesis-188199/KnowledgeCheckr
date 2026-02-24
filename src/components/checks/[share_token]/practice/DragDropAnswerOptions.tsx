@@ -95,7 +95,7 @@ function AnswerFeedback({
   const answerFeedbackText = feedbackEvaluation.reasoning?.get(id)
 
   return (
-    <DisplayFeedbackText feedback={answerFeedbackText} side='right' pinned={isFeedbackPinned}>
+    <DisplayFeedbackText feedback={answerFeedbackText} side='right' pinned={isFeedbackPinned} answerIndex={correctPosition}>
       <div className='drag-drop-feedback-indicators group/tooltip ml-auto flex cursor-pointer items-center gap-2'>
         {feedbackEvaluation.isCorrectlyPositioned(id) ? (
           <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
