@@ -59,15 +59,6 @@ export function RenderPracticeQuestion() {
       : // allow the same (only) question to be answered again and again.
         form.reset()
 
-  useEffect(() => {
-    if (!isSubmitSuccessful) return
-    if (isPending) return
-    if (isSubmitting) return
-
-    console.info(question.question, ' has been answered & submitted')
-    storeAnswer({ ...form.getValues(), question_id: question.id })
-  }, [isSubmitSuccessful, isPending, isSubmitting])
-
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
 
   //* Handle reseting form inputs when question changes
@@ -83,6 +74,9 @@ export function RenderPracticeQuestion() {
   const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
     runServerValidation(_data)
+
+    storeAnswer({ ...form.getValues(), question_id: question.id })
+    console.info(`[Submit] '${question.question}' has been answered & submitted`)
   }
 
   useEffect(() => {
