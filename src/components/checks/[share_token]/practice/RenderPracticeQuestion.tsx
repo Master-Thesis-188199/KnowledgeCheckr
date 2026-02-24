@@ -41,7 +41,9 @@ export function RenderPracticeQuestion() {
   const RHFForm = useRHF(
     QuestionInputSchema,
     {
-      defaultValues: () => ({ question_id: question.id, type: question.type }),
+      // Warning: Type assertion is intentional.
+      // By setting the question_id and type, the form-values are (re-) set when the question changes, setting `values` makes the form controlled.
+      values: { question_id: question.id, type: question.type } as QuestionInput,
     },
     { serverAction: EvaluateAnswer, initialActionState: { success: false } },
   )
@@ -57,19 +59,9 @@ export function RenderPracticeQuestion() {
     questions.length > 1
       ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
       : // allow the same (only) question to be answered again and again.
-        form.reset()
+        form.reset({ question_id: question.id, type: question.type as Any })
 
   const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
-
-  //* Handle reseting form inputs when question changes
-  useEffect(() => {
-    if (watch('type') === question.type && watch('question_id') === question.id) return
-    else {
-      //* When the question is changed reset the form (and set the new question id and type)
-      form.reset({ question_id: question.id, type: question.type as Any })
-      return
-    }
-  }, [question.id, question.type])
 
   const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
