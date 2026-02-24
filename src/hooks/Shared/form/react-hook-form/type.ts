@@ -29,6 +29,10 @@ export type UseRHFFormProps<TSchema extends z.ZodSchema> = Omit<UseFormProps<z.i
 export type RHFBaseReturn<TSchema extends z.ZodSchema> = {
   form: UseFormReturn<z.infer<TSchema>>
   descriptions: ReturnType<typeof extractDescriptionMap>
+  /**
+   * This property is set to true when both the client- and server- validation is complete. Previously this state was manually declared and usually named as `isEvaluated`.
+   */
+  isValidationComplete: boolean
   baseFieldProps: {
     form: UseFormReturn<z.infer<TSchema>>
     descriptions: ReturnType<typeof extractDescriptionMap>

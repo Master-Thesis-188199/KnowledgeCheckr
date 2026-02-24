@@ -64,5 +64,12 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   if (!hasServerValidation) return base
 
-  return { ...base, ...serverReturnProps }
+  const serverReturn: RHFWithServerReturn<TSchema> = {
+    ...base,
+    ...serverReturnProps,
+    isValidationComplete:
+      form.formState.isSubmitted && form.formState.isSubmitSuccessful && (!form.formState.isSubmitting || !serverReturnProps.isServerValidationPending) && !serverReturnProps.isServerValidationPending,
+  }
+
+  return serverReturn
 }

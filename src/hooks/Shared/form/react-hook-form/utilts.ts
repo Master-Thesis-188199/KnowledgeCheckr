@@ -13,9 +13,11 @@ export function createNoopServerAction<TSchema extends z.ZodSchema>(): RHFServer
 }
 
 export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn<z.infer<TSchema>>, descriptions: ReturnType<typeof extractDescriptionMap>): RHFBaseReturn<TSchema> {
+  const { isSubmitting, isSubmitted, isSubmitSuccessful } = form.formState
   return {
     form,
     descriptions,
+    isValidationComplete: isSubmitted && isSubmitSuccessful && !isSubmitting,
     baseFieldProps: { form, descriptions },
   }
 }
