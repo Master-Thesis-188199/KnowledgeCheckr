@@ -7,6 +7,7 @@ import { PracticeQuestionNavigation } from '@/src/components/checks/[share_token
 import { PracticeStoreProvider } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { RenderPracticeQuestion } from '@/src/components/checks/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import prepareQuestions from '@/src/lib/checks/[share_token]/prepareQuestions'
 import _logger from '@/src/lib/log/Logger'
 import { cn } from '@/src/lib/Shared/utils'
@@ -14,6 +15,7 @@ import { cn } from '@/src/lib/Shared/utils'
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default async function PracticePage({ params, searchParams }: { params: Promise<{ share_token: string }>; searchParams?: Promise<{ category?: '_none_' | string }> }) {
+  await requireAuthentication()
   const { share_token } = await params
   const { category } = (await searchParams) ?? {}
 
