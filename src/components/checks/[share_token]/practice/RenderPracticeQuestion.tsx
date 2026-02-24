@@ -210,7 +210,7 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
       register,
       formState: { errors },
     },
-  } = useRHFContext<QuestionInput>()
+  } = useRHFContext<QuestionInput>(true)
   const registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0'] = question.type === 'multiple-choice' ? (i) => `selection.${i}` : () => `selection`
 
   const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question)

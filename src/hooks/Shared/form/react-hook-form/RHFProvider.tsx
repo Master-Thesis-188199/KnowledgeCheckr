@@ -7,12 +7,17 @@ type RHFContext<T extends object> = RHFBaseReturn<T> & Partial<RHFServerReturn<T
 
 const RHFContext = createContext<RHFContext<Any> | null>(null)
 
-export const useRHFContext = <T extends object>() => {
+export function useRHFContext<T extends object>(serverValidation: false): RHFBaseReturn<T>
+export function useRHFContext<T extends object>(serverValidation: true): RHFBaseReturn<T> & RHFServerReturn<T>
+export function useRHFContext<T extends object>(serverValidation: boolean) {
   const context = useContext(RHFContext)
   if (!context) {
     throw new Error('useRHFContext must be used within a RHFProvider')
   }
-  return context as RHFContext<T>
+
+  if (!serverValidation) return context as RHFBaseReturn<T>
+
+  return context as RHFServerReturn<T>
 }
 
 export const RHFProvider = <T extends object>({ children, ...props }: { children: ReactNode } & RHFContext<T>) => {
