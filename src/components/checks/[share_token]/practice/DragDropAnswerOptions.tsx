@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ArrowUpFromLineIcon, CheckIcon, MessageCircleQuestionIcon, XIcon } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import { DragDropFeedbackEvaluation, usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
-import { PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import { cn } from '@/src/lib/Shared/utils'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
@@ -14,29 +13,33 @@ import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 /**
  * Renders the answer-options for a drag-drop question within a drag-and-drop container. Depending on the provided props it allows interaction for reordering answers or displays feedback based on the feedback and submission.
  */
-export default function DragDropAnswers({ isEvaluated, ...props }: { question: DragDropQuestion; isEvaluated: boolean; state: PracticeFeedbackServerState }) {
-  const { setValue, trigger } = useFormContext<QuestionInput>()
+export default function DragDropAnswers({ question }: { question: DragDropQuestion }) {
+  const {
+    isValidationComplete,
+    form: { setValue, trigger },
+  } = useRHFContext<QuestionInput>(true)
 
   return (
     <DragDropContainer
-      hideMoveIndicators={isEvaluated}
-      key={props.question.id + props.question.type + isEvaluated.toString()}
+      hideMoveIndicators={isValidationComplete}
+      key={question.id + question.type + isValidationComplete.toString()}
       className='col-span-2 my-auto space-y-6'
-      enabled={!isEvaluated}
+      enabled={!isValidationComplete}
       onSwapEnd={(e) => {
         e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
         trigger('input')
       }}>
-      <DragDropAnswerOptions {...props} isEvaluated={isEvaluated} />
+      <DragDropAnswerOptions question={question} />
     </DragDropContainer>
   )
 }
 
-function DragDropAnswerOptions({ question, state, isEvaluated }: { question: DragDropQuestion; isEvaluated: boolean; state: PracticeFeedbackServerState }) {
+function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
+  const { isValidationComplete, state } = useRHFContext<QuestionInput>(true)
   //? default: display the answers in their given order, but update position to be their index to prevent data leakage.
   let options: DragDropQuestion['answers'] = question.answers.map((a, i) => ({ ...a, position: i }))
 
-  if (isEvaluated && state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id) {
+  if (isValidationComplete && state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id) {
     //? Order question answers based on submitted positions
     options = state.values.input.map((id, submittedPos) => {
       const answer = question.answers.find((a) => a.id === id)
@@ -45,8 +48,8 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
   }
 
   const getFeedbackEvaluation = usePracticeFeeback(state, {
-    isSubmitSuccessful: isEvaluated,
-    isSubmitted: isEvaluated,
+    isSubmitSuccessful: isValidationComplete,
+    isSubmitted: isValidationComplete,
     isPending: false,
     isSubmitting: false,
   })
@@ -55,23 +58,23 @@ function DragDropAnswerOptions({ question, state, isEvaluated }: { question: Dra
   const [openFeedbacks, setOpenFeedbacks] = useState<DragDropQuestion['answers'][number]['id'][]>([])
 
   useEffect(() => {
-    if (!isEvaluated) return
+    if (!isValidationComplete) return
 
     // automatically display feedback texts for wrong positioned answers
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenFeedbacks(options.filter((o) => feedbackEvaluation.isFalslyPositioned(o.id)).map((o) => o.id))
-  }, [isEvaluated])
+  }, [isValidationComplete])
 
   return options.map(({ id, answer, position }, i) => (
     <DragDropItem
       key={id}
       name={id}
-      className={cn(isEvaluated && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer')}
-      onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
-      data-evaluation-result={isEvaluated ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
+      className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer')}
+      onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
+      data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
-      <AnswerFeedback show={isEvaluated} isFeedbackPinned={openFeedbacks.includes(id)} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
+      <AnswerFeedback show={isValidationComplete} isFeedbackPinned={openFeedbacks.includes(id)} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
     </DragDropItem>
   ))
 }

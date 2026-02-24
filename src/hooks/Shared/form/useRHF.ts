@@ -11,20 +11,20 @@ import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
  * Internal hook that encapsulates all server-action/useActionState wiring.
  * Keeps `useRHF` body focused on "schema + RHF init + return shape".
  */
-function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOptions<TSchema>): RHFServerReturn<TSchema> & { hasServerValidation: boolean } {
+function useServerValidation<Type extends object>(options?: UseRHFOptions<Type>): RHFServerReturn<Type> & { hasServerValidation: boolean } {
   const serverAction = options?.serverAction
-  const initialActionState = options?.initialActionState ?? ({} as RHFServerState<TSchema>)
+  const initialActionState = options?.initialActionState ?? ({} as RHFServerState<Type>)
   const hasServerValidation = isServerAction(serverAction)
 
   // Hooks must not be conditional; always provide an action function.
-  const actionForUseActionState = (serverAction ?? createNoopServerAction<TSchema>()) as RHFServerAction<TSchema>
+  const actionForUseActionState = (serverAction ?? createNoopServerAction<Type>()) as RHFServerAction<Type>
 
-  const [serverState, dispatchServerAction] = useActionState<RHFServerState<TSchema>, z.infer<TSchema>>(actionForUseActionState, initialActionState)
+  const [serverState, dispatchServerAction] = useActionState<RHFServerState<Type>, Type>(actionForUseActionState, initialActionState)
 
   const [isServerValidationPending, startTransition] = useTransition()
 
   const runServerValidation = useCallback(
-    (values: z.infer<TSchema>) => {
+    (values: Type) => {
       if (!hasServerValidation) return
       startTransition(() => {
         dispatchServerAction(values)
@@ -37,18 +37,18 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
 }
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps?: UseRHFFormProps<TSchema>): RHFBaseReturn<TSchema>
+export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>): RHFBaseReturn<z.infer<TSchema>>
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps: UseRHFFormProps<TSchema> | undefined, options: UseRHFOptions<TSchema>): RHFWithServerReturn<TSchema>
+export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps: UseRHFFormProps<z.infer<TSchema>> | undefined, options: UseRHFOptions<z.infer<TSchema>>): RHFWithServerReturn<z.infer<TSchema>>
 
 /**
  * Combines react-hook-form initialization with Zod schema validation + schema descriptions.
  * Optionally wires up a Next.js server action (useActionState) for server-side validation.
  */
-export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
+export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>, options?: UseRHFOptions<z.infer<TSchema>>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
-  const { hasServerValidation, ...serverReturnProps } = useServerValidation<TSchema>(options)
+  const { hasServerValidation, ...serverReturnProps } = useServerValidation<z.infer<TSchema>>(options)
   const { instantiate } = schemaUtilities(schema)
 
   const form = useForm<z.infer<TSchema>>({
@@ -64,5 +64,12 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   if (!hasServerValidation) return base
 
-  return { ...base, ...serverReturnProps }
+  const serverReturn: RHFWithServerReturn<z.infer<TSchema>> = {
+    ...base,
+    ...serverReturnProps,
+    isValidationComplete:
+      form.formState.isSubmitted && form.formState.isSubmitSuccessful && (!form.formState.isSubmitting || !serverReturnProps.isServerValidationPending) && !serverReturnProps.isServerValidationPending,
+  }
+
+  return serverReturn
 }

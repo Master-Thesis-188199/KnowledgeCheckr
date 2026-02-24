@@ -3,21 +3,19 @@
 import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
-import isEmpty from 'lodash/isEmpty'
-import { LoaderCircleIcon, MessageCircleQuestionIcon } from 'lucide-react'
+import { MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
-import { useFormContext } from 'react-hook-form'
 import { UseFormRegister } from 'react-hook-form'
 import { FeedbackOpenQuestion } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/checks/[share_token]/practice/DragDropAnswerOptions'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
-import { Form } from '@/src/components/shadcn/form'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
+import { RHFProvider, useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { EvaluateAnswer } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
@@ -39,68 +37,43 @@ export function RenderPracticeQuestion() {
     notFound()
   }
 
-  const {
-    form,
-    isServerValidationPending: isPending,
-    state,
-    runServerValidation,
-  } = useRHF(
+  const RHFForm = useRHF(
     QuestionInputSchema,
     {
-      defaultValues: () => ({ question_id: question.id, type: question.type }),
+      // Warning: Type assertion is intentional.
+      // By setting the question_id and type, the form-values are (re-) set when the question changes, setting `values` makes the form controlled.
+      values: { question_id: question.id, type: question.type } as QuestionInput,
     },
     { serverAction: EvaluateAnswer, initialActionState: { success: false } },
   )
+
   const {
-    watch,
-    formState: { isSubmitting, isValid, isSubmitted, isSubmitSuccessful, errors },
-  } = form
+    form: {
+      formState: { isValid, isSubmitting },
+      ...form
+    },
+    isValidationComplete,
+    isServerValidationPending: isPending,
+    state,
+    runServerValidation,
+  } = RHFForm
 
   const nextRandomQuestion = () =>
     questions.length > 1
       ? navigateToQuestion((currentQuestionIndex + 1) % questions.length)
       : // allow the same (only) question to be answered again and again.
-        form.reset()
-
-  useEffect(() => {
-    if (!isSubmitSuccessful) return
-    if (isPending) return
-    if (isSubmitting) return
-
-    console.info(question.question, ' has been answered & submitted')
-    storeAnswer({ ...form.getValues(), question_id: question.id })
-  }, [isSubmitSuccessful, isPending, isSubmitting])
-
-  const getFeedbackEvaluation = usePracticeFeeback(state, { isSubmitSuccessful, isPending, isSubmitted, isSubmitting })
-  const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && !isPending
-
-  //* Handle reseting form inputs when question changes
-  useEffect(() => {
-    if (watch('type') === question.type && watch('question_id') === question.id) return
-    else {
-      //* When the question is changed reset the form (and set the new question id and type)
-      form.reset({ question_id: question.id, type: question.type as Any })
-      return
-    }
-  }, [question.id, question.type])
+        form.reset({ question_id: question.id, type: question.type as Any })
 
   const onSubmit = (_data: QuestionInput) => {
     logger.verbose('Submitting practice answer...', _data)
     runServerValidation(_data)
+
+    storeAnswer({ ...form.getValues(), question_id: question.id })
+    console.info(`[Submit] '${question.question}' has been answered & submitted`)
   }
 
-  useEffect(() => {
-    const sub = watch((values, { name }) => {
-      console.debug(`[${name ?? 'Form-State (validation)'}] changed`, values)
-    })
-
-    return () => sub.unsubscribe()
-  })
-
-  if (!isEmpty(errors)) console.log('error', errors)
-
   return (
-    <Form {...form}>
+    <RHFProvider {...RHFForm}>
       <form id='practice-form' data-question-id={question.id} data-question-type={question.type} className='flex flex-col gap-4' onSubmit={form.handleSubmit(onSubmit)}>
         <div className='my-8 flex flex-col items-center justify-center gap-2'>
           <div className='flex items-center gap-4'>
@@ -111,40 +84,40 @@ export function RenderPracticeQuestion() {
         </div>
 
         <div id='answer-options' className={cn('grid min-h-[35vh] min-w-[25vw] grid-cols-2 gap-8 rounded-md p-6 ring-1 ring-ring dark:ring-ring', question?.type === 'open-question' && 'grid-cols-1')}>
-          {question.type === 'multiple-choice' && <ChoiceAnswerOptions type='checkbox' question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />}
+          {
+            //prettier-ignore
+            (question.type === 'single-choice' || question.type === 'multiple-choice') && 
+              <ChoiceAnswerOptions type={question.type === 'single-choice' ? 'radio' : 'checkbox'} question={question} />
+          }
 
-          {question.type === 'single-choice' && <ChoiceAnswerOptions type='radio' question={question} getFeedbackEvaluation={getFeedbackEvaluation} isEvaluated={isEvaluated} />}
+          {question.type === 'drag-drop' && <DragDropAnswers question={question} />}
 
-          {question.type === 'drag-drop' && <DragDropAnswers question={question} isEvaluated={isEvaluated} state={state} />}
-
-          {question.type === 'open-question' && (
-            <FeedbackOpenQuestion isEvaluated={isEvaluated} getFeedbackEvaluation={getFeedbackEvaluation} question={question} disabled={isSubmitted && isSubmitSuccessful && !isPending} />
-          )}
+          {question.type === 'open-question' && <FeedbackOpenQuestion question={question} />}
         </div>
 
         <FeedbackLegend
-          disabled={(!isEvaluated && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
-          show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')}
+          disabled={(!isValidationComplete && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
+          show={isValidationComplete && (question.type === 'single-choice' || question.type === 'multiple-choice')}
         />
 
         <div className='flex justify-center'>
           <Button
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
-            hidden={isSubmitted && isSubmitSuccessful && !isPending}
+            hidden={isValidationComplete}
             className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
             variant='secondary'
+            isLoading={isSubmitting || isPending}
             type='submit'>
-            <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
             Check Answer
           </Button>
 
-          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
+          <Button hidden={!isValidationComplete} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
             Continue
           </Button>
         </div>
       </form>
-    </Form>
+    </RHFProvider>
   )
 }
 
@@ -213,22 +186,23 @@ function FeedbackIndicators({ correctlySelected, missingSelection, falslySelecte
 /**
  * This component renders the answer-options for ChoiceQuestions as they are almost identical, to reduce code duplication
  */
-function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
-  question,
-  getFeedbackEvaluation,
-  isEvaluated,
-  type,
-}: {
-  isEvaluated: boolean
-  type: Required<HTMLProps<HTMLInputElement>['type']>
-  question: Q
-  getFeedbackEvaluation: ReturnType<typeof usePracticeFeeback>
-}) {
+function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { type: Required<HTMLProps<HTMLInputElement>['type']>; question: Q }) {
   const {
-    register,
-    formState: { errors },
-  } = useFormContext<QuestionInput>()
+    isValidationComplete,
+    state,
+    form: {
+      register,
+      formState: { errors },
+    },
+  } = useRHFContext<QuestionInput>(true)
   const registerKey: (index: number) => Parameters<UseFormRegister<QuestionInput>>['0'] = question.type === 'multiple-choice' ? (i) => `selection.${i}` : () => `selection`
+
+  const getFeedbackEvaluation = usePracticeFeeback(state, {
+    isSubmitSuccessful: isValidationComplete,
+    isSubmitted: isValidationComplete,
+    isPending: false,
+    isSubmitting: false,
+  })
 
   const { isCorrectlySelected, isFalslySelected, isMissingSelection, reasoning } = getFeedbackEvaluation(question)
   const [openFeedbacks, setOpenFeedbacks] = useState<ChoiceQuestion['answers'][number]['id'][]>([])
@@ -239,28 +213,28 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenFeedbacks([...question.answers.filter((a) => isFalslySelected(a)).map((a) => a.id)])
-  }, [isEvaluated])
+  }, [isValidationComplete])
 
   return question.answers.map((a, i) => {
     return (
       <ChoiceOption
         key={a.id}
-        onClick={isEvaluated ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
-        mode={isEvaluated ? 'feedback' : 'input'}
-        isCorrect={isEvaluated && isCorrectlySelected(a)}
-        isWrong={isEvaluated && isFalslySelected(a)}
-        isMissing={isEvaluated && isMissingSelection(a)}
+        onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
+        mode={isValidationComplete ? 'feedback' : 'input'}
+        isCorrect={isValidationComplete && isCorrectlySelected(a)}
+        isWrong={isValidationComplete && isFalslySelected(a)}
+        isMissing={isValidationComplete && isMissingSelection(a)}
         feedbackText={reasoning?.get(a.id)}
         htmlFor={a.id}>
         {a.answer}
 
-        <DisplayFeedbackText disabled={!isEvaluated} answerIndex={i} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
+        <DisplayFeedbackText disabled={!isValidationComplete} answerIndex={i} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon
               className={cn(
                 'size-4.5 text-warning',
                 !openFeedbacks.includes(a.id) ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110',
-                !isEvaluated && 'hidden',
+                !isValidationComplete && 'hidden',
                 !reasoning?.get(a.id) && 'hidden',
               )}
             />
@@ -273,9 +247,9 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({
           id={a.id}
           type={type}
           {...register(registerKey(i))}
-          disabled={isEvaluated}
+          disabled={isValidationComplete}
           value={a.id}
-          data-evaluation-result={isEvaluated ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
+          data-evaluation-result={isValidationComplete ? (isCorrectlySelected(a) ? 'correct' : isFalslySelected(a) ? 'incorrect' : isMissingSelection(a) ? 'missing' : 'none') : 'none'}
         />
 
         <FormFieldError field={registerKey(i)} errors={errors} />

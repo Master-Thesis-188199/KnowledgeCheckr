@@ -1,44 +1,47 @@
 import { DefaultValues, UseFormProps, UseFormReturn } from 'react-hook-form'
-import { z } from 'zod'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 
-export type RHFServerState<TSchema extends z.ZodSchema> = {
+export type RHFServerState<Type extends object> = {
   success: boolean
-  fieldErrors?: Partial<Record<keyof z.infer<TSchema>, string[]>>
+  fieldErrors?: Partial<Record<keyof Type, string[]>>
   rootError?: string
-  values?: z.infer<TSchema>
+  values?: Type
 }
 
-export type RHFServerAction<TSchema extends z.ZodSchema> = (prev: RHFServerState<TSchema>, data: z.infer<TSchema>) => Promise<RHFServerState<TSchema>>
+export type RHFServerAction<Type extends object> = (prev: RHFServerState<Type>, data: Type) => Promise<RHFServerState<Type>>
 
-export type UseRHFOptions<TSchema extends z.ZodSchema> = {
-  initialActionState: RHFServerState<TSchema>
-  serverAction: RHFServerAction<TSchema>
+export type UseRHFOptions<Type extends object> = {
+  initialActionState: RHFServerState<Type>
+  serverAction: RHFServerAction<Type>
 }
 
-export type UseRHFFormProps<TSchema extends z.ZodSchema> = Omit<UseFormProps<z.infer<TSchema>>, 'resolver' | 'defaultValues'> & {
+export type UseRHFFormProps<Type extends object> = Omit<UseFormProps<Type>, 'resolver' | 'defaultValues'> & {
   /**
    * Dynamically build the form default values
    * @param stateValues The values returned by the server-validation action, e.g. to preserver user-inputs after submission
    * @param instantiatedValues Property instantiations of the schema without default-values, thus string --> '', number --> 0, ...
    * @returns The form default values
    */
-  defaultValues?: (stateValues: RHFServerState<TSchema>['values'], instantiatedValues: z.infer<TSchema>) => DefaultValues<z.infer<TSchema>>
+  defaultValues?: (stateValues: RHFServerState<Type>['values'], instantiatedValues: Type) => DefaultValues<Type>
 }
 
-export type RHFBaseReturn<TSchema extends z.ZodSchema> = {
-  form: UseFormReturn<z.infer<TSchema>>
+export type RHFBaseReturn<Type extends object> = {
+  form: UseFormReturn<Type>
   descriptions: ReturnType<typeof extractDescriptionMap>
+  /**
+   * This property is set to true when both the client- and server- validation is complete. Previously this state was manually declared and usually named as `isEvaluated`.
+   */
+  isValidationComplete: boolean
   baseFieldProps: {
-    form: UseFormReturn<z.infer<TSchema>>
+    form: UseFormReturn<Type>
     descriptions: ReturnType<typeof extractDescriptionMap>
   }
 }
 
-export type RHFServerReturn<TSchema extends z.ZodSchema> = {
-  runServerValidation: (values: z.infer<TSchema>) => void
-  state: RHFServerState<TSchema>
+export type RHFServerReturn<Type extends object> = {
+  runServerValidation: (values: Type) => void
+  state: RHFServerState<Type>
   isServerValidationPending: boolean
 }
 
-export type RHFWithServerReturn<TSchema extends z.ZodSchema> = RHFBaseReturn<TSchema> & RHFServerReturn<TSchema>
+export type RHFWithServerReturn<Type extends object> = RHFBaseReturn<Type> & RHFServerReturn<Type>
