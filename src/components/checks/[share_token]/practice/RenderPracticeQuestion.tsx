@@ -120,14 +120,14 @@ export function RenderPracticeQuestion() {
 
         <FeedbackLegend
           disabled={(!isValidationComplete && !(question.type === 'single-choice' || question.type === 'multiple-choice')) || question.id !== state.values?.question_id}
-          show={isSubmitSuccessful && isSubmitted && !(isSubmitting || isPending) && (question.type === 'single-choice' || question.type === 'multiple-choice')}
+          show={isValidationComplete && (question.type === 'single-choice' || question.type === 'multiple-choice')}
         />
 
         <div className='flex justify-center'>
           <Button
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
-            hidden={isSubmitted && isSubmitSuccessful && !isPending}
+            hidden={isValidationComplete}
             className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
             variant='secondary'
             type='submit'>
@@ -135,7 +135,7 @@ export function RenderPracticeQuestion() {
             Check Answer
           </Button>
 
-          <Button hidden={!isSubmitted || !isSubmitSuccessful || isPending} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
+          <Button hidden={!isValidationComplete} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
             Continue
           </Button>
         </div>
