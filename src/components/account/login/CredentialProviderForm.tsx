@@ -20,8 +20,8 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
 }: {
   currentMode: 'signUp' | 'login'
   schema: Schema
-  formProps?: UseRHFFormProps<Schema>
-  formAction: RHFServerAction<Schema>
+  formProps?: UseRHFFormProps<z.infer<Schema>>
+  formAction: RHFServerAction<z.infer<Schema>>
   refererCallbackUrl?: string
   renderFields: (args: { form: ReturnType<typeof useRHF<Schema>>['form'] }) => React.ReactNode
 }) {

@@ -1,18 +1,17 @@
 import { useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
-import { z } from 'zod'
 import { RHFBaseReturn, RHFServerAction, RHFServerState, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { extractDescriptionMap } from '@/src/schemas/utils/extractDescriptions'
 
-export function isServerAction<TSchema extends z.ZodSchema>(action: UseRHFOptions<TSchema>['serverAction'] | undefined): action is RHFServerAction<TSchema> {
+export function isServerAction<Type extends object>(action: UseRHFOptions<Type>['serverAction'] | undefined): action is RHFServerAction<Type> {
   return typeof action === 'function'
 }
 
-export function createNoopServerAction<TSchema extends z.ZodSchema>(): RHFServerAction<TSchema> {
+export function createNoopServerAction<Type extends object>(): RHFServerAction<Type> {
   return async (prev) => prev
 }
 
-export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn<z.infer<TSchema>>, descriptions: ReturnType<typeof extractDescriptionMap>): RHFBaseReturn<TSchema> {
+export function buildBaseReturn<Type extends object>(form: UseFormReturn<Type>, descriptions: ReturnType<typeof extractDescriptionMap>): RHFBaseReturn<Type> {
   const { isSubmitting, isSubmitted, isSubmitSuccessful } = form.formState
   return {
     form,
@@ -29,17 +28,17 @@ export function buildBaseReturn<TSchema extends z.ZodSchema>(form: UseFormReturn
  * @param form.setErrror The `setError` function from the react-hook-form instance
  * @param form.reset The `reset` function from the react-hook-form instance
  */
-export function useServerValidationResults<TSchema extends z.ZodSchema>(
+export function useServerValidationResults<Type extends object>(
   hasServerValidation: boolean,
-  state: RHFServerState<TSchema>,
-  { setError, clearErrors }: {} & Pick<UseFormReturn<z.infer<TSchema>>, 'setError' | 'clearErrors'>,
+  state: RHFServerState<Type>,
+  { setError, clearErrors }: {} & Pick<UseFormReturn<Type>, 'setError' | 'clearErrors'>,
 ) {
   useEffect(() => {
     if (!hasServerValidation) return
 
     if (state.fieldErrors) {
       Object.entries(state.fieldErrors).forEach(([_key, msgs]) => {
-        const key = _key as keyof z.infer<TSchema>
+        const key = _key as keyof Type
 
         if (!msgs) return
 

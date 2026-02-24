@@ -37,18 +37,18 @@ function useServerValidation<TSchema extends z.ZodSchema>(options?: UseRHFOption
 }
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps?: UseRHFFormProps<TSchema>): RHFBaseReturn<TSchema>
+export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>): RHFBaseReturn<z.infer<TSchema>>
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema>( schema: TSchema, formProps: UseRHFFormProps<TSchema> | undefined, options: UseRHFOptions<TSchema>): RHFWithServerReturn<TSchema>
+export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps: UseRHFFormProps<z.infer<TSchema>> | undefined, options: UseRHFOptions<z.infer<TSchema>>): RHFWithServerReturn<z.infer<TSchema>>
 
 /**
  * Combines react-hook-form initialization with Zod schema validation + schema descriptions.
  * Optionally wires up a Next.js server action (useActionState) for server-side validation.
  */
-export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<TSchema>, options?: UseRHFOptions<TSchema>) {
+export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>, options?: UseRHFOptions<z.infer<TSchema>>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
-  const { hasServerValidation, ...serverReturnProps } = useServerValidation<TSchema>(options)
+  const { hasServerValidation, ...serverReturnProps } = useServerValidation<z.infer<TSchema>>(options)
   const { instantiate } = schemaUtilities(schema)
 
   const form = useForm<z.infer<TSchema>>({
@@ -64,7 +64,7 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   if (!hasServerValidation) return base
 
-  const serverReturn: RHFWithServerReturn<TSchema> = {
+  const serverReturn: RHFWithServerReturn<z.infer<TSchema>> = {
     ...base,
     ...serverReturnProps,
     isValidationComplete:
