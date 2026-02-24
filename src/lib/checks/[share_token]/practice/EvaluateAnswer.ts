@@ -61,12 +61,15 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
 
       const feedback: FeedbackMap = new Map()
 
-      question.answers.forEach((answer, i) =>
-        feedback.set(
-          answer.id,
-          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
-        ),
-      )
+      question.answers
+        // produce feedback for selected option(s) and the correct one that was not selected
+        .filter((a) => (answer.selection === a.id && !a.correct) || (answer.selection !== a.id && a.correct))
+        .forEach((answer, i) =>
+          feedback.set(
+            answer.id,
+            answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
+          ),
+        )
 
       return {
         type: answer.type,
@@ -80,12 +83,16 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
 
       const feedback: FeedbackMap = new Map()
 
-      question.answers.forEach((answer, i) =>
-        feedback.set(
-          answer.id,
-          answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
-        ),
-      )
+      question.answers
+        // produce feedback for selected option(s) and the correct one that was not selected
+        .filter((a) => (answer.selection.includes(a.id) && !a.correct) || (!answer.selection.includes(a.id) && a.correct))
+        .forEach((answer, i) =>
+          feedback.set(
+            answer.id,
+            answer.correct ? `Answer ${i} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}` : `Answer ${i} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
+          ),
+        )
+
       return {
         type: answer.type,
         solution: question.answers.filter((a) => a.correct).map((answer) => answer.id),
@@ -113,14 +120,11 @@ async function createFeedback({ question_id, ...answer }: QuestionInput): Promis
 
       const feedback: FeedbackMap = new Map()
 
-      question.answers.forEach((a, i) =>
-        feedback.set(
-          a.id,
-          answer.input.at(i) === a.id
-            ? `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is correct because ${lorem().split(' ').slice(0, 30).join(' ')}`
-            : `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`,
-        ),
-      )
+      question.answers
+        .filter((a, i) => answer.input.at(i) !== a.id)
+        .forEach((a, i) =>
+          feedback.set(a.id, `Answer (${orderedAnswers.find(({ id }) => id === answer.input.at(i))?.answer}) at position ${i + 1} is false because ${lorem().split(' ').slice(0, 30).join(' ')}`),
+        )
 
       return {
         type: answer.type,
