@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
 import isEmpty from 'lodash/isEmpty'
-import { LoaderCircleIcon, MessageCircleQuestionIcon } from 'lucide-react'
+import { MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
 import { UseFormRegister } from 'react-hook-form'
@@ -130,8 +130,8 @@ export function RenderPracticeQuestion() {
             hidden={isValidationComplete}
             className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
             variant='secondary'
+            isLoading={isSubmitting || isPending}
             type='submit'>
-            <LoaderCircleIcon className={cn('animate-spin', 'hidden', (isSubmitting || isPending) && 'block')} />
             Check Answer
           </Button>
 
