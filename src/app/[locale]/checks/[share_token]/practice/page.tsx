@@ -56,7 +56,9 @@ export default async function PracticePage({ params, searchParams }: { params: P
       <PageHeading title='Practice' />
 
       <div className='grid gap-12 @[60rem]:grid-cols-[1fr_auto] @[60rem]:gap-[7vw]'>
-        <PracticeQuestionNavigation />
+        <div className='flex justify-center *:max-w-8/12 *:flex-1'>
+          <PracticeQuestionNavigation />
+        </div>
         <div className='flex justify-center @[60rem]:order-first'>
           <div className='flex max-w-11/12 flex-1 flex-col 2xl:max-w-4/5'>
             <PracticeProgress />
