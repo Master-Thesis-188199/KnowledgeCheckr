@@ -23,10 +23,10 @@ export default function DisplayFeedbackText({ feedback, pinned: isPinned, childr
       content={
         <div className='flex flex-col gap-1'>
           <h2 className='text-sm font-medium'>Feedback for Answer {answerIndex + 1}</h2>
-          <p>{feedback}</p>
+          <p className='text-pretty'>{feedback}</p>
         </div>
       }
-      className='max-w-[50vw] text-wrap lg:max-w-[25vw]'
+      className='max-w-80 lg:max-w-[25vw]'
       config={{
         open,
         onOpenChange: (next) => {
