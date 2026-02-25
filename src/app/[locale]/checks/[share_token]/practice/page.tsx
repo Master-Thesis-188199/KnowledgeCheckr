@@ -55,16 +55,17 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
       <PageHeading title='Practice' />
 
-      <div className='mx-auto w-full max-w-3/4 lg:max-w-1/2'>
+      <div className='grid gap-12 @[60rem]:grid-cols-[1fr_auto] @[60rem]:gap-[7vw]'>
         <PracticeQuestionNavigation />
-
-        <PracticeProgress />
-
-        <RenderPracticeQuestion />
-
-        <div className={cn('flex justify-between', practiceQuestions.length <= 1 && 'hidden')}>
-          <PracticeNavigationPreviousButton />
-          <PracticeNavigationNextButton />
+        <div className='flex justify-center @[60rem]:order-first'>
+          <div className='flex max-w-11/12 flex-1 flex-col 2xl:max-w-4/5'>
+            <PracticeProgress />
+            <RenderPracticeQuestion />
+            <div className={cn('flex justify-between', practiceQuestions.length <= 1 && 'hidden')}>
+              <PracticeNavigationPreviousButton />
+              <PracticeNavigationNextButton />
+            </div>
+          </div>
         </div>
       </div>
     </PracticeStoreProvider>
