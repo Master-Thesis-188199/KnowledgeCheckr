@@ -1,39 +1,31 @@
 'use client'
 
+import { SquareIcon } from 'lucide-react'
+import QuestionNavigationMenu from '@/src/components/checks/[share_token]/(shared)/QuestionNavigation'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
-import { cn } from '@/src/lib/Shared/utils'
+import { Button } from '@/src/components/shadcn/button'
+import { StopwatchTime } from '@/src/components/Shared/StopwatchTime'
 
 export function PracticeQuestionNavigation() {
-  const { practiceQuestions, navigateToQuestion, currentQuestionIndex } = usePracticeStore((store) => store)
+  const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt } = usePracticeStore((store) => store)
 
   return (
-    <div id='practice-question-steps' className='mx-4 mb-8 grid grid-cols-[repeat(auto-fill,minmax(64,1fr))] gap-x-5 gap-y-10 lg:gap-x-12'>
-      {practiceQuestions.map((q, i) => (
-        <button
-          aria-label={`select question ${i}`}
-          type='button'
-          data-selected={currentQuestionIndex === i}
-          disabled={currentQuestionIndex === i}
-          key={q.id}
-          className={cn('group relative w-fit enabled:hover:cursor-pointer disabled:hover:cursor-auto')}
-          onClick={() => navigateToQuestion(i)}>
-          <span
-            className={cn(
-              'absolute right-0 bottom-2 left-0 text-center text-sm group-enabled:group-hover:font-semibold group-data-[selected="true"]:font-semibold',
-              'text-neutral-600 dark:text-neutral-300',
-            )}>
-            {i + 1}
+    <>
+      <QuestionNavigationMenu questions={practiceQuestions} currentQuestionIndex={currentQuestionIndex} onQuestionClick={navigateToQuestion}>
+        <div className='flex gap-1 text-xs text-neutral-500 dark:text-neutral-400'>
+          <span>Session </span>
+          <span className=''>
+            <StopwatchTime start={startedAt} delimiter=', ' />
           </span>
-          <div
-            className={cn(
-              'h-2 w-16 rounded-xl group-data-[selected="true"]:shadow-sm',
-              'bg-neutral-400/60 shadow-neutral-400 group-data-[selected="true"]:bg-neutral-500/80 dark:bg-neutral-600 dark:shadow-neutral-500 dark:group-data-[selected="true"]:bg-neutral-400',
-              'group-enabled:group-hover:bg-neutral-500/80 group-enabled:group-active:bg-neutral-500 dark:group-enabled:group-hover:bg-neutral-400 dark:group-enabled:group-active:bg-neutral-500/60',
-            )}
-            children=''
-          />
-        </button>
-      ))}
-    </div>
+        </div>
+
+        <div className='-mb-2 flex justify-end border-t pt-1'>
+          <Button variant='ghost' type='button' size='sm' rippleClassname='bg-destructive/60' className='text-muted-foreground ring-ring-subtle/80 dark:ring-ring-subtle/80'>
+            <SquareIcon className='text-destructive/70' />
+            End Practice
+          </Button>
+        </div>
+      </QuestionNavigationMenu>
+    </>
   )
 }
