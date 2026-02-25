@@ -1,9 +1,11 @@
 'use client'
 
 import { SquareIcon } from 'lucide-react'
+import { redirect, RedirectType } from 'next/navigation'
 import QuestionNavigationMenu from '@/src/components/checks/[share_token]/(shared)/QuestionNavigation'
 import { usePracticeStore } from '@/src/components/checks/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
+import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { StopwatchTime } from '@/src/components/Shared/StopwatchTime'
 
 export function PracticeQuestionNavigation() {
@@ -20,10 +22,16 @@ export function PracticeQuestionNavigation() {
         </div>
 
         <div className='-mb-2 flex justify-end border-t pt-1'>
-          <Button variant='ghost' type='button' size='sm' rippleClassname='bg-destructive/60' className='text-muted-foreground ring-ring-subtle/80 dark:ring-ring-subtle/80'>
-            <SquareIcon className='text-destructive/70' />
-            End Practice
-          </Button>
+          <ConfirmationDialog
+            confirmAction={() => {
+              //! For testing purposes users can navigate back to the practice-page when the app is not in production.
+              redirect('/checks', process.env.NEXT_PUBLIC_MODE !== 'production' ? RedirectType.push : RedirectType.replace)
+            }}>
+            <Button variant='link' type='button' size='sm' rippleClassname='bg-destructive/60' className='text-muted-foreground ring-ring-subtle/80 dark:ring-ring-subtle/80'>
+              <SquareIcon className='text-destructive/70' />
+              End Practice
+            </Button>
+          </ConfirmationDialog>
         </div>
       </QuestionNavigationMenu>
     </>
