@@ -9,7 +9,7 @@ import { addSeconds, differenceInMilliseconds, formatDuration, isAfter } from 'd
  * @param duration The max-time limit the user can use to finish a respective action
  * @returns The time left until the `duration` is reached.
  */
-export function TimeTicker({ start: rawStartDate, duration, onTimeUp }: { start: Date; duration: number; onTimeUp?: () => void }) {
+export function CountdownTime({ start: rawStartDate, duration, onTimeUp }: { start: Date; duration: number; onTimeUp?: () => void }) {
   const [remainingTime, setRemainingTime] = useState<string | null>(null)
   const [startDate] = useState(new Date(Date.parse(rawStartDate.toString()))) //* ensure date-object even if stringified
   const [endDate] = useState(addSeconds(startDate, duration))
