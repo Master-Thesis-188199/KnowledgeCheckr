@@ -36,17 +36,15 @@ export default async function PracticePage({ params, searchParams }: { params: P
   // When there are no categories to switch between -> set (practice-) questions to be the base-questions.
   let practiceQuestions = categories.length > 1 ? [] : unfilteredQuestions
 
-  // category already selected
-  if (category) {
-    const categoryName = decodeURIComponent(category)
+  const categoryName = decodeURIComponent(category ?? '')
 
-    if (categoryName === '_none_') {
-      logger.debug('Pre-setting practice questions to be unfiltered.')
-      practiceQuestions = unfilteredQuestions
-    } else {
-      logger.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
-      practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
-    }
+  // when mixed-category (_none_) is selected or no category is selected at all
+  if (categoryName === '_none_' || categoryName.trim().length === 0) {
+    logger.debug('Pre-setting practice questions to be unfiltered.')
+    practiceQuestions = unfilteredQuestions
+  } else {
+    logger.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
+    practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
   }
 
   return (
