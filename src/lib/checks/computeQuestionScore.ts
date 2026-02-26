@@ -7,9 +7,13 @@ export function computeQuestionInputScore(question: Question, answer: QuestionIn
 
   const answerScore = handleQuestionType(question, answer, {
     onSingleQuestion: function (singleChoice: SingleChoice, input) {
-      const correctAnswerId = singleChoice.answers.find((a) => a.correct)!.id
+      const correctAnswer = singleChoice.answers.find((a) => a.correct)
+      if (!correctAnswer) {
+        console.log('[copmuteQInputScore]: Correct answer for single-choice question not found...')
+        return 0
+      }
 
-      return input.selection === correctAnswerId ? singleChoice.points : 0
+      return input.selection === correctAnswer.id ? singleChoice.points : 0
     },
     onMultipleChoice: function (multipleChoice: MultipleChoice, input) {
       const correctAnswers = multipleChoice.answers.filter((a) => a.correct)
