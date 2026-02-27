@@ -35,13 +35,13 @@ export default function QuestionNavigationMenu({
               'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:bg-neutral-300/60 hover:ring-ring-hover data-selected:hover:cursor-default dark:hover:bg-neutral-600/80 dark:hover:ring-ring-hover',
               'data-selected:data-status-unanswered:bg-neutral-300 data-selected:data-status-unanswered:ring-neutral-600/60 dark:data-selected:data-status-unanswered:bg-neutral-600/60 dark:data-selected:data-status-unanswered:ring-neutral-300/40',
 
-              'data-status-correct:bg-linear-to-bl data-status-correct:from-neutral-100 data-status-correct:to-success-300/20 data-status-correct:to-60% data-status-correct:ring-success-400/40 dark:data-status-correct:from-neutral-700 dark:data-status-correct:to-success/40 dark:data-status-correct:to-50% dark:data-status-correct:ring-success/60',
+              'data-status-correct:bg-linear-to-bl data-status-correct:from-neutral-100 data-status-correct:to-success-300/20 data-status-correct:to-60% data-status-correct:ring-success-400/40 dark:data-status-correct:from-neutral-700 dark:data-status-correct:to-success/30 dark:data-status-correct:to-50% dark:data-status-correct:ring-success/40',
 
-              'data-status-incorrect:bg-linear-to-bl data-status-incorrect:from-neutral-100 data-status-incorrect:to-destructive-300/20 data-status-incorrect:to-60% data-status-incorrect:ring-destructive-400/40 dark:data-status-incorrect:from-neutral-700 dark:data-status-incorrect:to-destructive/40 dark:data-status-incorrect:to-50% dark:data-status-incorrect:ring-destructive/60',
+              'data-status-incorrect:bg-linear-to-bl data-status-incorrect:from-neutral-100 data-status-incorrect:to-destructive-300/20 data-status-incorrect:to-60% data-status-incorrect:ring-destructive-400/40 dark:data-status-incorrect:from-neutral-700 dark:data-status-incorrect:to-destructive/30 dark:data-status-incorrect:to-50% dark:data-status-incorrect:ring-destructive/40',
 
-              'data-status-partly-correct:bg-linear-to-bl data-status-partly-correct:from-neutral-100 data-status-partly-correct:to-warning-200/20 data-status-partly-correct:to-60% data-status-partly-correct:ring-warning-400/40 dark:data-status-partly-correct:from-neutral-700 dark:data-status-partly-correct:to-warning/40 dark:data-status-partly-correct:to-50% dark:data-status-partly-correct:ring-warning/60',
+              'data-status-partly-correct:bg-linear-to-bl data-status-partly-correct:from-neutral-100 data-status-partly-correct:to-warning-200/20 data-status-partly-correct:to-60% data-status-partly-correct:ring-warning-400/40 dark:data-status-partly-correct:from-neutral-700 dark:data-status-partly-correct:to-warning/30 dark:data-status-partly-correct:to-50% dark:data-status-partly-correct:ring-warning/40',
 
-              'not-data-status-unanswered:hover:bg-current/10 not-data-status-unanswered:hover:ring-2 dark:hover:bg-current/10',
+              'not-data-status-unanswered:hover:bg-current/15 not-data-status-unanswered:hover:ring-2 dark:hover:bg-current/10',
               'not-data-status-unanswered:data-selected:ring-2 data-status-unanswered:data-selected:ring-[1.7px]',
             )}
             onClick={() => onQuestionClick(i)}
