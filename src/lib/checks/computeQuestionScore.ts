@@ -9,7 +9,8 @@ export function computeQuestionInputScore(question: Question, answer: QuestionIn
     onSingleQuestion: function (singleChoice: SingleChoice, input) {
       const correctAnswer = singleChoice.answers.find((a) => a.correct)
       if (!correctAnswer) {
-        console.log('[copmuteQInputScore]: Correct answer for single-choice question not found...')
+        console.warn('[copmuteQInputScore]: Correct answer for single-choice question not found...')
+        console.log(singleChoice)
         return 0
       }
 
