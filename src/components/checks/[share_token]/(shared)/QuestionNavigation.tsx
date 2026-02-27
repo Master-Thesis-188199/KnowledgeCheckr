@@ -23,10 +23,12 @@ export default function QuestionNavigationMenu({
       <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='exam-question-navigation'>
         {questions.map((_, i) => (
           <button
+            data-selected={i === currentQuestionIndex || undefined}
             className={cn(
               'ring-ring dark:ring-ring',
-              'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:bg-neutral-300/60 hover:ring-ring-hover dark:hover:bg-neutral-600/80 dark:hover:ring-ring-hover',
-              i === currentQuestionIndex && 'bg-neutral-300 ring-neutral-600/60 hover:cursor-default dark:bg-neutral-600/60 dark:ring-neutral-300/60',
+              'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:bg-neutral-300/60 hover:ring-ring-hover data-selected:hover:cursor-default dark:hover:bg-neutral-600/80 dark:hover:ring-ring-hover',
+              'data-selected:bg-neutral-300 data-selected:ring-neutral-600/60 dark:data-selected:bg-neutral-600/60 dark:data-selected:ring-neutral-300/40',
+              'data-selected:ring-[1.7px]',
             )}
             onClick={() => onQuestionClick(i)}
             key={`question-nav-${i}`}>
