@@ -65,8 +65,37 @@ html[data-theme='dark'] {
   --tooltip: oklch(40% 0 0);
 
   --destructive: oklch(0.704 0.191 22.216);
+  --destructive-100: oklch(0.9 0.191 22.216);
+  --destructive-200: oklch(0.8 0.191 22.216);
+  --destructive-300: oklch(0.7 0.191 22.216);
+  --destructive-400: oklch(0.6 0.191 22.216);
+  --destructive-500: oklch(0.5 0.191 22.216);
+  --destructive-600: oklch(0.4 0.191 22.216);
+  --destructive-700: oklch(0.3 0.191 22.216);
+  --destructive-800: oklch(0.2 0.191 22.216);
+  --destructive-900: oklch(0.1 0.191 22.216);
+
   --success: oklch(0.654 0.291 140.216);
+  --success-900: oklch(0.154 0.291 140.216);
+  --success-800: oklch(0.254 0.291 140.216);
+  --success-700: oklch(0.354 0.291 140.216);
+  --success-600: oklch(0.454 0.291 140.216);
+  --success-500: oklch(0.554 0.291 140.216);
+  --success-400: oklch(0.654 0.291 140.216);
+  --success-300: oklch(0.754 0.291 140.216);
+  --success-200: oklch(0.854 0.291 140.216);
+  --success-100: oklch(0.954 0.291 140.216);
+
   --warning: oklch(0.704 0.191 95.216);
+  --warning-100: oklch(0.9 0.191 95.216);
+  --warning-200: oklch(0.8 0.191 95.216);
+  --warning-300: oklch(0.7 0.191 95.216);
+  --warning-400: oklch(0.6 0.191 95.216);
+  --warning-500: oklch(0.5 0.191 95.216);
+  --warning-600: oklch(0.4 0.191 95.216);
+  --warning-700: oklch(0.3 0.191 95.216);
+  --warning-800: oklch(0.2 0.191 95.216);
+  --warning-900: oklch(0.1 0.191 95.216);
 
   --card: oklch(28% 0 240);
   --card-foreground: oklch(0.985 0 0);
@@ -126,8 +155,37 @@ html[data-theme='dark'] {
   --tooltip: oklch(90% 0 0);
 
   --destructive: oklch(0.577 0.245 27.325);
+  --destructive-100: oklch(0.9 0.245 27.325);
+  --destructive-200: oklch(0.8 0.245 27.325);
+  --destructive-300: oklch(0.7 0.245 27.325);
+  --destructive-400: oklch(0.6 0.245 27.325);
+  --destructive-500: oklch(0.5 0.245 27.325);
+  --destructive-600: oklch(0.4 0.245 27.325);
+  --destructive-700: oklch(0.3 0.245 27.325);
+  --destructive-800: oklch(0.2 0.245 27.325);
+  --destructive-900: oklch(0.1 0.245 27.325);
+
   --success: oklch(0.587 0.245 140.325);
+  --success-900: oklch(0.187 0.245 140.325);
+  --success-800: oklch(0.287 0.245 140.325);
+  --success-700: oklch(0.387 0.245 140.325);
+  --success-600: oklch(0.487 0.245 140.325);
+  --success-500: oklch(0.587 0.245 140.325);
+  --success-400: oklch(0.687 0.245 140.325);
+  --success-300: oklch(0.787 0.245 140.325);
+  --success-200: oklch(0.887 0.245 140.325);
+  --success-100: oklch(0.987 0.245 140.325);
+
   --warning: oklch(0.8 0.16 83);
+  --warning-100: oklch(0.9 0.16 83);
+  --warning-200: oklch(0.8 0.16 83);
+  --warning-300: oklch(0.7 0.16 83);
+  --warning-400: oklch(0.6 0.16 83);
+  --warning-500: oklch(0.5 0.16 83);
+  --warning-600: oklch(0.4 0.16 83);
+  --warning-700: oklch(0.3 0.16 83);
+  --warning-800: oklch(0.2 0.16 83);
+  --warning-900: oklch(0.1 0.16 83);
 
   --card: oklch(0.205 0 0);
   --radius: 0.625rem;
@@ -206,8 +264,37 @@ html[data-theme='dark'] {
   --color-tooltip: var(--tooltip);
 
   --color-destructive: var(--destructive);
+  --color-destructive-100: var(--destructive-100);
+  --color-destructive-200: var(--destructive-200);
+  --color-destructive-300: var(--destructive-300);
+  --color-destructive-400: var(--destructive-400);
+  --color-destructive-500: var(--destructive-500);
+  --color-destructive-600: var(--destructive-600);
+  --color-destructive-700: var(--destructive-700);
+  --color-destructive-800: var(--destructive-800);
+  --color-destructive-900: var(--destructive-900);
+
   --color-success: var(--success);
+  --color-success-100: var(--success-100);
+  --color-success-200: var(--success-200);
+  --color-success-300: var(--success-300);
+  --color-success-400: var(--success-400);
+  --color-success-500: var(--success-500);
+  --color-success-600: var(--success-600);
+  --color-success-700: var(--success-700);
+  --color-success-800: var(--success-800);
+  --color-success-900: var(--success-900);
+
   --color-warning: var(--warning);
+  --color-warning-100: var(--warning-100);
+  --color-warning-200: var(--warning-200);
+  --color-warning-300: var(--warning-300);
+  --color-warning-400: var(--warning-400);
+  --color-warning-500: var(--warning-500);
+  --color-warning-600: var(--warning-600);
+  --color-warning-700: var(--warning-700);
+  --color-warning-800: var(--warning-800);
+  --color-warning-900: var(--warning-900);
 
   @keyframes accordion-down {
     from {
