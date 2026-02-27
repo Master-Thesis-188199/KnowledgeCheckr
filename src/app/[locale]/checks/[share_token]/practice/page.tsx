@@ -29,7 +29,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
   const unfilteredQuestions = prepareQuestions(
     check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only'),
-    { hideSolutions: true, answerOrder: 'create-order', questionOrder: 'create-order' },
+    { hideSolutions: false, answerOrder: 'create-order', questionOrder: 'create-order' },
   )
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
 
