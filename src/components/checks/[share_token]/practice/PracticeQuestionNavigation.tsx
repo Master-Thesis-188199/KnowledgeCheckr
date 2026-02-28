@@ -7,13 +7,29 @@ import { usePracticeStore } from '@/src/components/checks/[share_token]/practice
 import { Button } from '@/src/components/shadcn/button'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { StopwatchTime } from '@/src/components/Shared/StopwatchTime'
+import { computeQuestionInputScore } from '@/src/lib/checks/computeQuestionScore'
 
 export function PracticeQuestionNavigation() {
-  const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt } = usePracticeStore((store) => store)
+  const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt, results } = usePracticeStore((store) => store)
 
   return (
     <>
-      <QuestionNavigationMenu questions={practiceQuestions} currentQuestionIndex={currentQuestionIndex} onQuestionClick={navigateToQuestion}>
+      <QuestionNavigationMenu
+        questionStatus={(q) => {
+          const userInput = results.find((r) => r.question_id === q.id)
+          if (!userInput) return 'unanswered'
+
+          const score = computeQuestionInputScore(q, userInput)
+          if (score === null) return 'unanswered'
+
+          if (score === 0) return 'incorrect'
+          if (score >= q.points * 0.9) return 'correct'
+
+          return 'partly-correct'
+        }}
+        questions={practiceQuestions}
+        currentQuestionIndex={currentQuestionIndex}
+        onQuestionClick={navigateToQuestion}>
         <div className='flex gap-1 text-xs text-neutral-500 dark:text-neutral-400'>
           <span>Session </span>
           <span className=''>
