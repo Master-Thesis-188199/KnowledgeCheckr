@@ -289,10 +289,10 @@ function ChoiceOption({
             'relative ring-2',
             !!feedbackText && 'group cursor-pointer',
             isCorrect &&
-              'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+              'bg-radial from-neutral-200/60 via-neutral-100/60 to-success-200/50 to-99% font-semibold ring-success-300 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
 
             isWrong &&
-              'from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+              'from-neutral-200/60 via-neutral-100/60 to-destructive/10 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
 
             isMissing && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
           ),
