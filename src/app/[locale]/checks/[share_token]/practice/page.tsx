@@ -32,19 +32,20 @@ export default async function PracticePage({ params, searchParams }: { params: P
     { hideSolutions: false, answerOrder: 'create-order', questionOrder: 'create-order' },
   )
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
-
-  // When there are no categories to switch between -> set (practice-) questions to be the base-questions.
-  let practiceQuestions = categories.length > 1 ? [] : unfilteredQuestions
-
   const categoryName = decodeURIComponent(category ?? '')
 
-  // when mixed-category (_none_) is selected or no category is selected at all
-  if (categoryName === '_none_' || categoryName.trim().length === 0) {
-    logger.debug('Pre-setting practice questions to be unfiltered.')
+  let practiceQuestions: typeof unfilteredQuestions
+
+  if (categories.length <= 1 || categoryName === '_none_') {
+    logger.verbose('Pre-setting practice questions to be unfiltered.')
     practiceQuestions = unfilteredQuestions
-  } else {
-    logger.debug(`Pre-setting practice questions to use '${categoryName}' category.`)
+  } else if (categories.length > 1 && !!categoryName) {
+    logger.verbose(`Pre-setting practice questions to use '${categoryName}' category.`)
     practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
+  } else {
+    logger.verbose('User has not selected a practice-category, redirected to category selection page.')
+    // when users have not selected a category, but should have because there are available categories to choose from, they are redirected
+    redirect('practice/category')
   }
 
   return (
