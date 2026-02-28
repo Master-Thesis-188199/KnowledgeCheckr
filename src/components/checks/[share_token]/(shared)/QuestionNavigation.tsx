@@ -24,10 +24,11 @@ export default function QuestionNavigationMenu({
       <span className='font-semibold text-neutral-700 dark:text-neutral-300'>Questions</span>
       <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='question-navigation'>
         {questions.map((_, i) => {
-          const status = questionStatus?.(_, i)
+          const status = questionStatus?.(_, i) ?? 'unanswered'
 
           return (
             <button
+              aria-label={status ? `Question ${i + 1} is ${status.replace('-', ' ')}` : undefined}
               data-selected={i === currentQuestionIndex || undefined}
               data-status-correct={status === 'correct' || undefined}
               data-status-incorrect={status === 'incorrect' || undefined}
