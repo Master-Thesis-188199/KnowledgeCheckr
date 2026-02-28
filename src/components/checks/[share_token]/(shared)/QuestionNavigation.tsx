@@ -22,7 +22,7 @@ export default function QuestionNavigationMenu({
   return (
     <div className={cn('flex h-fit min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-[1.5px] ring-ring-subtle dark:ring-neutral-600', className)}>
       <span className='font-semibold text-neutral-700 dark:text-neutral-300'>Questions</span>
-      <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='exam-question-navigation'>
+      <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='question-navigation'>
         {questions.map((_, i) => (
           <button
             data-selected={i === currentQuestionIndex || undefined}

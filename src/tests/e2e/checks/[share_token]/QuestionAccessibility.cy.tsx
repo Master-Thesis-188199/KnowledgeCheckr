@@ -38,7 +38,7 @@ describe('Accessibility of questions: ', () => {
         const url = page === 'practice' ? practiceUrl : examUrl
         cy.visit(url)
 
-        const navigationMenuId = page === 'examination' ? '#exam-question-navigation' : '#practice-question-steps'
+        const navigationMenuId = '#question-navigation'
         cy.get(navigationMenuId)
           .should('exist')
           .and('be.visible')
