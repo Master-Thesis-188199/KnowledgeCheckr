@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import { StoreInitializer } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
@@ -32,7 +31,7 @@ export default function useStoreCaching<StoreProps extends object>({ set, option
       else update = { ...prev, ...modifications }
 
       storeTimer = setTimeout(() => {
-        if (!disableCache) storeSessionValue(cacheKey, cloneDeep(update))
+        if (!disableCache) storeSessionValue(cacheKey, update)
       }, debounceTime)
 
       return update

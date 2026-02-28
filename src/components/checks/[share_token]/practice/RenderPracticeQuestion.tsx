@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
+import cloneDeep from 'lodash/cloneDeep'
 import { MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
@@ -68,7 +69,7 @@ export function RenderPracticeQuestion() {
     logger.verbose('Submitting practice answer...', _data)
     runServerValidation(_data)
 
-    storeAnswer({ ...form.getValues(), question_id: question.id })
+    storeAnswer(cloneDeep({ ...form.getValues(), question_id: question.id }))
     console.info(`[Submit] '${question.question}' has been answered & submitted`)
   }
 

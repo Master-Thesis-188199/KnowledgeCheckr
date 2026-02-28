@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
 import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { instantiatePracticeData, PracticeData } from '@/src/schemas/practice/PracticeSchema'
@@ -68,12 +67,11 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
         navigateToQuestion: (index) => set((prev) => ({ currentQuestionIndex: index < prev.practiceQuestions.length && index >= 0 ? index : prev.currentQuestionIndex })),
         storeAnswer: (question) =>
           set((prev) => {
-            const safeQuestion = cloneDeep(question)
-            const exists = prev.results.find((r) => r.question_id === safeQuestion.question_id)
+            const exists = prev.results.find((r) => r.question_id === question.question_id)
 
             const update: typeof prev = {
               ...prev,
-              results: exists ? prev.results.map((r) => (r.question_id === safeQuestion.question_id ? safeQuestion : r)) : prev.results.concat([safeQuestion]),
+              results: exists ? prev.results.map((r) => (r.question_id === question.question_id ? question : r)) : prev.results.concat([question]),
             }
             savePracticeResults({ knowledgeCheckId: update.checkId, results: update.results, startedAt: update.startedAt, score: 0 })
 
