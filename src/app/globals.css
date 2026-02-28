@@ -17,12 +17,6 @@
   }
 }
 
-@property --rb-angle {
-  syntax: '<angle>';
-  inherits: true;
-  initial-value: 0turn;
-}
-
 @layer components {
   .grid-container {
     --grid-desired-gap: 56px;
@@ -40,50 +34,6 @@
 
     /* auto-fit collapses unused tracks (prevents “empty columns”) */
     grid-template-columns: repeat(auto-fit, minmax(max(var(--grid-item-min-width), var(--grid-item-max-width)), 1fr));
-  }
-}
-/* Keyframes can be plain CSS */
-@keyframes rotate-border {
-  to {
-    --rb-angle: 1turn;
-  }
-}
-
-/* ✅ Another Tailwind utility: rotate-border-anim */
-@utility rotate-border-anim {
-  animation: rotate-border 2.5s linear infinite;
-}
-
-/* ✅ This becomes a Tailwind utility: rotate-border */
-@utility rotate-border {
-  --rb-border: 1px;
-  --rb-angle: 0turn;
-  --rb-a: var(--color-indigo-500);
-  --rb-b: var(--color-indigo-300);
-  --rb-muted: transparent;
-
-  position: relative;
-
-  /* Don’t hardcode if you prefer Tailwind rounding — inherit from `rounded-*` */
-  border-radius: inherit;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: var(--rb-border);
-    border-radius: inherit;
-
-    background: conic-gradient(from var(--rb-angle), var(--rb-muted) 80%, var(--rb-a) 86%, var(--rb-b) 90%, var(--rb-a) 94%, var(--rb-muted));
-
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-
-    pointer-events: none;
-    box-sizing: border-box;
   }
 }
 

@@ -42,11 +42,12 @@ export default function QuestionNavigationMenu({
               'data-status-partly-correct:bg-linear-to-bl data-status-partly-correct:from-neutral-100 data-status-partly-correct:to-warning-200/20 data-status-partly-correct:to-60% data-status-partly-correct:ring-warning-400/40 dark:data-status-partly-correct:from-neutral-700 dark:data-status-partly-correct:to-warning/30 dark:data-status-partly-correct:to-50% dark:data-status-partly-correct:ring-warning/40',
 
               'not-data-status-unanswered:hover:bg-current/15 not-data-status-unanswered:hover:ring-2 dark:hover:bg-current/10',
-              i === currentQuestionIndex &&
-                'rotate-border rotate-border-anim [--rb-a:var(--color-neutral-500)] [--rb-b:var(--color-neutral-700)] [--rb-border:3px] dark:[--rb-a:var(--color-neutral-400)] dark:[--rb-b:var(--color-white)]',
+              'data-selected:ring-offset-1 data-selected:ring-offset-current/5 not-data-status-unanswered:data-selected:ring-2 data-status-unanswered:data-selected:ring-[1.7px] dark:data-selected:ring-offset-2 dark:data-selected:ring-offset-current/20',
+              'relative',
             )}
             onClick={() => onQuestionClick(i)}
             key={`question-nav-${i}`}>
+            <span className='absolute inset-0 m-auto hidden size-[65%] animate-ping rounded-md bg-neutral-700 opacity-25 in-data-selected:inline-flex dark:bg-neutral-100' />
             {i + 1}
           </button>
         ))}
