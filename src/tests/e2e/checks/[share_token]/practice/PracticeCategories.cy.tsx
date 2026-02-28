@@ -47,7 +47,7 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
-      cy.get('#practice-question-steps')
+      cy.get('#question-navigation')
         .children()
         .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
     }),
@@ -82,7 +82,7 @@ describe('Verify selection of practice questions by category', () => {
     cy.url().should('not.eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
     cy.url().should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice`)
 
-    cy.get('#practice-question-steps').children().should('have.length', dummyCheck.questions.length)
+    cy.get('#question-navigation').children().should('have.length', dummyCheck.questions.length)
   })
 
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
@@ -123,7 +123,7 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
-      cy.get('#practice-question-steps')
+      cy.get('#question-navigation')
         .children()
         .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
 
@@ -153,7 +153,7 @@ describe('Verify selection of practice questions by category', () => {
       cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${breadcrumbSelection === 'all' ? '_none_' : breadcrumbSelection}`)
       cy.wait(250)
 
-      cy.get('#practice-question-steps')
+      cy.get('#question-navigation')
         .children()
         .should('have.length', breadcrumbSelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === breadcrumbSelection).length)
     }),
@@ -196,14 +196,14 @@ describe('Verify selection of practice questions by category', () => {
 
     cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
 
-    cy.get('#practice-question-steps')
+    cy.get('#question-navigation')
       .children()
       .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
 
     cy.wait(500)
     cy.reload()
     cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
-    cy.get('#practice-question-steps')
+    cy.get('#question-navigation')
       .children()
       .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
   })

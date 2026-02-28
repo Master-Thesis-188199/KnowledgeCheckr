@@ -1,4 +1,7 @@
+'use client'
+
 import React from 'react'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { Question } from '@/src/schemas/QuestionSchema'
 
@@ -8,29 +11,54 @@ export default function QuestionNavigationMenu({
   onQuestionClick,
   className,
   children,
+  questionStatus,
 }: {
   questions: Question[]
   currentQuestionIndex: number
   onQuestionClick: (index: number) => void
   className?: string
   children?: React.ReactNode
+  questionStatus?: (question: Question, index: number) => 'correct' | 'incorrect' | 'partly-correct' | 'unanswered'
 }) {
+  const t = useScopedI18n('Components.QuestionNavigation')
+
   return (
     <div className={cn('flex h-fit min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-[1.5px] ring-ring-subtle dark:ring-neutral-600', className)}>
-      <span className='font-semibold text-neutral-700 dark:text-neutral-300'>Questions</span>
-      <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='exam-question-navigation'>
-        {questions.map((_, i) => (
-          <button
-            className={cn(
-              'ring-ring dark:ring-ring',
-              'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:bg-neutral-300/60 hover:ring-ring-hover dark:hover:bg-neutral-600/80 dark:hover:ring-ring-hover',
-              i === currentQuestionIndex && 'bg-neutral-300 ring-neutral-600/60 hover:cursor-default dark:bg-neutral-600/60 dark:ring-neutral-300/60',
-            )}
-            onClick={() => onQuestionClick(i)}
-            key={`question-nav-${i}`}>
-            {i + 1}
-          </button>
-        ))}
+      <span className='font-semibold text-neutral-700 dark:text-neutral-300'>{t('title')}</span>
+      <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='question-navigation'>
+        {questions.map((_, i) => {
+          const status = questionStatus?.(_, i) ?? 'unanswered'
+
+          return (
+            <button
+              aria-label={t('question_aria_label', { index: i + 1, status: t(`question_status_${status}`) })}
+              data-selected={i === currentQuestionIndex || undefined}
+              data-status-correct={status === 'correct' || undefined}
+              data-status-incorrect={status === 'incorrect' || undefined}
+              data-status-partly-correct={status === 'partly-correct' || undefined}
+              data-status-unanswered={status === 'unanswered' || undefined}
+              className={cn(
+                'ring-ring dark:ring-ring',
+                'flex size-7 items-center justify-center rounded-lg p-1 text-sm ring-1 hover:cursor-pointer hover:bg-neutral-300/60 hover:ring-ring-hover data-selected:hover:cursor-default dark:hover:bg-neutral-600/80 dark:hover:ring-ring-hover',
+                'data-selected:data-status-unanswered:bg-neutral-300 data-selected:data-status-unanswered:ring-neutral-600/60 dark:data-selected:data-status-unanswered:bg-neutral-600/60 dark:data-selected:data-status-unanswered:ring-neutral-300/40',
+
+                'data-status-correct:bg-linear-to-bl data-status-correct:from-neutral-100 data-status-correct:to-success-300/20 data-status-correct:to-60% data-status-correct:ring-success-400/40 dark:data-status-correct:from-neutral-700 dark:data-status-correct:to-success/30 dark:data-status-correct:to-50% dark:data-status-correct:ring-success/40',
+
+                'data-status-incorrect:bg-linear-to-bl data-status-incorrect:from-neutral-100 data-status-incorrect:to-destructive-300/20 data-status-incorrect:to-60% data-status-incorrect:ring-destructive-400/40 dark:data-status-incorrect:from-neutral-700 dark:data-status-incorrect:to-destructive/30 dark:data-status-incorrect:to-50% dark:data-status-incorrect:ring-destructive/40',
+
+                'data-status-partly-correct:bg-linear-to-bl data-status-partly-correct:from-neutral-100 data-status-partly-correct:to-warning-200/20 data-status-partly-correct:to-60% data-status-partly-correct:ring-warning-400/40 dark:data-status-partly-correct:from-neutral-700 dark:data-status-partly-correct:to-warning/30 dark:data-status-partly-correct:to-50% dark:data-status-partly-correct:ring-warning/40',
+
+                'not-data-status-unanswered:hover:bg-current/15 not-data-status-unanswered:hover:ring-2 dark:hover:bg-current/10',
+                'data-selected:ring-offset-1 data-selected:ring-offset-current/5 not-data-status-unanswered:data-selected:ring-2 data-status-unanswered:data-selected:ring-[1.7px] dark:data-selected:ring-offset-2 dark:data-selected:ring-offset-current/20',
+                'relative',
+              )}
+              onClick={() => onQuestionClick(i)}
+              key={`question-nav-${i}`}>
+              <span className='absolute inset-0 m-auto hidden size-[65%] animate-ping rounded-md bg-neutral-700 opacity-25 in-data-selected:inline-flex dark:bg-neutral-100' />
+              {i + 1}
+            </button>
+          )
+        })}
       </nav>
       {children}
     </div>

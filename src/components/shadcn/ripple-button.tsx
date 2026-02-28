@@ -16,9 +16,10 @@ interface Ripple {
 interface RippleButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>, SimpleButtonProps {
   scale?: number
   transition?: Transition
+  rippleClassname?: string
 }
 
-function RippleButton({ ref, isLoading, children, onClick, className, variant, size, scale = 10, transition = { duration: 0.6, ease: 'easeOut' }, ...props }: RippleButtonProps) {
+function RippleButton({ ref, isLoading, children, onClick, className, variant, size, scale = 10, transition = { duration: 0.6, ease: 'easeOut' }, rippleClassname, ...props }: RippleButtonProps) {
   const [ripples, setRipples] = React.useState<Ripple[]>([])
   const buttonRef = React.useRef<HTMLButtonElement>(null)
 
@@ -67,7 +68,7 @@ function RippleButton({ ref, isLoading, children, onClick, className, variant, s
           initial={{ scale: 0, opacity: 0.5 }}
           animate={{ scale, opacity: 0 }}
           transition={transition}
-          className='pointer-events-none absolute size-5 rounded-full bg-current/60'
+          className={cn('pointer-events-none absolute size-5 rounded-full bg-current/60', rippleClassname)}
           style={{
             top: ripple.y - 10,
             left: ripple.x - 10,

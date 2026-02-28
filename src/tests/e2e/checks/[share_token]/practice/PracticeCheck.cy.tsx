@@ -33,7 +33,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   const verifyQuestionIsDisplayedCorrectly = (question: Question, questionCount: number) => {
     cy.get('#practice-form h2').contains(question.question).should('exist').and('be.visible')
     cy.get('#practice-form ').should('exist').should('have.attr', 'data-question-type', question.type).and('have.attr', 'data-question-id', question.id)
-    cy.get('#practice-question-steps').should('exist').children().should('have.length', questionCount)
+    cy.get('#question-navigation').should('exist').children().should('have.length', questionCount)
 
     switch (question.type) {
       case 'single-choice':

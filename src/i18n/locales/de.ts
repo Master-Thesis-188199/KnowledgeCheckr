@@ -292,6 +292,18 @@ export default {
       disabled: 'Das Üben dieses KnowledgeChecks ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des KnowledgeChecks, um das Üben zu aktivieren.',
       title: 'Üben nicht erlaubt',
       toManyAttempts: 'Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht.'
+    },
+    PracticeQuestionNavigation: {
+      session_timer_label: 'Sitzung',
+      EndPractice_button_label: 'Üben beenden',
+      EndPractice_ConfirmDialog: {
+        confirm_button_label: 'Beenden',
+        cancel_button_label: 'Fortsezten',
+        title: 'Mit dem Üben aufhören?',
+        body:
+          'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
+          'Bitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben.'
+      }
     }
   },
   Components: {
@@ -396,6 +408,14 @@ export default {
         column_sort_button_aria_label: 'Sortieren nach {columnId}',
         dropdown_sr_only_trigger_label: 'Sortiermenü öffnen'
       }
+    },
+    QuestionNavigation: {
+      title: 'Übungsfragen',
+      question_aria_label: 'Frage {index} ist {status}',
+      question_status_correct: 'richtig',
+      question_status_incorrect: 'falsch',
+      'question_status_partly-correct': 'fast richtig',
+      question_status_unanswered: 'unbeantwortet'
     }
   },
   AccountPage: {

@@ -300,6 +300,16 @@
       "title": "Practicing not allowed",
       "disabled": "Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.",
       "toManyAttempts": "You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check."
+    },
+    "PracticeQuestionNavigation": {
+      "session_timer_label": "Session",
+      "EndPractice_button_label": "End Practice",
+      "EndPractice_ConfirmDialog": {
+        "confirm_button_label": "Finish",
+        "cancel_button_label": "Continue",
+        "title": "Do you want to stop Practicing?",
+        "body": "After stopping your current practice attempt, your results are being submitted and accessible by others. Please note that you cannot resume this exact practice session after submitting it."
+      }
     }
   },
   "Components": {
@@ -403,6 +413,14 @@
         "dropdown_sr_only_trigger_label": "Open sort menu",
         "column_sort_button_aria_label": "Sort by {columnId}"
       }
+    },
+    "QuestionNavigation": {
+      "title": "Questions",
+      "question_aria_label": "Question {index} is {status}",
+      "question_status_correct": "correct",
+      "question_status_incorrect": "incorrect",
+      "question_status_partly-correct": "partly-correct",
+      "question_status_unanswered": "unanswered"
     }
   }
 }
