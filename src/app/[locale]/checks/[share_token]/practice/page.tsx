@@ -36,16 +36,31 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
   let practiceQuestions: typeof unfilteredQuestions
 
-  if (categories.length <= 1 || categoryName === '_none_') {
-    logger.verbose('Pre-setting practice questions to be unfiltered.')
-    practiceQuestions = unfilteredQuestions
-  } else if (categories.length > 1 && !!categoryName) {
-    logger.verbose(`Pre-setting practice questions to use '${categoryName}' category.`)
-    practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase().trim() === categoryName.toLowerCase().trim())
-  } else {
-    logger.verbose('User has not selected a practice-category, redirected to category selection page.')
-    // when users have not selected a category, but should have because there are available categories to choose from, they are redirected
-    redirect('practice/category')
+  switch (true) {
+    case categories.length === 1:
+    case categoryName === '_none_': {
+      logger.verbose('Pre-setting practice questions to be unfiltered.')
+      practiceQuestions = unfilteredQuestions
+      break
+    }
+
+    // selected category is not found
+    case categories.every((c) => c.toLowerCase() !== categoryName.toLowerCase()): {
+      logger.verbose('User has not selected a practice-category, redirected to category selection page.')
+      redirect('practice/category')
+    }
+
+    // category is found and matches
+    case categories.some((c) => c.toLowerCase() === categoryName.toLowerCase()): {
+      logger.verbose(`Pre-setting practice questions to use '${categoryName}' category.`)
+      practiceQuestions = unfilteredQuestions.filter((q) => q.category.toLowerCase() === categoryName.toLowerCase())
+      break
+    }
+
+    default: {
+      logger.warn('Fallback: Assigning all practice questions as `practiceQuestions`.')
+      practiceQuestions = unfilteredQuestions
+    }
   }
 
   return (
