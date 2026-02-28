@@ -41,8 +41,8 @@ export function FeedbackOpenQuestion({
       data-evaluation-result={isValidationComplete ? (isCorrect ? 'correct' : isIncorrect ? 'incorrect' : 'none') : 'none'}
       className={cn(
         isValidationComplete && 'relative ring-2',
-        isCorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-green-500/20 ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/15 dark:ring-green-500/70',
-        isIncorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-red-500/20 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
+        isCorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-success-200/50 ring-success-300 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/15 dark:ring-green-500/70',
+        isIncorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-destructive/10 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
         isValidationComplete && 'pr-8',
       )}>
       <div className={cn('group/tooltip absolute top-1 right-1.5 z-10 flex cursor-pointer flex-row-reverse gap-1.5')} onClick={() => setPinned((prev) => !prev)}>
