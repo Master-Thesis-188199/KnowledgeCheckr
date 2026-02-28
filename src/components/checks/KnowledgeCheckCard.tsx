@@ -4,16 +4,20 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { CrownIcon, LockIcon, UserPenIcon } from 'lucide-react'
 import KnowledgeCheckMenu from '@/src/components/checks/(hamburger-menu)/KnowledgeCheckMenu'
+import DegradingScoreIndicator from '@/src/components/checks/DegradingScoreIndicator'
 import { ShareKnowledgeCheckButton } from '@/src/components/checks/ShareKnowledgeCheckButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
+import { computeKnowledgeRetainment } from '@/src/lib/checks/computeKnowledgeRetainment'
 import { cn } from '@/src/lib/Shared/utils'
 import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
 
 export function KnowledgeCheckCard(check: KnowledgeCheck) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const retainmentScore = computeKnowledgeRetainment({ difficulty: check.difficulty })
+
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? check.collaborators.includes(userId) : false
@@ -31,7 +35,11 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
-      <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
+      <div className='absolute top-0 left-0 z-10 opacity-65'>
+        <DegradingScoreIndicator className='min-w-10 rounded-tl-md rounded-br-md p-3 px-3 text-xs' knowledgeCheckScore={retainmentScore} />
+      </div>
+      <div className='-mt-2 -mb-9 flex items-center justify-between'>
+        <div className='w-14' />
         <DisplayUserRole role={role} />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />
