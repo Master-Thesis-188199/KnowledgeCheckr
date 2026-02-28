@@ -309,7 +309,7 @@ export default {
         confirm_button_label: 'Finish',
         cancel_button_label: 'Continue',
         title: 'Do you want to stop Practicing?',
-        body: 'After stopping your current practice attempt, your results are being submitted and accessible by others. Please note that you cannot resume this exact practice-sessions after stopping it.'
+        body: 'After stopping your current practice attempt, your results are being submitted and accessible by others. Please note that you cannot resume this exact practice session after submitting it.'
       }
     }
   },
@@ -414,6 +414,14 @@ export default {
         dropdown_sr_only_trigger_label: 'Open sort menu',
         column_sort_button_aria_label: 'Sort by {columnId}'
       }
+    },
+    QuestionNavigation: {
+      title: 'Questions',
+      question_aria_label: 'Question {index} is {status}',
+      question_status_correct: 'correct',
+      question_status_incorrect: 'incorrect',
+      'question_status_partly-correct': 'partly-correct',
+      question_status_unanswered: 'unanswered'
     }
   }
 } as const

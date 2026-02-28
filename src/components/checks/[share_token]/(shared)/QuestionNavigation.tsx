@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { Question } from '@/src/schemas/QuestionSchema'
 
@@ -19,16 +20,18 @@ export default function QuestionNavigationMenu({
   children?: React.ReactNode
   questionStatus?: (question: Question, index: number) => 'correct' | 'incorrect' | 'partly-correct' | 'unanswered'
 }) {
+  const t = useScopedI18n('Components.QuestionNavigation')
+
   return (
     <div className={cn('flex h-fit min-w-72 flex-col justify-evenly gap-3 rounded-md p-4 ring-[1.5px] ring-ring-subtle dark:ring-neutral-600', className)}>
-      <span className='font-semibold text-neutral-700 dark:text-neutral-300'>Questions</span>
+      <span className='font-semibold text-neutral-700 dark:text-neutral-300'>{t('title')}</span>
       <nav className='grid grid-cols-[repeat(auto-fill,30px)] gap-2' id='question-navigation'>
         {questions.map((_, i) => {
           const status = questionStatus?.(_, i) ?? 'unanswered'
 
           return (
             <button
-              aria-label={status ? `Question ${i + 1} is ${status.replace('-', ' ')}` : undefined}
+              aria-label={t('question_aria_label', { index: i + 1, status: t(`question_status_${status}`) })}
               data-selected={i === currentQuestionIndex || undefined}
               data-status-correct={status === 'correct' || undefined}
               data-status-incorrect={status === 'incorrect' || undefined}

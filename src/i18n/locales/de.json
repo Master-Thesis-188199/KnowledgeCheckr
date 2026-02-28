@@ -404,6 +404,14 @@
         "column_sort_button_aria_label": "Sortieren nach {columnId}",
         "dropdown_sr_only_trigger_label": "Sortiermenü öffnen"
       }
+    },
+    "QuestionNavigation": {
+      "title": "Übungsfragen",
+      "question_aria_label": "Frage {index} ist {status}",
+      "question_status_correct": "richtig",
+      "question_status_incorrect": "falsch",
+      "question_status_partly-correct": "fast richtig",
+      "question_status_unanswered": "unbeantwortet"
     }
   },
   "AccountPage": {
