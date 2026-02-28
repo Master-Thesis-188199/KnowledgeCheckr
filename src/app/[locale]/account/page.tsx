@@ -7,6 +7,7 @@ import { GoogleSocialButton } from '@/src/components/Shared/Authentication/Googl
 import Card from '@/src/components/Shared/Card'
 import Line from '@/src/components/Shared/Line'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 import { deleteUser } from '@/src/lib/auth/deleteUser'
 import { auth, BetterAuthUser, getServerSession } from '@/src/lib/auth/server'
 import env from '@/src/lib/Shared/Env'
@@ -21,10 +22,11 @@ export default async function AccountPage() {
 
   const { isAnonymous } = user
   const linkingPossible = env.AUTH_GITHUB_ENABLED || env.AUTH_GOOGLE_ENABLED || env.NEXT_PUBLIC_MODE === 'test'
+  const t = await getScopedI18n('AccountPage')
 
   return (
     <>
-      <PageHeading title='Account Information' />
+      <PageHeading title={t('title')} />
 
       <div className='mx-auto flex h-full max-w-lg items-center justify-center pb-12'>
         <Card as='form' disableInteractions className='flex min-w-sm flex-col gap-8 rounded-md p-6'>
@@ -46,8 +48,8 @@ export default async function AccountPage() {
               'bg-neutral-300/60 text-neutral-700 ring-neutral-400 dark:bg-neutral-700 dark:text-neutral-200 dark:ring-neutral-600',
               'hover:ring-ring-hover dark:hover:ring-ring-hover',
             )}>
-            Signout
-            {isAnonymous && <span className='ml-2 text-sm text-neutral-500 dark:text-neutral-400'>(delete data)</span>}
+            {t('signout_button_label')}
+            {isAnonymous && <span className='ml-2 text-sm text-neutral-500 dark:text-neutral-400'>({t('signout_delete_notice')})</span>}
           </button>
         </Card>
       </div>
@@ -55,17 +57,16 @@ export default async function AccountPage() {
   )
 }
 
-function LinkAccountSection({ user: { isAnonymous }, disabled }: { user: BetterAuthUser; disabled?: boolean }) {
+async function LinkAccountSection({ user: { isAnonymous }, disabled }: { user: BetterAuthUser; disabled?: boolean }) {
   if (!isAnonymous || disabled) return null
+  const t = await getScopedI18n('AccountPage.LinkAccountSection')
 
   return (
     <div className='mx-2 flex flex-col gap-6'>
       <Line className='text-neutral-400 dark:text-neutral-500' dashSize={4} dashed dashSpacing={6} />
       <div className='flex flex-col gap-2'>
-        <h2 className='text-lg font-semibold text-neutral-600 dark:text-neutral-300'>Link your Account</h2>
-        <span className='text-sm text-neutral-500 dark:text-neutral-400'>
-          To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.
-        </span>
+        <h2 className='text-lg font-semibold text-neutral-600 dark:text-neutral-300'>{t('title')}</h2>
+        <span className='text-sm text-neutral-500 dark:text-neutral-400'>{t('description')}</span>
       </div>
       <div className='mx-auto flex w-full max-w-64 flex-wrap items-center justify-center gap-5 text-neutral-700/90 dark:text-neutral-200/90'>
         <GoogleSocialButton callbackURL={`${env.NEXT_PUBLIC_BASE_URL}/account`} />

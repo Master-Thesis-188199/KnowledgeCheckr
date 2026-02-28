@@ -20,7 +20,7 @@ describe('Validate the order of inserted database elements', () => {
     const [testUser] = await db.select().from(db_user).limit(1).where(eq(db_user.email, 'test@email.com'))
     expect(testUser).toBeDefined()
 
-    const dummyCheck = Object.assign(instantiateKnowledgeCheck(), { owner_id: testUser.id })
+    const dummyCheck = Object.assign(instantiateKnowledgeCheck({ validate: true }), { owner_id: testUser.id })
     await insertKnowledgeCheck(dummyCheck)
 
     const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)

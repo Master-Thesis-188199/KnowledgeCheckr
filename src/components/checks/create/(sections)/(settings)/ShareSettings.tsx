@@ -1,11 +1,11 @@
 import { useFormContext, useWatch } from 'react-hook-form'
 import Field from '@/src/components/Shared/form/Field'
-import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { RHFBaseReturn } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export default function ShareSettings({ baseFieldProps }: {} & Pick<ReturnType<typeof useRHF<typeof KnowledgeCheckSettingsSchema>>, 'baseFieldProps'>) {
+export default function ShareSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<KnowledgeCheckSettings>, 'baseFieldProps'>) {
   const t = useScopedI18n('Checks.Create.SettingSection.ShareSettings')
   const { control } = useFormContext<KnowledgeCheckSettings>()
   const { shareAccessibility } = useWatch({ control: control })

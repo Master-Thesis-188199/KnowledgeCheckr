@@ -19,7 +19,11 @@
         "exam-only": "Prüfungs Frage"
       },
       "category_label": "Kategorie",
-      "answers_label": "Antworten"
+      "answers_label": "Antworten",
+      "points#one": "{count} Punkt",
+      "points#zero": "{count} Punkte",
+      "points#other": "{count} Punkte",
+      "points": "{count} Punkte"
     },
     "Timestamp": {
       "hour#one": "{count} stunde",
@@ -28,7 +32,11 @@
       "minute#other": "{count} minuten",
       "join_word": "und",
       "hour": "{count} stunden",
-      "minute": "{count} minuten"
+      "minute": "{count} minuten",
+      "minute_label#one": "minute",
+      "minute_label#zero": "minuten",
+      "minute_label#other": "minuten",
+      "minute_label": "minuten"
     },
     "jump_back_button_label": "Bearbeiten"
   },
@@ -94,7 +102,6 @@
           "startDate_label": "Start Datum",
           "endDate_label": "Abschluss Datum"
         },
-
         "ShareSettings": {
           "title": "Freigabe Einstellungen",
           "shareAccessibility": "Öffentlich auffindbar"
@@ -160,6 +167,114 @@
           "eq_filter_operand": "Gleich"
         }
       }
+    },
+    "ExaminatonResults": {
+      "Charts": {
+        "ExamQuestionDurationChart": {
+          "description": "Zeigt die Abweichung zwischen tatsächlicher und geschätzter Antwortzeit an",
+          "title": "Durchschnittlicher Zeitunterschied bei Fragen",
+          "tooltip": {
+            "title": "Frage {count}",
+            "actual_time_label": "tatsächliche Zeit",
+            "estimated_time_label": "geschätzte Zeit",
+            "total_faster_label": "Schneller um",
+            "total_slower_label": "Langsamer um"
+          },
+          "x_axis_label": "Fragen",
+          "y_axis_label": "Zeitaufwand"
+        },
+        "ExaminationSuccessPieChart": {
+          "description": "Zeigt an, wie viele Benutzer bestanden/fehlgeschlagen sind.",
+          "title": "Erfolgsquote der Prüfungen",
+          "inner_label#one": "Antritt",
+          "inner_label#other": "Antritte",
+          "inner_label": "Antritte",
+          "passed_label": "Positiv",
+          "failed_label": "Negativ"
+        },
+        "QuestionScoresLineChartCard": {
+          "description": "Zeigt die Varianz zwischen der durchschnittlichen Fragepunktzahl und der Höchstpunktzahl pro Frage an",
+          "title": "Durchschnittliche Fragepunktzahl pro Frage",
+          "x_axis_label": "Fragen",
+          "score_label": "Punkte",
+          "maxScore_label": "max Punkte"
+        },
+        "UserTypePieChart": {
+          "description": "Zeigt Prüfungsversuche nach Benutzertyp",
+          "title": "Prüfungen nach Benutzertypen",
+          "user_type_normal": "Normal",
+          "user_type_anonynmous": "Anonym",
+          "inner_label": "Benutzer"
+        }
+      },
+      "ExaminationAttemptTable": {
+        "description": "Zeigt eine detaillierte Liste aller Prüfungsversuche für diese Prüfung",
+        "status_done": "Erledigt",
+        "status_in_progress": "läuft",
+        "title": "Prüfungsversuche",
+        "user_type_anonynmous": "anonym",
+        "user_type_normal": "normal",
+        "Drawer": {
+          "close_button_label": "Schließen",
+          "description": "Zeigt Informationen zum Prüfungsversuch von {username}.",
+          "duration_label": "Dauer",
+          "end_time_label": "Endzeit",
+          "start_time_label": "Startzeit",
+          "submit_button_label": "Änderungen speichern",
+          "title": "Prüfungsversuch – {username}",
+          "user_score_label": "Benutzerbewertung",
+          "username_label": "Benutzername"
+        },
+        "columns": {
+          "username_header": "Benutzername",
+          "status_header": "Status",
+          "duration_header": "Dauer",
+          "user_type_header": "Benutzertyp",
+          "score_header": "Punktzahl",
+          "totalScore_header": "Maximale Punktzahl",
+          "preview_action_cell": "Vorschau",
+          "actions_menu": {
+            "delete_attempt_label": "Versuch löschen",
+            "show_results_label": "Ergebnisse anzeigen",
+            "sr_only_trigger": "Menü öffnen"
+          }
+        }
+      },
+      "description": "Schauen Sie sich die Prüfungsversuche der Nutzer an.",
+      "title": "Prüfungsergebnisse",
+      "ExaminationQuestionTable": {
+        "columns": {
+          "answer_status_accessorKey": "Antwortstatus",
+          "answer_status_cell_answered": "Beantwortet",
+          "answer_status_cell_unanswered": "nicht beantwortet",
+          "category_accessorKey": "Kategorie",
+          "grade_accessorKey": "Note",
+          "points_accessorKey": "Punkte",
+          "preview_action_cell": "Antworten anzeigen",
+          "question_accessorKey": "Frage",
+          "score_accessorKey": "Punktzahl",
+          "type_accessorKey": "Typ"
+        },
+        "ActionMenu": {
+          "delete_answer_label": "Antwort löschen",
+          "show_answers_label": "Antworten anzeigen",
+          "sr_only_trigger": "Menü öffnen"
+        }
+      },
+      "ExamAttemptResultPage": {
+        "description": "Zeigt alle Details zum jeweiligen Prüfungsversuch von {name}",
+        "title": "Ergebnisse des Prüfungsversuchs"
+      },
+      "ShowAnswerDrawer_TableCell": {
+        "answer_open_question_label": "Antwort",
+        "answers_array_label": "Antworten",
+        "description": "Zeigt Details zu einer bestimmten Frage und ihren Ergebnissen an.",
+        "drawer_close_button_label": "Schließen",
+        "drawer_submit_button_label": "Änderungen speichern",
+        "grade_label": "Note",
+        "score_slider_label": "Fragenergebnis",
+        "title": "Details zur Antwort auf die Prüfungsfrage"
+      }
     }
   },
   "Examination": {
@@ -176,6 +291,16 @@
       "disabled": "Das Üben dieses KnowledgeChecks ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des KnowledgeChecks, um das Üben zu aktivieren.",
       "title": "Üben nicht erlaubt",
       "toManyAttempts": "Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht."
+    },
+    "PracticeQuestionNavigation": {
+      "session_timer_label": "Sitzung",
+      "EndPractice_button_label": "Üben beenden",
+      "EndPractice_ConfirmDialog": {
+        "confirm_button_label": "Beenden",
+        "cancel_button_label": "Fortsezten",
+        "title": "Mit dem Üben aufhören?",
+        "body": "Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \nBitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben."
+      }
     }
   },
   "Components": {
@@ -253,6 +378,49 @@
       "default_body": "Diese Aktion kann nicht rückgängig gemacht werden. \nDadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.",
       "default_cancel_label": "Abbrechen",
       "default_confirm_label": "Weiter"
+    },
+    "DataTable": {
+      "Pagination": {
+        "current_page_label": "Seite {page} von {total}",
+        "selection_label": "{selected} von {total} Zeilen ausgewählt.",
+        "sr_only": {
+          "go_first_page": "Gehe zur ersten Seite",
+          "go_last_page": "Gehe zur letzten Seite",
+          "go_next_page": "Gehe zur nächsten Seite",
+          "go_previous_page": "Gehe zur vorherigen Seite"
+        }
+      },
+      "customize_columns_label_long": "Spalten anpassen",
+      "customize_columns_label_short": "Spalten",
+      "no_results_label": "Keine Ergebnisse.",
+      "page_size_label": "Zeilen pro Seite",
+      "Sorting": {
+        "ascending_order_label": "Aufsteigend sortieren",
+        "ascending_order_title": "Zeilen in aufsteigender Reihenfolge sortieren",
+        "descending_order_label": "Absteigend sortieren",
+        "descending_order_title": "Zeilen in absteigender Reihenfolge sortieren",
+        "reset_sorting_label": "Sortierung entfernen",
+        "reset_sorting_disabled_tooltip": "Diese Spalte wird derzeit nicht sortiert.",
+        "column_sort_button_aria_label": "Sortieren nach {columnId}",
+        "dropdown_sr_only_trigger_label": "Sortiermenü öffnen"
+      }
+    },
+    "QuestionNavigation": {
+      "title": "Übungsfragen",
+      "question_aria_label": "Frage {index} ist {status}",
+      "question_status_correct": "richtig",
+      "question_status_incorrect": "falsch",
+      "question_status_partly-correct": "fast richtig",
+      "question_status_unanswered": "unbeantwortet"
     }
+  },
+  "AccountPage": {
+    "LinkAccountSection": {
+      "description": "Um Ihre Daten nach dem Abmelden oder Schließen dieses Tabs zu behalten, können Sie sich über einen sozialen Anbieter wie Google oder GitHub anmelden.",
+      "title": "Verknüpfen Sie Ihr Konto"
+    },
+    "signout_button_label": "Abmelden",
+    "signout_delete_notice": "Daten löschen",
+    "title": "Kontoinformationen"
   }
 }

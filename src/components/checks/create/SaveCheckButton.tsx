@@ -1,11 +1,11 @@
 'use client'
 
-import { Tooltip } from '@heroui/tooltip'
 import { InfoIcon } from 'lucide-react'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { useCheckStore } from '@/src/components/checks/create/CreateCheckProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { saveAction } from '@/src/lib/checks/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
 import { safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
@@ -45,7 +45,7 @@ export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string;
 
   return (
     <Tooltip
-      isDisabled={safeParse.success}
+      disabled={safeParse.success}
       content={
         <div className='flex items-center gap-1.5'>
           <InfoIcon className='size-4 text-destructive' />
@@ -53,9 +53,6 @@ export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string;
         </div>
       }
       delay={250}
-      offset={8}
-      closeDelay={0}
-      shouldFlip
       className={cn(
         'rounded-md bg-neutral-100 p-2 text-sm shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
         !safeParse.success && 'dark:text-red-400/90 dark:shadow-red-400/40',

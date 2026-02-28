@@ -15,9 +15,10 @@ interface DragDropContainerProps {
   className?: string
   onSwapStart?: SwapStartEventHandler
   onSwapEnd?: SwapEndEventHandler
+  hideMoveIndicators?: boolean
 }
 
-export default function DragDropContainer({ children, className, onSwapEnd, onSwapStart, ...config }: DragDropContainerProps & Partial<Config>) {
+export default function DragDropContainer({ children, className, onSwapEnd, onSwapStart, hideMoveIndicators, ...config }: DragDropContainerProps & Partial<Config>) {
   const swapyRef = useRef<Swapy | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -68,7 +69,7 @@ export default function DragDropContainer({ children, className, onSwapEnd, onSw
   }, [])
 
   return (
-    <div ref={containerRef} className={cn('group/drag-drop-container', className)} data-enabled={config.enabled ?? true}>
+    <div ref={containerRef} className={cn('group/drag-drop-container', className)} data-enabled={config.enabled ?? true} data-hide-move-indicators={hideMoveIndicators || undefined}>
       {children}
     </div>
   )
