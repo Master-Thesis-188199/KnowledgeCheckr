@@ -301,6 +301,16 @@ export default {
       title: 'Practicing not allowed',
       disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
       toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.'
+    },
+    PracticeQuestionNavigation: {
+      session_timer_label: 'Session',
+      EndPractice_button_label: 'End Practice',
+      EndPractice_ConfirmDialog: {
+        confirm_button_label: 'Finish',
+        cancel_button_label: 'Continue',
+        title: 'Do you want to stop Practicing?',
+        body: 'After stopping your current practice attempt, your results are being submitted and accessible by others. Please note that you cannot resume this exact practice-sessions after stopping it.'
+      }
     }
   },
   Components: {
