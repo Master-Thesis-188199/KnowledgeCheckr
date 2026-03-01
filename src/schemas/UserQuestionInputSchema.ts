@@ -41,7 +41,7 @@ const userInputSchema = z.discriminatedUnion('type', [SingleChoiceInputSchema, M
 
 export const QuestionInputSchema = z.intersection(baseSchema, userInputSchema)
 
-export type QuestionInput = z.infer<typeof QuestionInputSchema>
+export type QuestionInput = z.output<typeof QuestionInputSchema>
 
 const { validate: validateQuestionInput, instantiate: instantiateQuestionInput, safeParse: safeParseQuestionInput } = schemaUtilities(QuestionInputSchema)
 export { instantiateQuestionInput, safeParseQuestionInput, validateQuestionInput }

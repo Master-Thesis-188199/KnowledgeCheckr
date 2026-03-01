@@ -32,7 +32,7 @@ const ExamAttemptItemSchema = z.object({
   totalCheckScore: z.number(),
 })
 
-type ExamAttemptItem = z.infer<typeof ExamAttemptItemSchema>
+type ExamAttemptItem = z.output<typeof ExamAttemptItemSchema>
 
 export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttemptItem[] }) {
   const currentLocale = useCurrentLocale()
@@ -189,7 +189,7 @@ function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; chil
     <Drawer direction={isMobile ? 'bottom' : 'right'}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent className='data-[vaul-drawer-direction=right]:*:data-close:flex'>
-        <div data-close className='absolute top-0 bottom-0 -left-2.5 hidden items-center'>
+        <div data-close className='absolute inset-y-0 -left-2.5 hidden items-center'>
           <DrawerClose asChild>
             <Button variant='ghost' size='icon' className='size-4 bg-background text-neutral-600 hover:scale-115 dark:text-neutral-300'>
               <ChevronRightIcon className='' />

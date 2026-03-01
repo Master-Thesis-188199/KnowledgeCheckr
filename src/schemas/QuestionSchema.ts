@@ -160,7 +160,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [singleChoiceAnswerSche
 
 export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes).default(() => generateRandomQuestion())
 
-export type Question = z.infer<typeof QuestionSchema>
+export type Question = z.output<typeof QuestionSchema>
 
 const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities(QuestionSchema)
 export { instantiateQuestion, safeParseQuestion, validateQuestion }
@@ -183,7 +183,7 @@ const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQues
 export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }
 
 // #region Dummy Data
-function generateRandomQuestion(): z.infer<typeof baseQuestion> & z.infer<typeof questionAnswerTypes> {
+function generateRandomQuestion(): z.output<typeof baseQuestion> & z.output<typeof questionAnswerTypes> {
   return {
     id: getUUID(),
     category: 'general',
@@ -193,8 +193,8 @@ function generateRandomQuestion(): z.infer<typeof baseQuestion> & z.infer<typeof
   }
 }
 
-function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pick<z.infer<typeof baseQuestion>, 'question'> {
-  const dummyQuestions: (z.infer<typeof questionAnswerTypes> & Pick<z.infer<typeof baseQuestion>, 'question'> & Partial<z.infer<typeof baseQuestion>>)[] = [
+function generateRandomQuestionType(): z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> {
+  const dummyQuestions: (z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> & Partial<z.output<typeof baseQuestion>>)[] = [
     {
       type: 'multiple-choice',
       question: 'In the PAYDAY series, who betrayed the PAYDAY gang that got Hoxton arrested?',

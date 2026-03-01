@@ -11,7 +11,7 @@ export const envSchema = z
 
     DATABASE_HOST: z.union([
       z.string().regex(/^\S*$/, { message: 'When using the service-name as the database host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
-      z.string().ip({ message: 'Please provide a valid database host url / ip / service-name' }),
+      z.ipv4({ message: 'Please provide a valid database host url / ip / service-name' }),
       z.string().url({ message: 'Please provide a valid database host url / ip / service-name' }),
       // .min(1, 'The database host must not be empty!')
     ]),
@@ -40,21 +40,14 @@ export const envSchema = z
     DEX_PROVIDER_URL: z
       .union([
         z.string().regex(/^\S*$/, { message: 'When using the service-name as the host, make sure that it does not contain any spaces! (Alternatively provide a valid URL / IP)' }),
-        z.string().ip({ message: 'Please provide a valid host url / ip / service-name' }),
+        z.ipv4({ message: 'Please provide a valid host url / ip / service-name' }),
         z.string().url({ message: 'Please provide a valid host url / ip / service-name' }),
       ])
       .optional(),
     DEX_CLIENT_ID: z.string().optional().default('nextjs-client').catch('nextjs-client'),
     DEX_CLIENT_SECRET: z.string().optional().default('dev-secret').catch('dev-secret'),
-    CAPTURE_CLIENT_LOGS: z
-      .string()
-      .optional()
-      .transform((val) => val?.toString().toLowerCase().trim() === 'true'),
-    ENABLE_FILE_LOGGING: z
-      .string()
-      .transform((val) => val.toLowerCase().trim() === 'true')
-      .optional()
-      .default('true'),
+    CAPTURE_CLIENT_LOGS: z.stringbool().optional(),
+    ENABLE_FILE_LOGGING: z.stringbool().default(true).optional(),
   })
   .superRefine((env, ctx) => {
     if (env.NEXT_PUBLIC_MODE === 'test') {

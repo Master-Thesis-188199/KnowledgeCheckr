@@ -15,4 +15,4 @@ export const CategorySchema = z.object({
 const { instantiate: instantiateCategory, validate: validateCategory, safeParse: safeParseCategory } = schemaUtilities(CategorySchema)
 export { instantiateCategory, validateCategory, safeParseCategory }
 
-export type CategorySchema = z.infer<typeof CategorySchema>
+export type CategorySchema = z.output<typeof CategorySchema>

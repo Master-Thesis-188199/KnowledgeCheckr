@@ -89,7 +89,7 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .describe('Defines whether this check is publicly accessible, thus whether users can discover this check.'),
 })
 
-export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>
+export type KnowledgeCheckSettings = z.output<typeof KnowledgeCheckSettingsSchema>
 
 const { validate: validateKnowledgeCheckSettings, instantiate: instantiateKnowledgeCheckSettings, safeParse: safeParseKnowledgeCheckSettings } = schemaUtilities(KnowledgeCheckSettingsSchema)
 export { instantiateKnowledgeCheckSettings, safeParseKnowledgeCheckSettings, validateKnowledgeCheckSettings }
