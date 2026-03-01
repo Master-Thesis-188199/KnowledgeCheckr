@@ -109,7 +109,8 @@ const dragDropAnswerSchema = z.object({
 
       if (minPos !== 0) {
         ctx.addIssue({
-          code: ZodIssueCode.too_small,
+          code: 'too_small',
+          origin: 'number',
           minimum: 0,
           type: 'number',
           inclusive: true,
