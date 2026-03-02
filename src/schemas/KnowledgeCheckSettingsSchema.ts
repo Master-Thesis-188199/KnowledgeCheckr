@@ -39,18 +39,18 @@ export const KnowledgeCheckSettingsSchema = z.object({
     startDate: z
       .date()
       .or(z.string())
+      .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
-      .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
       .describe('The start-date on which users can start examinations.'),
 
     endDate: z
       .date()
       .or(z.string())
+      .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
       .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
       .nullable()
-      .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
       .describe('The end-date after which users can no longer start examinations. When set to null no end constraints are set.'),
 
     questionOrder: z.enum(['create-order', 'random']).default('random').describe('Defines how questions are ordered during practice / exams.'),
