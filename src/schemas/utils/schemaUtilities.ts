@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SafeParseReturnType, z } from 'zod'
+import { z } from 'zod'
 import schemaDefaults, { SchemaOptionalProps } from '@/schemas/utils/schemaDefaults'
 import { stripZodDefault } from '@/schemas/utils/stripZodDefaultValues'
 
@@ -30,7 +30,7 @@ export function schemaUtilities<Schema extends z.ZodTypeAny>(schema: Schema) {
    * Safely parses an object against its schema and returns the result of the zod.safeParse method
    * @param object - The object to be parsed / validated
    */
-  const safeParse = (object: any): z.SafeParseReturnType<any, z.output<Schema>> => stripZodDefault(schema).safeParse(object) as SafeParseReturnType<any, z.output<Schema>>
+  const safeParse = (object: any): z.ZodSafeParseResult<z.output<Schema>> => stripZodDefault(schema).safeParse(object)
 
   return {
     instantiate,
