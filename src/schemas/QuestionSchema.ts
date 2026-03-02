@@ -1,4 +1,4 @@
-import { z, ZodIssueCode } from 'zod'
+import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
@@ -123,7 +123,7 @@ const dragDropAnswerSchema = z.object({
       answers.forEach((answer, i) => {
         if (seen.has(answer.position)) {
           ctx.addIssue({
-            code: ZodIssueCode.custom,
+            code: 'custom',
             message: `[drag-drop] duplicate position: ${answer.position}`,
             path: [i, 'position'],
           })
@@ -135,7 +135,7 @@ const dragDropAnswerSchema = z.object({
       for (let pos = 0; pos <= n - 1; pos++) {
         if (!seen.has(pos)) {
           ctx.addIssue({
-            code: ZodIssueCode.custom,
+            code: 'custom',
             message: `[drag-drop] positions must form a continuous range: [0...${n - 1}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
           })
 

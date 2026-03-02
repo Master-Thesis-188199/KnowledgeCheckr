@@ -54,7 +54,7 @@ export const envSchema = z
       // DEX_PROVIDER_URL required in test
       if (!env.DEX_PROVIDER_URL) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: ['DEX_PROVIDER_URL'],
           message: 'DEX_PROVIDER_URL is required when MODE is "test".',
         })
@@ -63,7 +63,7 @@ export const envSchema = z
       // DEX_CLIENT_ID required in test
       if (!env.DEX_CLIENT_ID) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: ['DEX_CLIENT_ID'],
           message: 'DEX_CLIENT_ID is required when MODE is "test".',
         })
@@ -72,7 +72,7 @@ export const envSchema = z
       // DEX_CLIENT_SECRET required in test
       if (!env.DEX_CLIENT_SECRET) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: ['DEX_CLIENT_SECRET'],
           message: 'DEX_CLIENT_SECRET is required when MODE is "test".',
         })
@@ -104,7 +104,7 @@ export const envSchema = z
         if (!hasSecret) console.info(`[.env] ${p.name} sign-in disabled (missing ${p.secretKey}).`)
 
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: [!hasId ? p.idKey : p.secretKey],
           message: `${p.name} auth requires BOTH ${p.idKey} and ${p.secretKey} (either set both or leave both empty).`,
         })
