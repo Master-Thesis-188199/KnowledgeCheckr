@@ -47,7 +47,7 @@ export const envSchema = z
     DEX_CLIENT_ID: z.string().optional().default('nextjs-client').catch('nextjs-client'),
     DEX_CLIENT_SECRET: z.string().optional().default('dev-secret').catch('dev-secret'),
     CAPTURE_CLIENT_LOGS: z.stringbool().optional(),
-    ENABLE_FILE_LOGGING: z.stringbool().default(true).optional(),
+    ENABLE_FILE_LOGGING: z.stringbool().optional().default(true),
   })
   .superRefine((env, ctx) => {
     if (env.NEXT_PUBLIC_MODE === 'test') {
