@@ -22,22 +22,30 @@ export interface SchemaOptionalProps {
   generateRandomNumbers?: boolean
   overrideArraySize?: number
 }
+type ResolvedOptions = Readonly<Required<SchemaOptionalProps>>
+/**
+ * Internal sentinel used to mean "do not materialize this property".
+ *
+ * This is useful for optional object keys: omitting a key is usually more
+ * correct than explicitly assigning `undefined`.
+ */
+
+const DEFAULT_OPTIONS: ResolvedOptions = {
+  instantiate_Optional_PrimitiveProps: true,
+  instantiate_Nullable_PrimitiveProps: true,
+  instantiate_Optional_Objects: true,
+  instantiate_Nullable_Objects: true,
+  stripDefaultValues: false,
+  generateRandomNumbers: true,
+  overrideArraySize: DEFAULT_ARRAY_SIZE,
+}
 
 /**
  * Returns a default values for a given schema.
  * @param schema The schema to generate default values for.
  */
-export default function schemaDefaults<Schema extends z.ZodTypeAny>(
-  schema: Schema,
-  options: SchemaOptionalProps = {
-    instantiate_Optional_PrimitiveProps: true,
-    instantiate_Optional_Objects: true,
-    instantiate_Nullable_PrimitiveProps: true,
-    instantiate_Nullable_Objects: true,
-    generateRandomNumbers: true,
-  },
-): z.output<Schema> {
-  if (options.instantiate_Optional_PrimitiveProps === undefined) options.instantiate_Optional_PrimitiveProps = true
+export default function schemaDefaults<Schema extends z.ZodTypeAny>(schema: Schema, userOptions?: SchemaOptionalProps): z.output<Schema> {
+  const options = resolveOptions(userOptions)
 
   const getDef = (s: any) => {
     if (s === undefined) {
@@ -275,4 +283,24 @@ export default function schemaDefaults<Schema extends z.ZodTypeAny>(
 
 function unwrapPipe<TSchema extends z.ZodPipe>(pipedSchema: TSchema): TSchema['in'] {
   return pipedSchema.in
+}
+
+/**
+ * joins custom options with default options into an immutable options object
+ * that way default values are not lost when users provide options
+ */
+function resolveOptions(options: SchemaOptionalProps = {}): ResolvedOptions {
+  return {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    overrideArraySize: normalizeArraySize(options.overrideArraySize ?? DEFAULT_OPTIONS.overrideArraySize),
+  }
+}
+
+/**
+ * normalize array sizes to a finite, thus non-negative integer.
+ */
+function normalizeArraySize(size: number): number {
+  if (!Number.isFinite(size) || size < 0) return DEFAULT_ARRAY_SIZE
+  return Math.floor(size)
 }
