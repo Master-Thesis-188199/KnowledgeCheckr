@@ -238,7 +238,7 @@ export default function schemaDefaults<Schema extends z.ZodTypeAny>(schema: Sche
 
     case 'literal': {
       const def = getDef(schema)
-      return def?.value as z.output<Schema>
+      return def?.values?.at(0) as z.output<Schema>
     }
 
     case 'enum': {
