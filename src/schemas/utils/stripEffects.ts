@@ -21,21 +21,27 @@ export type StripEffects<T extends z.ZodTypeAny> =
           ? z.ZodCatch<StripEffects<U>>
           : T extends z.ZodReadonly<infer U extends z.ZodTypeAny>
             ? z.ZodReadonly<StripEffects<U>>
-            : T extends z.ZodObject<infer Shape extends z.ZodRawShape, infer Config>
-              ? z.ZodObject<{ [K in keyof Shape]: Shape[K] extends z.ZodTypeAny ? StripEffects<Shape[K]> : Shape[K] }, Config>
-              : T extends z.ZodArray<infer U extends z.ZodTypeAny>
-                ? z.ZodArray<StripEffects<U>>
-                : T extends z.ZodTuple<infer Items>
-                  ? Items extends readonly z.ZodTypeAny[]
-                    ? z.ZodTuple<MapTuple<Items>>
-                    : T
-                  : T extends z.ZodUnion<infer Options>
-                    ? Options extends readonly z.ZodTypeAny[]
-                      ? z.ZodUnion<MapTuple<Options>>
+            : T extends z.ZodPipe<infer In, infer Out>
+              ? In extends z.ZodTypeAny
+                ? StripEffects<In>
+                : Out extends z.ZodTypeAny
+                  ? StripEffects<Out>
+                  : T
+              : T extends z.ZodObject<infer Shape extends z.ZodRawShape, infer Config>
+                ? z.ZodObject<{ [K in keyof Shape]: Shape[K] extends z.ZodTypeAny ? StripEffects<Shape[K]> : Shape[K] }, Config>
+                : T extends z.ZodArray<infer U extends z.ZodTypeAny>
+                  ? z.ZodArray<StripEffects<U>>
+                  : T extends z.ZodTuple<infer Items>
+                    ? Items extends readonly z.ZodTypeAny[]
+                      ? z.ZodTuple<MapTuple<Items>>
                       : T
-                    : T extends z.ZodIntersection<infer A extends z.ZodTypeAny, infer B extends z.ZodTypeAny>
-                      ? z.ZodIntersection<StripEffects<A>, StripEffects<B>>
-                      : T
+                    : T extends z.ZodUnion<infer Options>
+                      ? Options extends readonly z.ZodTypeAny[]
+                        ? z.ZodUnion<MapTuple<Options>>
+                        : T
+                      : T extends z.ZodIntersection<infer A extends z.ZodTypeAny, infer B extends z.ZodTypeAny>
+                        ? z.ZodIntersection<StripEffects<A>, StripEffects<B>>
+                        : T
 
 export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptions = {}): StripEffects<T> {
   const strip = opts.strip ?? 'effects-only'
