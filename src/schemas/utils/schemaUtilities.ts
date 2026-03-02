@@ -21,7 +21,8 @@ export function schemaUtilities<Schema extends z.ZodTypeAny>(schema: Schema) {
    * @param options - Defines how optional properties should be handled in terms of their instantiation (undefined / value)
    */
   function instantiate(options?: SchemaOptionalProps & { validate?: boolean }): z.output<Schema> {
-    const dummyData = schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options)
+    const dummyData = schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options) as z.output<Schema>
+
     //* ensure that generated dummy data satisfies with schema constraints
     return options?.validate ? validate(dummyData) : dummyData
   }
