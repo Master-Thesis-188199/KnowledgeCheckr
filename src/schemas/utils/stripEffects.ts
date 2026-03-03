@@ -125,9 +125,8 @@ export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptio
     if (type === 'default') {
       const def = getDef(s)
       const inner = unwrapInner(s)
-      const base = go(inner)
-      const dv = def?.defaultValue
-      const out = (base as any).default(typeof dv === 'function' ? dv() : dv)
+      const stripped = go(inner)
+      const out = stripped.default(def?.defaultValue)
       memo.set(s, out)
       return out
     }
