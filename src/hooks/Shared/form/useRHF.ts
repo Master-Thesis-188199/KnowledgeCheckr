@@ -1,6 +1,6 @@
 import { useActionState, useCallback, useMemo, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Resolver, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { RHFBaseReturn, RHFServerAction, RHFServerReturn, RHFServerState, RHFWithServerReturn, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { buildBaseReturn, createNoopServerAction, isServerAction, useServerValidationResults } from '@/src/hooks/Shared/form/react-hook-form/utilts'
@@ -52,7 +52,7 @@ export default function useRHF<TSchema extends z.ZodType<X>, X extends object = 
   const { instantiate } = schemaUtilities(schema)
 
   const form = useForm<z.output<TSchema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as unknown as Resolver<z.output<TSchema>>,
     ...formProps,
     defaultValues:
       typeof formProps?.defaultValues === 'function' ? formProps.defaultValues(serverReturnProps.state.values, instantiate({ stripDefaultValues: true, generateRandomNumbers: false })) : undefined,

@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
-import { FormState, useFieldArray, UseFieldArrayReturn, useForm, useFormContext, UseFormReturn } from 'react-hook-form'
+import { FormState, Resolver, useFieldArray, UseFieldArrayReturn, useForm, useFormContext, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import { useCheckStore } from '@/components/checks/create/CreateCheckProvider'
 import { Button } from '@/src/components/shadcn/button'
@@ -77,7 +77,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const form = useForm<Question>({
-    resolver: zodResolver(QuestionSchema),
+    resolver: zodResolver(QuestionSchema) as unknown as Resolver<Question>,
     defaultValues: computeFormDefaults(),
     mode: 'onChange',
     delayError: DELAY_ERROR_TIME,
