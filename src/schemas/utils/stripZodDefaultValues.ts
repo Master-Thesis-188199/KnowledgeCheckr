@@ -186,10 +186,14 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
       return z.discriminatedUnion(discriminator, strippedOptions as any) as unknown as StripZodDefault<Schema>
     }
 
-    case 'readonly':
+    case 'readonly': {
+      const inner = unwrapInner(schema)
+      return stripZodDefault(inner).readonly() as StripZodDefault<Schema>
+    }
+
     case 'nonoptional': {
       const inner = unwrapInner(schema)
-      return stripZodDefault(inner) as StripZodDefault<Schema>
+      return stripZodDefault(inner).nonoptional() as StripZodDefault<Schema>
     }
 
     default:
