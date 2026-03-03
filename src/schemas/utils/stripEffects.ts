@@ -178,6 +178,8 @@ export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptio
         // todo re-apply non-effects like (min, max) note that def.checks includes refinments as `type: 'custom'`
         // for (const check of def?.checks ?? []) out = out.check(check)
 
+        console.warn('Warning stripping all checks and effects from array.')
+
         memo.set(s, out)
         return out
       }

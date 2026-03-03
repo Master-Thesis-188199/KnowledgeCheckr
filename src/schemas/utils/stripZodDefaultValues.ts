@@ -104,6 +104,7 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
       const def = getDef(schema)
       const element = (schema as any).element ?? def?.element ?? def?.items
       const elementStripped = stripZodDefault(element)
+      console.warn('Warning stripping all checks and effects from array, while removing nested default-values.')
       return z.array(elementStripped) as StripZodDefault<Schema>
     }
 
