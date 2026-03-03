@@ -2,12 +2,12 @@ import { z } from 'zod'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 const baseSchema = z.object({
-  question_id: z.string().uuid(),
+  question_id: z.uuidv4(),
 })
 
 const SingleChoiceInputSchema = z.object({
   type: z.literal('single-choice'),
-  selection: z.string().uuid().nonempty('Please select an answer'),
+  selection: z.uuidv4().nonempty('Please select an answer'),
 })
 
 const MultipleChoiceInputSchema = z.object({
@@ -16,8 +16,7 @@ const MultipleChoiceInputSchema = z.object({
   selection: z
     .array(
       z
-        .string()
-        .uuid()
+        .uuidv4()
         .or(z.literal(false))
         .optional()
         .transform((v) => (v === false || v === undefined ? null : v))

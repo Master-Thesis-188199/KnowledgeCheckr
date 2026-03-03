@@ -10,10 +10,7 @@ import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 
 export const KnowledgeCheckSchema = z
   .object({
-    id: z
-      .string()
-      .uuid()
-      .default(() => getUUID()),
+    id: z.uuidv4().default(() => getUUID()),
 
     name: z.string().default('Knowledge Check').describe('The name under which the created check is associated with.'),
 

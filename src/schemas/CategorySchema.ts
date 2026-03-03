@@ -3,10 +3,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 export const CategorySchema = z.object({
-  id: z
-    .string()
-    .uuid()
-    .default(() => getUUID()),
+  id: z.uuidv4().default(() => getUUID()),
   name: z.string(),
   prequisiteCategoryId: z.string().min(1, 'A prerequisite category may not be empty!').nullable().default(null),
   skipOnMissingPrequisite: z.boolean().default(false),

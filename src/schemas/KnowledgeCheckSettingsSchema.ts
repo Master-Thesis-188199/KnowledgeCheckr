@@ -5,10 +5,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
 export const KnowledgeCheckSettingsSchema = z.object({
-  id: z
-    .string()
-    .uuid()
-    .default(() => getUUID()),
+  id: z.uuidv4().default(() => getUUID()),
 
   practice: z.object({
     enablePracticing: z

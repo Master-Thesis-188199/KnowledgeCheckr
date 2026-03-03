@@ -10,7 +10,7 @@ const AnswerId = z
   .catch(() => getUUID())
 
 const baseQuestion = z.object({
-  id: z.string().uuid(),
+  id: z.uuidv4(),
   points: z.number().positive('Number must be greater than 0'),
   category: z.string().default('general'),
 
