@@ -10,7 +10,7 @@ import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 import { LoginSchema } from '@/src/schemas/AuthenticationSchema'
 
-export default function CredentialProviderForm<Schema extends z.ZodSchema = typeof LoginSchema>({
+export default function CredentialProviderForm<Schema extends z.ZodObject = typeof LoginSchema>({
   schema,
   formAction,
   formProps,
