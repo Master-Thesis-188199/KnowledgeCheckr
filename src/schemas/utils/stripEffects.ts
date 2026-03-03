@@ -172,10 +172,12 @@ export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptio
     if (type === 'array') {
       const def = getDef(s)
       const element = (s as any).element ?? def?.element ?? def?.items
-      // Recreate a clean array => drops built-in checks (min/max/length) when strip === 'all'.
-      // If strip === 'effects-only', we keep the original array schema (but with stripped inner effects).
+
       if (strip === 'effects-only') {
-        const out = s as any
+        const out = z.array(go(element))
+        // todo re-apply non-effects like (min, max) note that def.checks includes refinments as `type: 'custom'`
+        // for (const check of def?.checks ?? []) out = out.check(check)
+
         memo.set(s, out)
         return out
       }
