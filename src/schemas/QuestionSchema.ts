@@ -11,7 +11,7 @@ const AnswerId = z
 
 const baseQuestion = z.object({
   id: z.string().uuid(),
-  points: z.number().positive(),
+  points: z.number().positive('Number must be greater than 0'),
   category: z.string().default('general'),
 
   question: z
