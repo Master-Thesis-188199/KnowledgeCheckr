@@ -70,15 +70,16 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
           const { success, error } = safeParseKnowledgeCheck(values)
           if (!success) {
-            for (const [key, messages] of Object.entries(error.formErrors.fieldErrors)) {
-              if (!messages) continue
+            for (const [, issue] of Object.entries(error.issues)) {
+              if (!issue) continue
+              const fieldName = issue.path.at(-1) as unknown as (typeof FIELDS)[number]
 
-              if (!FIELDS.includes(key as keyof KnowledgeCheck)) {
-                console.warn(`[Form]: Detected error for '${key}' but is not part of relevant fields`, FIELDS, ', ignoring error.')
+              if (!FIELDS.includes(fieldName)) {
+                console.warn(`[Form]: Detected error for '${fieldName}' but is not part of relevant fields`, FIELDS, ', ignoring error.', issue.message)
                 continue
               }
 
-              for (const msg of messages) form.setError(key as Any, { message: msg, type: 'custom' })
+              form.setError(fieldName as Any, { message: issue.message, type: issue.code })
             }
 
             return
