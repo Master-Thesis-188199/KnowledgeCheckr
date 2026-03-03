@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import getKeys from '@/src/lib/Shared/Keys'
 import { Any } from '@/types'
 
 /**
@@ -244,7 +243,9 @@ export default function schemaDefaults<Schema extends z.ZodTypeAny>(schema: Sche
     case 'enum': {
       const def = getDef(schema)
       // def.entries holds the enum values as an object e.g. {male: 'male', female: 'female' }
-      const values: any[] = (def?.values ?? def?.options ?? def?.entries) ? getKeys(def.entries) : []
+      const values: any[] = (def?.values ?? def?.options ?? def?.entries) ? Object.values(def.entries) : []
+      if (values.length === 0) return undefined as z.output<Schema>
+
       const randomIndex = Math.round((Math.random() * values.length) % (values.length - 1))
       return values[randomIndex] as z.output<Schema>
     }
