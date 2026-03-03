@@ -165,7 +165,7 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
       const inner = unwrapPipe(schema as Any)
       if (!out) return stripZodDefault(inner) as StripZodDefault<Schema>
 
-      return z.pipe(stripZodDefault(inner), stripZodDefault(out)) as unknown as StripZodDefault<Schema>
+      return z.pipe(stripZodDefault(inner), out.type !== 'transform' ? stripZodDefault(out) : out) as unknown as StripZodDefault<Schema>
     }
 
     case 'intersection': {
