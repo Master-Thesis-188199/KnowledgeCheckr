@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { ArrowUpFromLineIcon, CheckIcon, MessageCircleQuestionIcon, XIcon } from 'lucide-react'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
@@ -62,7 +62,7 @@ function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
 
     // automatically display feedback texts for wrong positioned answers
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOpenFeedbacks(options.filter((o) => feedbackEvaluation.isFalslyPositioned(o.id)).map((o) => o.id))
+    setOpenFeedbacks([options.find((o) => feedbackEvaluation.isFalslyPositioned(o.id))?.id ?? ''].filter(Boolean))
   }, [isValidationComplete])
 
   return options.map(({ id, answer, position }, i) => (
@@ -74,7 +74,15 @@ function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
       data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
       {answer}
-      <AnswerFeedback show={isValidationComplete} isFeedbackPinned={openFeedbacks.includes(id)} id={id} feedbackEvaluation={feedbackEvaluation} position={position} />
+      <AnswerFeedback
+        openFeedbacks={openFeedbacks}
+        updateOpenFeedbacks={setOpenFeedbacks}
+        show={isValidationComplete}
+        isFeedbackPinned={openFeedbacks.includes(id)}
+        id={id}
+        feedbackEvaluation={feedbackEvaluation}
+        position={position}
+      />
     </DragDropItem>
   ))
 }
@@ -84,12 +92,16 @@ function AnswerFeedback({
   position,
   feedbackEvaluation,
   isFeedbackPinned,
+  openFeedbacks,
+  updateOpenFeedbacks,
   id,
 }: {
   show: boolean
   id: DragDropQuestion['answers'][number]['id']
   feedbackEvaluation: DragDropFeedbackEvaluation
   isFeedbackPinned?: boolean
+  openFeedbacks: string[]
+  updateOpenFeedbacks: React.Dispatch<SetStateAction<string[]>>
   position: number
 }) {
   if (!show) return null
@@ -98,7 +110,14 @@ function AnswerFeedback({
   const answerFeedbackText = feedbackEvaluation.reasoning?.get(id)
 
   return (
-    <DisplayFeedbackText feedback={answerFeedbackText} side='right' pinned={isFeedbackPinned} answerIndex={correctPosition}>
+    <DisplayFeedbackText
+      answerId={id}
+      openTooltips={openFeedbacks}
+      updateOpenTooltips={updateOpenFeedbacks}
+      feedback={answerFeedbackText}
+      side='right'
+      pinned={isFeedbackPinned}
+      answerIndex={correctPosition}>
       <div className='drag-drop-feedback-indicators group/tooltip ml-auto flex cursor-pointer items-center gap-2'>
         {feedbackEvaluation.isCorrectlyPositioned(id) ? (
           <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
