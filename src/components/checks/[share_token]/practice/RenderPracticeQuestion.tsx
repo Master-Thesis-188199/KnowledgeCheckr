@@ -226,6 +226,7 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
         isWrong={isValidationComplete && isFalslySelected(a)}
         isMissing={isValidationComplete && isMissingSelection(a)}
         feedbackText={reasoning?.get(a.id)}
+        className={cn(isValidationComplete && !reasoning?.has(a.id) && 'pointer-events-none')}
         htmlFor={a.id}>
         {a.answer}
 
@@ -305,6 +306,8 @@ function ChoiceOption({
 
             isMissing && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
           ),
+
+        props.className,
       )}
     />
   )

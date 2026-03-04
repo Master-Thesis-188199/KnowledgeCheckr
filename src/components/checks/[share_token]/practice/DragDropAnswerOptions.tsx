@@ -69,7 +69,7 @@ function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
     <DragDropItem
       key={id}
       name={id}
-      className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer')}
+      className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer', isValidationComplete && !feedbackEvaluation.reasoning?.has(id) && 'pointer-events-none')}
       onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
       data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
       <DragDropItemPositionCounter initialIndex={position} />
