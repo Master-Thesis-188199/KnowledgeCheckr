@@ -31,6 +31,7 @@ export default function QuestionNavigationMenu({
 
           return (
             <button
+              tabIndex={-1}
               aria-label={t('question_aria_label', { index: i + 1, status: t(`question_status_${status}`) })}
               data-selected={i === currentQuestionIndex || undefined}
               data-status-correct={status === 'correct' || undefined}
