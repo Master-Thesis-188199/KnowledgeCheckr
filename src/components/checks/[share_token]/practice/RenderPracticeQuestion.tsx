@@ -213,7 +213,7 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
     if (openFeedbacks.length > 0) return
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOpenFeedbacks([...question.answers.filter((a) => isFalslySelected(a)).map((a) => a.id)])
+    setOpenFeedbacks([question.answers.find((a) => isFalslySelected(a))?.id ?? ''])
   }, [isValidationComplete])
 
   return question.answers.map((a, i) => {
@@ -229,7 +229,19 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
         htmlFor={a.id}>
         {a.answer}
 
-        <DisplayFeedbackText disabled={!isValidationComplete} answerIndex={i} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
+        <DisplayFeedbackText
+          onOpenChange={(open, id) => {
+            if (!open) return
+
+            // close all feedback-tooltips except the one being open right now.
+            setOpenFeedbacks((feedbacks) => feedbacks.filter((i) => i === id))
+          }}
+          answerId={a.id}
+          disabled={!isValidationComplete}
+          answerIndex={i}
+          pinned={openFeedbacks.includes(a.id)}
+          feedback={reasoning?.get(a.id)}
+          side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon
               className={cn(

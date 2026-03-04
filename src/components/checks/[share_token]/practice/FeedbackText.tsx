@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { usePrevious } from '@uidotdev/usehooks'
 import Tooltip, { TooltipProps } from '@/src/components/Shared/Tooltip'
 
 export type DisplayFeedbackTextProps = Pick<TooltipProps, 'side' | 'sideOffset' | 'disabled'> & {
@@ -10,11 +11,19 @@ export type DisplayFeedbackTextProps = Pick<TooltipProps, 'side' | 'sideOffset' 
   pinned?: boolean
   children: React.ReactNode
   answerIndex?: number
+  answerId?: string
+  onOpenChange?: (open: boolean, id: string) => void
 }
 
-export default function DisplayFeedbackText({ feedback, pinned: isPinned, children, answerIndex = 0, ...props }: DisplayFeedbackTextProps) {
+export default function DisplayFeedbackText({ feedback, pinned: isPinned, children, answerId, answerIndex = 0, onOpenChange, ...props }: DisplayFeedbackTextProps) {
   const [hoverOpen, setHoverOpen] = useState(false)
   const open = isPinned || hoverOpen
+  const prevOpen = usePrevious(open)
+
+  useEffect(() => {
+    if (prevOpen === open || !answerId) return
+    onOpenChange?.(open, answerId)
+  }, [open])
 
   if (!feedback) return <>{children}</>
 
