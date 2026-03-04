@@ -213,7 +213,7 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
     if (openFeedbacks.length > 0) return
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOpenFeedbacks([question.answers.find((a) => isFalslySelected(a))?.id ?? ''])
+    setOpenFeedbacks([question.answers.find((a) => isFalslySelected(a))?.id ?? ''].filter(Boolean))
   }, [isValidationComplete])
 
   return question.answers.map((a, i) => {
@@ -230,12 +230,8 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
         {a.answer}
 
         <DisplayFeedbackText
-          onOpenChange={(open, id) => {
-            if (!open) return
-
-            // close all feedback-tooltips except the one being open right now.
-            setOpenFeedbacks((feedbacks) => feedbacks.filter((i) => i === id))
-          }}
+          updateOpenTooltips={setOpenFeedbacks}
+          openTooltips={openFeedbacks}
           answerId={a.id}
           disabled={!isValidationComplete}
           answerIndex={i}
