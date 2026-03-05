@@ -10,10 +10,11 @@ export function PracticeCategorySelection({ questions, share_token }: { question
   const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
 
   const optionClasses = cn(
-    'cursor-pointer px-3 py-1.5 hover:rounded-md hover:bg-neutral-200/90 hover:ring-1 dark:ring-neutral-400/70 dark:hover:bg-neutral-800',
+    'cursor-pointer px-3 py-1.5 hover:rounded-md hover:bg-neutral-200/90 hover:ring-1 focus-visible:rounded-md focus-visible:bg-neutral-200/9 focus-visible:ring-1 dark:ring-neutral-400/70 dark:hover:bg-neutral-800 dark:focus-visible:bg-neutral-800',
     'active:bg-neutral-300/80 dark:active:bg-neutral-700',
-    'hover:ring-ring-hover dark:hover:ring-ring-hover',
-    'border-b border-ring-subtle first:border-b-3 last:border-b-0 first:hover:border-b-transparent dark:border-neutral-600',
+    'hover:ring-ring-hover focus-visible:ring-ring-hover dark:hover:ring-ring-hover dark:focus-visible:ring-ring-hover',
+    'border-b border-ring-subtle first:border-b-3 last:border-b-0 first:hover:border-b-transparent first:focus-visible:border-b-transparent dark:border-neutral-600',
+    'outline-0',
   )
 
   return (
@@ -25,7 +26,10 @@ export function PracticeCategorySelection({ questions, share_token }: { question
       <ul className='flex flex-col rounded-md text-neutral-700 ring-2 ring-ring-subtle select-none dark:text-neutral-300 dark:ring-ring-subtle' id='category-selection'>
         <Link
           data-category='all'
-          className={cn(optionClasses, 'rounded-t-md bg-neutral-200 hover:bg-neutral-300/80 dark:bg-neutral-700/50 dark:hover:bg-neutral-700')}
+          className={cn(
+            optionClasses,
+            'rounded-t-md bg-neutral-200 hover:bg-neutral-300/80 focus-visible:bg-neutral-300/80 dark:bg-neutral-700/50 dark:hover:bg-neutral-700 dark:focus-visible:bg-neutral-700',
+          )}
           href={{
             pathname: `/checks/${share_token}/practice`,
             query: { category: '_none_' },
