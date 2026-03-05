@@ -35,27 +35,48 @@ export function FeedbackOpenQuestion({
     setPinned(true)
   }, [isValidationComplete])
 
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (!isValidationComplete) return
+
+    // close the feedback-tooltip when escape is pressed while the option for which the feedback is shown is focussed
+    if (event.key === 'Escape' && isPinned) return setPinned(false)
+    if (event.key !== 'Enter' && event.key !== ' ') return
+
+    event.preventDefault()
+    setPinned((prev) => !prev)
+  }
+
   return (
-    <OpenQuestionAnswer
-      {...props}
-      disabled={isValidationComplete || props.disabled}
-      data-evaluation-result={isValidationComplete ? (isCorrect ? 'correct' : isIncorrect ? 'incorrect' : 'none') : 'none'}
+    <div
       className={cn(
-        isValidationComplete && 'relative ring-2',
-        isCorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-success-200/50 ring-success-300 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/15 dark:ring-green-500/70',
-        isIncorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-destructive/10 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
-        isValidationComplete && 'pr-8',
-      )}>
-      <div className={cn('group/tooltip absolute top-1 right-1.5 z-10 flex cursor-pointer flex-row-reverse gap-1.5')} onClick={() => setPinned((prev) => !prev)}>
-        <DisplayFeedbackText disabled={!isValidationComplete} pinned={isPinned} feedback={reasoning} side='right'>
-          <MessageCircleQuestionIcon
-            className={cn('size-4.5 text-warning', !isPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !isValidationComplete && 'hidden', !reasoning && 'hidden')}
-          />
-        </DisplayFeedbackText>
-      </div>
-      {/* overlay to detect click-events in text-area while disabled */}
-      {isValidationComplete && <div className='absolute inset-0 cursor-pointer' onClick={() => setPinned((prev) => !prev)}></div>}
-    </OpenQuestionAnswer>
+        'group relative rounded-md *:w-full focus-visible:ring-[5px]',
+        isIncorrect && 'ring-destructive-300/40 dark:ring-destructive-400/40',
+        isCorrect && 'ring-success-300/40 dark:ring-success/40',
+      )}
+      onKeyDown={handleKeyDown}
+      tabIndex={isValidationComplete && !!reasoning ? 0 : -1}>
+      <OpenQuestionAnswer
+        {...props}
+        disabled={isValidationComplete || props.disabled}
+        data-evaluation-result={isValidationComplete ? (isCorrect ? 'correct' : isIncorrect ? 'incorrect' : 'none') : 'none'}
+        className={cn(
+          isValidationComplete && 'relative ring-2',
+          isCorrect &&
+            'bg-radial from-neutral-200/60 via-neutral-200/60 to-success-200/50 ring-success-300 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/15 dark:ring-green-500/70',
+          isIncorrect && 'bg-radial from-neutral-200/60 via-neutral-200/60 to-destructive/10 ring-red-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/15 dark:ring-red-400/70',
+          isValidationComplete && 'pr-8',
+        )}>
+        <div className={cn('group/tooltip absolute top-1 right-1.5 z-10 flex cursor-pointer flex-row-reverse gap-1.5')} onClick={() => setPinned((prev) => !prev)}>
+          <DisplayFeedbackText disabled={!isValidationComplete} pinned={isPinned} feedback={reasoning} side='right'>
+            <MessageCircleQuestionIcon
+              className={cn('size-4.5 text-warning', !isPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !isValidationComplete && 'hidden', !reasoning && 'hidden')}
+            />
+          </DisplayFeedbackText>
+        </div>
+        {/* overlay to detect click-events in text-area while disabled */}
+        {isValidationComplete && <div className='absolute inset-0 cursor-pointer' onClick={() => setPinned((prev) => !prev)}></div>}
+      </OpenQuestionAnswer>
+    </div>
   )
 }
 
@@ -63,7 +84,7 @@ export function OpenQuestionAnswer({ children, ...props }: { children?: React.Re
   const { register } = useFormContext<QuestionInput>()
 
   return (
-    <div className='group relative *:w-full'>
+    <>
       <Textarea
         {...props}
         maxRows={-1}
@@ -77,6 +98,6 @@ export function OpenQuestionAnswer({ children, ...props }: { children?: React.Re
         )}
       />
       {children}
-    </div>
+    </>
   )
 }
