@@ -217,10 +217,31 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
   }, [isValidationComplete])
 
   return question.answers.map((a, i) => {
+    const handleActivate = () => {
+      if (isValidationComplete) {
+        setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id])))
+        return
+      }
+
+      const input = document.getElementById(a.id) as HTMLInputElement | null
+      if (!input || input.disabled) return
+
+      input.focus()
+      input.click()
+    }
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLLabelElement> = (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return
+
+      event.preventDefault()
+      handleActivate()
+    }
+
     return (
       <ChoiceOption
         key={a.id}
-        onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
+        onClick={isValidationComplete ? handleActivate : undefined}
+        onKeyDown={handleKeyDown}
         mode={isValidationComplete ? 'feedback' : 'input'}
         isCorrect={isValidationComplete && isCorrectlySelected(a)}
         isWrong={isValidationComplete && isFalslySelected(a)}
