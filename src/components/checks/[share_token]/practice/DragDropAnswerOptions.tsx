@@ -65,26 +65,53 @@ function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
     setOpenFeedbacks([options.find((o) => feedbackEvaluation.isFalslyPositioned(o.id))?.id ?? ''].filter(Boolean))
   }, [isValidationComplete])
 
-  return options.map(({ id, answer, position }, i) => (
-    <DragDropItem
-      key={id}
-      name={id}
-      className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer', isValidationComplete && !feedbackEvaluation.reasoning?.has(id) && 'pointer-events-none')}
-      onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((prev_id) => prev_id !== id) : prev.concat([id]))) : undefined}
-      data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
-      <DragDropItemPositionCounter initialIndex={position} />
-      {answer}
-      <AnswerFeedback
-        openFeedbacks={openFeedbacks}
-        updateOpenFeedbacks={setOpenFeedbacks}
-        show={isValidationComplete}
-        isFeedbackPinned={openFeedbacks.includes(id)}
-        id={id}
-        feedbackEvaluation={feedbackEvaluation}
-        position={position}
-      />
-    </DragDropItem>
-  ))
+  return options.map(({ id, answer, position }, i) => {
+    const handleActivate = () => {
+      if (isValidationComplete) {
+        setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : prev.concat([id])))
+        return
+      }
+
+      const input = document.getElementById(id) as HTMLInputElement | null
+      if (!input || input.disabled) return
+
+      input.focus()
+      input.click()
+    }
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+      const answerId = event.currentTarget.dataset['swapyItem'] as string
+      // close the feedback-tooltip when escape is pressed while the option for which the feedback is shown is focussed
+      if (event.key === 'Escape' && openFeedbacks.includes(answerId)) return setOpenFeedbacks((prev) => prev.filter((id) => id !== answerId))
+      if (event.key !== 'Enter' && event.key !== ' ') return
+
+      event.preventDefault()
+      handleActivate()
+    }
+
+    return (
+      <DragDropItem
+        tabIndex={isValidationComplete && feedbackEvaluation.reasoning?.has(id) ? 0 : -1}
+        key={id}
+        name={id}
+        className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer', isValidationComplete && !feedbackEvaluation.reasoning?.has(id) && 'pointer-events-none')}
+        onClick={isValidationComplete ? handleActivate : undefined}
+        onKeyDown={handleKeyDown}
+        data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
+        <DragDropItemPositionCounter initialIndex={position} />
+        {answer}
+        <AnswerFeedback
+          openFeedbacks={openFeedbacks}
+          updateOpenFeedbacks={setOpenFeedbacks}
+          show={isValidationComplete}
+          isFeedbackPinned={openFeedbacks.includes(id)}
+          id={id}
+          feedbackEvaluation={feedbackEvaluation}
+          position={position}
+        />
+      </DragDropItem>
+    )
+  })
 }
 
 function AnswerFeedback({
