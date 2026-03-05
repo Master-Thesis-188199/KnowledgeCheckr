@@ -231,6 +231,9 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
     }
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLLabelElement> = (event) => {
+      const answerId = event.currentTarget.htmlFor
+      // close the feedback-tooltip when escape is pressed while the option for which the feedback is shown is focussed
+      if (event.key === 'Escape' && openFeedbacks.includes(answerId)) return setOpenFeedbacks((prev) => prev.filter((id) => id !== answerId))
       if (event.key !== 'Enter' && event.key !== ' ') return
 
       event.preventDefault()
