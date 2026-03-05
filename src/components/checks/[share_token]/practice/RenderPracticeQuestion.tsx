@@ -309,7 +309,7 @@ function ChoiceOption({
   return (
     <label
       data-feedback={mode === 'feedback' ? (isCorrect ? 'correct' : isWrong ? 'incorrect' : isMissing ? 'missing' : undefined) : 'answering'}
-      tabIndex={mode === 'feedback' ? (isCorrect || isWrong || isMissing ? 0 : -1) : 0}
+      tabIndex={mode === 'input' ? 0 : mode === 'feedback' && !!feedbackText ? 0 : -1}
       {...props}
       className={cn(
         'rounded-md border border-neutral-400 bg-neutral-100/90 px-3 py-1.5 text-neutral-600 outline-none placeholder:text-neutral-400/90 dark:border-neutral-500 dark:bg-neutral-800 dark:text-neutral-300/80 dark:placeholder:text-neutral-400/50',
