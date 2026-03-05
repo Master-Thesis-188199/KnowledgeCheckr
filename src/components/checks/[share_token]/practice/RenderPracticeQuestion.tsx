@@ -305,27 +305,32 @@ function ChoiceOption({
 }) {
   return (
     <label
-      tabIndex={0}
+      data-feedback={mode === 'feedback' ? (isCorrect ? 'correct' : isWrong ? 'incorrect' : isMissing ? 'missing' : undefined) : 'answering'}
+      tabIndex={mode === 'feedback' ? (isCorrect || isWrong || isMissing ? 0 : -1) : 0}
       {...props}
       className={cn(
-        'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-        'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
-        'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
+        'rounded-md border border-neutral-400 bg-neutral-100/90 px-3 py-1.5 text-neutral-600 outline-none placeholder:text-neutral-400/90 dark:border-neutral-500 dark:bg-neutral-800 dark:text-neutral-300/80 dark:placeholder:text-neutral-400/50',
+        'has-enabled:hover:cursor-pointer has-enabled:hover:border-ring-hover has-enabled:dark:hover:border-ring-hover',
+        'has-enabled:focus:border-[1.2px] has-enabled:focus:border-ring-focus has-enabled:dark:focus:border-ring-focus',
         'flex items-center justify-center',
         'resize-none select-none',
-        'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+        'has-enabled:has-checked:border-[1.5px] has-enabled:has-checked:border-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold dark:has-enabled:has-checked:border-neutral-300 dark:has-enabled:has-checked:bg-neutral-700/60',
+        'focus-visible:ring-[3px] data-[feedback=answering]:focus-visible:border-ring-hover data-[feedback=answering]:focus-visible:ring-ring-hover/50',
+        'data-[feedback=correct]:focus-visible:border-success-400 data-[feedback=correct]:focus-visible:ring-success-300/50',
+        'data-[feedback=incorrect]:focus-visible:border-destructive-300/80 data-[feedback=incorrect]:focus-visible:ring-destructive-300/50 dark:data-[feedback=incorrect]:focus-visible:border-destructive-400',
+        'data-[feedback=missing]:focus-visible:border-0 data-[feedback=missing]:focus-visible:border-warning-400 data-[feedback=missing]:focus-visible:ring-warning/60 dark:data-[feedback=missing]:focus-visible:ring-warning-300/50',
 
         mode === 'feedback' &&
           cn(
-            'relative ring-2',
+            'relative border-2',
             !!feedbackText && 'group cursor-pointer',
             isCorrect &&
-              'bg-radial from-neutral-200/60 via-neutral-100/60 to-success-200/50 to-99% font-semibold ring-success-300 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+              'border-success-300 bg-radial from-neutral-200/60 via-neutral-100/60 to-success-200/50 to-99% font-semibold dark:border-green-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20',
 
             isWrong &&
-              'from-neutral-200/60 via-neutral-100/60 to-destructive/10 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+              'border-red-500/70 from-neutral-200/60 via-neutral-100/60 to-destructive/10 has-checked:bg-radial has-checked:font-semibold dark:border-red-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20',
 
-            isMissing && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+            isMissing && 'border-0 outline-2 outline-yellow-500 outline-dashed focus-visible:border dark:outline-yellow-400/60',
           ),
 
         props.className,
