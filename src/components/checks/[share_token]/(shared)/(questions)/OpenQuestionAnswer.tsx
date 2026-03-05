@@ -1,7 +1,8 @@
-import { HTMLProps, useEffect, useState } from 'react'
+import React, { HTMLProps, useEffect, useState } from 'react'
 import { MessageCircleQuestionIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import DisplayFeedbackText from '@/src/components/checks/[share_token]/practice/FeedbackText'
+import { Textarea } from '@/src/components/shadcn/textarea'
 import { usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
 import { useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import { cn } from '@/src/lib/Shared/utils'
@@ -58,17 +59,18 @@ export function FeedbackOpenQuestion({
   )
 }
 
-export function OpenQuestionAnswer({ children, ...props }: { children?: React.ReactNode } & HTMLProps<HTMLTextAreaElement>) {
+export function OpenQuestionAnswer({ children, ...props }: { children?: React.ReactNode } & React.ComponentProps<typeof Textarea>) {
   const { register } = useFormContext<QuestionInput>()
 
   return (
     <div className='group relative *:w-full'>
-      <textarea
+      <Textarea
         {...props}
+        maxRows={-1}
         {...register('input')}
         className={cn(
-          'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-          'enabled:hover:cursor-text enabled:hover:ring-ring-hover enabled:focus:ring-[1.2px] enabled:focus:ring-ring-focus enabled:dark:hover:ring-ring-hover enabled:dark:focus:ring-ring-focus',
+          'rounded-md border border-neutral-400 bg-neutral-100/90 px-3 py-1.5 text-neutral-600 outline-none placeholder:text-neutral-400/90 dark:border-neutral-500 dark:bg-neutral-800 dark:text-neutral-300/80 dark:placeholder:text-neutral-400/50',
+          'enabled:hover:cursor-text enabled:hover:border-ring-hover enabled:focus:border-[1.2px] enabled:focus:border-ring-focus enabled:dark:hover:border-ring-hover enabled:dark:focus:border-ring-focus',
           'resize-none',
           'my-auto h-full min-h-32',
           props.className,
