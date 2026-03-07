@@ -4,6 +4,7 @@ import { QuestionCorrectnessPieChart } from '@/src/components/charts/QuestionCor
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
 import { QuestionScorePlotCard } from '@/src/components/charts/QuestionScorePlot'
 import ExamQuestionResultTable from '@/src/components/checks/[share_token]/results/ExamQuestionResultTable'
+import { PracticeResultsBreadcrumbs } from '@/src/components/results/practice/PracticeResultsBreadcrumbs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
@@ -23,6 +24,7 @@ export default async function PracticeResultsPage({ params }: { params: Promise<
 
   return (
     <>
+      <PracticeResultsBreadcrumbs share_token={check.share_key!} />
       <PageHeading title='Practice Attempt Results' />
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>
