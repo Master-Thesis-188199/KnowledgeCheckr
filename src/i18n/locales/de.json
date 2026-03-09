@@ -275,6 +275,30 @@
         "score_slider_label": "Fragenergebnis",
         "title": "Details zur Antwort auf die Prüfungsfrage"
       }
+    },
+    "PracticeResults": {
+      "Charts": {
+        "QuestionCorrectnessPieChart": {
+          "correct_label": "Richtig",
+          "description": "Zeigt die Anzahl der Fragen an, die richtig, richtig oder gar nicht beantwortet wurden.",
+          "incorrect_label": "Falsch",
+          "title": "Übungsleistung",
+          "unanswered_label": "Unbeantwortet",
+          "questions_inner_label": "Fragen"
+        },
+        "DataTable": {
+          "description": "Zeigt eine detaillierte Liste aller Fragen dieser Prüfung an, um Ihre Antworten zu überprüfen.",
+          "title": "Fragenübersicht"
+        },
+        "DurationChart": {
+          "title": "Zeitunterschied zwischen Fragen"
+        },
+        "QuestionScorePlot": {
+          "description": "Zeigt die Abweichung zwischen der erhaltenen Fragepunktzahl und der maximalen Punktzahl pro Frage an",
+          "title": "Punkte unterschiede pro Frage"
+        }
+      },
+      "title": "Ergebnisse deines Übungsversuchs"
     }
   },
   "Examination": {

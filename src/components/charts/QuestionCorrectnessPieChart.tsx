@@ -5,8 +5,10 @@ import React from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export function QuestionCorrectnessPieChart({ title, description }: { title: string; description?: string }) {
+  const t = useScopedI18n('Checks.PracticeResults.Charts.QuestionCorrectnessPieChart')
   const totalQuestionsCount = Math.max(Math.round(Math.random() * 150), Math.round(Math.max(48, Math.random() * 120)))
 
   const passedRate = Math.min(0.6, Math.max(0.4, Math.random()))
@@ -25,15 +27,15 @@ export function QuestionCorrectnessPieChart({ title, description }: { title: str
   const chartConfig = React.useMemo(
     (): ChartConfig => ({
       correct: {
-        label: 'Correct',
+        label: t('correct_label'),
         color: 'var(--chart-2)',
       },
       incorrect: {
-        label: 'Incorrect',
+        label: t('incorrect_label'),
         color: 'var(--chart-5)',
       },
       unanswered: {
-        label: 'Unanswered',
+        label: t('unanswered_label'),
         color: 'var(--chart-3)',
       },
     }),
@@ -96,7 +98,7 @@ export function QuestionCorrectnessPieChart({ title, description }: { title: str
                           {totalUsers.toLocaleString()}
                         </tspan>
                         <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className='fill-muted-foreground capitalize'>
-                          Questions
+                          {t('questions_inner_label')}
                         </tspan>
                       </text>
                     )
