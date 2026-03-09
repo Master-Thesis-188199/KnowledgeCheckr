@@ -106,8 +106,8 @@ export function RenderPracticeQuestion() {
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
             hidden={isValidationComplete}
-            className='mx-auto mt-2 bg-neutral-300/80 enabled:ring-1 enabled:ring-ring-subtle enabled:hover:bg-neutral-300 enabled:hover:ring-ring dark:bg-neutral-700 dark:enabled:ring-transparent dark:enabled:hover:bg-neutral-600 dark:enabled:hover:ring-ring'
-            variant='secondary'
+            className='mt-2'
+            variant='base'
             isLoading={isSubmitting || isPending}
             type='submit'>
             Check Answer
@@ -213,23 +213,56 @@ function ChoiceAnswerOptions<Q extends ChoiceQuestion>({ question, type }: { typ
     if (openFeedbacks.length > 0) return
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOpenFeedbacks([...question.answers.filter((a) => isFalslySelected(a)).map((a) => a.id)])
+    setOpenFeedbacks([question.answers.find((a) => isFalslySelected(a))?.id ?? ''].filter(Boolean))
   }, [isValidationComplete])
 
   return question.answers.map((a, i) => {
+    const handleActivate = () => {
+      if (isValidationComplete) {
+        setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id])))
+        return
+      }
+
+      const input = document.getElementById(a.id) as HTMLInputElement | null
+      if (!input || input.disabled) return
+
+      input.focus()
+      input.click()
+    }
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLLabelElement> = (event) => {
+      const answerId = event.currentTarget.htmlFor
+      // close the feedback-tooltip when escape is pressed while the option for which the feedback is shown is focussed
+      if (event.key === 'Escape' && openFeedbacks.includes(answerId)) return setOpenFeedbacks((prev) => prev.filter((id) => id !== answerId))
+      if (event.key !== 'Enter' && event.key !== ' ') return
+
+      event.preventDefault()
+      handleActivate()
+    }
+
     return (
       <ChoiceOption
         key={a.id}
-        onClick={isValidationComplete ? () => setOpenFeedbacks((prev) => (prev.includes(a.id) ? prev.filter((id) => id !== a.id) : prev.concat([a.id]))) : undefined}
+        onClick={isValidationComplete ? handleActivate : undefined}
+        onKeyDown={handleKeyDown}
         mode={isValidationComplete ? 'feedback' : 'input'}
         isCorrect={isValidationComplete && isCorrectlySelected(a)}
         isWrong={isValidationComplete && isFalslySelected(a)}
         isMissing={isValidationComplete && isMissingSelection(a)}
         feedbackText={reasoning?.get(a.id)}
+        className={cn(isValidationComplete && !reasoning?.has(a.id) && 'pointer-events-none')}
         htmlFor={a.id}>
         {a.answer}
 
-        <DisplayFeedbackText disabled={!isValidationComplete} answerIndex={i} pinned={openFeedbacks.includes(a.id)} feedback={reasoning?.get(a.id)} side={i % 2 === 1 ? 'right' : 'left'}>
+        <DisplayFeedbackText
+          updateOpenTooltips={setOpenFeedbacks}
+          openTooltips={openFeedbacks}
+          answerId={a.id}
+          disabled={!isValidationComplete}
+          answerIndex={i}
+          pinned={openFeedbacks.includes(a.id)}
+          feedback={reasoning?.get(a.id)}
+          side={i % 2 === 1 ? 'right' : 'left'}>
           <div className={cn('group/tooltip absolute top-1 right-1.5 flex flex-row-reverse gap-1.5', i % 2 === 0 && 'left-1.5 flex-row justify-between')}>
             <MessageCircleQuestionIcon
               className={cn(
@@ -275,27 +308,35 @@ function ChoiceOption({
 }) {
   return (
     <label
+      data-feedback={mode === 'feedback' ? (isCorrect ? 'correct' : isWrong ? 'incorrect' : isMissing ? 'missing' : undefined) : 'answering'}
+      tabIndex={mode === 'input' ? 0 : mode === 'feedback' && !!feedbackText ? 0 : -1}
       {...props}
       className={cn(
-        'rounded-md bg-neutral-100/90 px-3 py-1.5 text-neutral-600 ring-1 ring-neutral-400 outline-none placeholder:text-neutral-400/90 dark:bg-neutral-800 dark:text-neutral-300/80 dark:ring-neutral-500 dark:placeholder:text-neutral-400/50',
-        'has-enabled:hover:cursor-pointer has-enabled:hover:ring-ring-hover has-enabled:dark:hover:ring-ring-hover',
-        'has-enabled:focus:ring-[1.2px] has-enabled:focus:ring-ring-focus has-enabled:dark:focus:ring-ring-focus',
+        'rounded-md border border-neutral-400 bg-neutral-100/90 px-3 py-1.5 text-neutral-600 outline-none placeholder:text-neutral-400/90 dark:border-neutral-500 dark:bg-neutral-800 dark:text-neutral-300/80 dark:placeholder:text-neutral-400/50',
+        'has-enabled:hover:cursor-pointer has-enabled:hover:border-ring-hover has-enabled:dark:hover:border-ring-hover',
+        'has-enabled:focus:border-[1.2px] has-enabled:focus:border-ring-focus has-enabled:dark:focus:border-ring-focus',
         'flex items-center justify-center',
         'resize-none select-none',
-        'has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold has-enabled:has-checked:ring-[1.5px] has-enabled:has-checked:ring-ring-hover dark:has-enabled:has-checked:bg-neutral-700/60 dark:has-enabled:has-checked:ring-neutral-300',
+        'has-enabled:has-checked:border-[1.5px] has-enabled:has-checked:border-ring-hover has-enabled:has-checked:bg-neutral-200/60 has-enabled:has-checked:font-semibold dark:has-enabled:has-checked:border-neutral-300 dark:has-enabled:has-checked:bg-neutral-700/60',
+        'focus-visible:ring-[3px] data-[feedback=answering]:focus-visible:border-ring-hover data-[feedback=answering]:focus-visible:ring-ring-hover/50',
+        'data-[feedback=correct]:focus-visible:border-success-400 data-[feedback=correct]:focus-visible:ring-success-300/50',
+        'data-[feedback=incorrect]:focus-visible:border-destructive-300/80 data-[feedback=incorrect]:focus-visible:ring-destructive-300/50 dark:data-[feedback=incorrect]:focus-visible:border-destructive-400',
+        'data-[feedback=missing]:focus-visible:border-0 data-[feedback=missing]:focus-visible:border-warning-400 data-[feedback=missing]:focus-visible:ring-warning/60 dark:data-[feedback=missing]:focus-visible:ring-warning-300/50',
 
         mode === 'feedback' &&
           cn(
-            'relative ring-2',
+            'relative border-2',
             !!feedbackText && 'group cursor-pointer',
             isCorrect &&
-              'bg-radial from-neutral-200/60 via-neutral-100/60 to-green-600/20 font-semibold ring-green-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20 dark:ring-green-500/70',
+              'border-success-300 bg-radial from-neutral-200/60 via-neutral-100/60 to-success-200/50 to-99% font-semibold dark:border-green-500/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-green-500/20',
 
             isWrong &&
-              'from-neutral-200/60 via-neutral-100/60 to-red-500/20 ring-red-500/70 has-checked:bg-radial has-checked:font-semibold dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20 dark:ring-red-400/70',
+              'border-red-500/70 from-neutral-200/60 via-neutral-100/60 to-destructive/10 has-checked:bg-radial has-checked:font-semibold dark:border-red-400/70 dark:from-neutral-700/60 dark:via-neutral-700/60 dark:to-red-400/20',
 
-            isMissing && 'ring-0 outline-2 outline-yellow-500 outline-dashed dark:outline-yellow-400/60',
+            isMissing && 'border-0 outline-2 outline-yellow-500 outline-dashed focus-visible:border dark:outline-yellow-400/60',
           ),
+
+        props.className,
       )}
     />
   )
