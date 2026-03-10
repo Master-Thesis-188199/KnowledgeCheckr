@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { isAfter } from 'date-fns/isAfter'
 import { isBefore } from 'date-fns/isBefore'
-import { ExternalLinkIcon, LoaderCircleIcon } from 'lucide-react'
+import { ExternalLinkIcon, LoaderCircleIcon, TriangleAlertIcon } from 'lucide-react'
 import Link from 'next/link'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { Button } from '@/src/components/shadcn/button'
@@ -15,22 +15,36 @@ import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 export default function ShareTokenOTP() {
   const [shareTokenInput, setShareTokenInput] = useState<string>('')
   const [status, setStatus] = useState<'fetching' | 'awaiting-input' | 'done' | 'not-found' | 'practice-only' | 'exam-only' | 'exam-and-practice'>('awaiting-input')
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const debouncedChange = debounceFunction((input: string) => {
     setStatus(input.trim().length > 0 ? 'fetching' : 'awaiting-input')
+    if (input.trim().length === 0) setErrorMsg('')
     setShareTokenInput(input)
   }, 350)
 
   useEffect(() => {
     let aborted = false
 
-    if (status !== 'fetching') return
-    if (shareTokenInput.trim().length === 0) return setStatus('awaiting-input')
-    if (shareTokenInput.trim().length < 8) return setStatus('not-found')
+    if (status !== 'fetching') {
+      return
+    }
+    if (shareTokenInput.trim().length === 0) {
+      return setStatus('awaiting-input')
+    }
+    if (shareTokenInput.trim().length < 8) {
+      setErrorMsg('Please provide a valid share token.')
+      return setStatus('not-found')
+    }
 
     getKnowledgeCheckByShareToken(shareTokenInput)
       .then((check) => {
-        if (!check) return aborted ? null : setStatus('not-found')
+        if (!check) {
+          if (aborted) return
+
+          setErrorMsg('No check has been found.')
+          return setStatus('not-found')
+        }
 
         if (
           check.settings.practice.enablePracticing &&
@@ -58,7 +72,11 @@ export default function ShareTokenOTP() {
         )
           return aborted ? null : setStatus('exam-only')
       })
-      .catch(() => (aborted ? null : setStatus('not-found')))
+      .catch(() => {
+        if (aborted) return
+        setErrorMsg('Retrieving check failed unexpectedly.')
+        setStatus('not-found')
+      })
 
     return () => {
       aborted = true
@@ -67,7 +85,7 @@ export default function ShareTokenOTP() {
 
   return (
     <>
-      <div className='flex justify-center'>
+      <div className='flex flex-col items-center gap-2'>
         <InputOTP maxLength={8} onChange={debouncedChange} name='share-token'>
           <InputOTPGroup>
             <InputOTPSlot index={0} aria-invalid={status === 'not-found'} />
@@ -83,6 +101,12 @@ export default function ShareTokenOTP() {
             <InputOTPSlot index={7} aria-invalid={status === 'not-found'} />
           </InputOTPGroup>
         </InputOTP>
+        {!!errorMsg && status === 'not-found' && (
+          <div className='flex items-center gap-1.5 text-destructive'>
+            <TriangleAlertIcon className='size-4.5' />
+            <p>{errorMsg}</p>
+          </div>
+        )}
       </div>
 
       <div className='-mt-4'>
