@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { LoaderCircleIcon } from 'lucide-react'
 import { type ShareTokenInput, useShareTokenFormContext } from '@/src/components/checks/start/ShareTokenFormContext'
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/src/components/shadcn/input-otp'
@@ -11,6 +12,16 @@ export function ShareTokenInput() {
   const { isDone, ...form } = useShareTokenFormContext()
   const registration = form.register('shareToken')
   const isInvalid = form.formState.errors.shareToken && form.getValues().shareToken.length > 0
+
+  useEffect(() => {
+    if (!form.formState.errors.shareToken) return
+
+    if (form.getValues().shareToken.length === 0) {
+      // actually removes field-error instead of just not showing it.
+      // causes error appearance to be delayed when users clear and re-type their input, instead of being instant
+      form.clearErrors('shareToken')
+    }
+  }, [form.formState.errors.shareToken])
 
   return (
     <>
