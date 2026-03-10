@@ -68,7 +68,7 @@ export default function ShareTokenOTP() {
   return (
     <>
       <div className='flex justify-center'>
-        <InputOTP maxLength={8} onChange={debouncedChange}>
+        <InputOTP maxLength={8} onChange={debouncedChange} name='share-token'>
           <InputOTPGroup>
             <InputOTPSlot index={0} aria-invalid={status === 'not-found'} />
             <InputOTPSlot index={1} aria-invalid={status === 'not-found'} />
@@ -88,7 +88,7 @@ export default function ShareTokenOTP() {
       <div className='-mt-4'>
         <SmoothPresenceTransition
           active={status === 'fetching'}
-          presenceTiming={{ minVisibleMs: 550 }}
+          presenceTiming={{ minVisibleMs: 850 }}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 1, margin: 0 }}
