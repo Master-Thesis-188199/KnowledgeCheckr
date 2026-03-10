@@ -27,7 +27,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
 
   return (
     <Tooltip
-      showsError={isEmpty}
+      variant={isEmpty ? 'destructive' : 'normal'}
       content={
         <div className='flex items-center gap-1.5'>
           <InfoIcon className='size-4' />
@@ -58,7 +58,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
                 .catch(() => toast(t('failed_copy_toast_message'), { type: 'error' }))
               setShareToken(token)
               router.refresh()
-              const pageHeading = document.querySelector('main h1')
+              const pageHeading = document.querySelector('main #page-heading')
               pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
             })
             .catch(() => toast('Failed to generate and save share-token', { type: 'error' }))

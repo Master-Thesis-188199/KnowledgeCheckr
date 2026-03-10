@@ -19,8 +19,8 @@ describe('Verify sharing of KnowledgeChecks', () => {
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
 
     cy.visit(`/checks/${dummyShareToken}`)
-    cy.get('main > h1').should('contain', dummyCheck.name)
-    cy.get('nav[id="exam-question-navigation"]').should('exist').children().should('have.length', dummyCheck.questions.length)
+    cy.get('main #page-heading').should('contain', dummyCheck.name)
+    cy.get('nav[id="question-navigation"]').should('exist').children().should('have.length', dummyCheck.questions.length)
   })
 
   it('Verify that a share-token can be generated and used by the owner', () => {
@@ -54,6 +54,6 @@ describe('Verify sharing of KnowledgeChecks', () => {
         cy.visit(`/checks/${token}`)
       })
 
-    cy.get('main > h1').should('contain', dummyCheck.name)
+    cy.get('main  #page-heading').should('contain', dummyCheck.name)
   })
 })

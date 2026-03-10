@@ -1,5 +1,5 @@
 import { notFound, redirect, RedirectType } from 'next/navigation'
-import { getExaminationAttempts } from '@/database/examination/select'
+import { getKnowledgeCheckUserExaminationAttempts } from '@/database/examination/select'
 import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationStoreProvider } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { ExamQuestionNavigationMenu } from '@/src/components/checks/[share_token]/ExamQuestionNavigationMenu'
@@ -24,7 +24,7 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
 
   if (!examAllowed) redirect(`/checks/${share_token}/attempt-not-possible`, RedirectType.replace)
 
-  const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getExaminationAttempts(user.id, check.id)])
+  const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getKnowledgeCheckUserExaminationAttempts(user.id, check.id)])
 
   if (attempts.length >= check.settings.examination.examinationAttemptCount) {
     return redirect(`/checks/${share_token}/attempt-limit?attemptLimit=${check.settings.examination.examinationAttemptCount}`, RedirectType.replace)

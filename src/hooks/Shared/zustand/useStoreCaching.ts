@@ -31,7 +31,7 @@ export default function useStoreCaching<StoreProps extends object>({ set, option
       else update = { ...prev, ...modifications }
 
       storeTimer = setTimeout(() => {
-        if (!disableCache) storeSessionValue(cacheKey, { ...update })
+        if (!disableCache) storeSessionValue(cacheKey, update)
       }, debounceTime)
 
       return update

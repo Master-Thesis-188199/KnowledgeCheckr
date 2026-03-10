@@ -55,12 +55,12 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
         />
         <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
-      <Footer updatedAt={check.updatedAt} role={role} />
+      <Footer updatedAt={check.updatedAt} />
     </Card>
   )
 }
 
-function Footer({ updatedAt, role }: { updatedAt?: Date; role: 'Guest' | 'Owner' | 'Collaborator' }) {
+function Footer({ updatedAt }: { updatedAt?: Date }) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const currentLocale = useCurrentLocale()
 

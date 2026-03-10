@@ -58,7 +58,7 @@ function DropdownMenuItem({
   enableTooltip?: boolean
 }) {
   return (
-    <ConditionalTooltip showTooltip={enableTooltip} {...tooltipOptions}>
+    <ConditionalTooltip showTooltip={enableTooltip} content={''} {...tooltipOptions}>
       <DropdownMenuPrimitive.Item
         data-slot='dropdown-menu-item'
         data-inset={inset}
@@ -153,7 +153,7 @@ function DropdownMenuSubTrigger({
   enableTooltip?: boolean
 }) {
   return (
-    <ConditionalTooltip showTooltip={enableTooltip} {...tooltipOptions}>
+    <ConditionalTooltip showTooltip={enableTooltip} content={''} {...tooltipOptions}>
       <DropdownMenuPrimitive.SubTrigger
         data-slot='dropdown-menu-sub-trigger'
         data-inset={inset}

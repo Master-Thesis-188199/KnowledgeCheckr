@@ -7,7 +7,7 @@ import ExamFinishDialog from '@/src/components/checks/[share_token]/ExamFinishDi
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
-import { TimeTicker } from '@/src/components/Shared/TimeTicker'
+import { CountdownTime } from '@/src/components/Shared/CountdownTime'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
@@ -21,7 +21,7 @@ export function ExamQuestionNavigationMenu({ className }: { className?: string }
     <>
       <QuestionNavigationMenu className={className} currentQuestionIndex={currentQuestionIndex} questions={knowledgeCheck.questions} onQuestionClick={(index) => setCurrentQuestionIndex(index)}>
         <span className='text-sm text-neutral-500 dark:text-neutral-400'>
-          <TimeTicker
+          <CountdownTime
             onTimeUp={() =>
               finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, startedAt, ...examinationState }))
                 .catch((e) => {

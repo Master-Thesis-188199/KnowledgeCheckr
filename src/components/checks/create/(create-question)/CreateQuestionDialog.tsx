@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library */
 import { HTMLProps, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { TooltipProps } from '@heroui/tooltip'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -14,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import Field from '@/src/components/Shared/form/Field'
 import FieldError from '@/src/components/Shared/form/FormFieldError'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
-import Tooltip from '@/src/components/Shared/Tooltip'
+import Tooltip, { TooltipProps } from '@/src/components/Shared/Tooltip'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { getUUID } from '@/src/lib/Shared/getUUID'

@@ -13,7 +13,7 @@ type ChoiceFeedbackEvaluation<Type extends ChoiceQuestion['type']> = FeedbackEva
   reasoning?: Extract<PracticeFeedback, { type: Type }>['reasoning']
 }
 
-type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
+export type DragDropFeedbackEvaluation = FeedbackEvaluation<DragDropQuestion['type']> & {
   isCorrectlyPositioned: (answerId: string) => boolean
   isFalslyPositioned: (answerId: string) => boolean
   getCorrectPosition: (answerId: string) => number
@@ -48,6 +48,7 @@ export function usePracticeFeeback(
   function getFeedbackEvaluation(question: MultipleChoice): ChoiceFeedbackEvaluation<MultipleChoice['type']>
   function getFeedbackEvaluation(question: OpenQuestion): OpenQuestionFeedbackEvaluation
   function getFeedbackEvaluation(question: DragDropQuestion): DragDropFeedbackEvaluation
+  function getFeedbackEvaluation(question: ChoiceQuestion): ChoiceFeedbackEvaluation<SingleChoice['type']> | ChoiceFeedbackEvaluation<MultipleChoice['type']>
   function getFeedbackEvaluation(question: Question): PracticeFeedbackReturn {
     //? Indicates whether the pre-conditions are satisfied so that a feedback-evaluation may be returned. Namely, whether the answers are submitted and whether the received feedback is for the respective question.
     const isEvaluated = isSubmitted && isSubmitSuccessful && (!isSubmitting || !isPending) && state.values?.question_id === question.id

@@ -21,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@/shadcn/*": ["./src/components/shadcn/*"],
       "@/components/*": ["./src/components/*"],
       "@/app/*": ["./src/app/*"],
       "@/hooks/*": ["./src/hooks/*"],

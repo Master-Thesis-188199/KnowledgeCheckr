@@ -17,6 +17,8 @@ const buttonVariants = cva(
         ),
         destructive:
           'bg-destructive text-white shadow-xs focus-visible:ring-destructive/20 enabled:hover:bg-destructive/80 enabled:active:bg-destructive/90! dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
+        success: 'bg-success text-white shadow-xs focus-visible:ring-success/20 enabled:hover:bg-success/80 enabled:active:bg-success/90! dark:bg-success/60 dark:focus-visible:ring-success/40',
+        warning: 'bg-warning text-white shadow-xs focus-visible:ring-warning/20 enabled:hover:bg-warning/80 enabled:active:bg-warning/90! dark:bg-warning/60 dark:focus-visible:ring-warning/40',
         outline:
           'bg-transparent text-secondary-foreground shadow-xs ring-1 ring-input-ring enabled:hover:bg-secondary/80 disabled:ring-neutral-300 dark:text-neutral-200 dark:ring-input-ring dark:enabled:hover:bg-neutral-700 dark:disabled:ring-neutral-500',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs enabled:hover:bg-secondary/80',
@@ -24,8 +26,8 @@ const buttonVariants = cva(
           'enabled:hover:bg-neutral-400/30 enabled:hover:text-accent-foreground/60 enabled:active:ring-2 enabled:active:ring-accent dark:enabled:hover:bg-accent/60 dark:enabled:hover:text-accent-foreground/55 dark:enabled:active:bg-accent/90',
         link: 'text-primary underline-offset-4 enabled:hover:underline',
         base: cn(
-          'bg-neutral-100/80 ring-1 ring-ring-subtle dark:bg-neutral-700/40',
-          'enabled:hover:bg-neutral-50/80 enabled:hover:ring-ring enabled:active:bg-neutral-200/90 enabled:active:ring-ring-focus dark:enabled:hover:bg-neutral-700/70 dark:enabled:active:bg-neutral-700/90',
+          'border border-ring-subtle bg-neutral-100/80 dark:bg-neutral-700/40',
+          'enabled:hover:border-ring enabled:hover:bg-neutral-50/80 enabled:active:border-ring-focus enabled:active:bg-neutral-200/90 dark:enabled:hover:bg-neutral-700/70 dark:enabled:active:bg-neutral-700/90',
         ),
         input: cn(
           'border border-input-ring bg-input',

@@ -81,7 +81,7 @@ function ProgressRing({ stage, title }: Stage) {
   const { show: showOnSmallScreens } = useFilterStages_SmallScreens(stage)
 
   return (
-    <Tooltip isDisabled={enabled} showsError content={reason}>
+    <Tooltip disabled={enabled} variant='destructive' content={reason}>
       <button
         type='button'
         disabled={!enabled}

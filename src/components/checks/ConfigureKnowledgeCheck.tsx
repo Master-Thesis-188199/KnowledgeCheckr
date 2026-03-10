@@ -13,10 +13,7 @@ import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/M
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import _logger from '@/src/lib/log/Logger'
 import getReferer from '@/src/lib/Shared/getReferer'
-
-const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
   Partial<Pick<CheckStoreProviderProps, 'options'>> & {
