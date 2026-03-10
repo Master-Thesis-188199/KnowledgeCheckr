@@ -39,22 +39,30 @@ export function ShareTokenInput() {
         <FormFieldError showIcon errors={form.formState.errors} field='shareToken' className={cn(form.getValues().shareToken?.length === 0 && 'hidden')} />
       </form>
 
-      <div className='-mt-6'>
+      <div data-show={(form.formState.isValid && !isDone) || !!form.formState.errors.root || undefined} className='flex flex-col items-center data-show:-mt-6'>
+        <div className='in-data-show:mt-6' />
         <SmoothPresenceTransition
-          active={form.formState.isValid}
-          presenceTiming={{ minVisibleMs: 450 }}
+          active={form.formState.isValid && !isDone}
+          presenceTiming={{ minVisibleMs: 850 }}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 1, margin: 0 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className='mt-6 flex items-center justify-center gap-2 text-muted-foreground'>
+          className='mb-3 flex items-center justify-center gap-2 text-muted-foreground'>
           <LoaderCircleIcon className='size-5 animate-spin' />
           Parsing token
         </SmoothPresenceTransition>
-      </div>
 
-      <div className='flex justify-center'>
-        <FormFieldError showIcon errors={form.formState.errors} field='root' />
+        <SmoothPresenceTransition
+          active={!!form.formState.errors.root}
+          presenceTiming={{ showDelayMs: 550 }}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 1, margin: 0 }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          className=''>
+          <FormFieldError showIcon errors={form.formState.errors} field='root' />
+        </SmoothPresenceTransition>
       </div>
     </>
   )
