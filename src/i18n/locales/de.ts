@@ -426,5 +426,16 @@ export default {
     signout_button_label: 'Abmelden',
     signout_delete_notice: 'Daten löschen',
     title: 'Kontoinformationen'
+  },
+  StartOptionsPage: {
+    ShareTokenInput: {
+      parse_token_label: 'wird überprüft'
+    },
+    ShareTokenOptions: {
+      not_found_error_message: 'Check wurde nicht gefunden.',
+      retrieval_error_message: 'Check Suche ist unerwartet fehlgeschlagen.',
+      start_examination_label: 'Prüfungsantritt starten',
+      start_practice_label: 'Beginne mit dem Üben'
+    }
   }
 } as const

@@ -6,9 +6,11 @@ import { type ShareTokenInput, useShareTokenFormContext } from '@/src/components
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/src/components/shadcn/input-otp'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
 export function ShareTokenInput() {
+  const t = useScopedI18n('StartOptionsPage.ShareTokenInput')
   const { isDone, ...form } = useShareTokenFormContext()
   const registration = form.register('shareToken')
   const isInvalid = form.formState.errors.shareToken && form.getValues().shareToken.length > 0
@@ -61,7 +63,7 @@ export function ShareTokenInput() {
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className='mb-3 flex items-center justify-center gap-2 text-muted-foreground'>
           <LoaderCircleIcon className='size-5 animate-spin' />
-          Parsing token
+          {t('parse_token_label')}
         </SmoothPresenceTransition>
 
         <SmoothPresenceTransition

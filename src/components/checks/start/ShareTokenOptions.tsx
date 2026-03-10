@@ -9,8 +9,10 @@ import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { useShareTokenFormContext } from '@/src/components/checks/start/ShareTokenFormContext'
 import { Button } from '@/src/components/shadcn/button'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function ShareTokenOptions() {
+  const t = useScopedI18n('StartOptionsPage.ShareTokenOptions')
   const {
     isDone,
     setIsDone,
@@ -31,7 +33,7 @@ export default function ShareTokenOptions() {
         if (aborted) return
 
         if (!check) {
-          form.setError('root', { message: 'Check was not found.' })
+          form.setError('root', { message: t('not_found_error_message') })
           setStatus('waiting')
           return
         }
@@ -62,7 +64,7 @@ export default function ShareTokenOptions() {
         )
           return setStatus('exam-only')
       })
-      .catch(() => (aborted ? null : form.setError('root', { message: 'Searching for check failed unexpectedly.' })))
+      .catch(() => (aborted ? null : form.setError('root', { message: t('retrieval_error_message') })))
 
     return () => {
       aborted = true
@@ -89,13 +91,13 @@ export default function ShareTokenOptions() {
       className='flex justify-center gap-6 text-muted-foreground'>
       <Link href={`/checks/${token}/practice`} className='flex-1' tabIndex={-1}>
         <Button variant='base' className='flex min-h-12 w-full items-center justify-center rounded-md'>
-          Start Practicing
+          {t('start_practice_label')}
           <ExternalLinkIcon />
         </Button>
       </Link>
       <Link href={`/checks/${token}/`} className='flex-1' tabIndex={-1}>
         <Button variant='base' className='flex min-h-12 w-full items-center justify-center rounded-md'>
-          Start Examination Attempt
+          {t('start_examination_label')}
           <ExternalLinkIcon />
         </Button>
       </Link>
