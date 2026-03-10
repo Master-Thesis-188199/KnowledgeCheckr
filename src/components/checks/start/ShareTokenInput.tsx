@@ -1,29 +1,23 @@
 'use client'
 
 import { LoaderCircleIcon } from 'lucide-react'
-import { z } from 'zod'
-import { Form } from '@/src/components/shadcn/form'
+import { type ShareTokenInput, useShareTokenFormContext } from '@/src/components/checks/start/ShareTokenFormContext'
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/src/components/shadcn/input-otp'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
-import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
 
-const schema = z.object({
-  shareToken: z.string().toUpperCase().length(8),
-})
-
 export function ShareTokenInput() {
-  const { form } = useRHF(schema, { mode: 'onChange', defaultValues: () => ({ shareToken: '' }), delayError: 400 })
+  const { isDone, ...form } = useShareTokenFormContext()
   const registration = form.register('shareToken')
   const isInvalid = form.formState.errors.shareToken && form.getValues().shareToken.length > 0
 
   return (
-    <Form {...form}>
+    <>
       <form onSubmit={(e) => e.preventDefault()} className='flex flex-col items-center gap-2'>
         <InputOTP
           {...registration}
-          maxLength={schema.shape.shareToken.maxLength ?? 8}
+          maxLength={8}
           onChange={(input) => {
             form.clearErrors('root') // clears custom errors, like check not found
             return registration.onChange({ target: { value: input, name: 'shareToken' } })
@@ -62,6 +56,6 @@ export function ShareTokenInput() {
       <div className='flex justify-center'>
         <FormFieldError showIcon errors={form.formState.errors} field='root' />
       </div>
-    </Form>
+    </>
   )
 }

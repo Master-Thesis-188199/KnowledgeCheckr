@@ -1,4 +1,5 @@
-import ShareTokenOTP from '@/src/components/checks/start/ShareTokenOTP'
+import ShareTokenFormContext from '@/src/components/checks/start/ShareTokenFormContext'
+import { ShareTokenInput } from '@/src/components/checks/start/ShareTokenInput'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
@@ -14,7 +15,9 @@ export default async function StartCheckPage() {
           <CardDescription>Provide a given share-token to begin practice / examination.</CardDescription>
         </CardHeader>
         <CardContent className='flex flex-col gap-6'>
-          <ShareTokenOTP />
+          <ShareTokenFormContext>
+            <ShareTokenInput />
+          </ShareTokenFormContext>
         </CardContent>
       </Card>
     </>
