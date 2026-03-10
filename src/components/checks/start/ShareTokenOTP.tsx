@@ -22,13 +22,15 @@ export default function ShareTokenOTP() {
   }, 350)
 
   useEffect(() => {
+    let aborted = false
+
     if (status !== 'fetching') return
     if (shareTokenInput.trim().length === 0) return setStatus('awaiting-input')
     if (shareTokenInput.trim().length < 8) return setStatus('not-found')
 
     getKnowledgeCheckByShareToken(shareTokenInput)
       .then((check) => {
-        if (!check) return setStatus('not-found')
+        if (!check) return aborted ? null : setStatus('not-found')
 
         if (
           check.settings.practice.enablePracticing &&
@@ -36,7 +38,7 @@ export default function ShareTokenOTP() {
           isBefore(check.settings.examination.startDate, new Date(Date.now())) &&
           (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
         )
-          return setStatus('exam-and-practice')
+          return aborted ? null : setStatus('exam-and-practice')
 
         if (
           check.settings.practice.enablePracticing &&
@@ -46,7 +48,7 @@ export default function ShareTokenOTP() {
             (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
           )
         )
-          return setStatus('practice-only')
+          return aborted ? null : setStatus('practice-only')
 
         if (
           !check.settings.practice.enablePracticing &&
@@ -54,9 +56,13 @@ export default function ShareTokenOTP() {
           isBefore(check.settings.examination.startDate, new Date(Date.now())) &&
           (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
         )
-          return setStatus('exam-only')
+          return aborted ? null : setStatus('exam-only')
       })
-      .catch(() => setStatus('not-found'))
+      .catch(() => (aborted ? null : setStatus('not-found')))
+
+    return () => {
+      aborted = true
+    }
   }, [status])
 
   return (
