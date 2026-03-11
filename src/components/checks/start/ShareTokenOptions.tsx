@@ -25,7 +25,13 @@ export default function ShareTokenOptions() {
   const [status, setStatus] = useState<'waiting' | 'practice-only' | 'exam-only' | 'both'>('waiting')
 
   useEffect(() => {
-    if (!isValid) return
+    if (!isValid) {
+      // clear options, when user changed input which made the form-input inValid again.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus('waiting')
+      return
+    }
+
     let aborted = false
 
     getKnowledgeCheckByShareToken(token)
