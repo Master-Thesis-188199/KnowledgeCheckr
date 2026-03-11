@@ -314,6 +314,11 @@ export default {
     }
   },
   StartOptionsPage: {
+    title: 'Start practicing / examination attempt',
+    Card: {
+      title: 'Find KnowledgeCheck by share-token',
+      description: 'Provide a given share-token to begin practice / examination.'
+    },
     ShareTokenInput: {
       parse_token_label: 'Parsing token'
     },

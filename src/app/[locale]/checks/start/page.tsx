@@ -3,16 +3,19 @@ import { ShareTokenInput } from '@/src/components/checks/start/ShareTokenInput'
 import ShareTokenOptions from '@/src/components/checks/start/ShareTokenOptions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 
 export default async function StartCheckPage() {
+  const t = await getScopedI18n('StartOptionsPage')
+
   return (
     <>
-      <PageHeading title='Start your practice / exam journey' />
+      <PageHeading title={t('title')} />
 
       <Card className='mx-auto w-full max-w-2xl'>
         <CardHeader className='border-b'>
-          <CardTitle>Find KnowledgeCheck by share-token</CardTitle>
-          <CardDescription>Provide a given share-token to begin practice / examination.</CardDescription>
+          <CardTitle>{t('Card.title')}</CardTitle>
+          <CardDescription>{t('Card.description')}</CardDescription>
         </CardHeader>
         <CardContent className='flex flex-col gap-6'>
           <ShareTokenFormContext>

@@ -304,6 +304,11 @@
     }
   },
   "StartOptionsPage": {
+    "title": "Beginne zu Üben / mit Prüfungsversuch",
+    "Card": {
+      "title": "Finde einen KnowledgeCheck über dessen Share-Token",
+      "description": "Geben Sie einen bestimmten Share-Token an, um mit der Übung/Prüfung zu beginnen."
+    },
     "ShareTokenInput": {
       "parse_token_label": "wird überprüft"
     },

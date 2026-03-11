@@ -306,6 +306,22 @@ export default {
       }
     }
   },
+  StartOptionsPage: {
+    title: 'Beginne zu Üben / mit Prüfungsversuch',
+    Card: {
+      title: 'Finde einen KnowledgeCheck über dessen Share-Token',
+      description: 'Geben Sie einen bestimmten Share-Token an, um mit der Übung/Prüfung zu beginnen.'
+    },
+    ShareTokenInput: {
+      parse_token_label: 'wird überprüft'
+    },
+    ShareTokenOptions: {
+      not_found_error_message: 'Check wurde nicht gefunden.',
+      retrieval_error_message: 'Check Suche ist unerwartet fehlgeschlagen.',
+      start_examination_label: 'Prüfungsantritt starten',
+      start_practice_label: 'Beginne mit dem Üben'
+    }
+  },
   Components: {
     KnowledgeCheckCard: {
       last_modified_label: 'zuletzt geändert',
@@ -426,16 +442,5 @@ export default {
     signout_button_label: 'Abmelden',
     signout_delete_notice: 'Daten löschen',
     title: 'Kontoinformationen'
-  },
-  StartOptionsPage: {
-    ShareTokenInput: {
-      parse_token_label: 'wird überprüft'
-    },
-    ShareTokenOptions: {
-      not_found_error_message: 'Check wurde nicht gefunden.',
-      retrieval_error_message: 'Check Suche ist unerwartet fehlgeschlagen.',
-      start_examination_label: 'Prüfungsantritt starten',
-      start_practice_label: 'Beginne mit dem Üben'
-    }
   }
 } as const
