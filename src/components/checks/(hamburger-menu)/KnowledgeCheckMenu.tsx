@@ -146,7 +146,11 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
             {t('clone_check.label')}
             <CopyPlusIcon className='size-4 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>{t('inspect_statistics.label')}</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href={`/checks/${share_key}/results`} className='flex flex-1 justify-between'>
+              {t('inspect_statistics.label')}
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
