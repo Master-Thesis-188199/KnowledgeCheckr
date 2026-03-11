@@ -151,8 +151,7 @@ export default {
     },
     Discover: {
       title: 'Entdecken Sie neue Wissenschecks',
-      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' +
-        'Erstellen Sie Ihren eigenen KnowledgeCheck',
+      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' + 'Erstellen Sie Ihren eigenen KnowledgeCheck',
       no_checks_found_link: 'hier',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operatoren',
@@ -325,25 +324,26 @@ export default {
         confirm_button_label: 'Beenden',
         cancel_button_label: 'Fortsezten',
         title: 'Mit dem Üben aufhören?',
-        body: 'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
+        body:
+          'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
           'Bitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben.'
       }
     }
   },
   StartOptionsPage: {
-    title: 'Beginne zu Üben / mit Prüfungsversuch',
+    title: 'Übung oder Prüfungsversuch starten',
     Card: {
-      title: 'Finde einen KnowledgeCheck über dessen Share-Token',
-      description: 'Geben Sie einen bestimmten Share-Token an, um mit der Übung/Prüfung zu beginnen.'
+      title: 'KnowledgeCheck per Share-Token finden',
+      description: 'Geben Sie einen Share-Token ein, um eine Übung oder einen Prüfungsversuch zu starten.'
     },
     ShareTokenInput: {
-      parse_token_label: 'wird überprüft'
+      parse_token_label: 'Token wird überprüft'
     },
     ShareTokenOptions: {
-      not_found_error_message: 'Check wurde nicht gefunden.',
-      retrieval_error_message: 'Check Suche ist unerwartet fehlgeschlagen.',
-      start_examination_label: 'Prüfungsantritt starten',
-      start_practice_label: 'Beginne mit dem Üben'
+      not_found_error_message: 'KnowledgeCheck wurde nicht gefunden.',
+      retrieval_error_message: 'Der KnowledgeCheck konnte nicht geladen werden.',
+      start_examination_label: 'Prüfungsversuch starten',
+      start_practice_label: 'Übung starten'
     }
   },
   Components: {
@@ -401,15 +401,14 @@ export default {
       },
       remove_share_token: {
         tooltip: 'Dieser Check hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
       delete_knowledgeCheck: {
         label: 'Check löschen',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        confirmation_dialog_body:
+          'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
         toast_deletion_successful: 'KnowledgeCheck erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des KnowledgeChecks fehlgeschlagen!'
       },
@@ -420,8 +419,7 @@ export default {
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     },

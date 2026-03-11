@@ -328,19 +328,19 @@
     }
   },
   "StartOptionsPage": {
-    "title": "Beginne zu Üben / mit Prüfungsversuch",
+    "title": "Übung oder Prüfungsversuch starten",
     "Card": {
-      "title": "Finde einen KnowledgeCheck über dessen Share-Token",
-      "description": "Geben Sie einen bestimmten Share-Token an, um mit der Übung/Prüfung zu beginnen."
+      "title": "KnowledgeCheck per Share-Token finden",
+      "description": "Geben Sie einen Share-Token ein, um eine Übung oder einen Prüfungsversuch zu starten."
     },
     "ShareTokenInput": {
-      "parse_token_label": "wird überprüft"
+      "parse_token_label": "Token wird überprüft"
     },
     "ShareTokenOptions": {
-      "not_found_error_message": "Check wurde nicht gefunden.",
-      "retrieval_error_message": "Check Suche ist unerwartet fehlgeschlagen.",
-      "start_examination_label": "Prüfungsantritt starten",
-      "start_practice_label": "Beginne mit dem Üben"
+      "not_found_error_message": "KnowledgeCheck wurde nicht gefunden.",
+      "retrieval_error_message": "Der KnowledgeCheck konnte nicht geladen werden.",
+      "start_examination_label": "Prüfungsversuch starten",
+      "start_practice_label": "Übung starten"
     }
   },
   "Components": {

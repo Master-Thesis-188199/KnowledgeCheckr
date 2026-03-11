@@ -337,10 +337,10 @@
     }
   },
   "StartOptionsPage": {
-    "title": "Start practicing / examination attempt",
+    "title": "Start practice or an examination",
     "Card": {
-      "title": "Find KnowledgeCheck by share-token",
-      "description": "Provide a given share-token to begin practice / examination."
+      "title": "Find a KnowledgeCheck by share token",
+      "description": "Enter a share token to start practice or an examination."
     },
     "ShareTokenInput": {
       "parse_token_label": "Parsing token"
