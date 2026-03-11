@@ -24,19 +24,19 @@ export default function ShareTokenOptions() {
   const token = getValues().shareToken
 
   const [status, setStatus] = useState<'waiting' | 'practice-only' | 'exam-only' | 'both'>('waiting')
-  const [input, setInput] = useState<string>('')
+  const [input, setInput] = useState<string>(token)
   const debounceInput = debounceFunction((input) => {
     setInput(input)
   }, 350)
 
   // indirectly re-validates options by applying updated token when the form remains to be valid but has changed; by changing input state.
   useEffect(() => {
-    if (input === getValues().shareToken) return
+    if (input === token) return
 
-    debounceInput(getValues().shareToken)
+    debounceInput(token)
 
     return () => debounceInput.abort()
-  }, [getValues, getValues().shareToken])
+  }, [token])
 
   useEffect(() => {
     if (!isValid) {
