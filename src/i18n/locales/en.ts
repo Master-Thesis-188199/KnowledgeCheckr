@@ -337,6 +337,22 @@ export default {
       }
     }
   },
+  StartOptionsPage: {
+    title: 'Start practice or an examination',
+    Card: {
+      title: 'Find a KnowledgeCheck by share token',
+      description: 'Enter a share token to start practice or an examination.'
+    },
+    ShareTokenInput: {
+      parse_token_label: 'Parsing token'
+    },
+    ShareTokenOptions: {
+      start_practice_label: 'Start Practicing',
+      start_examination_label: 'Start Examination Attempt',
+      not_found_error_message: 'Check was not found.',
+      retrieval_error_message: 'Searching for check failed unexpectedly.'
+    }
+  },
   Components: {
     KnowledgeCheckCard: {
       last_modified_label: 'last modified',
