@@ -284,6 +284,30 @@
         "title": "Examination Attempt Results",
         "description": "Shows all the details of the respective examination attempt of {name}"
       }
+    },
+    "PracticeResults": {
+      "title": "Practice Attempt Results",
+      "Charts": {
+        "QuestionCorrectnessPieChart": {
+          "title": "Practice Performance",
+          "description": "Shows the amount of questions that were answered in-, correctly or not at all.",
+          "correct_label": "Correct",
+          "incorrect_label": "Incorrect",
+          "unanswered_label": "Unanswered",
+          "questions_inner_label": "Questions"
+        },
+        "DurationChart": {
+          "title": "Question Time Difference"
+        },
+        "QuestionScorePlot": {
+          "title": "Performance Results per Question",
+          "description": "Shows the variance between the received question score and max-score by question"
+        },
+        "DataTable": {
+          "title": "Question Overview",
+          "description": "Shows a detailed list of every question of this check to review your answers."
+        }
+      }
     }
   },
   "Examination": {

@@ -11,7 +11,7 @@ import { useScopedI18n } from '@/src/i18n/client-localization'
 import { computeQuestionInputScore } from '@/src/lib/checks/computeQuestionScore'
 
 export function PracticeQuestionNavigation() {
-  const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt, results } = usePracticeStore((store) => store)
+  const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt, results, checkId } = usePracticeStore((store) => store)
   const t = useScopedI18n('Practice.PracticeQuestionNavigation')
 
   return (
@@ -47,7 +47,7 @@ export function PracticeQuestionNavigation() {
             body={t('EndPractice_ConfirmDialog.body')}
             confirmAction={() => {
               //! For testing purposes users can navigate back to the practice-page when the app is not in production.
-              redirect('/checks', process.env.NEXT_PUBLIC_MODE !== 'production' ? RedirectType.push : RedirectType.replace)
+              redirect(`/results/${checkId}/practice`, process.env.NEXT_PUBLIC_MODE !== 'production' ? RedirectType.push : RedirectType.replace)
             }}>
             <Button variant='link' type='button' size='sm' rippleClassname='bg-destructive/60' className='text-muted-foreground ring-ring-subtle/80 dark:ring-ring-subtle/80'>
               <SquareIcon className='text-destructive/70' />
