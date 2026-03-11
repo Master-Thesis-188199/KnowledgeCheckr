@@ -109,14 +109,18 @@ export default function ShareTokenOptions() {
       exit={{ opacity: 0, height: 1, margin: 0 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className='flex justify-center gap-6 text-muted-foreground'>
-      <Link href={`/checks/${token}/practice`} className='flex-1' tabIndex={-1}>
-        <Button variant='base' className='flex min-h-12 w-full items-center justify-center rounded-md'>
+      <Link href={`/checks/${token}/practice`} className='flex-1' onClick={status === 'exam-only' ? (e) => e.preventDefault() : undefined} tabIndex={-1}>
+        <Button variant='base' disabled={status === 'exam-only'} className='flex min-h-12 w-full items-center justify-center rounded-md'>
           {t('start_practice_label')}
           <ExternalLinkIcon />
         </Button>
       </Link>
       <Link href={`/checks/${token}/`} className='flex-1' tabIndex={-1}>
-        <Button variant='base' className='flex min-h-12 w-full items-center justify-center rounded-md'>
+        <Button
+          variant='base'
+          disabled={status === 'practice-only'}
+          onClick={status === 'practice-only' ? (e) => e.preventDefault() : undefined}
+          className='flex min-h-12 w-full items-center justify-center rounded-md'>
           {t('start_examination_label')}
           <ExternalLinkIcon />
         </Button>
