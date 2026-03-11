@@ -9,6 +9,7 @@ import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { useShareTokenFormContext } from '@/src/components/checks/start/ShareTokenFormContext'
 import { Button } from '@/src/components/shadcn/button'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
+import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function ShareTokenOptions() {
@@ -23,6 +24,19 @@ export default function ShareTokenOptions() {
   const token = getValues().shareToken
 
   const [status, setStatus] = useState<'waiting' | 'practice-only' | 'exam-only' | 'both'>('waiting')
+  const [input, setInput] = useState<string>('')
+  const debounceInput = debounceFunction((input) => {
+    setInput(input)
+  }, 350)
+
+  // indirectly re-validates options by applying updated token when the form remains to be valid but has changed; by changing input state.
+  useEffect(() => {
+    if (input === getValues().shareToken) return
+
+    debounceInput(getValues().shareToken)
+
+    return () => debounceInput.abort()
+  }, [getValues, getValues().shareToken])
 
   useEffect(() => {
     if (!isValid) {
@@ -75,7 +89,7 @@ export default function ShareTokenOptions() {
     return () => {
       aborted = true
     }
-  }, [isValid])
+  }, [isValid, input])
 
   useEffect(() => {
     if (status === 'waiting' && isDone) {
