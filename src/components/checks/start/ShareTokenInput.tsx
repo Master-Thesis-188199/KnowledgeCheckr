@@ -27,7 +27,7 @@ export function ShareTokenInput() {
 
   return (
     <>
-      <form onSubmit={(e) => e.preventDefault()} className='flex flex-col items-center gap-2'>
+      <form onSubmit={(e) => e.preventDefault()} className='mt-4 flex flex-col items-center gap-2'>
         <InputOTP
           {...registration}
           maxLength={8}
