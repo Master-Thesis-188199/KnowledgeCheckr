@@ -1,0 +1,165 @@
+import { SetStateAction, useEffect, useState } from 'react'
+import { ArrowUpFromLineIcon, CheckIcon, MessageCircleQuestionIcon, XIcon } from 'lucide-react'
+import DisplayFeedbackText from '@/src/components/courses/[share_token]/practice/FeedbackText'
+import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
+import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
+import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
+import { DragDropFeedbackEvaluation, usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
+import { useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
+import { cn } from '@/src/lib/Shared/utils'
+import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
+import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
+
+/**
+ * Renders the answer-options for a drag-drop question within a drag-and-drop container. Depending on the provided props it allows interaction for reordering answers or displays feedback based on the feedback and submission.
+ */
+export default function DragDropAnswers({ question }: { question: DragDropQuestion }) {
+  const {
+    isValidationComplete,
+    form: { setValue, trigger },
+  } = useRHFContext<QuestionInput>(true)
+
+  return (
+    <DragDropContainer
+      hideMoveIndicators={isValidationComplete}
+      key={question.id + question.type + isValidationComplete.toString()}
+      className='col-span-2 my-auto space-y-6'
+      enabled={!isValidationComplete}
+      onSwapEnd={(e) => {
+        e.slotItemMap.asArray.map((el, i) => setValue(`input.${i}` as const, el.item))
+        trigger('input')
+      }}>
+      <DragDropAnswerOptions question={question} />
+    </DragDropContainer>
+  )
+}
+
+function DragDropAnswerOptions({ question }: { question: DragDropQuestion }) {
+  const { isValidationComplete, state } = useRHFContext<QuestionInput>(true)
+  //? default: display the answers in their given order, but update position to be their index to prevent data leakage.
+  let options: DragDropQuestion['answers'] = question.answers.map((a, i) => ({ ...a, position: i }))
+
+  if (isValidationComplete && state.values?.type === 'drag-drop' && state.values?.input?.length === question.answers.length && state.values.question_id === question.id) {
+    //? Order question answers based on submitted positions
+    options = state.values.input.map((id, submittedPos) => {
+      const answer = question.answers.find((a) => a.id === id)
+      return { id, answer: answer?.answer ?? 'Failed to retrieve `answer`', position: submittedPos }
+    })
+  }
+
+  const getFeedbackEvaluation = usePracticeFeeback(state, {
+    isSubmitSuccessful: isValidationComplete,
+    isSubmitted: isValidationComplete,
+    isPending: false,
+    isSubmitting: false,
+  })
+
+  const feedbackEvaluation = getFeedbackEvaluation(question)
+  const [openFeedbacks, setOpenFeedbacks] = useState<DragDropQuestion['answers'][number]['id'][]>([])
+
+  useEffect(() => {
+    if (!isValidationComplete) return
+
+    // automatically display feedback texts for wrong positioned answers
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpenFeedbacks([options.find((o) => feedbackEvaluation.isFalslyPositioned(o.id))?.id ?? ''].filter(Boolean))
+  }, [isValidationComplete])
+
+  return options.map(({ id, answer, position }, i) => {
+    const handleActivate = () => {
+      if (isValidationComplete) {
+        setOpenFeedbacks((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : prev.concat([id])))
+        return
+      }
+
+      const input = document.getElementById(id) as HTMLInputElement | null
+      if (!input || input.disabled) return
+
+      input.focus()
+      input.click()
+    }
+
+    const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+      const answerId = event.currentTarget.dataset['swapyItem'] as string
+      // close the feedback-tooltip when escape is pressed while the option for which the feedback is shown is focussed
+      if (event.key === 'Escape' && openFeedbacks.includes(answerId)) return setOpenFeedbacks((prev) => prev.filter((id) => id !== answerId))
+      if (event.key !== 'Enter' && event.key !== ' ') return
+
+      event.preventDefault()
+      handleActivate()
+    }
+
+    return (
+      <DragDropItem
+        tabIndex={isValidationComplete && feedbackEvaluation.reasoning?.has(id) ? 0 : -1}
+        key={id}
+        name={id}
+        className={cn(isValidationComplete && feedbackEvaluation.reasoning?.has(id) && 'cursor-pointer', isValidationComplete && !feedbackEvaluation.reasoning?.has(id) && 'pointer-events-none')}
+        onClick={isValidationComplete ? handleActivate : undefined}
+        onKeyDown={handleKeyDown}
+        data-evaluation-result={isValidationComplete ? (feedbackEvaluation.isCorrectlyPositioned(id) ? 'correct' : feedbackEvaluation.isFalslyPositioned(id) ? 'incorrect' : 'none') : undefined}>
+        <DragDropItemPositionCounter initialIndex={position} />
+        {answer}
+        <AnswerFeedback
+          openFeedbacks={openFeedbacks}
+          updateOpenFeedbacks={setOpenFeedbacks}
+          show={isValidationComplete}
+          isFeedbackPinned={openFeedbacks.includes(id)}
+          id={id}
+          feedbackEvaluation={feedbackEvaluation}
+          position={position}
+        />
+      </DragDropItem>
+    )
+  })
+}
+
+function AnswerFeedback({
+  show,
+  position,
+  feedbackEvaluation,
+  isFeedbackPinned,
+  openFeedbacks,
+  updateOpenFeedbacks,
+  id,
+}: {
+  show: boolean
+  id: DragDropQuestion['answers'][number]['id']
+  feedbackEvaluation: DragDropFeedbackEvaluation
+  isFeedbackPinned?: boolean
+  openFeedbacks: string[]
+  updateOpenFeedbacks: React.Dispatch<SetStateAction<string[]>>
+  position: number
+}) {
+  if (!show) return null
+
+  const correctPosition = feedbackEvaluation.getCorrectPosition(id)
+  const answerFeedbackText = feedbackEvaluation.reasoning?.get(id)
+
+  return (
+    <DisplayFeedbackText
+      answerId={id}
+      openTooltips={openFeedbacks}
+      updateOpenTooltips={updateOpenFeedbacks}
+      feedback={answerFeedbackText}
+      side='right'
+      pinned={isFeedbackPinned}
+      answerIndex={correctPosition}>
+      <div className='drag-drop-feedback-indicators group/tooltip ml-auto flex cursor-pointer items-center gap-2'>
+        {feedbackEvaluation.isCorrectlyPositioned(id) ? (
+          <CheckIcon className='size-4 text-green-600 dark:text-green-500/70' />
+        ) : (
+          <div className='flex items-center gap-2 text-red-600/70 dark:text-red-500/70'>
+            <div className='flex items-center gap-1'>
+              {Array.from({ length: Math.abs(correctPosition - position) }).map((_, i) => (
+                <ArrowUpFromLineIcon key={i} className={cn('size-4.5', correctPosition - position > 0 && 'rotate-180')} />
+              ))}
+            </div>
+            <XIcon className='size-4' />
+          </div>
+        )}
+        <MessageCircleQuestionIcon className={cn('size-4.5 text-warning', !isFeedbackPinned ? 'not-group-hover/tooltip:group-hover:animate-scale' : 'scale-110', !answerFeedbackText && 'hidden')} />
+      </div>
+    </DisplayFeedbackText>
+  )
+}
