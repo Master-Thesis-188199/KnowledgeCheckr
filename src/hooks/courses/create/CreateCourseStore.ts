@@ -1,17 +1,17 @@
 import isEqual from 'lodash/isEqual'
 import { v4 as uuid } from 'uuid'
-import { Course,instantiateCourse } from '@/schemas/KnowledgeCheck'
+import { Course, instantiateCourse } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
-export type CheckState = Course & {
+export type CourseState = Course & {
   unsavedChanges?: boolean
 }
 
-export type CheckActions = {
+export type CourseActions = {
   setName: (name: string) => void
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
@@ -21,9 +21,9 @@ export type CheckActions = {
   updateCollaborators: (collaborators: Course['collaborators']) => void
 }
 
-export type CheckStore = CheckState & CheckActions
+export type CourseStore = CourseState & CourseActions
 
-const defaultInitState: CheckState = {
+const defaultInitState: CourseState = {
   ...instantiateCourse(),
   id: uuid(),
   name: '',
@@ -44,12 +44,12 @@ const defaultInitState: CheckState = {
   unsavedChanges: false,
 }
 
-export const createCheckStore: WithCaching<ZustandStore<CheckStore, Partial<CheckState>>> = ({ initialState, options }) =>
+export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<CourseState>>> = ({ initialState, options }) =>
   createZustandStore({
     caching: true,
     options,
     initializer: (set) => {
-      const removeQuestion: CheckActions['removeQuestion'] = (questionId) =>
+      const removeQuestion: CourseActions['removeQuestion'] = (questionId) =>
         set((prev) => {
           const toRemoveQuestion = prev.questions.find((question) => question.id === questionId)
 
@@ -82,7 +82,7 @@ export const createCheckStore: WithCaching<ZustandStore<CheckStore, Partial<Chec
               return prev // No changes needed
             }
 
-            // Add new category if not part of check-categories
+            // Add new category if not part of course-categories
             if (!questionCategories.find((category) => category.name === question.category)) {
               questionCategories.push({
                 ...instantiateCategory(),

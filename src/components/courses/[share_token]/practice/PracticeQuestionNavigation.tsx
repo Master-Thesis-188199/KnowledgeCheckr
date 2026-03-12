@@ -8,7 +8,7 @@ import { Button } from '@/src/components/shadcn/button'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { StopwatchTime } from '@/src/components/Shared/StopwatchTime'
 import { useScopedI18n } from '@/src/i18n/client-localization'
-import { computeQuestionInputScore } from '@/src/lib/checks/computeQuestionScore'
+import { computeQuestionInputScore } from '@/src/lib/courses/computeQuestionScore'
 
 export function PracticeQuestionNavigation() {
   const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt, results, courseId } = usePracticeStore((store) => store)

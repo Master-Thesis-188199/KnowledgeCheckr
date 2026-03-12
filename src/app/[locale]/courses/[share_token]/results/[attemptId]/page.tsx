@@ -5,7 +5,7 @@ import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresL
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
+import hasCollaborativePermissions from '@/src/lib/courses/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 import ExamQuestionResultTable from '../../../../../../components/courses/[share_token]/results/ExamQuestionResultTable'
 

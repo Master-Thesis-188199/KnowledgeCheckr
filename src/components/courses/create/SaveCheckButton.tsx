@@ -6,7 +6,7 @@ import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvid
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import Tooltip from '@/src/components/Shared/Tooltip'
-import { saveAction } from '@/src/lib/checks/create/SaveAction'
+import { saveAction } from '@/src/lib/courses/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
 import { safeParseCourse } from '@/src/schemas/KnowledgeCheck'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { FormState } from 'react-hook-form'
-import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/courses/[share_token]/practice/EvaluateAnswer'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'

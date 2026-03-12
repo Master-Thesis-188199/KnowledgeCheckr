@@ -73,7 +73,7 @@ export const auth = betterAuth({
         try {
           const [{ affectedRows: updatedChecks }] = await db.update(db_course).set({ owner_id: newUser.user.id }).where(eq(db_course.owner_id, anonymousUser.user.id))
           const [{ affectedRows: updatedResults }] = await db.update(db_userHasDoneCourse).set({ userId: newUser.user.id }).where(eq(db_userHasDoneCourse.userId, anonymousUser.user.id))
-          logger.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+          logger.info(`[Better-Auth]: Transferred ${updatedChecks} associated courses and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
         } catch (e) {
           logger.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
         }

@@ -1,4 +1,4 @@
-import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
+import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/courses/[share_token]/practice/EvaluateAnswer'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'

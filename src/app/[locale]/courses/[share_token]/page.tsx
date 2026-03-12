@@ -5,10 +5,10 @@ import { ExaminationStoreProvider } from '@/src/components/courses/[share_token]
 import { ExamQuestionNavigationMenu } from '@/src/components/courses/[share_token]/ExamQuestionNavigationMenu'
 import { ExamQuestionWrapper } from '@/src/components/courses/[share_token]/ExamQuestionWrapper'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { defaultExaminationStoreProps } from '@/src/hooks/checks/[share_token]/ExaminationStore'
+import { defaultExaminationStoreProps } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAllowed'
-import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
+import isExaminationAllowed from '@/src/lib/courses/[share_token]/isExaminationAllowed'
+import prepareExaminationCheck from '@/src/lib/courses/[share_token]/prepareExminationCheck'
 
 export default async function CheckPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params

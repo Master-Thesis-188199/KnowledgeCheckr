@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import hasCollaborativePermissions from '@/src/lib/checks/hasCollaborativePermissions'
+import hasCollaborativePermissions from '@/src/lib/courses/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 
 type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]

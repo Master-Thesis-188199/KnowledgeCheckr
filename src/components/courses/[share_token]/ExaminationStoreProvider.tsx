@@ -3,7 +3,7 @@
 import { createContext, type ReactNode, useContext } from 'react'
 import { format } from 'date-fns'
 import { useStore } from 'zustand'
-import { createExaminationStore, ExaminationState, ExaminationStore } from '@/hooks/checks/[share_token]/ExaminationStore'
+import { createExaminationStore, ExaminationState, ExaminationStore } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 
 export type ExaminationStoreApi = ReturnType<typeof createExaminationStore>

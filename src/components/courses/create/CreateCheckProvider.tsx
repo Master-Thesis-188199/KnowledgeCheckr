@@ -2,25 +2,25 @@
 
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
-import { CheckState, CheckStore, createCheckStore } from '@/hooks/checks/create/CreateCheckStore'
 import UnsavedCheckChangesAlert from '@/src/components/courses/create/UnsavedCheckChangesAlert'
+import { CourseState, CourseStore, createCourseStore } from '@/src/hooks/courses/create/CreateCourseStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
-export type CheckStoreApi = ReturnType<typeof createCheckStore>
+export type CheckStoreApi = ReturnType<typeof createCourseStore>
 
 const CheckStoreContext = createContext<CheckStoreApi | undefined>(undefined)
 
 export interface CheckStoreProviderProps {
   children: ReactNode
-  initialStoreProps?: Partial<CheckState>
-  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CheckStore>, ''>>
+  initialStoreProps?: Partial<CourseState>
+  options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CourseStore>, ''>>
 }
 
 export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'check-store' } }: CheckStoreProviderProps) {
   const props = useZustandStore({
     caching: true,
-    createStoreFunc: createCheckStore,
+    createStoreFunc: createCourseStore,
     initialStoreProps,
     options: {
       //     //? discard cache when cached check-id truly differs from the initialStore-id (because ids are constants)
@@ -39,7 +39,7 @@ export function CheckStoreProvider({ children, initialStoreProps, options = { ca
   )
 }
 
-export function useCheckStore<T>(selector: (store: CheckStore) => T): T {
+export function useCheckStore<T>(selector: (store: CourseStore) => T): T {
   const counterStoreContext = useContext(CheckStoreContext)
 
   if (!counterStoreContext) {

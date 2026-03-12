@@ -9,7 +9,7 @@ import { useNavigationAbort } from '@/src/components/navigation-abortion/Navigat
 import { Button } from '@/src/components/shadcn/button'
 import { CountdownTime } from '@/src/components/Shared/CountdownTime'
 import { useLogger } from '@/src/hooks/log/useLogger'
-import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
+import finishExaminationAttempt from '@/src/lib/courses/[share_token]/FinishExaminationAttempt'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export function ExamQuestionNavigationMenu({ className }: { className?: string }) {

@@ -2,7 +2,7 @@
 
 import getDatabase from '@/database/Database'
 import { db_userHasDoneCourse } from '@/database/drizzle'
-import { PracticeState } from '@/src/hooks/checks/[share_token]/practice/PracticeStore'
+import { PracticeState } from '@/src/hooks/courses/[share_token]/practice/PracticeStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'

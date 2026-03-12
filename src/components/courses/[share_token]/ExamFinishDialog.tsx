@@ -8,7 +8,7 @@ import { useExaminationStore } from '@/src/components/courses/[share_token]/Exam
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
-import finishExaminationAttempt from '@/src/lib/checks/[share_token]/FinishExaminationAttempt'
+import finishExaminationAttempt from '@/src/lib/courses/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 import { Question } from '@/src/schemas/QuestionSchema'

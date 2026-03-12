@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react'
 import { useStore } from 'zustand'
-import { createPracticeStore, PracticeStore } from '@/src/hooks/checks/[share_token]/practice/PracticeStore'
+import { createPracticeStore, PracticeStore } from '@/src/hooks/courses/[share_token]/practice/PracticeStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions, StoreState_fromStore } from '@/types/Shared/ZustandStore'
 

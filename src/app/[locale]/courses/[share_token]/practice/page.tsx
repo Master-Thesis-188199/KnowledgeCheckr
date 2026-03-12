@@ -8,7 +8,7 @@ import { PracticeStoreProvider } from '@/src/components/courses/[share_token]/pr
 import { RenderPracticeQuestion } from '@/src/components/courses/[share_token]/practice/RenderPracticeQuestion'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import prepareQuestions from '@/src/lib/checks/[share_token]/prepareQuestions'
+import prepareQuestions from '@/src/lib/courses/[share_token]/prepareQuestions'
 import _logger from '@/src/lib/log/Logger'
 import { cn } from '@/src/lib/Shared/utils'
 

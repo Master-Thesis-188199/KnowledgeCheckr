@@ -3,7 +3,7 @@ import { getCourseByShareToken } from '@/database/course/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import isExaminationAllowed from '@/src/lib/checks/[share_token]/isExaminationAllowed'
+import isExaminationAllowed from '@/src/lib/courses/[share_token]/isExaminationAllowed'
 
 export default async function ClosedExaminationPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params

@@ -4,7 +4,7 @@ import DisplayFeedbackText from '@/src/components/courses/[share_token]/practice
 import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContainer'
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
-import { DragDropFeedbackEvaluation, usePracticeFeeback } from '@/src/hooks/checks/[share_token]/practice/usePracticeFeedback'
+import { DragDropFeedbackEvaluation, usePracticeFeeback } from '@/src/hooks/courses/[share_token]/practice/usePracticeFeedback'
 import { useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import { cn } from '@/src/lib/Shared/utils'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
