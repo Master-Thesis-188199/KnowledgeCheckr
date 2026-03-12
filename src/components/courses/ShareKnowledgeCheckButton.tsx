@@ -9,9 +9,9 @@ import Tooltip from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export function ShareKnowledgeCheckButton({ check, className }: { check: KnowledgeCheck; className?: string }) {
+export function ShareKnowledgeCheckButton({ check, className }: { check: Course; className?: string }) {
   const t = useScopedI18n('Components.ShareKnowledgeCheckButton')
   const [shareToken, setShareToken] = useState(check.share_key)
   const router = useRouter()

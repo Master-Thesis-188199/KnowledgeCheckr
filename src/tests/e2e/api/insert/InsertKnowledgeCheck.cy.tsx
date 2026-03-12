@@ -1,20 +1,20 @@
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 
 describe('Verify the functionality and integrity of the insert/knowledgeCheck api route ', () => {
   beforeEach(() => {
     cy.loginTestUser()
   })
   it('Verify insertion of an valid knowledgeCheck instance', () => {
-    const dummyCheck: KnowledgeCheck = instantiateKnowledgeCheck()
-    const check = Object.assign(dummyCheck, { id: getUUID() } as Partial<KnowledgeCheck>)
+    const dummyCheck: Course = instantiateCourse()
+    const check = Object.assign(dummyCheck, { id: getUUID() } as Partial<Course>)
 
     cy.request('POST', '/api/insert/knowledgeCheck', check)
   })
 
   it('Verify error handling when inserting an invalid knowledgeCheck instance', () => {
-    const dummyCheck: KnowledgeCheck = instantiateKnowledgeCheck()
-    const invalidCheck: Partial<KnowledgeCheck> = Object.assign(dummyCheck, { id: getUUID() } as Partial<KnowledgeCheck>)
+    const dummyCheck: Course = instantiateCourse()
+    const invalidCheck: Partial<Course> = Object.assign(dummyCheck, { id: getUUID() } as Partial<Course>)
 
     invalidCheck.name = undefined
     invalidCheck.questionCategories = []

@@ -1,5 +1,5 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
 
@@ -24,8 +24,8 @@ describe('Accessibility of questions: ', () => {
           )
         }
 
-        const dummyCheck: KnowledgeCheck = {
-          ...instantiateKnowledgeCheck(),
+        const dummyCheck: Course = {
+          ...instantiateCourse(),
           share_key: 'question-accessibility' + generateToken(8),
           questions,
         }

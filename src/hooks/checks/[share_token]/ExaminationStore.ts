@@ -1,6 +1,6 @@
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type ExaminationState = ExaminationSchema & {
@@ -23,7 +23,7 @@ export type ExaminationStore = ExaminationState & ExaminationActions
 
 const defaultInitState: ExaminationState = {
   ...instantiateExaminationSchema(),
-  knowledgeCheck: instantiateKnowledgeCheck(),
+  knowledgeCheck: instantiateCourse(),
   startedAt: new Date(Date.now()),
   currentQuestionIndex: 0,
   isLastQuestion: false,

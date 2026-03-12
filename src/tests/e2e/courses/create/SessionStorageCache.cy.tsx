@@ -1,5 +1,5 @@
 import { addHours } from 'date-fns'
-import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
 
 describe('SessionStorageCache', () => {
   beforeEach(() => {
@@ -21,11 +21,11 @@ describe('SessionStorageCache', () => {
       .its(baseUrl)
       .should('have.property', 'check-store')
       .then((sessionCache) => {
-        const cachedCheck: KnowledgeCheck = JSON.parse(sessionCache.toString())
+        const cachedCheck: Course = JSON.parse(sessionCache.toString())
 
         expect(cachedCheck, "Verify that the cached knowldgeCheck object has a 'name' property").to.have.property('name')
         expect(cachedCheck.name, 'Verify cached knowldgeCheck name to match the entered name').to.equal(DUMMY_NAME)
-        expect(safeParseKnowledgeCheck(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
+        expect(safeParseCourse(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
       })
 
     cy.reload()
@@ -45,11 +45,11 @@ describe('SessionStorageCache', () => {
       .its(baseUrl)
       .should('have.property', 'check-store')
       .then((sessionCache) => {
-        const cachedCheck: KnowledgeCheck = JSON.parse(sessionCache.toString())
+        const cachedCheck: Course = JSON.parse(sessionCache.toString())
 
         expect(cachedCheck, "Verify that the cached knowldgeCheck object has a 'name' property").to.have.property('name')
         expect(cachedCheck.name, 'Verify cached knowldgeCheck name to match the entered name').to.equal(DUMMY_NAME)
-        expect(safeParseKnowledgeCheck(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
+        expect(safeParseCourse(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
       })
 
     cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS), ['Date'])

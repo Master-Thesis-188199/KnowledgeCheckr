@@ -1,6 +1,6 @@
 import { KnowledgeCheckCard } from '@/src/components/courses/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
 /**
@@ -12,12 +12,12 @@ export default function InfiniteKnowledgeCheckGrid<TFunc extends (...args: Any) 
   initialItems,
   ...props
 }: {
-  initialItems: KnowledgeCheck[]
+  initialItems: Course[]
 } & InfinityScrollFetcherProps<TFunc>) {
   return (
     <InfiniteScrollProvider initialItems={initialItems}>
       <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-        <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
+        <InfinityScrollRenderer<Course> component={KnowledgeCheckCard} />
       </div>
 
       <InfinityScrollFetcher {...props} loadingLabel={'Loading more courses...'} />

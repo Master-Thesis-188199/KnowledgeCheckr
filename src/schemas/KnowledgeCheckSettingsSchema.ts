@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
-export const KnowledgeCheckSettingsSchema = z.object({
+export const CourseSettingsSchema = z.object({
   id: z
     .string()
     .uuid()
@@ -89,7 +89,7 @@ export const KnowledgeCheckSettingsSchema = z.object({
     .describe('Defines whether this check is publicly accessible, thus whether users can discover this check.'),
 })
 
-export type KnowledgeCheckSettings = z.infer<typeof KnowledgeCheckSettingsSchema>
+export type CourseSettings = z.infer<typeof CourseSettingsSchema>
 
-const { validate: validateKnowledgeCheckSettings, instantiate: instantiateKnowledgeCheckSettings, safeParse: safeParseKnowledgeCheckSettings } = schemaUtilities(KnowledgeCheckSettingsSchema)
-export { instantiateKnowledgeCheckSettings, safeParseKnowledgeCheckSettings, validateKnowledgeCheckSettings }
+const { validate: validateCourseSettings, instantiate: instantiateCourseSettings, safeParse: safeParseCourseSettings } = schemaUtilities(CourseSettingsSchema)
+export { instantiateCourseSettings, safeParseCourseSettings, validateCourseSettings }

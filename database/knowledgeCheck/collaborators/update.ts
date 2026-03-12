@@ -2,9 +2,9 @@ import 'server-only'
 import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
 import { db_userContributesToKnowledgeCheck } from '@/database/drizzle'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function updateCollaborators(db: DrizzleDB, checkId: KnowledgeCheck['id'], newCollaborators: KnowledgeCheck['collaborators']) {
+export async function updateCollaborators(db: DrizzleDB, checkId: Course['id'], newCollaborators: Course['collaborators']) {
   await db.delete(db_userContributesToKnowledgeCheck).where(eq(db_userContributesToKnowledgeCheck.knowledgecheckId, checkId))
 
   if (newCollaborators.length === 0) return

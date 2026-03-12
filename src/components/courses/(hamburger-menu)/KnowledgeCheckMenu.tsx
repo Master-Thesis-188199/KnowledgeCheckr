@@ -27,9 +27,9 @@ import { TooltipProps } from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id, collaborators }: {} & KnowledgeCheck) {
+export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id, collaborators }: {} & Course) {
   const t = useScopedI18n('Components.KnowledgeCheckCardMenu')
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -55,7 +55,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
    * @param callback The callback function which is used when a) a share-key exists or b) after a new token was generated and stored.
    * @returns a callable onClick handler
    */
-  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<KnowledgeCheck['share_key']>) => void) => () => {
+  const gatherShareToken = (failureToastMessage: string, callback: (token: NonNullable<Course['share_key']>) => void) => () => {
     if (share_key) {
       callback(share_key)
       return

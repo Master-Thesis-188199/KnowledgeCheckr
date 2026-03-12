@@ -2,11 +2,11 @@ import 'server-only'
 import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
 import { db_knowledgeCheckSettings } from '@/database/drizzle'
-import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 
-export async function updateSettings(db: DrizzleDB, settings: KnowledgeCheckSettings) {
-  const convertTo = createConvertToDatabase(KnowledgeCheckSettingsSchema, db_knowledgeCheckSettings)
+export async function updateSettings(db: DrizzleDB, settings: CourseSettings) {
+  const convertTo = createConvertToDatabase(CourseSettingsSchema, db_knowledgeCheckSettings)
 
   // prevent the settings id from beingn accidentally updated
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

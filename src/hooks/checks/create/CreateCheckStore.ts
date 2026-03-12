@@ -1,13 +1,13 @@
 import isEqual from 'lodash/isEqual'
 import { v4 as uuid } from 'uuid'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import { Course,instantiateCourse } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
-export type CheckState = KnowledgeCheck & {
+export type CheckState = Course & {
   unsavedChanges?: boolean
 }
 
@@ -16,15 +16,15 @@ export type CheckActions = {
   setDescription: (description: string) => void
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
-  updateSettings: (settings: Partial<KnowledgeCheck['settings']>) => void
-  updateCheck: (update: Partial<KnowledgeCheck>) => void
-  updateCollaborators: (collaborators: KnowledgeCheck['collaborators']) => void
+  updateSettings: (settings: Partial<Course['settings']>) => void
+  updateCheck: (update: Partial<Course>) => void
+  updateCollaborators: (collaborators: Course['collaborators']) => void
 }
 
 export type CheckStore = CheckState & CheckActions
 
 const defaultInitState: CheckState = {
-  ...instantiateKnowledgeCheck(),
+  ...instantiateCourse(),
   id: uuid(),
   name: '',
   questions: [],

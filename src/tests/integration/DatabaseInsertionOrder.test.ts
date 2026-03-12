@@ -5,8 +5,8 @@ import { db_knowledgeCheck, db_user } from '@/database/drizzle/schema'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
@@ -20,7 +20,7 @@ describe('Validate the order of inserted database elements', () => {
     const [testUser] = await db.select().from(db_user).limit(1).where(eq(db_user.email, 'test@email.com'))
     expect(testUser).toBeDefined()
 
-    const dummyCheck = Object.assign(instantiateKnowledgeCheck({ validate: true }), { owner_id: testUser.id })
+    const dummyCheck = Object.assign(instantiateCourse({ validate: true }), { owner_id: testUser.id })
     await insertKnowledgeCheck(dummyCheck)
 
     const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)
@@ -46,11 +46,11 @@ describe('Validate the order of inserted database elements', () => {
     )
   })
 
-  it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['examination']['questionOrder']>)(
+  it.each(['create-order', 'random'] as Array<CourseSettings['examination']['questionOrder']>)(
     "Ensure that `prepareExaminationCheck` shuffled questions & answers do/don't match input order based on order-settings",
     async (order) => {
-      const check: KnowledgeCheck = {
-        ...instantiateKnowledgeCheck(),
+      const check: Course = {
+        ...instantiateCourse(),
 
         questions: [
           { ...instantiateSingleChoice(), question: 'This is a single-choice question' },

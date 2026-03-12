@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
@@ -155,22 +155,22 @@ export const db_knowledgeCheckSettings = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.questionOrder._def.defaultValue()),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.answerOrder._def.defaultValue()),
-    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examTimeFrameSeconds._def.defaultValue()),
-    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examinationAttemptCount._def.defaultValue()),
+      .default(CourseSettingsSchema.shape.examination.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.questionOrder._def.defaultValue()),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.answerOrder._def.defaultValue()),
+    examTimeFrameSeconds: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examTimeFrameSeconds._def.defaultValue()),
+    examinationAttemptCount: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examinationAttemptCount._def.defaultValue()),
     shareAccessibility: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
 
     // -----
     enableExaminations: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
     startDate: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -181,7 +181,7 @@ export const db_knowledgeCheckSettings = mysqlTable(
 
     enablePracticing: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.practice.shape.enablePracticing._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.practice.shape.enablePracticing._def.defaultValue() ? 1 : 0),
 
     allowedPracticeCount: int().default(sql`NULL`),
   },

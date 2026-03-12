@@ -1,6 +1,6 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
 
@@ -12,13 +12,13 @@ describe('Verify selection of practice questions by category', () => {
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can select '${categorySelection}' category in /practice/category page`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCheck = instantiateKnowledgeCheck()
+      const dummyCheck = instantiateCourse()
       const dummyCategories = ['general', 'geography', 'mathematics']
 
       dummyCheck.share_key = 'select-category' + generateToken(8)
 
       const questions: Question[] = []
-      const questionCategories: KnowledgeCheck['questionCategories'] = []
+      const questionCategories: Course['questionCategories'] = []
 
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
@@ -55,13 +55,13 @@ describe('Verify selection of practice questions by category', () => {
 
   it(`Verify users are not asked to select category when check has just 1 category`, () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCheck = instantiateKnowledgeCheck()
+    const dummyCheck = instantiateCourse()
     const dummyCategories = ['general']
 
     dummyCheck.share_key = 'select-category' + generateToken(8)
 
     const questions: Question[] = []
-    const questionCategories: KnowledgeCheck['questionCategories'] = []
+    const questionCategories: Course['questionCategories'] = []
 
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
@@ -88,13 +88,13 @@ describe('Verify selection of practice questions by category', () => {
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can switch between practice categories through breadcrumbs (category-selection: ${categorySelection})`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCheck = instantiateKnowledgeCheck()
+      const dummyCheck = instantiateCourse()
       const dummyCategories = ['general', 'geography', 'mathematics']
 
       dummyCheck.share_key = 'select-category' + generateToken(8)
 
       const questions: Question[] = []
-      const questionCategories: KnowledgeCheck['questionCategories'] = []
+      const questionCategories: Course['questionCategories'] = []
 
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
@@ -161,13 +161,13 @@ describe('Verify selection of practice questions by category', () => {
 
   it('Verify that category-selection is re-apply using searchParams', () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCheck = instantiateKnowledgeCheck()
+    const dummyCheck = instantiateCourse()
     const dummyCategories = ['general', 'geography', 'mathematics']
 
     dummyCheck.share_key = 'select-category' + generateToken(8)
 
     const questions: Question[] = []
-    const questionCategories: KnowledgeCheck['questionCategories'] = []
+    const questionCategories: Course['questionCategories'] = []
 
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })

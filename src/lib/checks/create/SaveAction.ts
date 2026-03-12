@@ -10,7 +10,7 @@ import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { updateKnowledgeCheck } from '@/database/knowledgeCheck/update'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
@@ -18,14 +18,14 @@ export type LodashDifferences<T> = {
   [K in keyof T]-?: { key: K; value: T[K] }
 }[keyof T][]
 
-export async function saveAction({ check: modifiedCheck, callbackPath }: { check: KnowledgeCheck; callbackPath: string }) {
+export async function saveAction({ check: modifiedCheck, callbackPath }: { check: Course; callbackPath: string }) {
   await requireAuthentication()
 
   try {
     const originCheck = await getKnowledgeCheckById(modifiedCheck.id)
     if (originCheck) {
       if (!isEqual(originCheck, modifiedCheck)) {
-        const changes = differenceWith(toPairs(modifiedCheck), toPairs(originCheck), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<KnowledgeCheck>
+        const changes = differenceWith(toPairs(modifiedCheck), toPairs(originCheck), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<Course>
 
         logger.info('Updating existing knowledge check -> changes', changes)
         await updateKnowledgeCheck(modifiedCheck, changes)

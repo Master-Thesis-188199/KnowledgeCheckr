@@ -3,9 +3,9 @@ import { DrizzleDB } from '@/database/Database'
 import { db_question } from '@/database/drizzle'
 import { getCategoriesByCheckId } from '@/database/knowledgeCheck/catagories/select'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function updateQuestions(db: DrizzleDB, checkId: KnowledgeCheck['id'], questions: KnowledgeCheck['questions']) {
+export async function updateQuestions(db: DrizzleDB, checkId: Course['id'], questions: Course['questions']) {
   await db.delete(db_question).where(eq(db_question.knowledgecheckId, checkId))
 
   if (questions.length === 0) return

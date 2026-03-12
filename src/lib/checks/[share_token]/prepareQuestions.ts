@@ -1,7 +1,7 @@
 import shuffle from 'lodash/shuffle'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { Course } from '@/src/schemas/KnowledgeCheck'
+import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -15,7 +15,7 @@ const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').rever
  */
 export default function prepareQuestions(
   baseQuestions: Question[],
-  options: { questionOrder?: KnowledgeCheckSettings['examination']['questionOrder']; answerOrder?: KnowledgeCheckSettings['examination']['answerOrder']; hideSolutions?: boolean } = {},
+  options: { questionOrder?: CourseSettings['examination']['questionOrder']; answerOrder?: CourseSettings['examination']['answerOrder']; hideSolutions?: boolean } = {},
 ) {
   const questions = options?.questionOrder === 'random' ? shuffleArray(baseQuestions) : baseQuestions
   const hideSolutions = options.hideSolutions ?? true
@@ -28,7 +28,7 @@ export default function prepareQuestions(
  * @param order The order in which the respective answers should be sorted
  * @returns A function that takes in the respective question, sorts its answers and returns the modified question.
  */
-function sortAnswers(order?: NonNullable<KnowledgeCheck['settings']>['examination']['answerOrder']) {
+function sortAnswers(order?: NonNullable<Course['settings']>['examination']['answerOrder']) {
   return (question: Question) => {
     if (!order || order === 'create-order') return question
 

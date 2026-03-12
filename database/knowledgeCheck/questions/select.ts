@@ -5,13 +5,13 @@ import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_category, db_question } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledgeCheck_id: KnowledgeCheck['id'], categories: (typeof db_category.$inferSelect)[]) {
+export default async function getKnowledgeCheckQuestions(db: DrizzleDB, knowledgeCheck_id: Course['id'], categories: (typeof db_category.$inferSelect)[]) {
   await requireAuthentication()
 
   const questions: Question[] = []

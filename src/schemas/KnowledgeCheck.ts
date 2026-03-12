@@ -5,10 +5,10 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 
-export const KnowledgeCheckSchema = z
+export const CourseSchema = z
   .object({
     id: z
       .string()
@@ -63,7 +63,7 @@ export const KnowledgeCheckSchema = z
     owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
     collaborators: z.array(z.string()).default([]),
 
-    settings: KnowledgeCheckSettingsSchema,
+    settings: CourseSettingsSchema,
 
     /* todo:
       - question-order: 'shuffle, static, ...'
@@ -104,7 +104,7 @@ export const KnowledgeCheckSchema = z
     }
   })
 
-export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
+export type Course = z.infer<typeof CourseSchema>
 
-const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema)
-export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }
+const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = schemaUtilities(CourseSchema)
+export { instantiateCourse, safeParseCourse, validateCourse }

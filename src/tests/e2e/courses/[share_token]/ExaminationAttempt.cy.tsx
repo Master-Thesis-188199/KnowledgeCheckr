@@ -1,6 +1,6 @@
 import { addSeconds } from 'date-fns'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 
 describe('ExaminationAttempt Suite: ', () => {
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe('ExaminationAttempt Suite: ', () => {
   })
 
   it('Verify that attempt is automatically closed when time-frame is reached', () => {
-    const check = instantiateKnowledgeCheck()
+    const check = instantiateCourse()
     check.settings.examination.examTimeFrameSeconds = 60
     check.share_key = generateToken(8) + '-time-frame'
 

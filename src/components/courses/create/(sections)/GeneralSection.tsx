@@ -16,18 +16,18 @@ import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/M
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck, KnowledgeCheckSchema, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course, CourseSchema, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
 import { Any } from '@/types'
 
-export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<KnowledgeCheck>, 'resolver' | 'defaultValues'>) {
+export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<Course>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
   const { updateCheck, ...check } = useCheckStore((state) => state)
-  const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof KnowledgeCheck>
+  const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof Course>
   const now = useCallback(() => new Date(Date.now()), [])()
 
   const t = useScopedI18n('Checks.Create.GeneralSection')
 
-  const { form, baseFieldProps } = useRHF(KnowledgeCheckSchema, {
+  const { form, baseFieldProps } = useRHF(CourseSchema, {
     defaultValues: () => ({
       ...check,
 
@@ -68,12 +68,12 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
           form.clearErrors()
 
-          const { success, error } = safeParseKnowledgeCheck(values)
+          const { success, error } = safeParseCourse(values)
           if (!success) {
             for (const [key, messages] of Object.entries(error.formErrors.fieldErrors)) {
               if (!messages) continue
 
-              if (!FIELDS.includes(key as keyof KnowledgeCheck)) {
+              if (!FIELDS.includes(key as keyof Course)) {
                 console.warn(`[Form]: Detected error for '${key}' but is not part of relevant fields`, FIELDS, ', ignoring error.')
                 continue
               }

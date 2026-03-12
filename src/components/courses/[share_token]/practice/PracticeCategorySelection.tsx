@@ -3,10 +3,10 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import Card from '@/src/components/Shared/Card'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 import { Question } from '@/src/schemas/QuestionSchema'
 
-export function PracticeCategorySelection({ questions, share_token }: { questions: Question[]; share_token: KnowledgeCheck['share_key'] }) {
+export function PracticeCategorySelection({ questions, share_token }: { questions: Question[]; share_token: Course['share_key'] }) {
   const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
 
   const optionClasses = cn(

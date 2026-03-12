@@ -5,7 +5,7 @@ import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import { getKnowledgeChecks } from '@/database/knowledgeCheck/query'
 import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
 export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
@@ -24,7 +24,7 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
   return checks
 }
 
-export async function getKnowledgeCheckById(id: KnowledgeCheck['id']) {
+export async function getKnowledgeCheckById(id: Course['id']) {
   await requireAuthentication()
 
   const checks = await getKnowledgeChecks({

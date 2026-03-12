@@ -2,7 +2,7 @@
 
 import shuffle from 'lodash/shuffle'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -10,7 +10,7 @@ const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').rever
 /**
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
-export default async function prepareExaminationCheck(check: KnowledgeCheck) {
+export default async function prepareExaminationCheck(check: Course) {
   let questions = check.settings.examination.questionOrder === 'create-order' ? check.questions : shuffleArray(check.questions)
 
   questions = questions
@@ -29,7 +29,7 @@ export default async function prepareExaminationCheck(check: KnowledgeCheck) {
  * @param order The order in which the respective answers should be sorted
  * @returns A function that takes in the respective question, sorts its answers and returns the modified question.
  */
-function sortAnswers(order?: NonNullable<KnowledgeCheck['settings']>['examination']['answerOrder']) {
+function sortAnswers(order?: NonNullable<Course['settings']>['examination']['answerOrder']) {
   return (question: Question) => {
     if (!order || order === 'create-order') return question
 

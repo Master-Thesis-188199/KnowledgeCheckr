@@ -14,17 +14,17 @@ import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettings, KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
 export default function SettingsSection({
   jumpBackButtons,
   className,
   ...config
-}: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<KnowledgeCheckSettings>, 'resolver' | 'defaultValues'>) {
+}: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<CourseSettings>, 'resolver' | 'defaultValues'>) {
   const { updateSettings, settings } = useCheckStore((state) => state)
   const t = useScopedI18n('Checks.Create.SettingSection')
 
-  const { form, baseFieldProps } = useRHF(KnowledgeCheckSettingsSchema, {
+  const { form, baseFieldProps } = useRHF(CourseSettingsSchema, {
     mode: 'all',
     delayError: 100,
     defaultValues: () => settings,

@@ -8,12 +8,12 @@ import { Button } from '@/src/components/shadcn/button'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { saveAction } from '@/src/lib/checks/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
-import { safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { safeParseCourse } from '@/src/schemas/KnowledgeCheck'
 
 export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string; callbackPath?: string }) {
   const store = useCheckStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
-  const safeParse = safeParseKnowledgeCheck(store)
+  const safeParse = safeParseCourse(store)
 
   if (!safeParse.success) {
     console.error('[SaveCheckButton]: Parsing of store data failed, save-button disabled. ', safeParse.error)

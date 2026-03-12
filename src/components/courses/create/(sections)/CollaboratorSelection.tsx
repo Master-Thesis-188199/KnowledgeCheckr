@@ -11,7 +11,7 @@ import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvid
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
 type CollaboratorItem = {
   id: string
@@ -19,7 +19,7 @@ type CollaboratorItem = {
 }
 
 export default function CollaboratorSelection() {
-  const form = useFormContext<KnowledgeCheck>()
+  const form = useFormContext<Course>()
   const { users } = useCollaboratorContext()
   const [open, setOpen] = useState(false)
   const t = useScopedI18n('Checks.Create.GeneralSection.CollaboratorSelection')

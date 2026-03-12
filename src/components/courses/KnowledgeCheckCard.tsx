@@ -10,9 +10,9 @@ import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export function KnowledgeCheckCard(check: KnowledgeCheck) {
+export function KnowledgeCheckCard(check: Course) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
@@ -31,7 +31,7 @@ export function KnowledgeCheckCard(check: KnowledgeCheck) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn('relative flex h-full flex-col justify-between gap-10')}>
-      <div className='absolute top-3 right-4 left-4 flex items-center justify-between'>
+      <div className='absolute inset-x-4 top-3 flex items-center justify-between'>
         <DisplayUserRole role={role} />
         <div className='flex gap-1'>
           <ShareKnowledgeCheckButton check={check} />

@@ -3,9 +3,9 @@ import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], checkId: KnowledgeCheck['id']) {
+export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], checkId: Course['id']) {
   const db = await getDatabase()
 
   const attempts = await db
@@ -35,7 +35,7 @@ export async function getExaminationAttemptById(attemptId: typeof db_userHasDone
   return attempt as typeof attempt | undefined
 }
 
-export async function getKnowledgeCheckExaminationAttempts(checkId: KnowledgeCheck['id'], options?: DatabaseOptions) {
+export async function getKnowledgeCheckExaminationAttempts(checkId: Course['id'], options?: DatabaseOptions) {
   const db = await getDatabase()
 
   const userAttempts = await db.query.db_userHasDoneKnowledgeCheck.findMany({

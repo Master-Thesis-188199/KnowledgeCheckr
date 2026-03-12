@@ -10,12 +10,12 @@ import { updateSettings } from '@/database/knowledgeCheck/settings/update'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { LodashDifferences } from '@/src/lib/checks/create/SaveAction'
 import _logger from '@/src/lib/log/Logger'
-import { KnowledgeCheck, KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
+import { Course, CourseSchema } from '@/src/schemas/KnowledgeCheck'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export async function updateKnowledgeCheck(modifiedCheck: KnowledgeCheck, changes: LodashDifferences<KnowledgeCheck>) {
+export async function updateKnowledgeCheck(modifiedCheck: Course, changes: LodashDifferences<Course>) {
   await requireAuthentication()
 
   const db = await getDatabase()
@@ -55,8 +55,8 @@ export async function updateKnowledgeCheck(modifiedCheck: KnowledgeCheck, change
   })
 }
 
-async function updateBaseCheckProperties(db: DrizzleDB, check: KnowledgeCheck) {
-  const convertTo = createConvertToDatabase(KnowledgeCheckSchema, db_knowledgeCheck)
+async function updateBaseCheckProperties(db: DrizzleDB, check: Course) {
+  const convertTo = createConvertToDatabase(CourseSchema, db_knowledgeCheck)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id, updatedAt, ...updates } = convertTo(check)
@@ -64,7 +64,7 @@ async function updateBaseCheckProperties(db: DrizzleDB, check: KnowledgeCheck) {
   await db.update(db_knowledgeCheck).set(updates).where(eq(db_knowledgeCheck.id, check.id))
 }
 
-export async function updateKnowledgeCheckShareToken({ checkId, token }: { checkId: KnowledgeCheck['id']; token: KnowledgeCheck['share_key'] }) {
+export async function updateKnowledgeCheckShareToken({ checkId, token }: { checkId: Course['id']; token: Course['share_key'] }) {
   const {
     user: { id: userId },
   } = await requireAuthentication()

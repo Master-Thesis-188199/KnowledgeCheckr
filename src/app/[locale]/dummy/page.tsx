@@ -6,7 +6,7 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -29,7 +29,7 @@ async function createPracticeCheck() {
   'use server'
   await requireAuthentication()
 
-  const check = instantiateKnowledgeCheck()
+  const check = instantiateCourse()
 
   check.name = `Practice Knowledge ${Math.floor(Math.random() * 1000)}`
   check.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'

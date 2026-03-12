@@ -1,7 +1,7 @@
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/checks/[share_token]/practice/EvaluateAnswer'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import {
   DragDropQuestion,
   instantiateDragDropQuestion,
@@ -20,7 +20,7 @@ type SimulateOptions = DistributiveOmit<UndoPartial<Parameters<typeof cy.simulat
 describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
   const insertKnowledgeCheck = (...question: Question[]) => {
     const check = {
-      ...instantiateKnowledgeCheck(),
+      ...instantiateCourse(),
       share_key: generateToken(16),
       questions: question,
     }

@@ -2,7 +2,7 @@ import { isFuture } from 'date-fns/isFuture'
 import { isPast } from 'date-fns/isPast'
 import { getCurrentLocale, getScopedI18n } from '@/src/i18n/server-localization'
 import { BetterAuthUser } from '@/src/lib/auth/server'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
 type AllowedReturn = {
   allowed: true
@@ -14,7 +14,7 @@ type NotAllowedReturn = {
   reason: string
 }
 
-export default async function isExaminationAllowed(check: KnowledgeCheck, user: BetterAuthUser): Promise<AllowedReturn | NotAllowedReturn> {
+export default async function isExaminationAllowed(check: Course, user: BetterAuthUser): Promise<AllowedReturn | NotAllowedReturn> {
   const currentLocale = await getCurrentLocale()
   const t = await getScopedI18n('Examination.attempt_not_possible')
   if (!check.settings.examination.enableExaminations) return { allowed: false, reason: t('unavailable') }

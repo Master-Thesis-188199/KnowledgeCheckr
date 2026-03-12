@@ -4,14 +4,14 @@ import Field from '@/src/components/Shared/form/Field'
 import { RHFBaseReturn } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export function ExaminationSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<KnowledgeCheckSettings>, 'baseFieldProps'>) {
+export function ExaminationSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<CourseSettings>, 'baseFieldProps'>) {
   const t = useScopedI18n('Checks.Create.SettingSection.ExaminationSettings')
   const {
     control,
     formState: { errors },
-  } = useFormContext<KnowledgeCheckSettings>()
+  } = useFormContext<CourseSettings>()
 
   const { examination } = useWatch({ control })
   const { examTimeFrameSeconds, questionOrder, answerOrder, enableExaminations, allowAnonymous } = examination!

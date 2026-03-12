@@ -3,11 +3,11 @@ import Field from '@/src/components/Shared/form/Field'
 import { RHFBaseReturn } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 
-export default function ShareSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<KnowledgeCheckSettings>, 'baseFieldProps'>) {
+export default function ShareSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<CourseSettings>, 'baseFieldProps'>) {
   const t = useScopedI18n('Checks.Create.SettingSection.ShareSettings')
-  const { control } = useFormContext<KnowledgeCheckSettings>()
+  const { control } = useFormContext<CourseSettings>()
   const { shareAccessibility } = useWatch({ control: control })
 
   return (

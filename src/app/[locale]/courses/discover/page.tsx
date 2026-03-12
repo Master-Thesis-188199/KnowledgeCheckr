@@ -7,7 +7,7 @@ import { KnowledgeCheckCard } from '@/src/components/courses/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
   const t = await getScopedI18n('Checks.Discover')
@@ -35,7 +35,7 @@ export default async function BrowseChecksPage() {
 
       <InfiniteScrollProvider initialItems={courses}>
         <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-          <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
+          <InfinityScrollRenderer<Course> component={KnowledgeCheckCard} />
         </div>
 
         <DiscoverDynamicFilterFetcher />

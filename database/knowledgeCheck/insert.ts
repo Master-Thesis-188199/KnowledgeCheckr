@@ -7,14 +7,14 @@ import { insertQuestionCategories } from '@/database/knowledgeCheck/catagories/i
 import { insertCollaboratorsToKnowledgeCheck } from '@/database/knowledgeCheck/collaborators/insert'
 import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
-import { KnowledgeCheck } from '@/schemas/KnowledgeCheck'
+import { Course } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export default async function insertKnowledgeCheck(check: KnowledgeCheck) {
+export default async function insertKnowledgeCheck(check: Course) {
   await requireAuthentication()
 
   const db = await getDatabase()
@@ -55,7 +55,7 @@ export default async function insertKnowledgeCheck(check: KnowledgeCheck) {
   })
 }
 
-export async function storeKnowledgeCheckShareToken(check_id: KnowledgeCheck['id'], token: string) {
+export async function storeKnowledgeCheckShareToken(check_id: Course['id'], token: string) {
   await requireAuthentication()
   const db = await getDatabase()
 

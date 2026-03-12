@@ -4,8 +4,8 @@ import { DrizzleSchema } from '@/database/drizzle'
 import { convertSettings } from '@/database/knowledgeCheck/settings/transform'
 import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
-import { KnowledgeCheck, safeParseKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { instantiateKnowledgeCheckSettings, KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { Course, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
+import { CourseSettings,instantiateCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
@@ -57,7 +57,7 @@ type KnowledgeCheckTableConfig = Tables['db_knowledgeCheck']
 
 export type KnowledgeCheckWithAll = BuildQueryResult<Tables, KnowledgeCheckTableConfig, { with: typeof knowledgeCheckWithAllConfig }>
 
-export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}): Promise<KnowledgeCheck[]> {
+export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}): Promise<Course[]> {
   const db = await getDatabase()
 
   const checks = await db.query.db_knowledgeCheck.findMany({
@@ -71,12 +71,12 @@ export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }
   return checks.map(parseCheck).filter((check) => check !== null)
 }
 
-function parseCheck({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: KnowledgeCheckWithAll): KnowledgeCheck | null {
-  const result = safeParseKnowledgeCheck({
+function parseCheck({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: KnowledgeCheckWithAll): Course | null {
+  const result = safeParseCourse({
     ...check,
     collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
-    questionCategories: categories.map((c): KnowledgeCheck['questionCategories'][number] => ({
+    questionCategories: categories.map((c): Course['questionCategories'][number] => ({
       ...c,
       skipOnMissingPrequisite: false,
     })),
@@ -130,6 +130,6 @@ function parseAnswers(
   }
 }
 
-function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): KnowledgeCheckSettings {
-  return convertSettings('from-database', setting) ?? instantiateKnowledgeCheckSettings()
+function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): CourseSettings {
+  return convertSettings('from-database', setting) ?? instantiateCourseSettings()
 }

@@ -4,9 +4,9 @@ import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function removeKnowledgeCheck({ checkId }: { checkId: KnowledgeCheck['id'] }) {
+export async function removeKnowledgeCheck({ checkId }: { checkId: Course['id'] }) {
   const {
     user: { id: userId },
   } = await requireAuthentication()

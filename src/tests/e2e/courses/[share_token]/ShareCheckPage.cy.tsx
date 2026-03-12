@@ -1,5 +1,5 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 describe('Verify sharing of KnowledgeChecks', () => {
@@ -15,7 +15,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
     const dummyShareToken: string = generateToken(8)
 
     //? Insert dummy knowledge check with share-token
-    const dummyCheck: KnowledgeCheck = Object.assign(instantiateKnowledgeCheck(), { share_key: dummyShareToken } as Partial<KnowledgeCheck>)
+    const dummyCheck: Course = Object.assign(instantiateCourse(), { share_key: dummyShareToken } as Partial<Course>)
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
 
     cy.visit(`/courses/${dummyShareToken}`)
@@ -27,10 +27,10 @@ describe('Verify sharing of KnowledgeChecks', () => {
     cy.loginTestUser()
 
     //? Insert dummy knowledge check with share-token
-    const dummyCheck: KnowledgeCheck = Object.assign(instantiateKnowledgeCheck(), {
+    const dummyCheck: Course = Object.assign(instantiateCourse(), {
       share_key: null,
       questions: [instantiateDragDropQuestion(), instantiateSingleChoice(), instantiateMultipleChoice(), instantiateOpenQuestion()],
-    } as Partial<KnowledgeCheck>)
+    } as Partial<Course>)
 
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
     cy.visit('/courses', {

@@ -5,7 +5,7 @@ import { db_user } from '@/database/drizzle/schema'
 import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
 import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateMultipleChoice, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
@@ -21,7 +21,7 @@ describe('Category Insertion / Retrieval Suite: ', () => {
   })
 
   it.each([{ categories: ['general', 'categoryA', 'categoryB'] }, { categories: ['general'] }] as const)('Ensure knowledgeCheck categories are inserted properly', async ({ categories }) => {
-    const dummyCheck = instantiateKnowledgeCheck()
+    const dummyCheck = instantiateCourse()
 
     dummyCheck.owner_id = testUser.id
     dummyCheck.questionCategories = []
