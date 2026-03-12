@@ -4,7 +4,7 @@ import { convertSettings } from '@/database/course/settings/transform'
 import { DrizzleDB } from '@/database/Database'
 import { db_courseSettings } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export default async function insertKnowledgeCheckSettings(db: DrizzleDB, { id, settings }: Pick<Course, 'id' | 'settings'>) {
   await requireAuthentication()

@@ -1,6 +1,6 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
 

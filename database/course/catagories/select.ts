@@ -2,7 +2,7 @@ import 'server-only'
 import { eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_category } from '@/database/drizzle/schema'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function getCategoriesByCheckId(knowledgeCheckId: Course['id']) {
   const db = await getDatabase()

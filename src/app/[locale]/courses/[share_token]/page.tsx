@@ -8,7 +8,7 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { defaultExaminationStoreProps } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import isExaminationAllowed from '@/src/lib/courses/[share_token]/isExaminationAllowed'
-import prepareExaminationCheck from '@/src/lib/courses/[share_token]/prepareExminationCheck'
+import prepareExaminationCourse from '@/src/lib/courses/[share_token]/prepareExaminationCourse'
 
 export default async function CheckPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
@@ -24,7 +24,7 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
 
   if (!examAllowed) redirect(`/courses/${share_token}/attempt-not-possible`, RedirectType.replace)
 
-  const [preparedCheck, attempts] = await Promise.all([prepareExaminationCheck(check), getKnowledgeCheckUserExaminationAttempts(user.id, check.id)])
+  const [preparedCheck, attempts] = await Promise.all([prepareExaminationCourse(check), getKnowledgeCheckUserExaminationAttempts(user.id, check.id)])
 
   if (attempts.length >= check.settings.examination.examinationAttemptCount) {
     return redirect(`/courses/${share_token}/attempt-limit?attemptLimit=${check.settings.examination.examinationAttemptCount}`, RedirectType.replace)

@@ -7,21 +7,21 @@ import { TbSettingsAutomation } from 'react-icons/tb'
 import { ExaminationSettings } from '@/src/components/courses/create/(sections)/(settings)/ExaminationSettings'
 import PracticeSettings from '@/src/components/courses/create/(sections)/(settings)/PracticeSettings'
 import ShareSettings from '@/src/components/courses/create/(sections)/(settings)/ShareSettings'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 
 export default function SettingsSection({
   jumpBackButtons,
   className,
   ...config
 }: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<CourseSettings>, 'resolver' | 'defaultValues'>) {
-  const { updateSettings, settings } = useCheckStore((state) => state)
+  const { updateSettings, settings } = useCourseStore((state) => state)
   const t = useScopedI18n('Checks.Create.SettingSection')
 
   const { form, baseFieldProps } = useRHF(CourseSettingsSchema, {

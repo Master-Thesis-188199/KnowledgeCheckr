@@ -3,21 +3,21 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { CrownIcon, LockIcon, UserPenIcon } from 'lucide-react'
-import KnowledgeCheckMenu from '@/src/components/courses/(hamburger-menu)/KnowledgeCheckMenu'
-import { ShareKnowledgeCheckButton } from '@/src/components/courses/ShareKnowledgeCheckButton'
+import CourseActionMenu from '@/src/components/courses/(hamburger-menu)/CourseActionMenu'
+import { ShareCourseButton } from '@/src/components/courses/ShareCourseButton'
 import Card from '@/src/components/Shared/Card'
 import { InitialsIcon } from '@/src/components/Shared/InitialsIcon'
 import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
-export function KnowledgeCheckCard(check: Course) {
+export function CourseCard(course: Course) {
   const t = useScopedI18n('Components.KnowledgeCheckCard')
   const { data } = useSession()
   const userId = data?.user.id
-  const isCollaborator = userId ? check.collaborators.includes(userId) : false
-  const isOwner = userId ? check.owner_id === userId : false
+  const isCollaborator = userId ? course.collaborators.includes(userId) : false
+  const isOwner = userId ? course.owner_id === userId : false
 
   let role: 'Guest' | 'Owner' | 'Collaborator' = 'Guest'
   if (isOwner) role = 'Owner'
@@ -26,7 +26,7 @@ export function KnowledgeCheckCard(check: Course) {
   return (
     <Card
       as={motion.div}
-      data-knowledge-check-id={check.id}
+      data-knowledge-check-id={course.id}
       disableInteractions
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -34,17 +34,17 @@ export function KnowledgeCheckCard(check: Course) {
       <div className='absolute inset-x-4 top-3 flex items-center justify-between'>
         <DisplayUserRole role={role} />
         <div className='flex gap-1'>
-          <ShareKnowledgeCheckButton check={check} />
-          <KnowledgeCheckMenu {...check} />
+          <ShareCourseButton course={course} />
+          <CourseActionMenu {...course} />
         </div>
       </div>
       <div className='flex flex-col items-center gap-1 px-4'>
-        <InitialsIcon size={64} name={check.name} className='mx-auto mt-4 mb-2' />
-        <h2 className='text-center text-xl font-semibold text-neutral-600 dark:text-neutral-300'>{check.name}</h2>
-        <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{check.description}</span>
+        <InitialsIcon size={64} name={course.name} className='mx-auto mt-4 mb-2' />
+        <h2 className='text-center text-xl font-semibold text-neutral-600 dark:text-neutral-300'>{course.name}</h2>
+        <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{course.description}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6'>
-        <StatisticElement label={t('Statistics.questions_label')} value={check.questions.length} />
+        <StatisticElement label={t('Statistics.questions_label')} value={course.questions.length} />
         <StatisticElement
           label={t('Statistics.estimatedTime_label')}
           value={
@@ -53,9 +53,9 @@ export function KnowledgeCheckCard(check: Course) {
             </>
           }
         />
-        <StatisticElement label={t('Statistics.points_label')} value={check.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
+        <StatisticElement label={t('Statistics.points_label')} value={course.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
       </div>
-      <Footer updatedAt={check.updatedAt} />
+      <Footer updatedAt={course.updatedAt} />
     </Card>
   )
 }

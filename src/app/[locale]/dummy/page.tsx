@@ -6,7 +6,7 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)

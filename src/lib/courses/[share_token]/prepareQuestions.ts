@@ -1,7 +1,7 @@
 import shuffle from 'lodash/shuffle'
 import _logger from '@/src/lib/log/Logger'
-import { Course } from '@/src/schemas/KnowledgeCheck'
-import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { Course } from '@/src/schemas/CourseSchema'
+import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)

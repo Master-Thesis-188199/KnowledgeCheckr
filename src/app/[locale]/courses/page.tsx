@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getCoursesByOwner } from '@/database/course/select'
-import InfiniteKnowledgeCheckGrid from '@/src/components/courses/RenderInfiniteChecks'
+import InfiniteCourseGrid from '@/src/components/courses/RenderInfiniteCourses'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -23,7 +23,7 @@ export default async function ChecksPage() {
         </div>
       )}
 
-      <InfiniteKnowledgeCheckGrid initialItems={courses} fetchItems={getCoursesByOwner} fetchProps={[user.id, { limit: 10 }]} />
+      <InfiniteCourseGrid initialItems={courses} fetchItems={getCoursesByOwner} fetchProps={[user.id, { limit: 10 }]} />
     </>
   )
 }

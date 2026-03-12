@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUp, Check, Plus, Trash2, X } from 'lucide-react'
 import { FieldValues, FormState, Resolver, useFieldArray, UseFieldArrayReturn, useForm, useFormContext, UseFormReturn } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import z from 'zod'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Form } from '@/src/components/shadcn/form'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
@@ -69,7 +69,7 @@ const DELAY_ERROR_TIME = 250
 
 export default function CreateQuestionDialog({ children, initialValues }: { children: ReactNode; initialValues?: Partial<Question> & Pick<Question, 'id'> }) {
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
-  const { addQuestion, questionCategories } = useCheckStore((state) => state)
+  const { addQuestion, questionCategories } = useCourseStore((state) => state)
 
   const tQuestion = useScopedI18n('Shared.Question')
   const t = useScopedI18n('Checks.Create.CreateQuestionDialog')

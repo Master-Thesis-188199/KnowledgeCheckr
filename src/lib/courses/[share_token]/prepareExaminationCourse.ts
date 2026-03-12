@@ -2,7 +2,7 @@
 
 import shuffle from 'lodash/shuffle'
 import _logger from '@/src/lib/log/Logger'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -10,16 +10,16 @@ const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').rever
 /**
  * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
  */
-export default async function prepareExaminationCheck(check: Course) {
-  let questions = check.settings.examination.questionOrder === 'create-order' ? check.questions : shuffleArray(check.questions)
+export default async function prepareExaminationCourse(course: Course) {
+  let questions = course.settings.examination.questionOrder === 'create-order' ? course.questions : shuffleArray(course.questions)
 
   questions = questions
     .filter((q) => q.accessibility === 'all' || q.accessibility === 'exam-only')
     .map(hideCorrectness)
-    .map(sortAnswers(check.settings.examination.answerOrder))
+    .map(sortAnswers(course.settings.examination.answerOrder))
 
   return {
-    ...check,
+    ...course,
     questions,
   }
 }

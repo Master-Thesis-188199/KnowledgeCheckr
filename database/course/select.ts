@@ -5,7 +5,7 @@ import { getCourses } from '@/database/course/query'
 import { db_course } from '@/database/drizzle/schema'
 import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function getCoursesByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()

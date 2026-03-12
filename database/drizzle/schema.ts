@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })

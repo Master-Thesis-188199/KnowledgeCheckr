@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty'
 import { UseFormProps, useWatch } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import CollaboratorSelection from '@/src/components/courses/create/(sections)/CollaboratorSelection'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Form, FormLabel } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
@@ -16,12 +16,12 @@ import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/M
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course, CourseSchema, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
+import { Course, CourseSchema, safeParseCourse } from '@/src/schemas/CourseSchema'
 import { Any } from '@/types'
 
 export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<Course>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
-  const { updateCheck, ...check } = useCheckStore((state) => state)
+  const { updateCheck, ...check } = useCourseStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof Course>
   const now = useCallback(() => new Date(Date.now()), [])()
 

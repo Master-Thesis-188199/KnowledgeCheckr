@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import Card from '@/src/components/Shared/Card'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 
 export function PracticeCategorySelection({ questions, share_token }: { questions: Question[]; share_token: Course['share_key'] }) {

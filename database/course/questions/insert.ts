@@ -2,9 +2,9 @@
 
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_question } from '@/database/drizzle/schema'
-import { Course } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { Course } from '@/src/schemas/CourseSchema'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 
 export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Array<Question & { categoryId: string }>, check_id: Course['id']) {

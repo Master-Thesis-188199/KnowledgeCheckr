@@ -1,5 +1,5 @@
-import { ConfigureKnowledgeCheck } from '@/src/components/courses/ConfigureKnowledgeCheck'
+import { ConfigureCourse } from '@/src/components/courses/ConfigureCourse'
 
 export default async function CreateCheckPage() {
-  return <ConfigureKnowledgeCheck mode='create' />
+  return <ConfigureCourse mode='create' />
 }

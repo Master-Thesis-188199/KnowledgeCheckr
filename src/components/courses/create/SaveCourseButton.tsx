@@ -2,21 +2,21 @@
 
 import { InfoIcon } from 'lucide-react'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { saveAction } from '@/src/lib/courses/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
-import { safeParseCourse } from '@/src/schemas/KnowledgeCheck'
+import { safeParseCourse } from '@/src/schemas/CourseSchema'
 
-export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string; callbackPath?: string }) {
-  const store = useCheckStore((store) => store)
+export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string; callbackPath?: string }) {
+  const store = useCourseStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
   const safeParse = safeParseCourse(store)
 
   if (!safeParse.success) {
-    console.error('[SaveCheckButton]: Parsing of store data failed, save-button disabled. ', safeParse.error)
+    console.error('[SaveCourseButton]: Parsing of store data failed, save-button disabled. ', safeParse.error)
   }
 
   const formAction = () => {

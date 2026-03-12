@@ -14,7 +14,7 @@ export const CourseSettingsSchema = z.object({
       .transform((v) => !!v)
       .optional()
       .default(true)
-      .describe('Defines whether users are able to practice with this check or not.'),
+      .describe('Defines whether users are able to practice with this course or not.'),
 
     allowedPracticeCount: z
       .number()

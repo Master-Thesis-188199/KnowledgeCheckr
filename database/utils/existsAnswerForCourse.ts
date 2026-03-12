@@ -27,23 +27,18 @@ import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
  * - Uses aliased tables (`a`, `q`) to prevent table/alias-naming collisions.
  *
  * @param db - Drizzle DB instance used to build the subquery.
- * @param kcId - The FK of the knowledgeCheck row to which the respective `question-` and `answer-` filters shall be applied.
+ * @param courseId - The FK of the knowledgeCheck row to which the respective `question-` and `answer-` filters shall be applied.
  * @param answerFilter - Column-level filters for Answer.
  * @param questionFilter - Column-level filters for Question
  */
-export default function existsAnswerForKnowledgeCheck(
-  db: DrizzleDB,
-  kcId: AnyColumn,
-  answerFilter?: TableFilters<typeof db_answer>,
-  questionFilter?: TableFilters<typeof db_question>,
-): SQL | undefined {
+export default function existsAnswerForCourse(db: DrizzleDB, courseId: AnyColumn, answerFilter?: TableFilters<typeof db_answer>, questionFilter?: TableFilters<typeof db_question>): SQL | undefined {
   if (!answerFilter && !questionFilter) return undefined
 
   const a = alias(db_answer, 'a')
   const q = alias(db_question, 'q')
 
   // join respective check with questions and answers to apply filters
-  const predicates: SQL[] = [eq(q.knowledgecheckId, kcId), eq(a.questionId, q.id)]
+  const predicates: SQL[] = [eq(q.knowledgecheckId, courseId), eq(a.questionId, q.id)]
 
   if (answerFilter) {
     const answerWhere = buildWhere(a, answerFilter)

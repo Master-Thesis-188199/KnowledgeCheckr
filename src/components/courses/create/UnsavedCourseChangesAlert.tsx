@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
-export default function UnsavedCheckChangesAlert() {
+export default function UnsavedCourseChangesAlert() {
   const t = useScopedI18n('Checks.Create.UnsavedChangesAlert')
-  const { unsavedChanges } = useCheckStore((state) => state)
+  const { unsavedChanges } = useCourseStore((state) => state)
   const { enableNavigationAbort } = useNavigationAbort()
 
   useEffect(() => {

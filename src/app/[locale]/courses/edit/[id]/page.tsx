@@ -1,6 +1,6 @@
 import { forbidden, notFound } from 'next/navigation'
 import { getCourseById } from '@/database/course/select'
-import { ConfigureKnowledgeCheck } from '@/src/components/courses/ConfigureKnowledgeCheck'
+import { ConfigureCourse } from '@/src/components/courses/ConfigureCourse'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 export default async function CheckPage({ params }: { params: Promise<{ id: string }> }) {
@@ -16,5 +16,5 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
   const canEdit = check.owner_id === user.id || check.collaborators.includes(user.id)
   if (!canEdit) forbidden()
 
-  return <ConfigureKnowledgeCheck mode='edit' initialStoreProps={check} options={{ cacheKey: 'check-exam-store', disableCache: true }} />
+  return <ConfigureCourse mode='edit' initialStoreProps={check} options={{ cacheKey: 'check-exam-store', disableCache: true }} />
 }

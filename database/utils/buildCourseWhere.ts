@@ -2,7 +2,7 @@ import { SQL } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
 import { db_answer, db_category, db_course, db_courseSettings, db_question } from '@/database/drizzle'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
-import existsAnswerForKnowledgeCheck from '@/database/utils/existsAnswerForKnowledgeCheck'
+import existsAnswerForCourse from '@/database/utils/existsAnswerForCourse'
 import existsByFk from '@/database/utils/existsByFK'
 
 export type CourseFilterBundle = {
@@ -84,7 +84,7 @@ export default function buildCourseWhere(db: DrizzleDB, filters?: CourseFilterBu
     })
     if (questionsExists) predicates.push(questionsExists)
 
-    const answersExists = existsAnswerForKnowledgeCheck(db, kc.id, filters?.answersFilter, filters?.questionsFilter)
+    const answersExists = existsAnswerForCourse(db, kc.id, filters?.answersFilter, filters?.questionsFilter)
     if (answersExists) predicates.push(answersExists)
 
     return predicates.length ? and(...predicates) : undefined

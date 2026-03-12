@@ -10,7 +10,7 @@ import { db_course } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { LodashDifferences } from '@/src/lib/courses/create/SaveAction'
 import _logger from '@/src/lib/log/Logger'
-import { Course, CourseSchema } from '@/src/schemas/KnowledgeCheck'
+import { Course, CourseSchema } from '@/src/schemas/CourseSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)

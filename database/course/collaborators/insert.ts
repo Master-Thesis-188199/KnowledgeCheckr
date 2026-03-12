@@ -1,6 +1,6 @@
 import { DrizzleDB } from '@/database/Database'
 import { db_userContributesToCourse } from '@/database/drizzle/schema'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function insertCollaboratorsToKnowledgeCheck(db: DrizzleDB, courseId: Course['id'], collaborators: Course['collaborators']) {
   if (collaborators.length === 0) return

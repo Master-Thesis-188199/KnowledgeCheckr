@@ -9,20 +9,20 @@ import Tooltip from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
-export function ShareKnowledgeCheckButton({ check, className }: { check: Course; className?: string }) {
+export function ShareCourseButton({ course, className }: { course: Course; className?: string }) {
   const t = useScopedI18n('Components.ShareKnowledgeCheckButton')
-  const [shareToken, setShareToken] = useState(check.share_key)
+  const [shareToken, setShareToken] = useState(course.share_key)
   const router = useRouter()
 
   // Update share-key when the check has been modified, e.g. when the share-token was removed
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (shareToken !== check.share_key) setShareToken(check.share_key)
-  }, [check.share_key, shareToken])
+    if (shareToken !== course.share_key) setShareToken(course.share_key)
+  }, [course.share_key, shareToken])
 
-  const isEmpty = check.questions.length === 0
+  const isEmpty = course.questions.length === 0
   const tooltipMessage = isEmpty ? t('tooltip_empty_message') : t('tooltip_message')
 
   return (
@@ -50,7 +50,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Course;
           }
 
           const token = generateToken()
-          storeCourseShareToken(check.id, token)
+          storeCourseShareToken(course.id, token)
             .then(() => {
               navigator.clipboard
                 .writeText(`${window.location.origin}/courses/${token}/practice`)

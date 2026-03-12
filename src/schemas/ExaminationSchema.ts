@@ -1,6 +1,6 @@
 import { z } from 'zod'
+import { CourseSchema } from '@/src/schemas/CourseSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { CourseSchema } from '@/src/schemas/KnowledgeCheck'
 import { QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'

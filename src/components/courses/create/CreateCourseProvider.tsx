@@ -2,22 +2,22 @@
 
 import { createContext, type ReactNode, useContext } from 'react'
 import { useStore } from 'zustand'
-import UnsavedCheckChangesAlert from '@/src/components/courses/create/UnsavedCheckChangesAlert'
+import UnsavedCourseChangesAlert from '@/src/components/courses/create/UnsavedCourseChangesAlert'
 import { CourseState, CourseStore, createCourseStore } from '@/src/hooks/courses/create/CreateCourseStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
 import { StoreCachingOptions } from '@/types/Shared/ZustandStore'
 
-export type CheckStoreApi = ReturnType<typeof createCourseStore>
+export type CourseStoreApi = ReturnType<typeof createCourseStore>
 
-const CheckStoreContext = createContext<CheckStoreApi | undefined>(undefined)
+const CourseStoreContext = createContext<CourseStoreApi | undefined>(undefined)
 
-export interface CheckStoreProviderProps {
+export interface CourseStoreProviderProps {
   children: ReactNode
   initialStoreProps?: Partial<CourseState>
   options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CourseStore>, ''>>
 }
 
-export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'courses-store' } }: CheckStoreProviderProps) {
+export function CourseStoreProvider({ children, initialStoreProps, options = { cacheKey: 'courses-store' } }: CourseStoreProviderProps) {
   const props = useZustandStore({
     caching: true,
     createStoreFunc: createCourseStore,
@@ -32,18 +32,18 @@ export function CheckStoreProvider({ children, initialStoreProps, options = { ca
   })
 
   return (
-    <CheckStoreContext.Provider value={props}>
-      <UnsavedCheckChangesAlert />
+    <CourseStoreContext.Provider value={props}>
+      <UnsavedCourseChangesAlert />
       {children}
-    </CheckStoreContext.Provider>
+    </CourseStoreContext.Provider>
   )
 }
 
-export function useCheckStore<T>(selector: (store: CourseStore) => T): T {
-  const counterStoreContext = useContext(CheckStoreContext)
+export function useCourseStore<T>(selector: (store: CourseStore) => T): T {
+  const counterStoreContext = useContext(CourseStoreContext)
 
   if (!counterStoreContext) {
-    throw new Error(`useCheckStore must be used within CheckStoreProvider`)
+    throw new Error(`useCourseStore must be used within CourseStoreProvider`)
   }
 
   return useStore(counterStoreContext, selector)

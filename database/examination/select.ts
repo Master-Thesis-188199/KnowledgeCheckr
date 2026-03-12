@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm'
 import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
 import { db_userHasDoneCourse } from '@/database/drizzle/schema'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], courseId: Course['id']) {
   const db = await getDatabase()

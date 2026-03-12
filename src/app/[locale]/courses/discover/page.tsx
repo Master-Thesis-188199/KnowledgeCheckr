@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { getPublicCourses } from '@/database/course/select'
+import { KnowledgeCheckCard } from '@/src/components/courses/CourseCard'
 import DiscoverDynamicFilterFetcher from '@/src/components/courses/discover/DiscoverDynamicFilterFetcher'
 import { DiscoverFilterFields } from '@/src/components/courses/discover/DiscoverFilterFields'
 import DiscoverFilterOptionsContext from '@/src/components/courses/discover/DiscoverFilterOptionsProvider'
-import { KnowledgeCheckCard } from '@/src/components/courses/KnowledgeCheckCard'
 import { InfiniteScrollProvider, InfinityScrollFetcherProps, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export default async function BrowseChecksPage() {
   const t = await getScopedI18n('Checks.Discover')

@@ -4,8 +4,8 @@ import GeneralSection from '@/src/components/courses/create/(sections)/GeneralSe
 import { OverviewSection } from '@/src/components/courses/create/(sections)/OverviewSection'
 import QuestionsSection from '@/src/components/courses/create/(sections)/QuestionsSection'
 import SettingsSection from '@/src/components/courses/create/(sections)/SettingsSection'
-import { CheckStoreProvider, CheckStoreProviderProps } from '@/src/components/courses/create/CreateCheckProvider'
-import { SaveCheckButton } from '@/src/components/courses/create/SaveCheckButton'
+import { CourseStoreProvider, CourseStoreProviderProps } from '@/src/components/courses/create/CreateCourseProvider'
+import { SaveCourseButton } from '@/src/components/courses/create/SaveCourseButton'
 import { MultiStageBackButton, MultiStageNextButton } from '@/src/components/Shared/MultiStageProgress/MultiStageNavigationButtons'
 import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgress/MultiStageProgressBar'
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
@@ -15,17 +15,17 @@ import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import getReferer from '@/src/lib/Shared/getReferer'
 
-type CreateProps = Pick<CheckStoreProviderProps, 'initialStoreProps'> &
-  Partial<Pick<CheckStoreProviderProps, 'options'>> & {
+type CreateProps = Pick<CourseStoreProviderProps, 'initialStoreProps'> &
+  Partial<Pick<CourseStoreProviderProps, 'options'>> & {
     mode: 'create'
   }
 
-type EditProps = Required<Pick<CheckStoreProviderProps, 'initialStoreProps'>> &
-  Pick<CheckStoreProviderProps, 'options'> & {
+type EditProps = Required<Pick<CourseStoreProviderProps, 'initialStoreProps'>> &
+  Pick<CourseStoreProviderProps, 'options'> & {
     mode: 'edit'
   }
 
-export async function ConfigureKnowledgeCheck({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
+export async function ConfigureCourse({ mode = 'create', initialStoreProps, options }: CreateProps | EditProps) {
   const { user } = await requireAuthentication()
   const users = await getUsers()
   const tButtons = await getScopedI18n('Shared')
@@ -35,7 +35,7 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
   const callbackPath = mode === 'edit' ? await getReferer() : '/courses'
 
   return (
-    <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
+    <CourseStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
       <MultiStageStoreProvider
         cacheOptions={{ cacheKey: 'create-check-stages' }}
         initialStoreProps={{
@@ -73,11 +73,11 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
         </div>
         <MutliStageRenderer stage={4}>
           <form className='mt-4 flex justify-center gap-4'>
-            <SaveCheckButton callbackPath={callbackPath} />
+            <SaveCourseButton callbackPath={callbackPath} />
           </form>
         </MutliStageRenderer>
         <div />
       </MultiStageStoreProvider>
-    </CheckStoreProvider>
+    </CourseStoreProvider>
   )
 }

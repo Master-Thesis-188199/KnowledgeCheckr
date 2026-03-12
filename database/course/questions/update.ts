@@ -3,7 +3,7 @@ import { getCategoriesByCheckId } from '@/database/course/catagories/select'
 import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
 import { DrizzleDB } from '@/database/Database'
 import { db_question } from '@/database/drizzle'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function updateQuestions(db: DrizzleDB, courseId: Course['id'], questions: Course['questions']) {
   await db.delete(db_question).where(eq(db_question.knowledgecheckId, courseId))

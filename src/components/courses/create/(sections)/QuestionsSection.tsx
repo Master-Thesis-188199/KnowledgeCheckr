@@ -4,13 +4,13 @@ import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 import Card from '@/components/Shared/Card'
 import { cn } from '@/lib/Shared/utils'
 import CreateQuestionDialog from '@/src/components/courses/create/(create-question)/CreateQuestionDialog'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBackButton?: boolean; disabled?: boolean }) {
   const t = useScopedI18n('Checks.Create.QuestionSection')
-  const { questions } = useCheckStore((state) => state)
+  const { questions } = useCourseStore((state) => state)
 
   return (
     <Card disableInteractions className='question-section relative flex break-inside-avoid flex-col p-3'>
@@ -46,7 +46,7 @@ function EmptyQuestionsStatus({ show }: { show: boolean }) {
 }
 
 function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: boolean }) {
-  const { questions, removeQuestion } = useCheckStore((state) => state)
+  const { questions, removeQuestion } = useCourseStore((state) => state)
   const tQuestion = useScopedI18n('Shared.Question')
   const t = useScopedI18n('Checks.Create.QuestionSection.QuestionCard')
 

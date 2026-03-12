@@ -7,10 +7,10 @@ import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/course/settings/insert'
 import getDatabase from '@/database/Database'
 import { db_course } from '@/database/drizzle/schema'
-import { Course } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
+import { Course } from '@/src/schemas/CourseSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 

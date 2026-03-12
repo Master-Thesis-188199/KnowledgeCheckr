@@ -2,7 +2,7 @@ import { isFuture } from 'date-fns/isFuture'
 import { isPast } from 'date-fns/isPast'
 import { getCurrentLocale, getScopedI18n } from '@/src/i18n/server-localization'
 import { BetterAuthUser } from '@/src/lib/auth/server'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 type AllowedReturn = {
   allowed: true

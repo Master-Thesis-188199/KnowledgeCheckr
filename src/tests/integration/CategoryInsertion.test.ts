@@ -5,7 +5,7 @@ import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
 import { db_user } from '@/database/drizzle/schema'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateMultipleChoice, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 let db: Awaited<ReturnType<typeof getDatabase>>

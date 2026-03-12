@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
 import { db_course } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export async function removeCourse({ courseId }: { courseId: Course['id'] }) {
   const {

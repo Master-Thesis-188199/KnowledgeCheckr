@@ -1,6 +1,6 @@
 import { addSeconds } from 'date-fns'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 
 describe('ExaminationAttempt Suite: ', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('ExaminationAttempt Suite: ', () => {
     check.settings.examination.examTimeFrameSeconds = 60
     check.share_key = generateToken(8) + '-time-frame'
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+    cy.request('POST', '/api/insert/course', check).should('have.property', 'status').and('eq', 200)
 
     cy.visit(`/courses/${check.share_key}`)
     cy.get('h1').contains(check.name).should('exist').and('be.visible')

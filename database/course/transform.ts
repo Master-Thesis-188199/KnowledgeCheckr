@@ -1,6 +1,6 @@
 import { db_course } from '@/database/drizzle/schema'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 export function convertToDatabaseCourse(course: Course): typeof db_course.$inferInsert {
   return {

@@ -2,7 +2,7 @@ import 'server-only'
 import { eq } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
 import { db_courseSettings } from '@/database/drizzle'
-import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 
 export async function updateSettings(db: DrizzleDB, settings: CourseSettings) {

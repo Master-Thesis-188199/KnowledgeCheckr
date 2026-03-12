@@ -1,6 +1,6 @@
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { ExaminationSchema, instantiateExaminationSchema } from '@/src/schemas/ExaminationSchema'
-import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type ExaminationState = ExaminationSchema & {

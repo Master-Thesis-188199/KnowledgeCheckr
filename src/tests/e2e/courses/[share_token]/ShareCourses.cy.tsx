@@ -1,8 +1,8 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
-describe('Verify sharing of KnowledgeChecks', () => {
+describe('Verify sharing of Courses', () => {
   it('Verify that notFound is displayed for invalid share-token', () => {
     cy.loginTestUser()
     cy.visit('/courses/some-share-token')
@@ -16,7 +16,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
 
     //? Insert dummy knowledge check with share-token
     const dummyCheck: Course = Object.assign(instantiateCourse(), { share_key: dummyShareToken } as Partial<Course>)
-    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
+    cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCheck })
 
     cy.visit(`/courses/${dummyShareToken}`)
     cy.get('main #page-heading').should('contain', dummyCheck.name)
@@ -32,7 +32,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
       questions: [instantiateDragDropQuestion(), instantiateSingleChoice(), instantiateMultipleChoice(), instantiateOpenQuestion()],
     } as Partial<Course>)
 
-    cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
+    cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCheck })
     cy.visit('/courses', {
       onBeforeLoad: (win) => {
         cy.spy(win.navigator.clipboard, 'writeText').as('share-token-copied-to-clipboard')

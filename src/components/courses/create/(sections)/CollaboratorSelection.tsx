@@ -7,11 +7,11 @@ import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/shadcn/button'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/shadcn/command'
 import { useCollaboratorContext } from '@/src/components/courses/create/(sections)/CollaboratorProvider'
-import { useCheckStore } from '@/src/components/courses/create/CreateCheckProvider'
+import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
 type CollaboratorItem = {
   id: string
@@ -24,7 +24,7 @@ export default function CollaboratorSelection() {
   const [open, setOpen] = useState(false)
   const t = useScopedI18n('Checks.Create.GeneralSection.CollaboratorSelection')
 
-  const { collaborators: collaboratorIds, updateCollaborators } = useCheckStore((store) => store)
+  const { collaborators: collaboratorIds, updateCollaborators } = useCourseStore((store) => store)
   const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>(users.filter((u) => collaboratorIds.includes(u.id)).map((u) => ({ id: u.id, name: u.name })))
 
   const [selectionStatus, setSelectionStatus] = useState<'require-min-input' | 'no-matches-found' | 'ok' | 'loading'>('require-min-input')

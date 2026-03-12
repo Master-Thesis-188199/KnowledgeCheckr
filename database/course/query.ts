@@ -3,9 +3,9 @@ import { convertSettings } from '@/database/course/settings/transform'
 import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
-import buildCourseWhere, { CourseFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
-import { Course, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
-import { CourseSettings, instantiateCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import buildCourseWhere, { CourseFilterBundle } from '@/database/utils/buildCourseWhere'
+import { Course, safeParseCourse } from '@/src/schemas/CourseSchema'
+import { CourseSettings, instantiateCourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
@@ -68,12 +68,12 @@ export async function getCourses({ limit = 10, offset, ...filterBundle }: {} & C
     offset,
   })
 
-  return courses.map(parseCourse).filter((check) => check !== null)
+  return courses.map(parseCourse).filter((course) => course !== null)
 }
 
-function parseCourse({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: CourseWithAll): Course | null {
+function parseCourse({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...course }: CourseWithAll): Course | null {
   const result = safeParseCourse({
-    ...check,
+    ...course,
     collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
     questionCategories: categories.map((c): Course['questionCategories'][number] => ({
@@ -84,7 +84,7 @@ function parseCourse({ questions, knowledgeCheckSettings: settings, categories, 
   })
 
   if (!result.success) {
-    console.error(`Failed to parse course instance ${check.id} because: `, result.error)
+    console.error(`Failed to parse course instance ${course.id} because: `, result.error)
   }
 
   return result.data ?? null

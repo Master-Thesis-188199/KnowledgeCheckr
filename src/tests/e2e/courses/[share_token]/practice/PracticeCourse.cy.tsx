@@ -1,7 +1,7 @@
 import { PracticeFeedback, PracticeFeedbackServerState } from '@/src/lib/courses/[share_token]/practice/EvaluateAnswer'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import {
   DragDropQuestion,
   instantiateDragDropQuestion,
@@ -25,7 +25,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
       questions: question,
     }
 
-    cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
+    cy.request('POST', '/api/insert/course', check).should('have.property', 'status').and('eq', 200)
 
     return { share_key: check.share_key, check }
   }

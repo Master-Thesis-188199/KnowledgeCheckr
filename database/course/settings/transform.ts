@@ -1,7 +1,7 @@
 import 'server-only'
 import { db_courseSettings } from '@/database/drizzle'
 import _logger from '@/src/lib/log/Logger'
-import { CourseSettings, CourseSettingsSchema, instantiateCourseSettings, safeParseCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, CourseSettingsSchema, instantiateCourseSettings, safeParseCourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
 import { Any } from '@/types'
 

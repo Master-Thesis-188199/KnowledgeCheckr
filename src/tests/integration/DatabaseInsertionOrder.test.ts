@@ -4,9 +4,9 @@ import insertCourse from '@/database/course/insert'
 import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
 import { db_course, db_user } from '@/database/drizzle/schema'
-import prepareExaminationCheck from '@/src/lib/courses/[share_token]/prepareExminationCheck'
-import { Course, instantiateCourse } from '@/src/schemas/KnowledgeCheck'
-import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import prepareExaminationCourse from '@/src/lib/courses/[share_token]/prepareExaminationCourse'
+import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
+import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
@@ -64,7 +64,7 @@ describe('Validate the order of inserted database elements', () => {
       check.settings.examination.answerOrder = order
 
       for (let i = 0; i < 10; i++) {
-        const preparedCheck = await prepareExaminationCheck(check)
+        const preparedCheck = await prepareExaminationCourse(check)
 
         if (order === 'random') {
           expect(preparedCheck.questions.map((q) => q.id).join(',')).not.toBe(check.questions.map((q) => q.id).join(','))

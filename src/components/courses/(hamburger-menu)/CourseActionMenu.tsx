@@ -27,9 +27,9 @@ import { TooltipProps } from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { Course } from '@/src/schemas/KnowledgeCheck'
+import { Course } from '@/src/schemas/CourseSchema'
 
-export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id, collaborators }: {} & Course) {
+export default function CourseActionMenu({ id, questions, share_key, owner_id, collaborators }: {} & Course) {
   const t = useScopedI18n('Components.KnowledgeCheckCardMenu')
   const [menuOpen, setMenuOpen] = useState(false)
 

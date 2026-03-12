@@ -1,10 +1,10 @@
 import isEqual from 'lodash/isEqual'
 import { v4 as uuid } from 'uuid'
-import { Course, instantiateCourse } from '@/schemas/KnowledgeCheck'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
+import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type CourseState = Course & {

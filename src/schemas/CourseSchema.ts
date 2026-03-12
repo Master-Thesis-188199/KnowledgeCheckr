@@ -4,8 +4,8 @@ import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { CourseSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 
 export const CourseSchema = z

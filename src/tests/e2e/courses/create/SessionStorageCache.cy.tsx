@@ -1,5 +1,5 @@
 import { addHours } from 'date-fns'
-import { Course, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
+import { Course, safeParseCourse } from '@/src/schemas/CourseSchema'
 
 describe('SessionStorageCache', () => {
   beforeEach(() => {
