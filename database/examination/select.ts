@@ -19,7 +19,7 @@ export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'
 export async function getExaminationAttemptById(attemptId: typeof db_userHasDoneCourse.$inferSelect.id, options?: DatabaseOptions) {
   const db = await getDatabase()
 
-  const [attempt] = await db.query.db_userHasDoneKnowledgeCheck.findMany({
+  const [attempt] = await db.query.db_userHasDoneCourse.findMany({
     columns: {
       knowledgeCheckId: false,
       userId: false,
@@ -38,7 +38,7 @@ export async function getExaminationAttemptById(attemptId: typeof db_userHasDone
 export async function getKnowledgeCheckExaminationAttempts(courseId: Course['id'], options?: DatabaseOptions) {
   const db = await getDatabase()
 
-  const userAttempts = await db.query.db_userHasDoneKnowledgeCheck.findMany({
+  const userAttempts = await db.query.db_userHasDoneCourse.findMany({
     columns: {
       knowledgeCheckId: false,
       userId: false,
