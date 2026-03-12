@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import insertCourse from '@/database/course/insert'
 import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck, db_user } from '@/database/drizzle/schema'
+import { db_course, db_user } from '@/database/drizzle/schema'
 import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
 import { Course, instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
@@ -23,7 +23,7 @@ describe('Validate the order of inserted database elements', () => {
     const dummyCheck = Object.assign(instantiateCourse({ validate: true }), { owner_id: testUser.id })
     await insertCourse(dummyCheck)
 
-    const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)
+    const [{ id }] = await db.select().from(db_course).where(eq(db_course.id, dummyCheck.id)).limit(1)
     expect(id).toBe(dummyCheck.id)
 
     const retrieved = await getCourseById(dummyCheck.id)

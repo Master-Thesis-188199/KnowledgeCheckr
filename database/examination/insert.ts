@@ -1,7 +1,7 @@
 'use server'
 
 import getDatabase from '@/database/Database'
-import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
+import { db_userHasDoneCourse } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
@@ -14,7 +14,7 @@ export default async function insertExaminationResults(examinationResult: Examin
   const db = await getDatabase()
 
   try {
-    await db.insert(db_userHasDoneKnowledgeCheck).values({
+    await db.insert(db_userHasDoneCourse).values({
       userId: user.id,
       knowledgeCheckId: examinationResult.knowledgeCheck.id,
       startedAt: formatDatetime(examinationResult.startedAt),

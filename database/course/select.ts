@@ -2,7 +2,7 @@
 
 import { User } from 'better-auth'
 import { getCourses } from '@/database/course/query'
-import { db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_course } from '@/database/drizzle/schema'
 import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/KnowledgeCheck'
@@ -54,7 +54,7 @@ export async function getCourseByShareToken(token: string) {
   return courses.at(0)
 }
 
-export async function getPublicCourses({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
+export async function getPublicCourses({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_course> } = {}) {
   await requireAuthentication()
 
   const courses = await getCourses({

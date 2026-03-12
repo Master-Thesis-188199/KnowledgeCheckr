@@ -2,7 +2,7 @@
 
 import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_course } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
@@ -13,6 +13,6 @@ export async function removeCourse({ courseId }: { courseId: Course['id'] }) {
 
   const db = await getDatabase()
 
-  const result = await db.delete(db_knowledgeCheck).where(and(eq(db_knowledgeCheck.id, courseId), eq(db_knowledgeCheck.owner_id, userId)))
+  const result = await db.delete(db_course).where(and(eq(db_course.id, courseId), eq(db_course.owner_id, userId)))
   return result[0].affectedRows > 0
 }

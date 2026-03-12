@@ -2,7 +2,7 @@ import { User } from 'better-auth'
 import { and, eq } from 'drizzle-orm'
 import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
-import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
+import { db_userHasDoneCourse } from '@/database/drizzle/schema'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
 export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], courseId: Course['id']) {
@@ -10,13 +10,13 @@ export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'
 
   const attempts = await db
     .select()
-    .from(db_userHasDoneKnowledgeCheck)
-    .where(and(eq(db_userHasDoneKnowledgeCheck.userId, userId), eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, courseId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')))
+    .from(db_userHasDoneCourse)
+    .where(and(eq(db_userHasDoneCourse.userId, userId), eq(db_userHasDoneCourse.knowledgeCheckId, courseId), eq(db_userHasDoneCourse.type, 'examination')))
 
   return attempts
 }
 
-export async function getExaminationAttemptById(attemptId: typeof db_userHasDoneKnowledgeCheck.$inferSelect.id, options?: DatabaseOptions) {
+export async function getExaminationAttemptById(attemptId: typeof db_userHasDoneCourse.$inferSelect.id, options?: DatabaseOptions) {
   const db = await getDatabase()
 
   const [attempt] = await db.query.db_userHasDoneKnowledgeCheck.findMany({
@@ -27,7 +27,7 @@ export async function getExaminationAttemptById(attemptId: typeof db_userHasDone
     with: {
       user: true,
     },
-    where: eq(db_userHasDoneKnowledgeCheck.id, attemptId),
+    where: eq(db_userHasDoneCourse.id, attemptId),
     limit: options?.limit ?? 100,
     offset: options?.offset ?? 0,
   })
@@ -46,7 +46,7 @@ export async function getKnowledgeCheckExaminationAttempts(courseId: Course['id'
     with: {
       user: true,
     },
-    where: and(eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, courseId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')),
+    where: and(eq(db_userHasDoneCourse.knowledgeCheckId, courseId), eq(db_userHasDoneCourse.type, 'examination')),
     limit: options?.limit ?? 100,
     offset: options?.offset ?? 0,
   })

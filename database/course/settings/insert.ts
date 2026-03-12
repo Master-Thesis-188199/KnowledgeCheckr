@@ -2,7 +2,7 @@
 
 import { convertSettings } from '@/database/course/settings/transform'
 import { DrizzleDB } from '@/database/Database'
-import { db_knowledgeCheckSettings } from '@/database/drizzle/schema'
+import { db_courseSettings } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
@@ -12,7 +12,7 @@ export default async function insertKnowledgeCheckSettings(db: DrizzleDB, { id, 
   const dbSettings = convertSettings('to-database', settings)
 
   const [{ id: insertId }] = await db
-    .insert(db_knowledgeCheckSettings)
+    .insert(db_courseSettings)
     .values({
       knowledgecheckId: id,
       ...dbSettings,

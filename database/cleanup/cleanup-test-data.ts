@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 import { eq } from 'drizzle-orm'
 import deleteUser from '@/database/cleanup/deleteUser'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck, db_user } from '@/database/drizzle/schema'
+import { db_course, db_user } from '@/database/drizzle/schema'
 
 dotenv.config()
 
@@ -24,7 +24,7 @@ async function cleanupTestData() {
     process.exit(1)
   }
 
-  await db.delete(db_knowledgeCheck).where(eq(db_knowledgeCheck.owner_id, users.at(0)!.userId))
+  await db.delete(db_course).where(eq(db_course.owner_id, users.at(0)!.userId))
 
   console.log(`Deleted all KnowledgeChecks created by the test-user with the email ${testEmail}`)
 

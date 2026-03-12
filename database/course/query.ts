@@ -50,17 +50,17 @@ const courseWithAllConfig = {
 } as const satisfies CourseWith
 
 type Tables = ExtractTablesWithRelations<DrizzleSchema>
-type CourseTable = Tables['db_knowledgeCheck']
+type CourseTable = Tables['db_course']
 type CourseWith = DBQueryConfig<'one' | 'many', boolean, Tables, CourseTable>['with']
 
-type CourseTableConfig = Tables['db_knowledgeCheck']
+type CourseTableConfig = Tables['db_course']
 
 export type CourseWithAll = BuildQueryResult<Tables, CourseTableConfig, { with: typeof courseWithAllConfig }>
 
 export async function getCourses({ limit = 10, offset, ...filterBundle }: {} & CourseFilterBundle & DatabaseOptions = {}): Promise<Course[]> {
   const db = await getDatabase()
 
-  const courses = await db.query.db_knowledgeCheck.findMany({
+  const courses = await db.query.db_course.findMany({
     where: buildCourseWhere(db, filterBundle),
     with: courseWithAllConfig,
     orderBy: (kc, { desc }) => [desc(kc.updatedAt)],

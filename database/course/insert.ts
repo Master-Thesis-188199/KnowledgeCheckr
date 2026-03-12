@@ -6,7 +6,7 @@ import { insertCollaboratorsToKnowledgeCheck } from '@/database/course/collabora
 import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
 import insertKnowledgeCheckSettings from '@/database/course/settings/insert'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_course } from '@/database/drizzle/schema'
 import { Course } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
@@ -21,7 +21,7 @@ export default async function insertCourse(course: Course) {
   await db.transaction(async (transaction) => {
     try {
       const [{ id }] = await transaction
-        .insert(db_knowledgeCheck)
+        .insert(db_course)
         .values({
           id: course.id,
           name: course.name,
@@ -59,5 +59,5 @@ export async function storeCourseShareToken(check_id: Course['id'], token: strin
   await requireAuthentication()
   const db = await getDatabase()
 
-  await db.update(db_knowledgeCheck).set({ share_key: token }).where(eq(db_knowledgeCheck.id, check_id))
+  await db.update(db_course).set({ share_key: token }).where(eq(db_course.id, check_id))
 }

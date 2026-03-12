@@ -1,16 +1,16 @@
 import { SQL } from 'drizzle-orm'
 import { DrizzleDB } from '@/database/Database'
-import { db_answer, db_category, db_knowledgeCheck, db_knowledgeCheckSettings, db_question } from '@/database/drizzle'
+import { db_answer, db_category, db_course, db_courseSettings, db_question } from '@/database/drizzle'
 import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import existsAnswerForKnowledgeCheck from '@/database/utils/existsAnswerForKnowledgeCheck'
 import existsByFk from '@/database/utils/existsByFK'
 
 export type CourseFilterBundle = {
   /** Filters on the root KnowledgeCheck table. */
-  baseFilter?: TableFilters<typeof db_knowledgeCheck>
+  baseFilter?: TableFilters<typeof db_course>
 
   /** Filters checks by requiring that the associated settings entry satisfies the filter  */
-  settingsFilter?: TableFilters<typeof db_knowledgeCheckSettings>
+  settingsFilter?: TableFilters<typeof db_courseSettings>
 
   /** Filters checks by requiring at least one matching category  */
   categoriesFilter?: TableFilters<typeof db_category>
@@ -22,7 +22,7 @@ export type CourseFilterBundle = {
   answersFilter?: TableFilters<typeof db_answer>
 }
 
-type CourseFindManyArg = NonNullable<Parameters<DrizzleDB['query']['db_knowledgeCheck']['findMany']>[0]>
+type CourseFindManyArg = NonNullable<Parameters<DrizzleDB['query']['db_course']['findMany']>[0]>
 type CourseWhereFn = Exclude<CourseFindManyArg['where'], SQL | undefined>
 
 /**
@@ -54,11 +54,11 @@ export default function buildCourseWhere(db: DrizzleDB, filters?: CourseFilterBu
   return (kc, { and }) => {
     const predicates: SQL[] = []
 
-    const rootWhere = buildWhere(db_knowledgeCheck, filters?.baseFilter)
+    const rootWhere = buildWhere(db_course, filters?.baseFilter)
     if (rootWhere) predicates.push(rootWhere)
 
     const settingsExists = existsByFk(db, {
-      childTable: db_knowledgeCheckSettings,
+      childTable: db_courseSettings,
       aliasName: 'kcs',
       childFk: (t) => t.knowledgecheckId,
       parentPk: kc.id,

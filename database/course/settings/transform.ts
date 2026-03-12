@@ -1,5 +1,5 @@
 import 'server-only'
-import { db_knowledgeCheckSettings } from '@/database/drizzle'
+import { db_courseSettings } from '@/database/drizzle'
 import _logger from '@/src/lib/log/Logger'
 import { CourseSettings, CourseSettingsSchema, instantiateCourseSettings, safeParseCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
@@ -7,13 +7,13 @@ import { Any } from '@/types'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export function convertSettings(direction: 'to-database', settings: CourseSettings): Omit<typeof db_knowledgeCheckSettings.$inferInsert, 'knowledgecheckId'>
-export function convertSettings(direction: 'from-database', settings: Omit<typeof db_knowledgeCheckSettings.$inferSelect, 'knowledgecheckId'> | null): CourseSettings | undefined
-export function convertSettings(direction: 'to-database' | 'from-database', settings: CourseSettings | Omit<typeof db_knowledgeCheckSettings.$inferSelect, 'knowledgecheckId'> | null) {
+export function convertSettings(direction: 'to-database', settings: CourseSettings): Omit<typeof db_courseSettings.$inferInsert, 'knowledgecheckId'>
+export function convertSettings(direction: 'from-database', settings: Omit<typeof db_courseSettings.$inferSelect, 'knowledgecheckId'> | null): CourseSettings | undefined
+export function convertSettings(direction: 'to-database' | 'from-database', settings: CourseSettings | Omit<typeof db_courseSettings.$inferSelect, 'knowledgecheckId'> | null) {
   return direction === 'from-database' ? convertFromDatabase(settings as Any) : convertToDatabase(settings as Any)
 }
 
-function convertFromDatabase(settings: Omit<typeof db_knowledgeCheckSettings.$inferSelect, 'knowledgecheckId'> | null): CourseSettings | undefined {
+function convertFromDatabase(settings: Omit<typeof db_courseSettings.$inferSelect, 'knowledgecheckId'> | null): CourseSettings | undefined {
   if (settings === null) {
     logger.warn('Check has not settings (null) returning instantiated settings object.')
     return instantiateCourseSettings()
@@ -46,8 +46,8 @@ function convertFromDatabase(settings: Omit<typeof db_knowledgeCheckSettings.$in
   return parseResult.data
 }
 
-function convertToDatabase(settings: CourseSettings): Omit<typeof db_knowledgeCheckSettings.$inferInsert, 'knowledgecheckId'> {
-  const convertToDatabase = createConvertToDatabase(CourseSettingsSchema, db_knowledgeCheckSettings)
+function convertToDatabase(settings: CourseSettings): Omit<typeof db_courseSettings.$inferInsert, 'knowledgecheckId'> {
+  const convertToDatabase = createConvertToDatabase(CourseSettingsSchema, db_courseSettings)
 
   return convertToDatabase(settings)
 }

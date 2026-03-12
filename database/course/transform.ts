@@ -1,8 +1,8 @@
-import { db_knowledgeCheck } from '@/database/drizzle/schema'
+import { db_course } from '@/database/drizzle/schema'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export function convertToDatabaseCourse(course: Course): typeof db_knowledgeCheck.$inferInsert {
+export function convertToDatabaseCourse(course: Course): typeof db_course.$inferInsert {
   return {
     ...course,
     openDate: formatDatetime(course.openDate),

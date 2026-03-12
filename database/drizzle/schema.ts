@@ -97,7 +97,7 @@ export const db_category = mysqlTable(
     index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_Category_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -113,7 +113,7 @@ export const db_category = mysqlTable(
   ],
 )
 
-export const db_knowledgeCheck = mysqlTable(
+export const db_course = mysqlTable(
   'KnowledgeCheck',
   {
     id: primaryKeyUUID,
@@ -148,7 +148,7 @@ export const db_knowledgeCheck = mysqlTable(
   ],
 )
 
-export const db_knowledgeCheckSettings = mysqlTable(
+export const db_courseSettings = mysqlTable(
   'KnowledgeCheck_Settings',
   {
     id: primaryKeyUUID,
@@ -189,7 +189,7 @@ export const db_knowledgeCheckSettings = mysqlTable(
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_KnowledgeCheck_Settings_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -234,7 +234,7 @@ export const db_question = mysqlTable(
       .onUpdate('no action'),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_Question_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -277,7 +277,7 @@ export const db_user = mysqlTable('User', {
   isAnonymous: boolean(),
 })
 
-export const db_userContributesToKnowledgeCheck = mysqlTable(
+export const db_userContributesToCourse = mysqlTable(
   'User_contributesTo_KnowledgeCheck',
   {
     userId: varchar('user_id', { length: 36 }).notNull(),
@@ -296,7 +296,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
       .onUpdate('cascade'),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -304,7 +304,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
   ],
 )
 
-export const db_userHasDoneKnowledgeCheck = mysqlTable(
+export const db_userHasDoneCourse = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
@@ -329,7 +329,7 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
       .onUpdate('no action'),
     foreignKey({
       columns: [table.knowledgeCheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck2',
     })
       .onDelete('cascade')
