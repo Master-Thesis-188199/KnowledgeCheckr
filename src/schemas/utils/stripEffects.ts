@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment,@typescript-eslint/no-explicit-any */
 import { z } from 'zod'
+import { Any } from '@/types'
 
 type StripOptions = {
   /** Remove only refinements/transforms (effects), or also drop built-in checks like .min/.max/.regex */
@@ -172,18 +173,17 @@ export function stripEffects<T extends z.ZodTypeAny>(schema: T, opts: StripOptio
     if (type === 'array') {
       const def = getDef(s)
       const element = (s as any).element ?? def?.element ?? def?.items
+      let out = z.array(go(element))
 
-      if (strip === 'effects-only') {
-        const out = z.array(go(element))
-        // todo re-apply non-effects like (min, max) note that def.checks includes refinments as `type: 'custom'`
-        // for (const check of def?.checks ?? []) out = out.check(check)
-
-        console.warn('Warning stripping all checks and effects from array.')
+      if (strip !== 'all') {
+        // re-apply default and catch value is they exist
+        if (def?.defaultValue) out = out.default(def.defaultValue) as Any
+        if (def?.catch) out = out.catch(def.catch) as Any
 
         memo.set(s, out)
         return out
       }
-      const out = z.array(go(element))
+
       memo.set(s, out)
       return out
     }
