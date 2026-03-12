@@ -9,16 +9,16 @@ export type CourseFilterBundle = {
   /** Filters on the root KnowledgeCheck table. */
   baseFilter?: TableFilters<typeof db_course>
 
-  /** Filters checks by requiring that the associated settings entry satisfies the filter  */
+  /** Filters courses by requiring that the associated settings entry satisfies the filter  */
   settingsFilter?: TableFilters<typeof db_courseSettings>
 
-  /** Filters checks by requiring at least one matching category  */
+  /** Filters courses by requiring at least one matching category  */
   categoriesFilter?: TableFilters<typeof db_category>
 
-  /** Filters checks by requiring at least one matching question  */
+  /** Filters courses by requiring at least one matching question  */
   questionsFilter?: TableFilters<typeof db_question>
 
-  /** Filters checks by requiring at least one matching answer  */
+  /** Filters courses by requiring at least one matching answer  */
   answersFilter?: TableFilters<typeof db_answer>
 }
 
