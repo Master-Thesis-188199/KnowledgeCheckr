@@ -17,7 +17,7 @@ export interface CheckStoreProviderProps {
   options?: Required<Pick<StoreCachingOptions, 'cacheKey'>> & Partial<Omit<useStoreCachingOptions<CourseStore>, ''>>
 }
 
-export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'check-store' } }: CheckStoreProviderProps) {
+export function CheckStoreProvider({ children, initialStoreProps, options = { cacheKey: 'courses-store' } }: CheckStoreProviderProps) {
   const props = useZustandStore({
     caching: true,
     createStoreFunc: createCourseStore,

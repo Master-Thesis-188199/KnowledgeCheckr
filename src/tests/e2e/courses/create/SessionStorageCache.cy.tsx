@@ -12,14 +12,14 @@ describe('SessionStorageCache', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
     const DUMMY_NAME = 'Test Check'
 
-    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'check-store', 'Verify that check-store is not cached at the beginning')
+    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'courses-store', 'Verify that courses-store is not cached at the beginning')
 
     cy.get("input[name='name']").type(DUMMY_NAME)
 
     cy.wait(1000) // wait - debounce time before values are cached
     cy.getAllSessionStorage()
       .its(baseUrl)
-      .should('have.property', 'check-store')
+      .should('have.property', 'courses-store')
       .then((sessionCache) => {
         const cachedCheck: Course = JSON.parse(sessionCache.toString())
 
@@ -37,13 +37,13 @@ describe('SessionStorageCache', () => {
     const DUMMY_NAME = 'Test Check'
     const CACHE_EXPIRATION_HOURS = 5
 
-    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'check-store', 'Verify that check-store is not cached at the beginning')
+    cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'courses-store', 'Verify that courses-store is not cached at the beginning')
     cy.get("input[name='name']").type(DUMMY_NAME)
 
     cy.wait(1000) // wait - debounce time before values are cached
     cy.getAllSessionStorage()
       .its(baseUrl)
-      .should('have.property', 'check-store')
+      .should('have.property', 'courses-store')
       .then((sessionCache) => {
         const cachedCheck: Course = JSON.parse(sessionCache.toString())
 
@@ -60,7 +60,7 @@ describe('SessionStorageCache', () => {
 
     cy.getAllSessionStorage().then((storage) => {
       const sessionCache = storage[baseUrl] ?? {}
-      expect(sessionCache, "Expect session-storage to not include 'check-store' entry").not.haveOwnProperty('check-store')
+      expect(sessionCache, "Expect session-storage to not include 'courses-store' entry").not.haveOwnProperty('courses-store')
     })
   })
 })

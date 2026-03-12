@@ -24,7 +24,7 @@ export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string;
 
     saveAction({ check: safeParse.data, callbackPath: callbackPath ?? '/courses' }).catch((e) => {
       if (isRedirectError(e)) {
-        const key = cacheKey ?? 'check-store'
+        const key = cacheKey ?? 'courses-store'
         const hasCache = !!sessionStorage.getItem(key)
 
         const stagesKey = 'create-check-stages'
