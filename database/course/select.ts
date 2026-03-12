@@ -1,16 +1,16 @@
 'use server'
 
 import { User } from 'better-auth'
+import { getCourses } from '@/database/course/query'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
-import { getKnowledgeChecks } from '@/database/knowledgeCheck/query'
 import { TableFilters } from '@/database/utils/buildWhere'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
+export async function getCoursesByOwner(user_id: User['id'], { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {}) {
   await requireAuthentication()
 
-  const checks = await getKnowledgeChecks({
+  const courses = await getCourses({
     limit,
     offset,
     baseFilter: {
@@ -21,13 +21,13 @@ export async function getKnowledgeChecksByOwner(user_id: User['id'], { limit = 1
     },
   })
 
-  return checks
+  return courses
 }
 
-export async function getKnowledgeCheckById(id: Course['id']) {
+export async function getCourseById(id: Course['id']) {
   await requireAuthentication()
 
-  const checks = await getKnowledgeChecks({
+  const courses = await getCourses({
     limit: 1,
     baseFilter: {
       id: {
@@ -37,11 +37,11 @@ export async function getKnowledgeCheckById(id: Course['id']) {
     },
   })
 
-  return checks.at(0)
+  return courses.at(0)
 }
 
-export async function getKnowledgeCheckByShareToken(token: string) {
-  const checks = await getKnowledgeChecks({
+export async function getCourseByShareToken(token: string) {
+  const courses = await getCourses({
     limit: 1,
     baseFilter: {
       share_key: {
@@ -51,17 +51,17 @@ export async function getKnowledgeCheckByShareToken(token: string) {
     },
   })
 
-  return checks.at(0)
+  return courses.at(0)
 }
 
-export async function getPublicKnowledgeChecks({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
+export async function getPublicCourses({ limit = 10, offset = 0, filter }: { limit?: number; offset?: number; filter?: TableFilters<typeof db_knowledgeCheck> } = {}) {
   await requireAuthentication()
 
-  const checks = await getKnowledgeChecks({
+  const courses = await getCourses({
     limit,
     offset,
     baseFilter: filter,
   })
 
-  return checks
+  return courses
 }

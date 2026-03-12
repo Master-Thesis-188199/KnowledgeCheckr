@@ -5,7 +5,7 @@ import { isAfter } from 'date-fns/isAfter'
 import { isBefore } from 'date-fns/isBefore'
 import { ExternalLinkIcon } from 'lucide-react'
 import Link from 'next/link'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { getCourseByShareToken } from '@/database/course/select'
 import { useShareTokenFormContext } from '@/src/components/courses/start/ShareTokenFormContext'
 import { Button } from '@/src/components/shadcn/button'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
@@ -48,7 +48,7 @@ export default function ShareTokenOptions() {
 
     let aborted = false
 
-    getKnowledgeCheckByShareToken(token)
+    getCourseByShareToken(token)
       .then((check) => {
         if (aborted) return
 

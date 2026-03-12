@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { InfoIcon, Share2Icon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
-import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
+import { storeCourseShareToken } from '@/database/course/insert'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { generateToken } from '@/src/lib/Shared/generateToken'
@@ -50,7 +50,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Course;
           }
 
           const token = generateToken()
-          storeKnowledgeCheckShareToken(check.id, token)
+          storeCourseShareToken(check.id, token)
             .then(() => {
               navigator.clipboard
                 .writeText(`${window.location.origin}/courses/${token}/practice`)

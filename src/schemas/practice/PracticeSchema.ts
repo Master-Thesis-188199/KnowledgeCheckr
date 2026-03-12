@@ -7,7 +7,7 @@ import { stripEffects } from '@/src/schemas/utils/stripEffects'
 import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
 
 export const PracticeSchema = z.object({
-  checkId: stripZodDefault(stripEffects(CourseSchema)).shape.id,
+  courseId: stripZodDefault(stripEffects(CourseSchema)).shape.id,
   startedAt: StringDate,
   score: z.number().default(0),
   questions: stripZodDefault(stripEffects(CourseSchema)).shape.questions.default([]),

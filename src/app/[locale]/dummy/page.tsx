@@ -1,4 +1,4 @@
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import insertCourse from '@/database/course/insert'
 import { Button } from '@/src/components/shadcn/button'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
@@ -135,5 +135,5 @@ async function createPracticeCheck() {
   ]
 
   logger.info('Inserting new check...')
-  await insertKnowledgeCheck(check) //.then(() => redirect('/courses'))
+  await insertCourse(check) //.then(() => redirect('/courses'))
 }

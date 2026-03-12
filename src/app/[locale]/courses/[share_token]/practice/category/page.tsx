@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { getCourseByShareToken } from '@/database/course/select'
 import { PracticeCategorySelection } from '@/src/components/courses/[share_token]/practice/PracticeCategorySelection'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
 export default async function PracticeCategoryPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
 
-  const check = await getKnowledgeCheckByShareToken(share_token)
+  const check = await getCourseByShareToken(share_token)
 
   if (!check) {
     notFound()

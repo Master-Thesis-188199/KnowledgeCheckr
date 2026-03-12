@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import insertCourse from '@/database/course/insert'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { safeParseCourse } from '@/src/schemas/KnowledgeCheck'
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const { success, error, data: check } = safeParseCourse(Object.assign(body, { owner_id: user.id }))
   if (!success) return NextResponse.json({ message: 'Please provide a valid knowledgecheck instance!', errors: error, timestamp: Date.now() }, { status: 400 })
 
-  await insertKnowledgeCheck(check)
+  await insertCourse(check)
 
   return NextResponse.json({ success: true }, { status: 200 })
 }

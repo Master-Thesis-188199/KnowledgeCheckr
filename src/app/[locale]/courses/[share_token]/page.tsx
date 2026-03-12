@@ -1,6 +1,6 @@
 import { notFound, redirect, RedirectType } from 'next/navigation'
+import { getCourseByShareToken } from '@/database/course/select'
 import { getKnowledgeCheckUserExaminationAttempts } from '@/database/examination/select'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationStoreProvider } from '@/src/components/courses/[share_token]/ExaminationStoreProvider'
 import { ExamQuestionNavigationMenu } from '@/src/components/courses/[share_token]/ExamQuestionNavigationMenu'
 import { ExamQuestionWrapper } from '@/src/components/courses/[share_token]/ExamQuestionWrapper'
@@ -14,7 +14,7 @@ export default async function CheckPage({ params }: { params: Promise<{ share_to
   const { share_token } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getKnowledgeCheckByShareToken(share_token)
+  const check = await getCourseByShareToken(share_token)
 
   if (!check) {
     notFound()

@@ -5,7 +5,7 @@ import buildWhere, { TableFilters } from '@/database/utils/buildWhere'
 import existsAnswerForKnowledgeCheck from '@/database/utils/existsAnswerForKnowledgeCheck'
 import existsByFk from '@/database/utils/existsByFK'
 
-export type KnowledgeCheckFilterBundle = {
+export type CourseFilterBundle = {
   /** Filters on the root KnowledgeCheck table. */
   baseFilter?: TableFilters<typeof db_knowledgeCheck>
 
@@ -22,8 +22,8 @@ export type KnowledgeCheckFilterBundle = {
   answersFilter?: TableFilters<typeof db_answer>
 }
 
-type KCFindManyArg = NonNullable<Parameters<DrizzleDB['query']['db_knowledgeCheck']['findMany']>[0]>
-type KCWhereFn = Exclude<KCFindManyArg['where'], SQL | undefined>
+type CourseFindManyArg = NonNullable<Parameters<DrizzleDB['query']['db_knowledgeCheck']['findMany']>[0]>
+type CourseWhereFn = Exclude<CourseFindManyArg['where'], SQL | undefined>
 
 /**
  * This utility function is combine a knowledgeCheck filter-bundle that allows for easy but deeply nested filtering.
@@ -50,7 +50,7 @@ type KCWhereFn = Exclude<KCFindManyArg['where'], SQL | undefined>
  *
  * @returns A `where` callback compatible with `db.query.db_knowledgeCheck.findMany`.
  */
-export default function buildKnowledgeCheckWhere(db: DrizzleDB, filters?: KnowledgeCheckFilterBundle): KCWhereFn {
+export default function buildCourseWhere(db: DrizzleDB, filters?: CourseFilterBundle): CourseWhereFn {
   return (kc, { and }) => {
     const predicates: SQL[] = []
 

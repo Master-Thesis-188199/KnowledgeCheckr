@@ -21,7 +21,7 @@ export function PracticeStoreProvider({ children, initialStoreProps, options = {
     createStoreFunc: createPracticeStore,
     initialStoreProps,
     options: {
-      discardCache: (cache) => cache.checkId !== initialStoreProps?.checkId,
+      discardCache: (cache) => cache.courseId !== initialStoreProps?.courseId,
       ...options,
     },
   })

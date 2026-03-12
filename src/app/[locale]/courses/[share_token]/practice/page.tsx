@@ -1,5 +1,5 @@
 import { notFound, redirect, RedirectType } from 'next/navigation'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { getCourseByShareToken } from '@/database/course/select'
 import { PracticeNavigationNextButton, PracticeNavigationPreviousButton } from '@/src/components/courses/[share_token]/practice/NavigationButtons'
 import { PracticeBreadcrumbs } from '@/src/components/courses/[share_token]/practice/PracticeBreadcrumbs'
 import { PracticeProgress } from '@/src/components/courses/[share_token]/practice/PracticeProgress'
@@ -19,7 +19,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
   const { share_token } = await params
   const { category } = (await searchParams) ?? {}
 
-  const check = await getKnowledgeCheckByShareToken(share_token)
+  const check = await getCourseByShareToken(share_token)
 
   if (!check) {
     notFound()
@@ -64,7 +64,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
   }
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, checkId: check.id }} key={category}>
+    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: check.id }} key={category}>
       <PracticeBreadcrumbs className={cn('mb-2', categories.length === 1 && 'hidden')} share_token={share_token} categories={categories} selectedCategory={category} />
 
       <PageHeading title='Practice' />

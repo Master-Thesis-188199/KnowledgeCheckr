@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
+import { getPublicCourses } from '@/database/course/select'
 import DiscoverDynamicFilterFetcher from '@/src/components/courses/discover/DiscoverDynamicFilterFetcher'
 import { DiscoverFilterFields } from '@/src/components/courses/discover/DiscoverFilterFields'
 import DiscoverFilterOptionsContext from '@/src/components/courses/discover/DiscoverFilterOptionsProvider'
@@ -11,13 +11,13 @@ import { Course } from '@/src/schemas/KnowledgeCheck'
 
 export default async function BrowseChecksPage() {
   const t = await getScopedI18n('Checks.Discover')
-  const props: InfinityScrollFetcherProps<typeof getPublicKnowledgeChecks>['fetchProps'] = [
+  const props: InfinityScrollFetcherProps<typeof getPublicCourses>['fetchProps'] = [
     {
       limit: 10,
     },
   ]
 
-  const courses = await getPublicKnowledgeChecks.apply(null, props)
+  const courses = await getPublicCourses.apply(null, props)
 
   return (
     <DiscoverFilterOptionsContext defaultProps={props[0]}>

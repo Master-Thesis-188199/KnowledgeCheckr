@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals'
 import { eq } from 'drizzle-orm'
+import insertCourse from '@/database/course/insert'
+import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
 import { db_user } from '@/database/drizzle/schema'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { instantiateMultipleChoice, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
@@ -31,10 +31,10 @@ describe('Category Insertion / Retrieval Suite: ', () => {
       dummyCheck.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
     }
 
-    await insertKnowledgeCheck(dummyCheck)
+    await insertCourse(dummyCheck)
 
     //* Ensure category was inserted and retrieved correctly
-    const check = await getKnowledgeCheckById(dummyCheck.id)
+    const check = await getCourseById(dummyCheck.id)
     expect(check?.questionCategories).toEqual(expect.arrayContaining(dummyCheck?.questionCategories))
   })
 

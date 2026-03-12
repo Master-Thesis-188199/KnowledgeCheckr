@@ -6,13 +6,13 @@ import { Course } from '@/src/schemas/KnowledgeCheck'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports
 import { Any } from '@/types'
 
-export async function insertQuestionCategories(db: DrizzleDB | undefined, checkId: Course['id'], categories: Course['questionCategories']) {
+export async function insertQuestionCategories(db: DrizzleDB | undefined, courseId: Course['id'], categories: Course['questionCategories']) {
   if (!db) db = await getDatabase()
 
   const insertedCategories: Awaited<ReturnType<typeof insertCategory>>[] = []
 
   for (const category of categories) {
-    const insertion = await insertCategory(db, { ...category, knowledgecheckId: checkId })
+    const insertion = await insertCategory(db, { ...category, knowledgecheckId: courseId })
     insertedCategories.push(insertion)
   }
 

@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals'
 import { eq } from 'drizzle-orm'
+import insertCourse from '@/database/course/insert'
+import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck, db_user } from '@/database/drizzle/schema'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
 import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
-import { Course,instantiateCourse } from '@/src/schemas/KnowledgeCheck'
+import { Course, instantiateCourse } from '@/src/schemas/KnowledgeCheck'
 import { CourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
@@ -21,12 +21,12 @@ describe('Validate the order of inserted database elements', () => {
     expect(testUser).toBeDefined()
 
     const dummyCheck = Object.assign(instantiateCourse({ validate: true }), { owner_id: testUser.id })
-    await insertKnowledgeCheck(dummyCheck)
+    await insertCourse(dummyCheck)
 
     const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)
     expect(id).toBe(dummyCheck.id)
 
-    const retrieved = await getKnowledgeCheckById(dummyCheck.id)
+    const retrieved = await getCourseById(dummyCheck.id)
     expect(retrieved).toBeDefined()
 
     if (!retrieved) throw new Error('Retrieved knowledge check is undefined')

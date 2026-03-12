@@ -1,8 +1,8 @@
 'use server'
 
 import { forbidden, notFound } from 'next/navigation'
+import { getCourseByShareToken } from '@/database/course/select'
 import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
 import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
 import { QuestionScoresLineChartCard } from '@/src/components/charts/QuestionScoresLineChart'
@@ -28,7 +28,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   const { share_token } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getKnowledgeCheckByShareToken(share_token)
+  const check = await getCourseByShareToken(share_token)
 
   if (!check) notFound()
   if (!hasCollaborativePermissions(check, user.id)) forbidden()

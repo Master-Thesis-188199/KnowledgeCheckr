@@ -1,9 +1,9 @@
 'use client'
 
 import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
-import { getPublicKnowledgeChecks } from '@/database/knowledgeCheck/select'
+import { getPublicCourses } from '@/database/course/select'
 
-type Props = NonNullable<Parameters<typeof getPublicKnowledgeChecks>['0']>
+type Props = NonNullable<Parameters<typeof getPublicCourses>['0']>
 
 type DiscoverFilterContextProps = Props & {
   setFuncProps: Dispatch<SetStateAction<Props>>

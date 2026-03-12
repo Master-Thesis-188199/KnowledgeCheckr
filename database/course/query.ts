@@ -1,16 +1,16 @@
 import { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
+import { convertSettings } from '@/database/course/settings/transform'
+import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
-import { convertSettings } from '@/database/knowledgeCheck/settings/transform'
-import { DatabaseOptions } from '@/database/knowledgeCheck/type'
-import buildKnowledgeCheckWhere, { KnowledgeCheckFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
+import buildCourseWhere, { CourseFilterBundle } from '@/database/utils/buildKnowledgeCheckWhere'
 import { Course, safeParseCourse } from '@/src/schemas/KnowledgeCheck'
-import { CourseSettings,instantiateCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettings, instantiateCourseSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
 //* joins the knowledgeCheck table with the following tables and aggregates the results: `Settings`, `Questions`, `Answers` and `Category`
-const knowledgeCheckWithAllConfig = {
+const courseWithAllConfig = {
   userContributesToKnowledgeChecks: {
     columns: {
       knowledgecheckId: false,
@@ -47,31 +47,31 @@ const knowledgeCheckWithAllConfig = {
       },
     },
   },
-} as const satisfies KcWith
+} as const satisfies CourseWith
 
 type Tables = ExtractTablesWithRelations<DrizzleSchema>
-type KcTable = Tables['db_knowledgeCheck']
-type KcWith = DBQueryConfig<'one' | 'many', boolean, Tables, KcTable>['with']
+type CourseTable = Tables['db_knowledgeCheck']
+type CourseWith = DBQueryConfig<'one' | 'many', boolean, Tables, CourseTable>['with']
 
-type KnowledgeCheckTableConfig = Tables['db_knowledgeCheck']
+type CourseTableConfig = Tables['db_knowledgeCheck']
 
-export type KnowledgeCheckWithAll = BuildQueryResult<Tables, KnowledgeCheckTableConfig, { with: typeof knowledgeCheckWithAllConfig }>
+export type CourseWithAll = BuildQueryResult<Tables, CourseTableConfig, { with: typeof courseWithAllConfig }>
 
-export async function getKnowledgeChecks({ limit = 10, offset, ...filterBundle }: {} & KnowledgeCheckFilterBundle & DatabaseOptions = {}): Promise<Course[]> {
+export async function getCourses({ limit = 10, offset, ...filterBundle }: {} & CourseFilterBundle & DatabaseOptions = {}): Promise<Course[]> {
   const db = await getDatabase()
 
-  const checks = await db.query.db_knowledgeCheck.findMany({
-    where: buildKnowledgeCheckWhere(db, filterBundle),
-    with: knowledgeCheckWithAllConfig,
+  const courses = await db.query.db_knowledgeCheck.findMany({
+    where: buildCourseWhere(db, filterBundle),
+    with: courseWithAllConfig,
     orderBy: (kc, { desc }) => [desc(kc.updatedAt)],
     limit: limit,
     offset,
   })
 
-  return checks.map(parseCheck).filter((check) => check !== null)
+  return courses.map(parseCourse).filter((check) => check !== null)
 }
 
-function parseCheck({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: KnowledgeCheckWithAll): Course | null {
+function parseCourse({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...check }: CourseWithAll): Course | null {
   const result = safeParseCourse({
     ...check,
     collaborators: collaboratorIds.map((c) => c.userId),
@@ -84,19 +84,19 @@ function parseCheck({ questions, knowledgeCheckSettings: settings, categories, u
   })
 
   if (!result.success) {
-    console.error(`Failed to parse knowledgeCheck instance ${check.id} because: `, result.error)
+    console.error(`Failed to parse course instance ${check.id} because: `, result.error)
   }
 
   return result.data ?? null
 }
 
-function parseQuestion({ category, answers, ...question }: KnowledgeCheckWithAll['questions'][number]): Question {
+function parseQuestion({ category, answers, ...question }: CourseWithAll['questions'][number]): Question {
   return { ...question, type: question.type as Any, category: category.name, ...parseAnswers(question.type, answers) }
 }
 
 function parseAnswers(
   question_type: Question['type'],
-  answers: KnowledgeCheckWithAll['questions'][number]['answers'],
+  answers: CourseWithAll['questions'][number]['answers'],
 ): Pick<ChoiceQuestion, 'answers'> | Pick<OpenQuestion, 'expectation'> | Pick<DragDropQuestion, 'answers'> {
   switch (question_type) {
     case 'multiple-choice':
@@ -130,6 +130,6 @@ function parseAnswers(
   }
 }
 
-function parseSetting(setting: KnowledgeCheckWithAll['knowledgeCheckSettings']): CourseSettings {
+function parseSetting(setting: CourseWithAll['knowledgeCheckSettings']): CourseSettings {
   return convertSettings('from-database', setting) ?? instantiateCourseSettings()
 }

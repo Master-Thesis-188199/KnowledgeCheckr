@@ -5,9 +5,9 @@ import isEqual from 'lodash/isEqual'
 import toPairs from 'lodash/toPairs'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { redirect } from 'next/navigation'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
-import { updateKnowledgeCheck } from '@/database/knowledgeCheck/update'
+import insertCourse from '@/database/course/insert'
+import { getCourseById } from '@/database/course/select'
+import { updateCourse } from '@/database/course/update'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { Course } from '@/src/schemas/KnowledgeCheck'
@@ -22,19 +22,19 @@ export async function saveAction({ check: modifiedCheck, callbackPath }: { check
   await requireAuthentication()
 
   try {
-    const originCheck = await getKnowledgeCheckById(modifiedCheck.id)
+    const originCheck = await getCourseById(modifiedCheck.id)
     if (originCheck) {
       if (!isEqual(originCheck, modifiedCheck)) {
         const changes = differenceWith(toPairs(modifiedCheck), toPairs(originCheck), isEqual).map(([key, value]) => ({ key, value })) as LodashDifferences<Course>
 
         logger.info('Updating existing knowledge check -> changes', changes)
-        await updateKnowledgeCheck(modifiedCheck, changes)
+        await updateCourse(modifiedCheck, changes)
       } else {
         logger.info('Knowledge check is unchanged, skipping update')
       }
     } else {
       logger.info('Inserting new knowledge check', modifiedCheck)
-      await insertKnowledgeCheck(modifiedCheck)
+      await insertCourse(modifiedCheck)
     }
 
     redirect(callbackPath)

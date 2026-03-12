@@ -73,7 +73,7 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
               ...prev,
               results: exists ? prev.results.map((r) => (r.question_id === question.question_id ? question : r)) : prev.results.concat([question]),
             }
-            savePracticeResults({ knowledgeCheckId: update.checkId, results: update.results, startedAt: update.startedAt, score: 0 })
+            savePracticeResults({ knowledgeCheckId: update.courseId, results: update.results, startedAt: update.startedAt, score: 0 })
 
             return update
           }),

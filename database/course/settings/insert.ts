@@ -1,8 +1,8 @@
 'use server'
 
+import { convertSettings } from '@/database/course/settings/transform'
 import { DrizzleDB } from '@/database/Database'
 import { db_knowledgeCheckSettings } from '@/database/drizzle/schema'
-import { convertSettings } from '@/database/knowledgeCheck/settings/transform'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 

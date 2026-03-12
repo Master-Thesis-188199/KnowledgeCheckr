@@ -1,16 +1,16 @@
 import { eq } from 'drizzle-orm'
+import { getCategoriesByCheckId } from '@/database/course/catagories/select'
+import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
 import { DrizzleDB } from '@/database/Database'
 import { db_question } from '@/database/drizzle'
-import { getCategoriesByCheckId } from '@/database/knowledgeCheck/catagories/select'
-import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function updateQuestions(db: DrizzleDB, checkId: Course['id'], questions: Course['questions']) {
-  await db.delete(db_question).where(eq(db_question.knowledgecheckId, checkId))
+export async function updateQuestions(db: DrizzleDB, courseId: Course['id'], questions: Course['questions']) {
+  await db.delete(db_question).where(eq(db_question.knowledgecheckId, courseId))
 
   if (questions.length === 0) return
 
-  const categories = await getCategoriesByCheckId(checkId)
+  const categories = await getCategoriesByCheckId(courseId)
   const questionsWithCategoryIds = questions.map((q) => {
     const category = categories.find((c) => c.name === q.category)
 
@@ -18,5 +18,5 @@ export async function updateQuestions(db: DrizzleDB, checkId: Course['id'], ques
 
     return { ...q, categoryId: category.id }
   })
-  await insertKnowledgeCheckQuestions(db, questionsWithCategoryIds, checkId)
+  await insertKnowledgeCheckQuestions(db, questionsWithCategoryIds, courseId)
 }

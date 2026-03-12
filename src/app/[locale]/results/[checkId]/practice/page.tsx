@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
+import { getCourseById } from '@/database/course/select'
 import { QuestionCorrectnessPieChart } from '@/src/components/charts/QuestionCorrectnessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
 import { QuestionScorePlotCard } from '@/src/components/charts/QuestionScorePlot'
@@ -10,11 +10,11 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
-export default async function PracticeResultsPage({ params }: { params: Promise<{ checkId: string }> }) {
-  const { checkId } = await params
+export default async function PracticeResultsPage({ params }: { params: Promise<{ courseId: string }> }) {
+  const { courseId } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getKnowledgeCheckById(checkId)
+  const check = await getCourseById(courseId)
 
   if (!check) notFound()
   // todo verify that only the user that made a respective practice-attempt can view the attmept.

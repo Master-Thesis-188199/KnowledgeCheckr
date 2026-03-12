@@ -1,5 +1,5 @@
 import { forbidden, notFound } from 'next/navigation'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
+import { getCourseById } from '@/database/course/select'
 import { ConfigureKnowledgeCheck } from '@/src/components/courses/ConfigureKnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
@@ -7,7 +7,7 @@ export default async function CheckPage({ params }: { params: Promise<{ id: stri
   const { id } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getKnowledgeCheckById(id)
+  const check = await getCourseById(id)
 
   if (!check) {
     notFound()

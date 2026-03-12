@@ -1,5 +1,5 @@
 import { notFound, redirect, RedirectType } from 'next/navigation'
-import { getKnowledgeCheckByShareToken } from '@/database/knowledgeCheck/select'
+import { getCourseByShareToken } from '@/database/course/select'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -9,7 +9,7 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
   const { share_token } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getKnowledgeCheckByShareToken(share_token)
+  const check = await getCourseByShareToken(share_token)
 
   if (!check) notFound()
 

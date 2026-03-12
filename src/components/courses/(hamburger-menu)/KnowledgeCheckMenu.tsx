@@ -19,9 +19,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu'
-import { removeKnowledgeCheck } from '@/database/knowledgeCheck/delete'
-import { storeKnowledgeCheckShareToken } from '@/database/knowledgeCheck/insert'
-import { updateKnowledgeCheckShareToken } from '@/database/knowledgeCheck/update'
+import { removeCourse } from '@/database/course/delete'
+import { storeCourseShareToken } from '@/database/course/insert'
+import { updateCourseShareToken } from '@/database/course/update'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { TooltipProps } from '@/src/components/Shared/Tooltip'
 import { useScopedI18n } from '@/src/i18n/client-localization'
@@ -62,7 +62,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
     }
 
     const token = generateToken()
-    storeKnowledgeCheckShareToken(id, token)
+    storeCourseShareToken(id, token)
       .then(() => {
         router.refresh()
         callback(token)
@@ -154,7 +154,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
           body={t('remove_share_token.confirmation_dialog_body')}
           onConfirmSuccess={() => setMenuOpen(false)}
           confirmAction={() =>
-            updateKnowledgeCheckShareToken({ checkId: id, token: null })
+            updateCourseShareToken({ courseId: id, token: null })
               .then((success) => {
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 
@@ -186,7 +186,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
           body={t('delete_knowledgeCheck.confirmation_dialog_body')}
           onConfirmSuccess={() => setMenuOpen(false)}
           confirmAction={() => {
-            removeKnowledgeCheck({ checkId: id })
+            removeCourse({ courseId: id })
               .then((success) => {
                 if (!success) return toast(t('Shared.toast_deletion_not_found'), { type: 'info' })
 

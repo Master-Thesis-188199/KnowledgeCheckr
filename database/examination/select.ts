@@ -1,17 +1,17 @@
 import { User } from 'better-auth'
 import { and, eq } from 'drizzle-orm'
+import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
 import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
-import { DatabaseOptions } from '@/database/knowledgeCheck/type'
 import { Course } from '@/src/schemas/KnowledgeCheck'
 
-export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], checkId: Course['id']) {
+export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], courseId: Course['id']) {
   const db = await getDatabase()
 
   const attempts = await db
     .select()
     .from(db_userHasDoneKnowledgeCheck)
-    .where(and(eq(db_userHasDoneKnowledgeCheck.userId, userId), eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, checkId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')))
+    .where(and(eq(db_userHasDoneKnowledgeCheck.userId, userId), eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, courseId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')))
 
   return attempts
 }
@@ -35,7 +35,7 @@ export async function getExaminationAttemptById(attemptId: typeof db_userHasDone
   return attempt as typeof attempt | undefined
 }
 
-export async function getKnowledgeCheckExaminationAttempts(checkId: Course['id'], options?: DatabaseOptions) {
+export async function getKnowledgeCheckExaminationAttempts(courseId: Course['id'], options?: DatabaseOptions) {
   const db = await getDatabase()
 
   const userAttempts = await db.query.db_userHasDoneKnowledgeCheck.findMany({
@@ -46,7 +46,7 @@ export async function getKnowledgeCheckExaminationAttempts(checkId: Course['id']
     with: {
       user: true,
     },
-    where: and(eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, checkId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')),
+    where: and(eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, courseId), eq(db_userHasDoneKnowledgeCheck.type, 'examination')),
     limit: options?.limit ?? 100,
     offset: options?.offset ?? 0,
   })

@@ -1,4 +1,4 @@
-import { DatabaseOptions } from '@/database/knowledgeCheck/type'
+import { DatabaseOptions } from '@/database/course/type'
 import { InfiniteScrollProvider, InfinityScrollFetcher, InfinityScrollRenderer } from '@/src/components/Shared/InfiniteScroll'
 import { Any } from '@/types'
 

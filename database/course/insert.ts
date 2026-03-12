@@ -1,12 +1,12 @@
 'use server'
 
 import { eq } from 'drizzle-orm'
+import { insertQuestionCategories } from '@/database/course/catagories/insert'
+import { insertCollaboratorsToKnowledgeCheck } from '@/database/course/collaborators/insert'
+import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
+import insertKnowledgeCheckSettings from '@/database/course/settings/insert'
 import getDatabase from '@/database/Database'
 import { db_knowledgeCheck } from '@/database/drizzle/schema'
-import { insertQuestionCategories } from '@/database/knowledgeCheck/catagories/insert'
-import { insertCollaboratorsToKnowledgeCheck } from '@/database/knowledgeCheck/collaborators/insert'
-import insertKnowledgeCheckQuestions from '@/database/knowledgeCheck/questions/insert'
-import insertKnowledgeCheckSettings from '@/database/knowledgeCheck/settings/insert'
 import { Course } from '@/schemas/KnowledgeCheck'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
@@ -14,7 +14,7 @@ import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
-export default async function insertKnowledgeCheck(check: Course) {
+export default async function insertCourse(course: Course) {
   await requireAuthentication()
 
   const db = await getDatabase()
@@ -23,23 +23,23 @@ export default async function insertKnowledgeCheck(check: Course) {
       const [{ id }] = await transaction
         .insert(db_knowledgeCheck)
         .values({
-          id: check.id,
-          name: check.name,
-          description: check.description,
-          difficulty: check.difficulty,
-          share_key: check.share_key,
-          owner_id: check.owner_id,
-          openDate: formatDatetime(check.openDate),
-          closeDate: check.closeDate ? formatDatetime(check.closeDate) : null,
+          id: course.id,
+          name: course.name,
+          description: course.description,
+          difficulty: course.difficulty,
+          share_key: course.share_key,
+          owner_id: course.owner_id,
+          openDate: formatDatetime(course.openDate),
+          closeDate: course.closeDate ? formatDatetime(course.closeDate) : null,
         })
         .$returningId()
 
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
-      await insertCollaboratorsToKnowledgeCheck(transaction, check.id, check.collaborators)
-      await insertKnowledgeCheckSettings(transaction, check)
-      const categories = await insertQuestionCategories(transaction, id, check.questionCategories)
-      const questionsWithCategoryIds = check.questions.map((q) => {
+      await insertCollaboratorsToKnowledgeCheck(transaction, course.id, course.collaborators)
+      await insertKnowledgeCheckSettings(transaction, course)
+      const categories = await insertQuestionCategories(transaction, id, course.questionCategories)
+      const questionsWithCategoryIds = course.questions.map((q) => {
         const category = categories.find((c) => c.name === q.category)
 
         if (!category) throw new Error(`Category "${q.category}" not found for question "${q.id}"`)
@@ -55,7 +55,7 @@ export default async function insertKnowledgeCheck(check: Course) {
   })
 }
 
-export async function storeKnowledgeCheckShareToken(check_id: Course['id'], token: string) {
+export async function storeCourseShareToken(check_id: Course['id'], token: string) {
   await requireAuthentication()
   const db = await getDatabase()
 
