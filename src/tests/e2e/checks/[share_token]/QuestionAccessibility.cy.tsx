@@ -32,8 +32,8 @@ describe('Accessibility of questions: ', () => {
 
         cy.insertKnowledgeCheck(dummyCheck)
 
-        const examUrl = `/checks/${dummyCheck.share_key}/`
-        const practiceUrl = `/checks/${dummyCheck.share_key}/practice`
+        const examUrl = `/courses/${dummyCheck.share_key}/`
+        const practiceUrl = `/courses/${dummyCheck.share_key}/practice`
 
         const url = page === 'practice' ? practiceUrl : examUrl
         cy.visit(url)

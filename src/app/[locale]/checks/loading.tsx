@@ -14,9 +14,9 @@ export default async function LoadingChecksPage() {
   return (
     <div>
       <GenericBreadcrumb />
-      <PageHeading title='Your Checks' showBreadcrumbs={false} />
+      <PageHeading title='Your Courses' showBreadcrumbs={false} />
 
-      <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
+      <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
         {dummyChecks.map((_, i) => (
           <KnowledgeCheckCardSkeleton key={i} />
         ))}

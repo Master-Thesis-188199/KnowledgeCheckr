@@ -7,23 +7,23 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
 export default async function ChecksPage() {
   const { user } = await requireAuthentication()
-  const checks = await getKnowledgeChecksByOwner(user.id)
+  const courses = await getKnowledgeChecksByOwner(user.id)
 
   const t = await getScopedI18n('Checks')
 
   return (
     <>
       <PageHeading title={t('title')} />
-      {checks.length === 0 && (
+      {courses.length === 0 && (
         <div className='flex gap-2'>
           {t('no_existing_checks')}
-          <Link href='/checks/create' className='text-blue-500 underline dark:text-blue-500'>
+          <Link href='/courses/create' className='text-blue-500 underline dark:text-blue-500'>
             {t('no_existing_checks_action_button')}
           </Link>
         </div>
       )}
 
-      <InfiniteKnowledgeCheckGrid initialItems={checks} fetchItems={getKnowledgeChecksByOwner} fetchProps={[user.id, { limit: 10 }]} />
+      <InfiniteKnowledgeCheckGrid initialItems={courses} fetchItems={getKnowledgeChecksByOwner} fetchProps={[user.id, { limit: 10 }]} />
     </>
   )
 }

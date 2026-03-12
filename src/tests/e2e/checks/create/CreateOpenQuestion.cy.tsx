@@ -3,7 +3,7 @@ import { OpenQuestion } from '@/src/schemas/QuestionSchema'
 describe('Check: Open Question -', () => {
   beforeEach(() => {
     cy.loginTestUser()
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
 
     //* Switch to questions-stage
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()

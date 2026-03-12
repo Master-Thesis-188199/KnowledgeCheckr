@@ -5,7 +5,7 @@ import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpen
 describe('Verify sharing of KnowledgeChecks', () => {
   it('Verify that notFound is displayed for invalid share-token', () => {
     cy.loginTestUser()
-    cy.visit('/checks/some-share-token')
+    cy.visit('/courses/some-share-token')
 
     cy.get('main').should('contain', 'This page could not be found')
   })
@@ -18,7 +18,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
     const dummyCheck: KnowledgeCheck = Object.assign(instantiateKnowledgeCheck(), { share_key: dummyShareToken } as Partial<KnowledgeCheck>)
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
 
-    cy.visit(`/checks/${dummyShareToken}`)
+    cy.visit(`/courses/${dummyShareToken}`)
     cy.get('main #page-heading').should('contain', dummyCheck.name)
     cy.get('nav[id="question-navigation"]').should('exist').children().should('have.length', dummyCheck.questions.length)
   })
@@ -33,7 +33,7 @@ describe('Verify sharing of KnowledgeChecks', () => {
     } as Partial<KnowledgeCheck>)
 
     cy.request({ url: '/api/insert/knowledgeCheck', method: 'POST', body: dummyCheck })
-    cy.visit('/checks', {
+    cy.visit('/courses', {
       onBeforeLoad: (win) => {
         cy.spy(win.navigator.clipboard, 'writeText').as('share-token-copied-to-clipboard')
       },
@@ -46,12 +46,12 @@ describe('Verify sharing of KnowledgeChecks', () => {
       .its('firstCall')
       .then((call) => {
         const shareLink = call.args[0] as string
-        expect(shareLink).to.match(new RegExp(`${Cypress.config().baseUrl}/checks/[A-Z0-9]{8}/practice`))
+        expect(shareLink).to.match(new RegExp(`${Cypress.config().baseUrl}/courses/[A-Z0-9]{8}/practice`))
 
         const token = shareLink.split('/').at(-2) as string
         expect(token).to.have.length(8)
 
-        cy.visit(`/checks/${token}`)
+        cy.visit(`/courses/${token}`)
       })
 
     cy.get('main  #page-heading').should('contain', dummyCheck.name)

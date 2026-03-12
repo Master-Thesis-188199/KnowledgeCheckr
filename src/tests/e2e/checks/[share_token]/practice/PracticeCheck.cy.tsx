@@ -86,12 +86,12 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
         check: { questions },
       } = insertKnowledgeCheck(question)
 
-      cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/courses/${share_key}/practice`)
 
       verifyQuestionIsDisplayedCorrectly(question, questions.length)
       cy.simulatePracticeSelection(question, { selection: selectionAnswerId })
 
-      cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
+      cy.intercept('POST', `/courses/${share_key}/practice`).as('submit-request')
       cy.get('button').contains('Check Answer').click()
 
       validateFeedback<typeof question>('@submit-request', (feedback) => {
@@ -136,13 +136,13 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const selectedAnswerIds = question.answers.filter((a) => (type === 'correct' ? a.correct : !a.correct)).map((a) => a.id)
 
-      cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/courses/${share_key}/practice`)
 
       verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
       cy.simulatePracticeSelection(question, { selection: selectedAnswerIds })
 
-      cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
+      cy.intercept('POST', `/courses/${share_key}/practice`).as('submit-request')
       cy.get('button').contains('Check Answer').click()
 
       validateFeedback<typeof question>('@submit-request', (feedback) => {
@@ -188,13 +188,13 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
         check: { questions },
       } = insertKnowledgeCheck(question)
 
-      cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/courses/${share_key}/practice`)
 
       verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
       cy.simulatePracticeSelection(question, { selection: selectedAnswerIds })
 
-      cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
+      cy.intercept('POST', `/courses/${share_key}/practice`).as('submit-request')
       cy.get('button').contains('Check Answer').click()
 
       validateFeedback<typeof question>('@submit-request', (feedback) => {
@@ -223,13 +223,13 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
         check: { questions },
       } = insertKnowledgeCheck(question)
 
-      cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/courses/${share_key}/practice`)
 
       verifyQuestionIsDisplayedCorrectly(question, questions.length)
 
       cy.simulatePracticeSelection(question, { input: type === 'correct' ? 'correct' : 'wrong' })
 
-      cy.intercept('POST', `/checks/${share_key}/practice`).as('submit-request')
+      cy.intercept('POST', `/courses/${share_key}/practice`).as('submit-request')
       cy.get('button').contains('Check Answer').click()
 
       validateFeedback<typeof question>('@submit-request', (feedback) => {
@@ -260,7 +260,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const { share_key } = insertKnowledgeCheck(...questions)
 
-      cy.visit(`/checks/${share_key}/practice`)
+      cy.visit(`/courses/${share_key}/practice`)
 
       for (let i = 0; i < questions.length; i++) {
         cy.get('#practice-form h2')
@@ -313,7 +313,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
             cy.simulatePracticeSelection(question, { ...answer })
 
-            cy.intercept('POST', `/checks/${share_key}/practice`).as(`submit-request-${question.type}`)
+            cy.intercept('POST', `/courses/${share_key}/practice`).as(`submit-request-${question.type}`)
             cy.log(`Checking answer for question-type: ${question.type}`)
             cy.get('button').contains('Check Answer').click()
 

@@ -22,12 +22,12 @@ describe('Anonymous User Authentication: ', () => {
   it('Ensure anonymous users can create KnowledgeChecks', () => {
     cy.loginAnonymously()
 
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
 
     cy.get('input[name="name"]').type('Example Anonymous Check')
 
     cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
-    cy.intercept('POST', `/checks/create`).as('create-server-action')
+    cy.intercept('POST', `/courses/create`).as('create-server-action')
     cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
 
     cy.wait('@create-server-action').then((interception) => {
@@ -44,12 +44,12 @@ describe('Anonymous User Authentication: ', () => {
     const CHECK_NAME = 'Example Anonymous Check'
     cy.loginAnonymously()
 
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
 
     cy.get('input[name="name"]').type(CHECK_NAME)
 
     cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
-    cy.intercept('POST', `/checks/create`).as('create-server-action')
+    cy.intercept('POST', `/courses/create`).as('create-server-action')
     cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
 
     cy.wait('@create-server-action').then((interception) => {
@@ -62,7 +62,7 @@ describe('Anonymous User Authentication: ', () => {
     })
 
     //* Safety-check that KnowledgeCheck was created and retrieved.
-    cy.visit('/checks')
+    cy.visit('/courses')
     cy.get('h2').contains(CHECK_NAME).should('exist').and('be.visible')
 
     cy.visit('/account')
@@ -80,7 +80,7 @@ describe('Anonymous User Authentication: ', () => {
     cy.get("img[aria-label='user avatar']").should('exist').should('be.visible')
     cy.get("img[aria-label='user avatar']").parent().children('div').contains('e2e').should('exist')
 
-    cy.visit('/checks')
+    cy.visit('/courses')
     cy.get('h2').contains(CHECK_NAME).should('exist').and('be.visible')
   })
 })

@@ -33,10 +33,10 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.insertKnowledgeCheck(dummyCheck)
 
-      cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+      cy.visit(`/courses/${dummyCheck.share_key}/practice`)
 
       //* ensure users are redirected when no selection is made but > 1 categories exist
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
 
       cy.get('#category-selection')
         .children()
@@ -45,7 +45,7 @@ describe('Verify selection of practice questions by category', () => {
       const selection = categorySelection === 'random' ? dummyCategories[Math.floor(Math.random() * dummyCategories.length)] : 'all'
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
       cy.get('#question-navigation')
         .children()
@@ -76,11 +76,11 @@ describe('Verify selection of practice questions by category', () => {
 
     cy.insertKnowledgeCheck(dummyCheck)
 
-    cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+    cy.visit(`/courses/${dummyCheck.share_key}/practice`)
 
     //* ensure users are NOT redirected to category selection when only 1 category exists
-    cy.url().should('not.eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
-    cy.url().should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice`)
+    cy.url().should('not.eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
+    cy.url().should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice`)
 
     cy.get('#question-navigation').children().should('have.length', dummyCheck.questions.length)
   })
@@ -109,9 +109,9 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.insertKnowledgeCheck(dummyCheck)
 
-      cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+      cy.visit(`/courses/${dummyCheck.share_key}/practice`)
 
-      cy.url().should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
+      cy.url().should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
 
       cy.get('#category-selection')
         .children()
@@ -121,7 +121,7 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
       cy.get('#question-navigation')
         .children()
@@ -150,7 +150,7 @@ describe('Verify selection of practice questions by category', () => {
         .should('exist')
         .click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${breadcrumbSelection === 'all' ? '_none_' : breadcrumbSelection}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${breadcrumbSelection === 'all' ? '_none_' : breadcrumbSelection}`)
       cy.wait(250)
 
       cy.get('#question-navigation')
@@ -182,10 +182,10 @@ describe('Verify selection of practice questions by category', () => {
 
     cy.insertKnowledgeCheck(dummyCheck)
 
-    cy.visit(`/checks/${dummyCheck.share_key}/practice`)
+    cy.visit(`/courses/${dummyCheck.share_key}/practice`)
 
     //* ensure users are redirected when no selection is made but > 1 categories exist
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice/category`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
 
     cy.get('#category-selection')
       .children()
@@ -194,7 +194,7 @@ describe('Verify selection of practice questions by category', () => {
     const randomSelection = dummyCategories[Math.floor(Math.random() * dummyCategories.length)]
     cy.get('#category-selection').children(`[data-category="${randomSelection}"]`).should('exist').click()
 
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${randomSelection}`)
 
     cy.get('#question-navigation')
       .children()
@@ -202,7 +202,7 @@ describe('Verify selection of practice questions by category', () => {
 
     cy.wait(500)
     cy.reload()
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/checks/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${randomSelection}`)
     cy.get('#question-navigation')
       .children()
       .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)

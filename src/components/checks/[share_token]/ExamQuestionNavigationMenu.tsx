@@ -32,7 +32,7 @@ export function ExamQuestionNavigationMenu({ className }: { className?: string }
                   toast('Successfully submitted examination results', { type: 'success' })
                   sessionStorage.removeItem('examination-store')
                   clearNavigationAbort()
-                  redirect('/checks', RedirectType.replace)
+                  redirect('/courses', RedirectType.replace)
                 })
             }
             start={startedAt}

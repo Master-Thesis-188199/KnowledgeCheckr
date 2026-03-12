@@ -31,7 +31,7 @@ export function PracticeCategorySelection({ questions, share_token }: { question
             'rounded-t-md bg-neutral-200 focus-visible:bg-neutral-300/80 dark:bg-neutral-700/50 dark:focus-visible:bg-neutral-700 hocus:bg-neutral-300/80 dark:hocus:bg-neutral-700',
           )}
           href={{
-            pathname: `/checks/${share_token}/practice`,
+            pathname: `/courses/${share_token}/practice`,
             query: { category: '_none_' },
           }}>
           Combine all category questions
@@ -42,7 +42,7 @@ export function PracticeCategorySelection({ questions, share_token }: { question
             data-category={category}
             className={optionClasses}
             href={{
-              pathname: `/checks/${share_token}/practice`,
+              pathname: `/courses/${share_token}/practice`,
               query: { category },
             }}>
             {category}

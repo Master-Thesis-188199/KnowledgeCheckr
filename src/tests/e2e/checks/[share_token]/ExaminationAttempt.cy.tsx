@@ -14,10 +14,10 @@ describe('ExaminationAttempt Suite: ', () => {
 
     cy.request('POST', '/api/insert/knowledgeCheck', check).should('have.property', 'status').and('eq', 200)
 
-    cy.visit(`/checks/${check.share_key}`)
+    cy.visit(`/courses/${check.share_key}`)
     cy.get('h1').contains(check.name).should('exist').and('be.visible')
 
-    cy.intercept('POST', `/checks/${check.share_key}`).as('finishAttemptAction')
+    cy.intercept('POST', `/courses/${check.share_key}`).as('finishAttemptAction')
 
     cy.wait(2000)
     cy.clock(addSeconds(new Date(Date.now()), check.settings.examination.examTimeFrameSeconds * 2), ['Date'])
@@ -25,6 +25,6 @@ describe('ExaminationAttempt Suite: ', () => {
     cy.wait('@finishAttemptAction', { timeout: check.settings.examination.examTimeFrameSeconds * 1000 })
       .its('response.statusCode')
       .should('eq', 200)
-    cy.url().should('eq', `${Cypress.env('NEXT_PUBLIC_BASE_URL')}/checks`)
+    cy.url().should('eq', `${Cypress.env('NEXT_PUBLIC_BASE_URL')}/courses`)
   })
 })

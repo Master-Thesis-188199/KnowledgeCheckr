@@ -31,8 +31,8 @@ export async function ConfigureKnowledgeCheck({ mode = 'create', initialStorePro
   const tButtons = await getScopedI18n('Shared')
   const t = await getScopedI18n('Checks.Create.MultiStages')
 
-  // when users start editing from e.g. '/discover', '/checks' redirect them back to that page after save. When creating new checks redirect to '/checks'
-  const callbackPath = mode === 'edit' ? await getReferer() : '/checks'
+  // when users start editing from e.g. '/discover', '/courses' redirect them back to that page after save. When creating new courses redirect to '/courses'
+  const callbackPath = mode === 'edit' ? await getReferer() : '/courses'
 
   return (
     <CheckStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>

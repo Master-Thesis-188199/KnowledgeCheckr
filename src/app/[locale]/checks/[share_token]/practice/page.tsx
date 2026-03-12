@@ -25,7 +25,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
     notFound()
   }
 
-  if (!check.settings.practice.enablePracticing) redirect(`/checks/${share_token}/practice/not-allowed`, RedirectType.replace)
+  if (!check.settings.practice.enablePracticing) redirect(`/courses/${share_token}/practice/not-allowed`, RedirectType.replace)
 
   const unfilteredQuestions = prepareQuestions(
     check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only'),

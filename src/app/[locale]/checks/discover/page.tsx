@@ -17,24 +17,24 @@ export default async function BrowseChecksPage() {
     },
   ]
 
-  const checks = await getPublicKnowledgeChecks.apply(null, props)
+  const courses = await getPublicKnowledgeChecks.apply(null, props)
 
   return (
     <DiscoverFilterOptionsContext defaultProps={props[0]}>
       <PageHeading title={t('title')} />
 
-      {checks.length === 0 && (
+      {courses.length === 0 && (
         <div className='flex gap-2'>
           {t('no_checks_found_base')}
-          <Link href='/checks/create' className='text-blue-500 underline dark:text-blue-500'>
+          <Link href='/courses/create' className='text-blue-500 underline dark:text-blue-500'>
             {t('no_checks_found_link')}
           </Link>
         </div>
       )}
       <DiscoverFilterFields />
 
-      <InfiniteScrollProvider initialItems={checks}>
-        <div className='checks grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
+      <InfiniteScrollProvider initialItems={courses}>
+        <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
           <InfinityScrollRenderer<KnowledgeCheck> component={KnowledgeCheckCard} />
         </div>
 

@@ -108,7 +108,7 @@ export function DiscoverFilterFields() {
         </InputGroup>
 
         <div className='flex gap-4'>
-          <Link href='/checks/create'>
+          <Link href='/courses/create'>
             <Button>
               <PlusIcon className='size-5' />
               {t('FilterFields.create_check_button_label')}

@@ -135,5 +135,5 @@ async function createPracticeCheck() {
   ]
 
   logger.info('Inserting new check...')
-  await insertKnowledgeCheck(check) //.then(() => redirect('/checks'))
+  await insertKnowledgeCheck(check) //.then(() => redirect('/courses'))
 }

@@ -5,7 +5,7 @@ describe('SessionStorageCache', () => {
   beforeEach(() => {
     cy.clearAllSessionStorage()
     cy.loginTestUser()
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
   })
 
   it('Verify that create-store-state is stored in sessionStorage', () => {
@@ -53,7 +53,7 @@ describe('SessionStorageCache', () => {
       })
 
     cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS), ['Date'])
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
 
     // wait for deletion of session-item
     cy.wait(750)

@@ -16,7 +16,7 @@ export function PracticeBreadcrumbs({
 
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href={`/checks/${share_token}/practice/category`}>Category</Link>
+            <Link href={`/courses/${share_token}/practice/category`}>Category</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
@@ -32,7 +32,7 @@ export function PracticeBreadcrumbs({
                 data-category={'all'}
                 replace
                 href={{
-                  pathname: `/checks/${share_token}/practice`,
+                  pathname: `/courses/${share_token}/practice`,
                   query: { category: '_none_' },
                 }}>
                 <DropdownMenuItem className='rounded-b-none border-b border-b-neutral-500'>Combined Questions</DropdownMenuItem>
@@ -43,7 +43,7 @@ export function PracticeBreadcrumbs({
                   data-category={categoryName}
                   key={categoryName}
                   href={{
-                    pathname: `/checks/${share_token}/practice`,
+                    pathname: `/courses/${share_token}/practice`,
                     query: { category: categoryName },
                   }}>
                   <DropdownMenuItem className='cursor-pointer'>{categoryName}</DropdownMenuItem>

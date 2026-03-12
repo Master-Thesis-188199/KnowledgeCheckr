@@ -7,5 +7,5 @@ import { InfinityScrollFetcher } from '@/src/components/Shared/InfiniteScroll'
 export default function DiscoverDynamicFilterFetcher() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { setFuncProps: setFilter, ...filter } = useDiscoverFilterOptionsContext()
-  return <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} fetchProps={[filter]} loadingLabel={'Loading more checks...'} />
+  return <InfinityScrollFetcher fetchItems={getPublicKnowledgeChecks} fetchProps={[filter]} loadingLabel={'Loading more courses...'} />
 }

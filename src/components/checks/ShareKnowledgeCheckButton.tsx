@@ -43,7 +43,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
 
           if (shareToken) {
             navigator.clipboard
-              .writeText(`${window.location.origin}/checks/${shareToken}/practice`)
+              .writeText(`${window.location.origin}/courses/${shareToken}/practice`)
               .then(() => toast(t('successfully_copied_toast_message'), { type: 'success' }))
               .catch(() => toast(t('failed_copy_toast_message'), { type: 'error' }))
             return
@@ -53,7 +53,7 @@ export function ShareKnowledgeCheckButton({ check, className }: { check: Knowled
           storeKnowledgeCheckShareToken(check.id, token)
             .then(() => {
               navigator.clipboard
-                .writeText(`${window.location.origin}/checks/${token}/practice`)
+                .writeText(`${window.location.origin}/courses/${token}/practice`)
                 .then(() => toast(t('successfully_copied_toast_message'), { type: 'success' }))
                 .catch(() => toast(t('failed_copy_toast_message'), { type: 'error' }))
               setShareToken(token)

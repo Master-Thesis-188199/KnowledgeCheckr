@@ -1,12 +1,12 @@
 describe('Edit KnowledgeCheck page: ', () => {
   it('Verify that users must be logged in to access the edit page', () => {
-    cy.visit('/checks/edit/12931293')
+    cy.visit('/courses/edit/12931293')
     cy.get('main').should('contain', "You're not authorized to access this page")
   })
 
   it('Verify that users can access the edit page when logged in', () => {
     cy.loginTestUser()
-    cy.visit('/checks/edit/1239')
+    cy.visit('/courses/edit/1239')
 
     cy.get('main').should('contain', 'This page could not be found')
   })
@@ -14,7 +14,7 @@ describe('Edit KnowledgeCheck page: ', () => {
   it('Verify that users can edit an existing knowledge check that they own', () => {
     cy.loginTestUser()
 
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
     cy.get('input[name="name"]').type('Test Check Title')
 
     //* Switch to last stage to save check
@@ -23,11 +23,11 @@ describe('Edit KnowledgeCheck page: ', () => {
 
     //? Ensure that the check was created and the user is redirected
     cy.wait(750)
-    cy.visit('/checks')
+    cy.visit('/courses')
 
     cy.get(`[data-slot="generic-card"]`).first().should('exist').and('be.visible').find('button[data-slot="dropdown-menu-trigger"]').click()
     cy.get(`[data-slot="generic-card"]`).first().find('button[data-slot="dropdown-menu-trigger"]').should('have.attr', 'data-state', 'open')
 
-    cy.get('[data-slot="dropdown-menu-content"]').should('exist').find("a[href^='/checks/edit/']").should('exist')
+    cy.get('[data-slot="dropdown-menu-content"]').should('exist').find("a[href^='/courses/edit/']").should('exist')
   })
 })

@@ -1,6 +1,6 @@
 it("Verify that a dialog opens when the 'Add Question' button is clicked", () => {
   cy.loginTestUser()
-  cy.visit('/checks/create')
+  cy.visit('/courses/create')
 
   //* Switch to questions-stage
   cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()
@@ -12,7 +12,7 @@ it("Verify that a dialog opens when the 'Add Question' button is clicked", () =>
 describe('Check: Create Question Dialog Closure Checks -', () => {
   beforeEach(() => {
     cy.loginTestUser()
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
 
     //* Switch to questions-stage
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()

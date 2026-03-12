@@ -87,7 +87,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
             tooltipOptions={{ ...baseTooltipOptions, content: t('start_practice.tooltip') }}
             disabled={!hasQuestions}
             onClick={gatherShareToken(t('start_practice.toast'), (token) => {
-              router.push(`${window.location.origin}/checks/${token}/practice`)
+              router.push(`${window.location.origin}/courses/${token}/practice`)
             })}>
             {t('start_practice.label')}
             <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400' />
@@ -99,7 +99,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
             tooltipOptions={{ ...baseTooltipOptions, content: t('start_examination.tooltip') }}
             disabled={!hasQuestions}
             onClick={gatherShareToken(t('start_examination.toast'), (token) => {
-              router.push(`${window.location.origin}/checks/${token}`)
+              router.push(`${window.location.origin}/courses/${token}`)
             })}>
             {t('start_examination.label')}
             <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
@@ -115,7 +115,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
               <DropdownMenuItem
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {
                   navigator.clipboard
-                    .writeText(`${window.location.origin}/checks/${token}/practice`)
+                    .writeText(`${window.location.origin}/courses/${token}/practice`)
                     .then(() => toast(t('copy_practice.toast_success'), { type: 'success' }))
                     .catch(() => toast(t('copy_practice.toast_failure'), { type: 'error' }))
                 })}>
@@ -124,7 +124,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
               <DropdownMenuItem
                 onClick={gatherShareToken('Unable to generate share-token', (token) => {
                   navigator.clipboard
-                    .writeText(`${window.location.origin}/checks/${token}/`)
+                    .writeText(`${window.location.origin}/courses/${token}/`)
                     .then(() => toast(t('copy_examination.toast_success'), { type: 'success' }))
                     .catch(() => toast(t('copy_examination.toast_failure'), { type: 'error' }))
                 })}>
@@ -137,7 +137,7 @@ export default function KnowledgeCheckMenu({ id, questions, share_key, owner_id,
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_check.tooltip') }}>
-            <Link href={`/checks/edit/${id}`} className='flex flex-1 justify-between'>
+            <Link href={`/courses/edit/${id}`} className='flex flex-1 justify-between'>
               {t('edit_check.label')}
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
             </Link>

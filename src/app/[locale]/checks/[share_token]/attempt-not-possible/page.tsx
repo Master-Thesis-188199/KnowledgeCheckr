@@ -17,7 +17,7 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
 
   const { reason, allowed } = await isExaminationAllowed(check, user)
 
-  if (allowed) redirect(`/checks/${share_token}`, RedirectType.replace)
+  if (allowed) redirect(`/courses/${share_token}`, RedirectType.replace)
 
   return (
     <>

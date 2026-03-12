@@ -22,7 +22,7 @@ export function SaveCheckButton({ cacheKey, callbackPath }: { cacheKey?: string;
   const formAction = () => {
     if (!safeParse.success) return undefined
 
-    saveAction({ check: safeParse.data, callbackPath: callbackPath ?? '/checks' }).catch((e) => {
+    saveAction({ check: safeParse.data, callbackPath: callbackPath ?? '/courses' }).catch((e) => {
       if (isRedirectError(e)) {
         const key = cacheKey ?? 'check-store'
         const hasCache = !!sessionStorage.getItem(key)

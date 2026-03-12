@@ -188,7 +188,7 @@ describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, (
   beforeEach(() => {
     cy.loginAnonymously()
 
-    cy.visit('/checks/create')
+    cy.visit('/courses/create')
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children('[data-stage-name="questions"]').should('exist').and('be.visible').click()
 
     for (const question of dummyQuestions) {

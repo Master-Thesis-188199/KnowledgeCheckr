@@ -64,7 +64,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                     toast('Successfully submitted examination results', { type: 'success' })
                     sessionStorage.removeItem('examination-store')
                     clearNavigationAbort()
-                    redirect('/checks', RedirectType.replace)
+                    redirect('/courses', RedirectType.replace)
                   })
               }
               className='rounded-md bg-neutral-500 px-4 py-1.5 ring-[1.5px] ring-ring-subtle dark:bg-black dark:ring-ring-subtle'>
