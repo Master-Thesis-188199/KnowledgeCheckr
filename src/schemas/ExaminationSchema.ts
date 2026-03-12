@@ -6,7 +6,7 @@ import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'
 
 export const ExaminationSchema = z.object({
-  knowledgeCheck: stripEffects(CourseSchema),
+  course: stripEffects(CourseSchema),
   startedAt: StringDate.default(new Date(Date.now())),
   finishedAt: StringDate.nullable().default(null),
   score: z.number().default(0),

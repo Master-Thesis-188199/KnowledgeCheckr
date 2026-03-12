@@ -26,7 +26,7 @@ async function cleanupTestData() {
 
   await db.delete(db_course).where(eq(db_course.owner_id, users.at(0)!.userId))
 
-  console.log(`Deleted all KnowledgeChecks created by the test-user with the email ${testEmail}`)
+  console.log(`Deleted all Courses created by the test-user with the email ${testEmail}`)
 
   await deleteUser({ email: 'e2e.user@example.test' })
   await deleteUser({ name: 'Anonymous' }, { limit: -1 })

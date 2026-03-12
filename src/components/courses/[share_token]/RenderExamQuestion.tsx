@@ -21,7 +21,7 @@ import { Any } from '@/types'
 export default function RenderExamQuestion() {
   const isFirstRender = useIsFirstRender()
   const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
-  const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
+  const question = state.course.questions.at(currentQuestionIndex)!
 
   const form = useForm<QuestionInput>({
     resolver: zodResolver(QuestionInputSchema) as unknown as Resolver<QuestionInput>,

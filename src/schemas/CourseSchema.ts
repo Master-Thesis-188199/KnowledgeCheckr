@@ -12,13 +12,13 @@ export const CourseSchema = z
   .object({
     id: z.uuidv4().default(() => getUUID()),
 
-    name: z.string().default('Knowledge Check').describe('The name under which the created check is associated with.'),
+    name: z.string().default('KnowledgeCheck Course').describe('The name under which the created course is associated with.'),
 
     description: z
       .string()
       .nullable()
       .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
-      .describe('Describe the concept of your knowledge check using a few words.'),
+      .describe('Describe the concept of your course using a few words.'),
 
     difficulty: z
       .number()
@@ -26,7 +26,7 @@ export const CourseSchema = z
       .max(10, 'Please specify a difficulty between 1 and 10.')
       .optional()
       .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
-      .describe('Defines the skill level needed for this check.'),
+      .describe('Defines the skill level needed for this course.'),
 
     questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
     questionCategories: z
@@ -40,19 +40,19 @@ export const CourseSchema = z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
       // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
       .default(() => new Date(Date.now()))
-      .describe('The day on which users can start to use the check.'),
+      .describe('The day on which users can start to use the course.'),
     closeDate: z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
       // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
       .nullable()
       .default(null)
-      .describe('The last day on which the check can be used by others.'),
+      .describe('The last day on which the course can be used by others.'),
 
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
@@ -69,11 +69,11 @@ export const CourseSchema = z
     */
   })
   //* Declares missing question-catgegories in `questionCategories`
-  .transform((check) => {
-    const questionCategories = check.questionCategories
+  .transform((course) => {
+    const questionCategories = course.questionCategories
 
     // declare missing question categories
-    Array.from(new Set(check.questions.map((q) => q.category)))
+    Array.from(new Set(course.questions.map((q) => q.category)))
       .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
       .forEach((missingCategoryName) => {
         questionCategories.push({
@@ -84,7 +84,7 @@ export const CourseSchema = z
         })
       })
 
-    return check
+    return course
   })
   .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
     message: 'Please define question categories before assigning them to questions.',

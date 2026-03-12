@@ -31,14 +31,14 @@ export const CourseSettingsSchema = z.object({
       .transform((v) => !!v)
       .optional()
       .default(true)
-      .describe('Defines whether users are able to start an examination attempt for this check or not.'),
+      .describe('Defines whether users are able to start an examination attempt for this course or not.'),
 
     startDate: z
       .date()
       .or(z.string())
       .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
       .describe('The start-date on which users can start examinations.'),
 
     endDate: z
@@ -46,7 +46,7 @@ export const CourseSettingsSchema = z.object({
       .or(z.string())
       .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((check) => !isNaN(check.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
       .nullable()
       .describe('The end-date after which users can no longer start examinations. When set to null no end constraints are set.'),
 
@@ -58,7 +58,7 @@ export const CourseSettingsSchema = z.object({
       .or(z.number())
       .transform((v) => !!v)
       .default(true)
-      .describe('Specifies whether anonymous users can interact with this check.'),
+      .describe('Specifies whether anonymous users can interact with this course.'),
 
     allowFreeNavigation: z
       .boolean()
@@ -83,7 +83,7 @@ export const CourseSettingsSchema = z.object({
     .transform((v) => !!v)
     .optional()
     .default(false)
-    .describe('Defines whether this check is publicly accessible, thus whether users can discover this check.'),
+    .describe('Defines whether this course is publicly accessible, thus whether users can discover this course.'),
 })
 
 export type CourseSettings = z.output<typeof CourseSettingsSchema>

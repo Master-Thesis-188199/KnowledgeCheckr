@@ -17,7 +17,7 @@ export type CourseActions = {
   addQuestion: (question: Question) => void
   removeQuestion: (questionId: Question['id']) => void
   updateSettings: (settings: Partial<Course['settings']>) => void
-  updateCheck: (update: Partial<Course>) => void
+  updateCourse: (update: Partial<Course>) => void
   updateCollaborators: (collaborators: Course['collaborators']) => void
 }
 
@@ -100,7 +100,7 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
           }),
         removeQuestion,
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
-        updateCheck: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
+        updateCourse: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
         updateCollaborators: (collaborators) => set((prev) => ({ ...prev, collaborators: collaborators, unsavedChanges: true })),
       }
     },

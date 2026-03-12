@@ -14,16 +14,16 @@ import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export function ExamQuestionNavigationMenu({ className }: { className?: string }) {
   const { error } = useLogger('ExamQuestionNavigationMenu')
-  const { knowledgeCheck, setCurrentQuestionIndex, currentQuestionIndex, startedAt, ...examinationState } = useExaminationStore((store) => store)
+  const { course, setCurrentQuestionIndex, currentQuestionIndex, startedAt, ...examinationState } = useExaminationStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
 
   return (
     <>
-      <QuestionNavigationMenu className={className} currentQuestionIndex={currentQuestionIndex} questions={knowledgeCheck.questions} onQuestionClick={(index) => setCurrentQuestionIndex(index)}>
+      <QuestionNavigationMenu className={className} currentQuestionIndex={currentQuestionIndex} questions={course.questions} onQuestionClick={(index) => setCurrentQuestionIndex(index)}>
         <span className='text-sm text-neutral-500 dark:text-neutral-400'>
           <CountdownTime
             onTimeUp={() =>
-              finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, startedAt, ...examinationState }))
+              finishExaminationAttempt(validateExaminationSchema({ course, startedAt, ...examinationState }))
                 .catch((e) => {
                   toast(`Failed to submit examination results. ${e}`, { type: 'error' })
                   error('Failed to finish examination attempt', e)
@@ -36,7 +36,7 @@ export function ExamQuestionNavigationMenu({ className }: { className?: string }
                 })
             }
             start={startedAt}
-            duration={knowledgeCheck.settings.examination.examTimeFrameSeconds}
+            duration={course.settings.examination.examTimeFrameSeconds}
           />{' '}
           left
         </span>

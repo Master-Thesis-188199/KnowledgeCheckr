@@ -3,18 +3,18 @@ import { getCourseById } from '@/database/course/select'
 import { ConfigureCourse } from '@/src/components/courses/ConfigureCourse'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
-export default async function CheckPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getCourseById(id)
+  const course = await getCourseById(id)
 
-  if (!check) {
+  if (!course) {
     notFound()
   }
 
-  const canEdit = check.owner_id === user.id || check.collaborators.includes(user.id)
+  const canEdit = course.owner_id === user.id || course.collaborators.includes(user.id)
   if (!canEdit) forbidden()
 
-  return <ConfigureCourse mode='edit' initialStoreProps={check} options={{ cacheKey: 'check-exam-store', disableCache: true }} />
+  return <ConfigureCourse mode='edit' initialStoreProps={course} options={{ cacheKey: 'course-exam-store', disableCache: true }} />
 }

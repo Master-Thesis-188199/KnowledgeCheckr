@@ -19,16 +19,16 @@ export default async function PracticePage({ params, searchParams }: { params: P
   const { share_token } = await params
   const { category } = (await searchParams) ?? {}
 
-  const check = await getCourseByShareToken(share_token)
+  const course = await getCourseByShareToken(share_token)
 
-  if (!check) {
+  if (!course) {
     notFound()
   }
 
-  if (!check.settings.practice.enablePracticing) redirect(`/courses/${share_token}/practice/not-allowed`, RedirectType.replace)
+  if (!course.settings.practice.enablePracticing) redirect(`/courses/${share_token}/practice/not-allowed`, RedirectType.replace)
 
   const unfilteredQuestions = prepareQuestions(
-    check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only'),
+    course.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only'),
     { hideSolutions: false, answerOrder: 'create-order', questionOrder: 'create-order' },
   )
   const categories = Array.from(new Set(unfilteredQuestions.map((q) => q.category)))
@@ -64,7 +64,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
   }
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: check.id }} key={category}>
+    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id }} key={category}>
       <PracticeBreadcrumbs className={cn('mb-2', categories.length === 1 && 'hidden')} share_token={share_token} categories={categories} selectedCategory={category} />
 
       <PageHeading title='Practice' />

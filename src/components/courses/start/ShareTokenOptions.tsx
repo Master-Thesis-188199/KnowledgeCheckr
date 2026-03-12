@@ -49,38 +49,38 @@ export default function ShareTokenOptions() {
     let aborted = false
 
     getCourseByShareToken(token)
-      .then((check) => {
+      .then((course) => {
         if (aborted) return
 
-        if (!check) {
+        if (!course) {
           form.setError('root', { message: t('not_found_error_message') })
           setStatus('waiting')
           return
         }
 
         if (
-          check.settings.practice.enablePracticing &&
-          check.settings.examination.enableExaminations &&
-          isBefore(check.settings.examination.startDate, new Date(Date.now())) &&
-          (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
+          course.settings.practice.enablePracticing &&
+          course.settings.examination.enableExaminations &&
+          isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+          (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
         )
           return setStatus('both')
 
         if (
-          check.settings.practice.enablePracticing &&
+          course.settings.practice.enablePracticing &&
           !(
-            check.settings.examination.enableExaminations &&
-            isBefore(check.settings.examination.startDate, new Date(Date.now())) &&
-            (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
+            course.settings.examination.enableExaminations &&
+            isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+            (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
           )
         )
           return setStatus('practice-only')
 
         if (
-          !check.settings.practice.enablePracticing &&
-          check.settings.examination.enableExaminations &&
-          isBefore(check.settings.examination.startDate, new Date(Date.now())) &&
-          (check.settings.examination.endDate === null || isAfter(check.settings.examination.endDate, new Date(Date.now())))
+          !course.settings.practice.enablePracticing &&
+          course.settings.examination.enableExaminations &&
+          isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+          (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
         )
           return setStatus('exam-only')
       })

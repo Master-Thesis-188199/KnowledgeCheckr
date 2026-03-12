@@ -16,7 +16,7 @@ export function ShareCourseButton({ course, className }: { course: Course; class
   const [shareToken, setShareToken] = useState(course.share_key)
   const router = useRouter()
 
-  // Update share-key when the check has been modified, e.g. when the share-token was removed
+  // Update share-key when the course has been modified, e.g. when the share-token was removed
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (shareToken !== course.share_key) setShareToken(course.share_key)

@@ -24,16 +24,16 @@ describe('Accessibility of questions: ', () => {
           )
         }
 
-        const dummyCheck: Course = {
+        const dummyCourse: Course = {
           ...instantiateCourse(),
           share_key: 'question-accessibility' + generateToken(8),
           questions,
         }
 
-        cy.insertKnowledgeCheck(dummyCheck)
+        cy.insertCourse(dummyCourse)
 
-        const examUrl = `/courses/${dummyCheck.share_key}/`
-        const practiceUrl = `/courses/${dummyCheck.share_key}/practice`
+        const examUrl = `/courses/${dummyCourse.share_key}/`
+        const practiceUrl = `/courses/${dummyCourse.share_key}/practice`
 
         const url = page === 'practice' ? practiceUrl : examUrl
         cy.visit(url)
@@ -43,7 +43,7 @@ describe('Accessibility of questions: ', () => {
           .should('exist')
           .and('be.visible')
           .children()
-          .should('have.length', dummyCheck.questions.filter((q) => accessbilities.flat().includes(q.accessibility)).length)
+          .should('have.length', dummyCourse.questions.filter((q) => accessbilities.flat().includes(q.accessibility)).length)
       }),
   )
 })

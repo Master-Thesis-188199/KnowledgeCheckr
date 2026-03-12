@@ -20,7 +20,7 @@ export async function insertQuestionCategories(db: DrizzleDB | undefined, course
 }
 
 /**
- * This function inserts a new category that is associated to a given check. When a category that already exists is inserted again the duplicate-entry-error is caught and the respective category is selected instead.
+ * This function inserts a new category that is associated to a given course. When a category that already exists is inserted again the duplicate-entry-error is caught and the respective category is selected instead.
  * @param db The database / db-transaction to use
  * @param props The category-props that are to be inserted
  * @returns The inserted data / retrieved category that was already inserted

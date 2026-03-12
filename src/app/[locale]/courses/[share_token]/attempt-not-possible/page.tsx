@@ -9,13 +9,13 @@ export default async function ClosedExaminationPage({ params }: { params: Promis
   const { share_token } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getCourseByShareToken(share_token)
+  const course = await getCourseByShareToken(share_token)
 
-  if (!check) notFound()
+  if (!course) notFound()
 
   const t = await getScopedI18n('Examination.attempt_not_possible')
 
-  const { reason, allowed } = await isExaminationAllowed(check, user)
+  const { reason, allowed } = await isExaminationAllowed(course, user)
 
   if (allowed) redirect(`/courses/${share_token}`, RedirectType.replace)
 

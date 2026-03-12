@@ -14,13 +14,13 @@ export default async function ExamAttemptResultPage({ params }: { params: Promis
   const { share_token, attemptId } = await params
   const { user } = await requireAuthentication()
 
-  let [check, attempt] = await Promise.all([getCourseByShareToken(share_token), getExaminationAttemptById(parseInt(attemptId))])
+  let [course, attempt] = await Promise.all([getCourseByShareToken(share_token), getExaminationAttemptById(parseInt(attemptId))])
 
   // dummy examinationAttempt data when a given attempt does not exist
   if (!attempt) attempt = (await getDummyExamAttempts(1))[0]
 
-  if (!check || !attempt) notFound()
-  if (!hasCollaborativePermissions(check, user.id)) forbidden()
+  if (!course || !attempt) notFound()
+  if (!hasCollaborativePermissions(course, user.id)) forbidden()
 
   return (
     <>

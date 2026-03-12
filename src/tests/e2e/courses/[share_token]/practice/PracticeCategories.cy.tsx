@@ -12,10 +12,10 @@ describe('Verify selection of practice questions by category', () => {
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can select '${categorySelection}' category in /practice/category page`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCheck = instantiateCourse()
+      const dummyCourse = instantiateCourse()
       const dummyCategories = ['general', 'geography', 'mathematics']
 
-      dummyCheck.share_key = 'select-category' + generateToken(8)
+      dummyCourse.share_key = 'select-category' + generateToken(8)
 
       const questions: Question[] = []
       const questionCategories: Course['questionCategories'] = []
@@ -28,15 +28,15 @@ describe('Verify selection of practice questions by category', () => {
         })
       }
 
-      dummyCheck.questions = questions
-      dummyCheck.questionCategories = questionCategories
+      dummyCourse.questions = questions
+      dummyCourse.questionCategories = questionCategories
 
-      cy.insertKnowledgeCheck(dummyCheck)
+      cy.insertCourse(dummyCourse)
 
-      cy.visit(`/courses/${dummyCheck.share_key}/practice`)
+      cy.visit(`/courses/${dummyCourse.share_key}/practice`)
 
       //* ensure users are redirected when no selection is made but > 1 categories exist
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice/category`)
 
       cy.get('#category-selection')
         .children()
@@ -45,20 +45,20 @@ describe('Verify selection of practice questions by category', () => {
       const selection = categorySelection === 'random' ? dummyCategories[Math.floor(Math.random() * dummyCategories.length)] : 'all'
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
       cy.get('#question-navigation')
         .children()
-        .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
+        .should('have.length', categorySelection === 'all' ? dummyCourse.questions.length : dummyCourse.questions.filter((q) => q.category === selection).length)
     }),
   )
 
-  it(`Verify users are not asked to select category when check has just 1 category`, () => {
+  it(`Verify users are not asked to select category when course has just 1 category`, () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCheck = instantiateCourse()
+    const dummyCourse = instantiateCourse()
     const dummyCategories = ['general']
 
-    dummyCheck.share_key = 'select-category' + generateToken(8)
+    dummyCourse.share_key = 'select-category' + generateToken(8)
 
     const questions: Question[] = []
     const questionCategories: Course['questionCategories'] = []
@@ -71,27 +71,27 @@ describe('Verify selection of practice questions by category', () => {
       })
     }
 
-    dummyCheck.questions = questions
-    dummyCheck.questionCategories = questionCategories
+    dummyCourse.questions = questions
+    dummyCourse.questionCategories = questionCategories
 
-    cy.insertKnowledgeCheck(dummyCheck)
+    cy.insertCourse(dummyCourse)
 
-    cy.visit(`/courses/${dummyCheck.share_key}/practice`)
+    cy.visit(`/courses/${dummyCourse.share_key}/practice`)
 
     //* ensure users are NOT redirected to category selection when only 1 category exists
-    cy.url().should('not.eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
-    cy.url().should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice`)
+    cy.url().should('not.eq', `${baseURL}/courses/${dummyCourse.share_key}/practice/category`)
+    cy.url().should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice`)
 
-    cy.get('#question-navigation').children().should('have.length', dummyCheck.questions.length)
+    cy.get('#question-navigation').children().should('have.length', dummyCourse.questions.length)
   })
 
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can switch between practice categories through breadcrumbs (category-selection: ${categorySelection})`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCheck = instantiateCourse()
+      const dummyCourse = instantiateCourse()
       const dummyCategories = ['general', 'geography', 'mathematics']
 
-      dummyCheck.share_key = 'select-category' + generateToken(8)
+      dummyCourse.share_key = 'select-category' + generateToken(8)
 
       const questions: Question[] = []
       const questionCategories: Course['questionCategories'] = []
@@ -104,14 +104,14 @@ describe('Verify selection of practice questions by category', () => {
         })
       }
 
-      dummyCheck.questions = questions
-      dummyCheck.questionCategories = questionCategories
+      dummyCourse.questions = questions
+      dummyCourse.questionCategories = questionCategories
 
-      cy.insertKnowledgeCheck(dummyCheck)
+      cy.insertCourse(dummyCourse)
 
-      cy.visit(`/courses/${dummyCheck.share_key}/practice`)
+      cy.visit(`/courses/${dummyCourse.share_key}/practice`)
 
-      cy.url().should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
+      cy.url().should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice/category`)
 
       cy.get('#category-selection')
         .children()
@@ -121,11 +121,11 @@ describe('Verify selection of practice questions by category', () => {
 
       cy.get('#category-selection').children(`[data-category="${selection}"]`).should('exist').click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice?category=${categorySelection === 'random' ? selection : '_none_'}`)
 
       cy.get('#question-navigation')
         .children()
-        .should('have.length', categorySelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === selection).length)
+        .should('have.length', categorySelection === 'all' ? dummyCourse.questions.length : dummyCourse.questions.filter((q) => q.category === selection).length)
 
       cy.get('[data-slot="breadcrumb"]').should('exist').and('be.visible')
       cy.get('#category-switcher')
@@ -150,21 +150,21 @@ describe('Verify selection of practice questions by category', () => {
         .should('exist')
         .click()
 
-      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${breadcrumbSelection === 'all' ? '_none_' : breadcrumbSelection}`)
+      cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice?category=${breadcrumbSelection === 'all' ? '_none_' : breadcrumbSelection}`)
       cy.wait(250)
 
       cy.get('#question-navigation')
         .children()
-        .should('have.length', breadcrumbSelection === 'all' ? dummyCheck.questions.length : dummyCheck.questions.filter((q) => q.category === breadcrumbSelection).length)
+        .should('have.length', breadcrumbSelection === 'all' ? dummyCourse.questions.length : dummyCourse.questions.filter((q) => q.category === breadcrumbSelection).length)
     }),
   )
 
   it('Verify that category-selection is re-apply using searchParams', () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCheck = instantiateCourse()
+    const dummyCourse = instantiateCourse()
     const dummyCategories = ['general', 'geography', 'mathematics']
 
-    dummyCheck.share_key = 'select-category' + generateToken(8)
+    dummyCourse.share_key = 'select-category' + generateToken(8)
 
     const questions: Question[] = []
     const questionCategories: Course['questionCategories'] = []
@@ -177,15 +177,15 @@ describe('Verify selection of practice questions by category', () => {
       })
     }
 
-    dummyCheck.questions = questions
-    dummyCheck.questionCategories = questionCategories
+    dummyCourse.questions = questions
+    dummyCourse.questionCategories = questionCategories
 
-    cy.insertKnowledgeCheck(dummyCheck)
+    cy.insertCourse(dummyCourse)
 
-    cy.visit(`/courses/${dummyCheck.share_key}/practice`)
+    cy.visit(`/courses/${dummyCourse.share_key}/practice`)
 
     //* ensure users are redirected when no selection is made but > 1 categories exist
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice/category`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice/category`)
 
     cy.get('#category-selection')
       .children()
@@ -194,17 +194,17 @@ describe('Verify selection of practice questions by category', () => {
     const randomSelection = dummyCategories[Math.floor(Math.random() * dummyCategories.length)]
     cy.get('#category-selection').children(`[data-category="${randomSelection}"]`).should('exist').click()
 
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice?category=${randomSelection}`)
 
     cy.get('#question-navigation')
       .children()
-      .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
+      .should('have.length', dummyCourse.questions.filter((q) => q.category === randomSelection).length)
 
     cy.wait(500)
     cy.reload()
-    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCheck.share_key}/practice?category=${randomSelection}`)
+    cy.url({ timeout: 5 * 1000 }).should('eq', `${baseURL}/courses/${dummyCourse.share_key}/practice?category=${randomSelection}`)
     cy.get('#question-navigation')
       .children()
-      .should('have.length', dummyCheck.questions.filter((q) => q.category === randomSelection).length)
+      .should('have.length', dummyCourse.questions.filter((q) => q.category === randomSelection).length)
   })
 })

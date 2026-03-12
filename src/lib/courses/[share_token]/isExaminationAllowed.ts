@@ -14,16 +14,16 @@ type NotAllowedReturn = {
   reason: string
 }
 
-export default async function isExaminationAllowed(check: Course, user: BetterAuthUser): Promise<AllowedReturn | NotAllowedReturn> {
+export default async function isExaminationAllowed(course: Course, user: BetterAuthUser): Promise<AllowedReturn | NotAllowedReturn> {
   const currentLocale = await getCurrentLocale()
   const t = await getScopedI18n('Examination.attempt_not_possible')
-  if (!check.settings.examination.enableExaminations) return { allowed: false, reason: t('unavailable') }
+  if (!course.settings.examination.enableExaminations) return { allowed: false, reason: t('unavailable') }
 
-  if (isFuture(check.settings.examination.startDate)) return { allowed: false, reason: t('notOpenYet', { openDate: check.settings.examination.startDate.toLocaleDateString(currentLocale) }) }
-  if (check.settings.examination.endDate !== null && isPast(check.settings.examination.endDate))
-    return { allowed: false, reason: t('checkClosed', { closeDate: check.settings.examination.endDate?.toLocaleDateString(currentLocale) }) }
+  if (isFuture(course.settings.examination.startDate)) return { allowed: false, reason: t('notOpenYet', { openDate: course.settings.examination.startDate.toLocaleDateString(currentLocale) }) }
+  if (course.settings.examination.endDate !== null && isPast(course.settings.examination.endDate))
+    return { allowed: false, reason: t('checkClosed', { closeDate: course.settings.examination.endDate?.toLocaleDateString(currentLocale) }) }
 
-  if (!check.settings.examination.allowAnonymous && user.isAnonymous) return { allowed: false, reason: t('anonymous-users-not-allowed') }
+  if (!course.settings.examination.allowAnonymous && user.isAnonymous) return { allowed: false, reason: t('anonymous-users-not-allowed') }
 
   return { allowed: true }
 }

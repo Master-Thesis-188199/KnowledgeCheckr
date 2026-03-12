@@ -20,22 +20,22 @@ describe('Category Insertion / Retrieval Suite: ', () => {
     expect(testUser).toBeDefined()
   })
 
-  it.each([{ categories: ['general', 'categoryA', 'categoryB'] }, { categories: ['general'] }] as const)('Ensure knowledgeCheck categories are inserted properly', async ({ categories }) => {
-    const dummyCheck = instantiateCourse()
+  it.each([{ categories: ['general', 'categoryA', 'categoryB'] }, { categories: ['general'] }] as const)('Ensure course categories are inserted properly', async ({ categories }) => {
+    const dummyCourse = instantiateCourse()
 
-    dummyCheck.owner_id = testUser.id
-    dummyCheck.questionCategories = []
-    dummyCheck.questions = []
+    dummyCourse.owner_id = testUser.id
+    dummyCourse.questionCategories = []
+    dummyCourse.questions = []
     for (const category of categories) {
-      dummyCheck.questionCategories.push({ ...instantiateCategory(), name: category })
-      dummyCheck.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
+      dummyCourse.questionCategories.push({ ...instantiateCategory(), name: category })
+      dummyCourse.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
     }
 
-    await insertCourse(dummyCheck)
+    await insertCourse(dummyCourse)
 
     //* Ensure category was inserted and retrieved correctly
-    const check = await getCourseById(dummyCheck.id)
-    expect(check?.questionCategories).toEqual(expect.arrayContaining(dummyCheck?.questionCategories))
+    const course = await getCourseById(dummyCourse.id)
+    expect(course?.questionCategories).toEqual(expect.arrayContaining(dummyCourse?.questionCategories))
   })
 
   afterAll(async () => {

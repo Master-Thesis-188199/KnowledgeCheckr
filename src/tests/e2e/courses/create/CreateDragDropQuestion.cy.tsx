@@ -1,7 +1,7 @@
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
 
-describe('Check: Drag Drop Question -', () => {
+describe('Course: Drag Drop Question -', () => {
   beforeEach(() => {
     cy.loginTestUser()
     cy.visit('/courses/create')

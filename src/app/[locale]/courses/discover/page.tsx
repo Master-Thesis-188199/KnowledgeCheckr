@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getPublicCourses } from '@/database/course/select'
-import { KnowledgeCheckCard } from '@/src/components/courses/CourseCard'
+import { CourseCard } from '@/src/components/courses/CourseCard'
 import DiscoverDynamicFilterFetcher from '@/src/components/courses/discover/DiscoverDynamicFilterFetcher'
 import { DiscoverFilterFields } from '@/src/components/courses/discover/DiscoverFilterFields'
 import DiscoverFilterOptionsContext from '@/src/components/courses/discover/DiscoverFilterOptionsProvider'
@@ -9,7 +9,7 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import { Course } from '@/src/schemas/CourseSchema'
 
-export default async function BrowseChecksPage() {
+export default async function BrowseCoursesPage() {
   const t = await getScopedI18n('Checks.Discover')
   const props: InfinityScrollFetcherProps<typeof getPublicCourses>['fetchProps'] = [
     {
@@ -35,7 +35,7 @@ export default async function BrowseChecksPage() {
 
       <InfiniteScrollProvider initialItems={courses}>
         <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-          <InfinityScrollRenderer<Course> component={KnowledgeCheckCard} />
+          <InfinityScrollRenderer<Course> component={CourseCard} />
         </div>
 
         <DiscoverDynamicFilterFetcher />

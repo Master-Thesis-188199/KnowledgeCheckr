@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 
-export default async function StartCheckPage() {
+export default async function StartCoursePage() {
   const t = await getScopedI18n('StartOptionsPage')
 
   return (

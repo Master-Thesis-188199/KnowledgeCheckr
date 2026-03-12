@@ -15,7 +15,7 @@ export function convertSettings(direction: 'to-database' | 'from-database', sett
 
 function convertFromDatabase(settings: Omit<typeof db_courseSettings.$inferSelect, 'knowledgecheckId'> | null): CourseSettings | undefined {
   if (settings === null) {
-    logger.warn('Check has not settings (null) returning instantiated settings object.')
+    logger.warn('Course has no settings (null) returning instantiated settings object.')
     return instantiateCourseSettings()
   }
 

@@ -2,7 +2,7 @@
 
 import { forbidden, notFound } from 'next/navigation'
 import { getCourseByShareToken } from '@/database/course/select'
-import { getKnowledgeCheckExaminationAttempts } from '@/database/examination/select'
+import { getCourseExaminationAttempts } from '@/database/examination/select'
 import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
 import { QuestionScoresLineChartCard } from '@/src/components/charts/QuestionScoresLineChart'
@@ -15,7 +15,7 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import hasCollaborativePermissions from '@/src/lib/courses/hasCollaborativePermissions'
 import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 
-type ExaminationAttmept = Awaited<ReturnType<typeof getKnowledgeCheckExaminationAttempts>>[number]
+type ExaminationAttmept = Awaited<ReturnType<typeof getCourseExaminationAttempts>>[number]
 export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' | 'type'> & {
   startedAt: string
   duration: number
@@ -28,10 +28,10 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   const { share_token } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getCourseByShareToken(share_token)
+  const course = await getCourseByShareToken(share_token)
 
-  if (!check) notFound()
-  if (!hasCollaborativePermissions(check, user.id)) forbidden()
+  if (!course) notFound()
+  if (!hasCollaborativePermissions(course, user.id)) forbidden()
 
   const dummyAttempts = await getDummyExamAttempts(50)
   const t = await getScopedI18n('Checks.ExaminatonResults')
@@ -68,7 +68,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
                 startedAt: new Date(Date.parse(attempt.startedAt)),
                 finishedAt: new Date(Date.parse(attempt.finishedAt)),
                 status: i % 4 !== 0 ? t('ExaminationAttemptTable.status_done') : t('ExaminationAttemptTable.status_in_progress'),
-                totalCheckScore: 100,
+                totalCourseScore: 100,
                 type: i % 5 !== 0 ? t('ExaminationAttemptTable.user_type_normal') : t('ExaminationAttemptTable.user_type_anonynmous'),
                 username: attempt.user.name,
               }))}

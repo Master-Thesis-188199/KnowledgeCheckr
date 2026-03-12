@@ -18,16 +18,16 @@ import { DistributiveOmit, UndoPartial } from '@/types/Shared/Utils'
 type SimulateOptions = DistributiveOmit<UndoPartial<Parameters<typeof cy.simulatePracticeSelection>['1']>, 'correctness'>
 
 describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
-  const insertKnowledgeCheck = (...question: Question[]) => {
-    const check = {
+  const insertCourse = (...question: Question[]) => {
+    const course = {
       ...instantiateCourse(),
       share_key: generateToken(16),
       questions: question,
     }
 
-    cy.request('POST', '/api/insert/course', check).should('have.property', 'status').and('eq', 200)
+    cy.request('POST', '/api/insert/course', course).should('have.property', 'status').and('eq', 200)
 
-    return { share_key: check.share_key, check }
+    return { share_key: course.share_key, course }
   }
 
   const verifyQuestionIsDisplayedCorrectly = (question: Question, questionCount: number) => {
@@ -83,8 +83,8 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const {
         share_key,
-        check: { questions },
-      } = insertKnowledgeCheck(question)
+        course: { questions },
+      } = insertCourse(question)
 
       cy.visit(`/courses/${share_key}/practice`)
 
@@ -131,8 +131,8 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const {
         share_key,
-        check: { questions },
-      } = insertKnowledgeCheck(question)
+        course: { questions },
+      } = insertCourse(question)
 
       const selectedAnswerIds = question.answers.filter((a) => (type === 'correct' ? a.correct : !a.correct)).map((a) => a.id)
 
@@ -185,8 +185,8 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const {
         share_key,
-        check: { questions },
-      } = insertKnowledgeCheck(question)
+        course: { questions },
+      } = insertCourse(question)
 
       cy.visit(`/courses/${share_key}/practice`)
 
@@ -220,8 +220,8 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
 
       const {
         share_key,
-        check: { questions },
-      } = insertKnowledgeCheck(question)
+        course: { questions },
+      } = insertCourse(question)
 
       cy.visit(`/courses/${share_key}/practice`)
 
@@ -258,7 +258,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
         { ...instantiateDragDropQuestion(), question: 'What is an drag-drop question?' },
       ]
 
-      const { share_key } = insertKnowledgeCheck(...questions)
+      const { share_key } = insertCourse(...questions)
 
       cy.visit(`/courses/${share_key}/practice`)
 

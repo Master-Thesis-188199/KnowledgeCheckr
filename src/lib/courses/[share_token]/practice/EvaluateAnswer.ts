@@ -1,6 +1,6 @@
 'use server'
 
-import { getKnowledgeCheckQuestionById } from '@/database/course/questions/select'
+import { getCourseQuestionById } from '@/database/course/questions/select'
 import _logger from '@/src/lib/log/Logger'
 import lorem from '@/src/lib/Shared/Lorem'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
@@ -46,7 +46,7 @@ type DragDropFeedback = Omit<Extract<QuestionInput, { type: 'drag-drop' }> & { r
 export type PracticeFeedback = SingleChoiceFeedback | MultipleChoiceFeedback | OpenQuestionFeedback | DragDropFeedback
 
 async function createFeedback({ question_id, ...answer }: QuestionInput): Promise<PracticeFeedback | undefined> {
-  let question = await getKnowledgeCheckQuestionById(question_id)
+  let question = await getCourseQuestionById(question_id)
 
   if (!question) {
     logger.warn(`Question with id ${question_id} not found when creating feedback.`)

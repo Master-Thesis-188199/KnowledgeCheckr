@@ -8,9 +8,9 @@ export default async function PracticeNotAllowedPage({ params }: { params: Promi
   const { share_token } = await params
   await requireAuthentication()
 
-  const check = await getCourseByShareToken(share_token)
+  const course = await getCourseByShareToken(share_token)
 
-  if (!check) notFound()
+  if (!course) notFound()
 
   const t = await getScopedI18n('Practice.practicing_not_allowed')
 

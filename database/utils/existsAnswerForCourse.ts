@@ -37,7 +37,7 @@ export default function existsAnswerForCourse(db: DrizzleDB, courseId: AnyColumn
   const a = alias(db_answer, 'a')
   const q = alias(db_question, 'q')
 
-  // join respective check with questions and answers to apply filters
+  // join respective course with questions and answers to apply filters
   const predicates: SQL[] = [eq(q.knowledgecheckId, courseId), eq(a.questionId, q.id)]
 
   if (answerFilter) {

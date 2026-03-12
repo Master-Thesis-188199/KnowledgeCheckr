@@ -16,7 +16,7 @@ export default async function insertExaminationResults(examinationResult: Examin
   try {
     await db.insert(db_userHasDoneCourse).values({
       userId: user.id,
-      knowledgeCheckId: examinationResult.knowledgeCheck.id,
+      knowledgeCheckId: examinationResult.course.id,
       startedAt: formatDatetime(examinationResult.startedAt),
       finishedAt: formatDatetime(examinationResult.finishedAt ?? new Date(Date.now())),
       score: examinationResult.score,

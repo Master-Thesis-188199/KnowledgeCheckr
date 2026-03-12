@@ -2,9 +2,9 @@
 
 import { eq } from 'drizzle-orm'
 import { insertQuestionCategories } from '@/database/course/catagories/insert'
-import { insertCollaboratorsToKnowledgeCheck } from '@/database/course/collaborators/insert'
-import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
-import insertKnowledgeCheckSettings from '@/database/course/settings/insert'
+import { insertCollaboratorsToCourse } from '@/database/course/collaborators/insert'
+import insertCourseQuestions from '@/database/course/questions/insert'
+import insertCourseSettings from '@/database/course/settings/insert'
 import getDatabase from '@/database/Database'
 import { db_course } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -36,8 +36,8 @@ export default async function insertCourse(course: Course) {
 
       if (!id) throw new Error('Database insert statement did not return inserted-`id`')
 
-      await insertCollaboratorsToKnowledgeCheck(transaction, course.id, course.collaborators)
-      await insertKnowledgeCheckSettings(transaction, course)
+      await insertCollaboratorsToCourse(transaction, course.id, course.collaborators)
+      await insertCourseSettings(transaction, course)
       const categories = await insertQuestionCategories(transaction, id, course.questionCategories)
       const questionsWithCategoryIds = course.questions.map((q) => {
         const category = categories.find((c) => c.name === q.category)
@@ -47,7 +47,7 @@ export default async function insertCourse(course: Course) {
         return { ...q, categoryId: category.id }
       })
 
-      await insertKnowledgeCheckQuestions(transaction, questionsWithCategoryIds, id)
+      await insertCourseQuestions(transaction, questionsWithCategoryIds, id)
     } catch (err) {
       logger.info('[Rollback]: Inserting db_knowledgecheck was unsuccessful!', err)
       transaction.rollback()

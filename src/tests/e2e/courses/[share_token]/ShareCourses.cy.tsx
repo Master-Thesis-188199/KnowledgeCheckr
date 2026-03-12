@@ -14,32 +14,32 @@ describe('Verify sharing of Courses', () => {
     cy.loginTestUser()
     const dummyShareToken: string = generateToken(8)
 
-    //? Insert dummy knowledge check with share-token
-    const dummyCheck: Course = Object.assign(instantiateCourse(), { share_key: dummyShareToken } as Partial<Course>)
-    cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCheck })
+    //? Insert dummy knowledge course with share-token
+    const dummmyCourse: Course = Object.assign(instantiateCourse(), { share_key: dummyShareToken } as Partial<Course>)
+    cy.request({ url: '/api/insert/course', method: 'POST', body: dummmyCourse })
 
     cy.visit(`/courses/${dummyShareToken}`)
-    cy.get('main #page-heading').should('contain', dummyCheck.name)
-    cy.get('nav[id="question-navigation"]').should('exist').children().should('have.length', dummyCheck.questions.length)
+    cy.get('main #page-heading').should('contain', dummmyCourse.name)
+    cy.get('nav[id="question-navigation"]').should('exist').children().should('have.length', dummmyCourse.questions.length)
   })
 
   it('Verify that a share-token can be generated and used by the owner', () => {
     cy.loginTestUser()
 
-    //? Insert dummy knowledge check with share-token
-    const dummyCheck: Course = Object.assign(instantiateCourse(), {
+    //? Insert dummy knowledge course with share-token
+    const dummyCourse: Course = Object.assign(instantiateCourse(), {
       share_key: null,
       questions: [instantiateDragDropQuestion(), instantiateSingleChoice(), instantiateMultipleChoice(), instantiateOpenQuestion()],
     } as Partial<Course>)
 
-    cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCheck })
+    cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCourse })
     cy.visit('/courses', {
       onBeforeLoad: (win) => {
         cy.spy(win.navigator.clipboard, 'writeText').as('share-token-copied-to-clipboard')
       },
     })
 
-    cy.get(`[data-slot="generic-card"][data-knowledge-check-id="${dummyCheck.id}"]`).should('exist').and('be.visible').find('button[data-share-button]').should('exist').click()
+    cy.get(`[data-slot="generic-card"][data-course-id="${dummyCourse.id}"]`).should('exist').and('be.visible').find('button[data-share-button]').should('exist').click()
 
     cy.get('@share-token-copied-to-clipboard').should('have.been.calledOnce')
     cy.get('@share-token-copied-to-clipboard')
@@ -54,6 +54,6 @@ describe('Verify sharing of Courses', () => {
         cy.visit(`/courses/${token}`)
       })
 
-    cy.get('main  #page-heading').should('contain', dummyCheck.name)
+    cy.get('main  #page-heading').should('contain', dummyCourse.name)
   })
 })

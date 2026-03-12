@@ -7,7 +7,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import { Course } from '@/src/schemas/CourseSchema'
 import { ChoiceQuestion, DragDropQuestion, Question } from '@/src/schemas/QuestionSchema'
 
-export default async function insertKnowledgeCheckQuestions(db: DrizzleDB, questions: Array<Question & { categoryId: string }>, check_id: Course['id']) {
+export default async function insertCourseQuestions(db: DrizzleDB, questions: Array<Question & { categoryId: string }>, check_id: Course['id']) {
   await requireAuthentication()
 
   let index = 0

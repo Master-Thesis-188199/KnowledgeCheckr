@@ -23,7 +23,7 @@ export type ExaminationStore = ExaminationState & ExaminationActions
 
 const defaultInitState: ExaminationState = {
   ...instantiateExaminationSchema(),
-  knowledgeCheck: instantiateCourse(),
+  course: instantiateCourse(),
   startedAt: new Date(Date.now()),
   currentQuestionIndex: 0,
   isLastQuestion: false,
@@ -37,19 +37,19 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
       return {
         ...initialState,
 
-        // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.knowledgeCheck.questions.length })),
-        setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.knowledgeCheck.questions.length - 1 })),
+        // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.course.questions.length })),
+        setCurrentQuestionIndex: (index) => set((prev) => ({ ...prev, currentQuestionIndex: index, isLastQuestion: index === prev.course.questions.length - 1 })),
         nextQuestion: () =>
           set((prev) => ({
             ...prev,
-            currentQuestionIndex: (prev.currentQuestionIndex + 1) % prev.knowledgeCheck.questions.length,
-            isLastQuestion: prev.currentQuestionIndex + 1 + 1 === prev.knowledgeCheck.questions.length,
+            currentQuestionIndex: (prev.currentQuestionIndex + 1) % prev.course.questions.length,
+            isLastQuestion: prev.currentQuestionIndex + 1 + 1 === prev.course.questions.length,
           })),
         previousQuestion: () =>
           set((prev) => ({
             ...prev,
-            currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1,
-            isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.knowledgeCheck.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.knowledgeCheck.questions.length,
+            currentQuestionIndex: prev.currentQuestionIndex === 0 ? prev.course.questions.length - 1 : prev.currentQuestionIndex - 1,
+            isLastQuestion: (prev.currentQuestionIndex === 0 ? prev.course.questions.length - 1 : prev.currentQuestionIndex - 1) + 1 === prev.course.questions.length,
           })),
         saveAnswer: (result) => {
           return set((prev) => ({

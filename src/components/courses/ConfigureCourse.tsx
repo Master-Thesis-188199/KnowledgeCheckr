@@ -37,7 +37,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
   return (
     <CourseStoreProvider initialStoreProps={{ owner_id: user.id, ...initialStoreProps }} options={options}>
       <MultiStageStoreProvider
-        cacheOptions={{ cacheKey: 'create-check-stages' }}
+        cacheOptions={{ cacheKey: 'create-course-stages' }}
         initialStoreProps={{
           stages: [
             { stage: 1, title: t('basic-information') },
@@ -46,7 +46,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
             { stage: 4, title: t('conclusion') },
           ],
         }}>
-        <PageHeading title={`${mode === 'create' ? 'Create KnowledgeCheck' : initialStoreProps?.name}`} />
+        <PageHeading title={`${mode === 'create' ? 'Create Course' : initialStoreProps?.name}`} />
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
         <div className='mx-[1.5%] grid grid-cols-1 gap-8'>

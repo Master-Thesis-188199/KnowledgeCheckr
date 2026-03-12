@@ -38,7 +38,7 @@ export const sideBarConfiguration: SideBarProps = {
     },
     {
       type: 'navigation',
-      label: 'Create New Check',
+      label: 'Create New Course',
       href: '/courses/create',
       icon: <PlusIcon className={iconClasses} />,
     },

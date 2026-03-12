@@ -18,22 +18,22 @@ describe('/courses/create - Create Page ', () => {
     cy.wait('@intercept-page-response').its('response.statusCode').should('eq', 200)
   })
 
-  it('Verify that save-check button calls save server-action', () => {
+  it('Verify that save-course button calls save server-action', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
     cy.visit('/courses/create')
 
-    //* Switch to last stage to save check
+    //* Switch to last stage to save course
     cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).children().last().click()
 
     cy.intercept('POST', `${baseUrl}/courses/create`).as('intercept-create-response')
-    cy.get("[aria-label='save knowledge check']").should('exist').click({ force: true })
+    cy.get("[aria-label='save course']").should('exist').click({ force: true })
 
     cy.wait('@intercept-create-response').then((interception) => {
       const request = interception.request
       const body: Array<Any> = JSON.parse(request.body)
       const response = interception.response
 
-      expect(body.at(0)).to.have.property('check')
+      expect(body.at(0)).to.have.property('course')
       expect(response?.statusCode).to.eq(303)
     })
   })

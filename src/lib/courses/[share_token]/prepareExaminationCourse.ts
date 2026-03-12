@@ -8,7 +8,7 @@ import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 /**
- * This function takes in a given knowledgeCheck and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
+ * This function takes in a given course and removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the course-settings.
  */
 export default async function prepareExaminationCourse(course: Course) {
   let questions = course.settings.examination.questionOrder === 'create-order' ? course.questions : shuffleArray(course.questions)

@@ -29,7 +29,7 @@ const ExamAttemptItemSchema = z.object({
   startedAt: z.date(),
   finishedAt: z.date(),
   score: z.number(),
-  totalCheckScore: z.number(),
+  totalCourseScore: z.number(),
 })
 
 type ExamAttemptItem = z.output<typeof ExamAttemptItemSchema>
@@ -125,8 +125,8 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
         accessorKey: t('columns.totalScore_header'),
         header: () => <div className='w-full text-center'>{t('columns.totalScore_header')}</div>,
         cell: ({ row }) => (
-          <div className='text-center text-xs text-foreground' id={`${row.original.id}-total-check-score`}>
-            {row.original.totalCheckScore}
+          <div className='text-center text-xs text-foreground' id={`${row.original.id}-total-course-score`}>
+            {row.original.totalCourseScore}
           </div>
         ),
       },

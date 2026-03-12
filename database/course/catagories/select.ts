@@ -4,8 +4,8 @@ import getDatabase from '@/database/Database'
 import { db_category } from '@/database/drizzle/schema'
 import { Course } from '@/src/schemas/CourseSchema'
 
-export async function getCategoriesByCheckId(knowledgeCheckId: Course['id']) {
+export async function getCategoriesByCourseId(courseId: Course['id']) {
   const db = await getDatabase()
 
-  return await db.select().from(db_category).where(eq(db_category.knowledgecheckId, knowledgeCheckId))
+  return await db.select().from(db_category).where(eq(db_category.knowledgecheckId, courseId))
 }

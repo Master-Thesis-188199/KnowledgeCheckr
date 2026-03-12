@@ -10,7 +10,7 @@ describe('SessionStorageCache', () => {
 
   it('Verify that create-store-state is stored in sessionStorage', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const DUMMY_NAME = 'Test Check'
+    const DUMMY_NAME = 'Test Course'
 
     cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'courses-store', 'Verify that courses-store is not cached at the beginning')
 
@@ -21,11 +21,11 @@ describe('SessionStorageCache', () => {
       .its(baseUrl)
       .should('have.property', 'courses-store')
       .then((sessionCache) => {
-        const cachedCheck: Course = JSON.parse(sessionCache.toString())
+        const cachedCourse: Course = JSON.parse(sessionCache.toString())
 
-        expect(cachedCheck, "Verify that the cached knowldgeCheck object has a 'name' property").to.have.property('name')
-        expect(cachedCheck.name, 'Verify cached knowldgeCheck name to match the entered name').to.equal(DUMMY_NAME)
-        expect(safeParseCourse(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
+        expect(cachedCourse, "Verify that the cached course object has a 'name' property").to.have.property('name')
+        expect(cachedCourse.name, 'Verify cached course name to match the entered name').to.equal(DUMMY_NAME)
+        expect(safeParseCourse(cachedCourse).success, 'Verify cached course to satisfy course schema').to.be.equal(true)
       })
 
     cy.reload()
@@ -34,7 +34,7 @@ describe('SessionStorageCache', () => {
 
   it('Verify that create-store-sate session storage cache is invalidated after cacheDuration', () => {
     const baseUrl = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const DUMMY_NAME = 'Test Check'
+    const DUMMY_NAME = 'Test Course'
     const CACHE_EXPIRATION_HOURS = 5
 
     cy.getAllSessionStorage().its(baseUrl).should('not.have.a.property', 'courses-store', 'Verify that courses-store is not cached at the beginning')
@@ -45,11 +45,11 @@ describe('SessionStorageCache', () => {
       .its(baseUrl)
       .should('have.property', 'courses-store')
       .then((sessionCache) => {
-        const cachedCheck: Course = JSON.parse(sessionCache.toString())
+        const cachedCourse: Course = JSON.parse(sessionCache.toString())
 
-        expect(cachedCheck, "Verify that the cached knowldgeCheck object has a 'name' property").to.have.property('name')
-        expect(cachedCheck.name, 'Verify cached knowldgeCheck name to match the entered name').to.equal(DUMMY_NAME)
-        expect(safeParseCourse(cachedCheck).success, 'Verify cached knowledeCheck to satisfy knowledgeCheck schema').to.be.equal(true)
+        expect(cachedCourse, "Verify that the cached course object has a 'name' property").to.have.property('name')
+        expect(cachedCourse.name, 'Verify cached course name to match the entered name').to.equal(DUMMY_NAME)
+        expect(safeParseCourse(cachedCourse).success, 'Verify cached course to satisfy course schema').to.be.equal(true)
       })
 
     cy.clock(addHours(Date.now(), CACHE_EXPIRATION_HOURS), ['Date'])

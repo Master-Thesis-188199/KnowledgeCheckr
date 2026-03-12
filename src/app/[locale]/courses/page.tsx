@@ -5,7 +5,7 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 
-export default async function ChecksPage() {
+export default async function CoursesPage() {
   const { user } = await requireAuthentication()
   const courses = await getCoursesByOwner(user.id)
 

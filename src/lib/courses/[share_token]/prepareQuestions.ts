@@ -7,7 +7,7 @@ import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 /**
- * This function takes in an array of questions and depending on the given options it removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the KnowledgeCheck-settings.
+ * This function takes in an array of questions and depending on the given options it removes each answer's correctness information and either randomizes the question- and answer-option orders depending on the Course-settings.
  * By default it will hide solutions from answers and sort them by their create-order.
  * @param options.questionOrder Defines the order in which questions are sorted, by default the `create-order` is used, which will not modify the questions order
  * @param options.answerOrder Defines the order in which answers are sorted, by default the `create-order` is used, which will not modify the answer order

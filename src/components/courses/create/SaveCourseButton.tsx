@@ -22,12 +22,12 @@ export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string
   const formAction = () => {
     if (!safeParse.success) return undefined
 
-    saveAction({ check: safeParse.data, callbackPath: callbackPath ?? '/courses' }).catch((e) => {
+    saveAction({ course: safeParse.data, callbackPath: callbackPath ?? '/courses' }).catch((e) => {
       if (isRedirectError(e)) {
         const key = cacheKey ?? 'courses-store'
         const hasCache = !!sessionStorage.getItem(key)
 
-        const stagesKey = 'create-check-stages'
+        const stagesKey = 'create-course-stages'
         const hasCachedStage = !!sessionStorage.getItem(stagesKey)
 
         if (hasCachedStage) sessionStorage.removeItem(stagesKey)
@@ -35,7 +35,7 @@ export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string
         if (hasCache) {
           sessionStorage.removeItem(key)
         } else {
-          console.debug(`[SaveCheckButton]: No cached data was found for cacheKey: ${key}.`)
+          console.debug(`[SaveCourseButton]: No cached data was found for cacheKey: ${key}.`)
         }
 
         clearNavigationAbort()
@@ -49,7 +49,7 @@ export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string
       content={
         <div className='flex items-center gap-1.5'>
           <InfoIcon className='size-4 text-destructive' />
-          This check cannot be saved at this moment, because it violates internal schema definitions.
+          This course cannot be saved at this moment, because it violates internal schema definitions.
         </div>
       }
       delay={250}
@@ -57,7 +57,7 @@ export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string
         'rounded-md bg-neutral-100 p-2 text-sm shadow-sm shadow-neutral-400 dark:bg-neutral-800 dark:text-neutral-300 dark:shadow-neutral-700',
         !safeParse.success && 'dark:text-red-400/90 dark:shadow-red-400/40',
       )}>
-      <Button disabled={!safeParse.success} aria-label='save knowledge check' type='submit' formAction={formAction}>
+      <Button disabled={!safeParse.success} aria-label='save course' type='submit' formAction={formAction}>
         Save
       </Button>
     </Tooltip>

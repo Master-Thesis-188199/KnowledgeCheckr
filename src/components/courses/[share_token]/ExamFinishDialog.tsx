@@ -15,7 +15,7 @@ import { Question } from '@/src/schemas/QuestionSchema'
 import { safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
-  const { knowledgeCheck, ...examinationState } = useExaminationStore((state) => state)
+  const { course, ...examinationState } = useExaminationStore((state) => state)
   const { clearNavigationAbort } = useNavigationAbort()
 
   return (
@@ -32,7 +32,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
           <div className='flex flex-col gap-4'>
             <span className='text-neutral-700 dark:text-neutral-200'>Question Overview</span>
             <div className='flex flex-wrap gap-4 px-4'>
-              {knowledgeCheck.questions.map((q, i) => (
+              {course.questions.map((q, i) => (
                 <div
                   className={cn(
                     'relative flex w-9 rounded-md py-1 text-center ring-1 ring-ring dark:ring-ring',
@@ -56,7 +56,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
             </DialogClose>
             <Button
               onClick={() =>
-                finishExaminationAttempt(validateExaminationSchema({ knowledgeCheck, ...examinationState }))
+                finishExaminationAttempt(validateExaminationSchema({ course, ...examinationState }))
                   .catch((e) => {
                     toast(`Failed to submit examination results. ${e}`, { type: 'error' })
                   })

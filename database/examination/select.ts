@@ -5,7 +5,7 @@ import getDatabase from '@/database/Database'
 import { db_userHasDoneCourse } from '@/database/drizzle/schema'
 import { Course } from '@/src/schemas/CourseSchema'
 
-export async function getKnowledgeCheckUserExaminationAttempts(userId: User['id'], courseId: Course['id']) {
+export async function getCourseUserExaminationAttempts(userId: User['id'], courseId: Course['id']) {
   const db = await getDatabase()
 
   const attempts = await db
@@ -35,7 +35,7 @@ export async function getExaminationAttemptById(attemptId: typeof db_userHasDone
   return attempt as typeof attempt | undefined
 }
 
-export async function getKnowledgeCheckExaminationAttempts(courseId: Course['id'], options?: DatabaseOptions) {
+export async function getCourseExaminationAttempts(courseId: Course['id'], options?: DatabaseOptions) {
   const db = await getDatabase()
 
   const userAttempts = await db.query.db_userHasDoneCourse.findMany({

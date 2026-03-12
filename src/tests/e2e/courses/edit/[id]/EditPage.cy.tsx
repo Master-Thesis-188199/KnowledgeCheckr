@@ -1,4 +1,4 @@
-describe('Edit KnowledgeCheck page: ', () => {
+describe('Edit Course page: ', () => {
   it('Verify that users must be logged in to access the edit page', () => {
     cy.visit('/courses/edit/12931293')
     cy.get('main').should('contain', "You're not authorized to access this page")
@@ -11,17 +11,17 @@ describe('Edit KnowledgeCheck page: ', () => {
     cy.get('main').should('contain', 'This page could not be found')
   })
 
-  it('Verify that users can edit an existing knowledge check that they own', () => {
+  it('Verify that users can edit an existing course that they own', () => {
     cy.loginTestUser()
 
     cy.visit('/courses/create')
-    cy.get('input[name="name"]').type('Test Check Title')
+    cy.get('input[name="name"]').type('Test Course Title')
 
-    //* Switch to last stage to save check
+    //* Switch to last stage to save course
     cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
     cy.get('button').contains('Save').should('exist').scrollIntoView().should('be.visible').click()
 
-    //? Ensure that the check was created and the user is redirected
+    //? Ensure that the course was created and the user is redirected
     cy.wait(750)
     cy.visit('/courses')
 

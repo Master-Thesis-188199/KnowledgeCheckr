@@ -41,7 +41,7 @@ function MenuBar() {
           <Separator orientation='vertical' className='min-h-5!' />
         </div>
 
-        <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-8' />
+        <Image src={KnowledgeCheckrIcon} alt='Course-Icon' className='size-8' />
         <span className='tracking-widest'>KnowledgeCheckr</span>
       </div>
       <div className='flex items-center gap-2'>

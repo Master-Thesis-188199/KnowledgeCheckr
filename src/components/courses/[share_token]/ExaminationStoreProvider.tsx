@@ -24,7 +24,7 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
     initialStoreProps,
     options: {
       expiresAfter: 10 * 60 * 1000,
-      discardCache: (cache) => cache?.knowledgeCheck.id !== initialStoreProps?.knowledgeCheck.id,
+      discardCache: (cache) => cache?.course.id !== initialStoreProps?.course.id,
       cacheKey: 'examination-store',
       modifyCache: (cache) => {
         const formatUpdateDate = (date?: Date | string) => {
@@ -37,19 +37,19 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
           return format(date, 'dd.LL.yyyy HH:mm:ss')
         }
 
-        // mutate cache when the underlying check (initialStoreProps) change, but preserve order, results and startedAt values
-        if (initialStoreProps !== undefined && formatUpdateDate(cache?.knowledgeCheck.updatedAt) !== formatUpdateDate(initialStoreProps?.knowledgeCheck.updatedAt)) {
-          console.warn('[Examination]: Check has been updated, mutating cache!')
+        // mutate cache when the underlying course (initialStoreProps) change, but preserve order, results and startedAt values
+        if (initialStoreProps !== undefined && formatUpdateDate(cache?.course.updatedAt) !== formatUpdateDate(initialStoreProps?.course.updatedAt)) {
+          console.warn('[Examination]: Course has been updated, mutating cache!')
 
           // preserve the cached order of questions
-          const preservedQuestionsOrder = initialStoreProps.knowledgeCheck.questions.toSorted(
-            (a, b) => cache.knowledgeCheck.questions.findIndex((q) => q.id === a.id) - cache.knowledgeCheck.questions.findIndex((q) => q.id === b.id),
+          const preservedQuestionsOrder = initialStoreProps.course.questions.toSorted(
+            (a, b) => cache.course.questions.findIndex((q) => q.id === a.id) - cache.course.questions.findIndex((q) => q.id === b.id),
           )
 
           const update: typeof initialStoreProps = {
             ...initialStoreProps,
-            knowledgeCheck: {
-              ...initialStoreProps.knowledgeCheck,
+            course: {
+              ...initialStoreProps.course,
               questions: preservedQuestionsOrder,
             },
           }
@@ -60,7 +60,7 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
       },
       ...options,
     },
-  }) // expire after 10 minutes of inactivity or when cached check-id differs from the initialStore-id (because ids are constants)
+  }) // expire after 10 minutes of inactivity or when cached course-id differs from the initialStore-id (because ids are constants)
 
   return <ExaminationStoreContext.Provider value={props}>{children}</ExaminationStoreContext.Provider>
 }

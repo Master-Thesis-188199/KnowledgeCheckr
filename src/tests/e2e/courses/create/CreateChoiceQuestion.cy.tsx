@@ -1,7 +1,7 @@
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { ChoiceQuestion } from '@/src/schemas/QuestionSchema'
 
-describe('Check: Create Choice Question -', () => {
+describe('Course: Create Choice Question -', () => {
   beforeEach(() => {
     cy.loginTestUser()
     cy.visit('/courses/create')

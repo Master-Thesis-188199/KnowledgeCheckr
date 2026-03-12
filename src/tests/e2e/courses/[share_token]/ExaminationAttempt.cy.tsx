@@ -8,21 +8,21 @@ describe('ExaminationAttempt Suite: ', () => {
   })
 
   it('Verify that attempt is automatically closed when time-frame is reached', () => {
-    const check = instantiateCourse()
-    check.settings.examination.examTimeFrameSeconds = 60
-    check.share_key = generateToken(8) + '-time-frame'
+    const course = instantiateCourse()
+    course.settings.examination.examTimeFrameSeconds = 60
+    course.share_key = generateToken(8) + '-time-frame'
 
-    cy.request('POST', '/api/insert/course', check).should('have.property', 'status').and('eq', 200)
+    cy.request('POST', '/api/insert/course', course).should('have.property', 'status').and('eq', 200)
 
-    cy.visit(`/courses/${check.share_key}`)
-    cy.get('h1').contains(check.name).should('exist').and('be.visible')
+    cy.visit(`/courses/${course.share_key}`)
+    cy.get('h1').contains(course.name).should('exist').and('be.visible')
 
-    cy.intercept('POST', `/courses/${check.share_key}`).as('finishAttemptAction')
+    cy.intercept('POST', `/courses/${course.share_key}`).as('finishAttemptAction')
 
     cy.wait(2000)
-    cy.clock(addSeconds(new Date(Date.now()), check.settings.examination.examTimeFrameSeconds * 2), ['Date'])
+    cy.clock(addSeconds(new Date(Date.now()), course.settings.examination.examTimeFrameSeconds * 2), ['Date'])
 
-    cy.wait('@finishAttemptAction', { timeout: check.settings.examination.examTimeFrameSeconds * 1000 })
+    cy.wait('@finishAttemptAction', { timeout: course.settings.examination.examTimeFrameSeconds * 1000 })
       .its('response.statusCode')
       .should('eq', 200)
     cy.url().should('eq', `${Cypress.env('NEXT_PUBLIC_BASE_URL')}/courses`)

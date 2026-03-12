@@ -21,7 +21,7 @@ import { Any } from '@/types'
 
 export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<Course>, 'resolver' | 'defaultValues'>) {
   const { setEnabled, enabled } = useMultiStageStore((store) => store)
-  const { updateCheck, ...check } = useCourseStore((state) => state)
+  const { updateCourse, ...course } = useCourseStore((state) => state)
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof Course>
   const now = useCallback(() => new Date(Date.now()), [])()
 
@@ -29,11 +29,11 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
   const { form, baseFieldProps } = useRHF(CourseSchema, {
     defaultValues: () => ({
-      ...check,
+      ...course,
 
       // the date-value causes the input to not display the `Date` object
-      openDate: format(check.openDate ?? now, 'yyyy-LL-dd') as Any,
-      closeDate: format(check.closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
+      openDate: format(course.openDate ?? now, 'yyyy-LL-dd') as Any,
+      closeDate: format(course.closeDate ?? addDays(now, 14), 'yyyy-LL-dd') as Any,
     }),
     mode: 'all',
     ...config,
@@ -87,7 +87,7 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
           // transfer form-values into create-store
           console.debug('Updating store with:', values)
-          updateCheck(values)
+          updateCourse(values)
         }}
         className='@container relative flex flex-col gap-8 p-3'
         disableInteractions>

@@ -107,7 +107,7 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
         </DropdownMenuGroup>
 
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger enableTooltip={!hasQuestions} tooltipOptions={{ ...baseTooltipOptions, content: 'This check has no questions, sharing disabled.' }} disabled={!hasQuestions}>
+          <DropdownMenuSubTrigger enableTooltip={!hasQuestions} tooltipOptions={{ ...baseTooltipOptions, content: 'This course has no questions, sharing disabled.' }} disabled={!hasQuestions}>
             {t('invite_to_submenu_label')}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
@@ -196,7 +196,7 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
                 toast(t('delete_knowledgeCheck.toast_deletion_successful'), { type: 'success' })
               })
               .catch((err) => {
-                console.error('[Error]: Removing knowledgeCheck failed.', err)
+                console.error('[Error]: Removing course failed.', err)
                 toast(t('delete_knowledgeCheck.toast_deletion_failure'), { type: 'error' })
               })
           }}>

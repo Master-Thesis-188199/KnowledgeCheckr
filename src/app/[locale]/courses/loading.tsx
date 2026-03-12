@@ -7,9 +7,9 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { cn } from '@/src/lib/Shared/utils'
 
-export default async function LoadingChecksPage() {
+export default async function LoadingCoursesPage() {
   await requireAuthentication()
-  const dummyChecks = Array.from({ length: 10 })
+  const dummyCourses = Array.from({ length: 10 })
 
   return (
     <div>
@@ -17,21 +17,21 @@ export default async function LoadingChecksPage() {
       <PageHeading title='Your Courses' showBreadcrumbs={false} />
 
       <div className='courses grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-8'>
-        {dummyChecks.map((_, i) => (
-          <KnowledgeCheckCardSkeleton key={i} />
+        {dummyCourses.map((_, i) => (
+          <CourseCardSkeleton key={i} />
         ))}
       </div>
     </div>
   )
 }
 
-function KnowledgeCheckCardSkeleton() {
+function CourseCardSkeleton() {
   return (
     <Card disableInteractions className='group relative flex h-[329px] flex-col justify-between gap-10'>
       <div className='absolute top-3 right-4 flex gap-1'>
         <button
           disabled
-          aria-label='share KnowledgeCheck'
+          aria-label='share course'
           className={cn('group rounded-md p-1.5 text-neutral-600 disabled:cursor-not-allowed disabled:text-neutral-400 dark:text-neutral-400 disabled:dark:text-neutral-500')}>
           <Share2Icon className='size-4.5 group-active:stroke-3' />
         </button>

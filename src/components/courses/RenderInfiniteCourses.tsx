@@ -4,7 +4,7 @@ import { Course } from '@/src/schemas/CourseSchema'
 import { Any } from '@/types'
 
 /**
- * This component renders a given set of (KnowledgeCheck) initialItems in a grid.
+ * This component renders a given set of (courses) initialItems in a grid.
  * When the user scrolls to the bottom of the grid, new items will be fetched and appended using the `fetchNewItems` function.
  * @param props.initialItems The initial set of items that are usually fetched on the server that are to be shown.
  */

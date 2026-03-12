@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { getCategoriesByCheckId } from '@/database/course/catagories/select'
-import insertKnowledgeCheckQuestions from '@/database/course/questions/insert'
+import { getCategoriesByCourseId } from '@/database/course/catagories/select'
+import insertCourseQuestions from '@/database/course/questions/insert'
 import { DrizzleDB } from '@/database/Database'
 import { db_question } from '@/database/drizzle'
 import { Course } from '@/src/schemas/CourseSchema'
@@ -10,7 +10,7 @@ export async function updateQuestions(db: DrizzleDB, courseId: Course['id'], que
 
   if (questions.length === 0) return
 
-  const categories = await getCategoriesByCheckId(courseId)
+  const categories = await getCategoriesByCourseId(courseId)
   const questionsWithCategoryIds = questions.map((q) => {
     const category = categories.find((c) => c.name === q.category)
 
@@ -18,5 +18,5 @@ export async function updateQuestions(db: DrizzleDB, courseId: Course['id'], que
 
     return { ...q, categoryId: category.id }
   })
-  await insertKnowledgeCheckQuestions(db, questionsWithCategoryIds, courseId)
+  await insertCourseQuestions(db, questionsWithCategoryIds, courseId)
 }

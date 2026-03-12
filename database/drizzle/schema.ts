@@ -93,7 +93,7 @@ export const db_category = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
-    unique().on(table.knowledgecheckId, table.name), //* ensure a check can not have duplicate categories
+    unique().on(table.knowledgecheckId, table.name), //* ensure a course can not have duplicate categories
     index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],

@@ -14,18 +14,18 @@ export default async function PracticeResultsPage({ params }: { params: Promise<
   const { courseId } = await params
   const { user } = await requireAuthentication()
 
-  const check = await getCourseById(courseId)
+  const course = await getCourseById(courseId)
 
-  if (!check) notFound()
+  if (!course) notFound()
   // todo verify that only the user that made a respective practice-attempt can view the attmept.
-  // if (check) forbidden()
+  // if (course) forbidden()
 
   const tExamResults = await getScopedI18n('Checks.ExaminatonResults')
   const t = await getScopedI18n('Checks.PracticeResults')
 
   return (
     <>
-      <PracticeResultsBreadcrumbs share_token={check.share_key!} />
+      <PracticeResultsBreadcrumbs share_token={course.share_key!} />
       <PageHeading title={t('title')} />
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>

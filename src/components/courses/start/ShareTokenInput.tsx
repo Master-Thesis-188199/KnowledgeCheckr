@@ -32,7 +32,7 @@ export function ShareTokenInput() {
           {...registration}
           maxLength={8}
           onChange={(input) => {
-            form.clearErrors('root') // clears custom errors, like check not found
+            form.clearErrors('root') // clears custom errors, like course not found
             return registration.onChange({ target: { value: input, name: 'shareToken' } })
           }}>
           <InputOTPGroup>

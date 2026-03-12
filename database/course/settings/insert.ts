@@ -6,7 +6,7 @@ import { db_courseSettings } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { Course } from '@/src/schemas/CourseSchema'
 
-export default async function insertKnowledgeCheckSettings(db: DrizzleDB, { id, settings }: Pick<Course, 'id' | 'settings'>) {
+export default async function insertCourseSettings(db: DrizzleDB, { id, settings }: Pick<Course, 'id' | 'settings'>) {
   await requireAuthentication()
 
   const dbSettings = convertSettings('to-database', settings)

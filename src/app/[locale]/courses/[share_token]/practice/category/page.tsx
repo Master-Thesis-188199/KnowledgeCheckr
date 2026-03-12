@@ -6,16 +6,16 @@ import PageHeading from '@/src/components/Shared/PageHeading'
 export default async function PracticeCategoryPage({ params }: { params: Promise<{ share_token: string }> }) {
   const { share_token } = await params
 
-  const check = await getCourseByShareToken(share_token)
+  const course = await getCourseByShareToken(share_token)
 
-  if (!check) {
+  if (!course) {
     notFound()
   }
 
   return (
     <>
       <PageHeading title='Choose Category Questions' />
-      <PracticeCategorySelection share_token={share_token} questions={check.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')} />
+      <PracticeCategorySelection share_token={share_token} questions={course.questions.filter((q) => q.accessibility === 'all' || q.accessibility === 'practice-only')} />
     </>
   )
 }

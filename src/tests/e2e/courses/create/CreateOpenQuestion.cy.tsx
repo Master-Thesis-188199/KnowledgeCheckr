@@ -1,6 +1,6 @@
 import { OpenQuestion } from '@/src/schemas/QuestionSchema'
 
-describe('Check: Open Question -', () => {
+describe('Course: Open Question -', () => {
   beforeEach(() => {
     cy.loginTestUser()
     cy.visit('/courses/create')
