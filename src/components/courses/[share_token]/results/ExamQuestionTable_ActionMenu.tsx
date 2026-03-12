@@ -10,7 +10,7 @@ import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
 export default function ExamQuestionTable_ActionMenu({ row }: { row: Row<PreviewQuestionResult_QuestionItem> }) {
-  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationQuestionTable.ActionMenu')
+  const t = useScopedI18n('Courses.ExaminatonResults.ExaminationQuestionTable.ActionMenu')
   const currentLocale = useCurrentLocale()
   const [drawerOpenState, setDrawerOpenState] = useState(false)
 

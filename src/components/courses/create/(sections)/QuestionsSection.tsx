@@ -9,7 +9,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBackButton?: boolean; disabled?: boolean }) {
-  const t = useScopedI18n('Checks.Create.QuestionSection')
+  const t = useScopedI18n('Courses.Create.QuestionSection')
   const { questions } = useCourseStore((state) => state)
 
   return (
@@ -35,7 +35,7 @@ export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBac
 }
 
 function EmptyQuestionsStatus({ show }: { show: boolean }) {
-  const t = useScopedI18n('Checks.Create.QuestionSection')
+  const t = useScopedI18n('Courses.Create.QuestionSection')
 
   return (
     <div className={cn('flex min-h-60 flex-1 flex-col items-center justify-center gap-6', !show && 'hidden')}>
@@ -48,7 +48,7 @@ function EmptyQuestionsStatus({ show }: { show: boolean }) {
 function RenderCreatedQuestions({ show, disabled }: { show: boolean; disabled?: boolean }) {
   const { questions, removeQuestion } = useCourseStore((state) => state)
   const tQuestion = useScopedI18n('Shared.Question')
-  const t = useScopedI18n('Checks.Create.QuestionSection.QuestionCard')
+  const t = useScopedI18n('Courses.Create.QuestionSection.QuestionCard')
 
   if (!show) return null
 

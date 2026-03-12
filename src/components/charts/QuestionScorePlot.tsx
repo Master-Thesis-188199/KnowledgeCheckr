@@ -49,7 +49,7 @@ export function QuestionScorePlotCard({ title, description }: { title: string; d
 }
 
 export function QuestionScorePlot({ data: initialData = data, className }: { data?: ChartData[]; className?: string }) {
-  const t = useScopedI18n('Checks.ExaminatonResults.Charts.QuestionScoresLineChartCard')
+  const t = useScopedI18n('Courses.ExaminatonResults.Charts.QuestionScoresLineChartCard')
 
   const chartConfig = React.useMemo(
     (): ChartConfig => ({

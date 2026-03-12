@@ -13,7 +13,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { Course } from '@/src/schemas/CourseSchema'
 
 export function CourseCard(course: Course) {
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const t = useScopedI18n('Components.CourseCard')
   const { data } = useSession()
   const userId = data?.user.id
   const isCollaborator = userId ? course.collaborators.includes(userId) : false
@@ -61,7 +61,7 @@ export function CourseCard(course: Course) {
 }
 
 function Footer({ updatedAt }: { updatedAt?: Date }) {
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const t = useScopedI18n('Components.CourseCard')
   const currentLocale = useCurrentLocale()
 
   return (
@@ -75,7 +75,7 @@ function Footer({ updatedAt }: { updatedAt?: Date }) {
 }
 
 function DisplayUserRole({ role }: { role: 'Guest' | 'Owner' | 'Collaborator' }) {
-  const t = useScopedI18n('Components.KnowledgeCheckCard')
+  const t = useScopedI18n('Components.CourseCard')
   let Icon: React.ComponentType<{ className?: string }>
   let canEdit: boolean
 

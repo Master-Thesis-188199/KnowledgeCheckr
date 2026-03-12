@@ -22,7 +22,7 @@ export default function CollaboratorSelection() {
   const form = useFormContext<Course>()
   const { users } = useCollaboratorContext()
   const [open, setOpen] = useState(false)
-  const t = useScopedI18n('Checks.Create.GeneralSection.CollaboratorSelection')
+  const t = useScopedI18n('Courses.Create.GeneralSection.CollaboratorSelection')
 
   const { collaborators: collaboratorIds, updateCollaborators } = useCourseStore((store) => store)
   const [selectedCollaborators, setSelectedCollaborators] = useState<CollaboratorItem[]>(users.filter((u) => collaboratorIds.includes(u.id)).map((u) => ({ id: u.id, name: u.name })))

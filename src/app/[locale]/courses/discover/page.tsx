@@ -10,7 +10,7 @@ import { getScopedI18n } from '@/src/i18n/server-localization'
 import { Course } from '@/src/schemas/CourseSchema'
 
 export default async function BrowseCoursesPage() {
-  const t = await getScopedI18n('Checks.Discover')
+  const t = await getScopedI18n('Courses.Discover')
   const props: InfinityScrollFetcherProps<typeof getPublicCourses>['fetchProps'] = [
     {
       limit: 10,
@@ -25,9 +25,9 @@ export default async function BrowseCoursesPage() {
 
       {courses.length === 0 && (
         <div className='flex gap-2'>
-          {t('no_checks_found_base')}
+          {t('no_courses_found_base')}
           <Link href='/courses/create' className='text-blue-500 underline dark:text-blue-500'>
-            {t('no_checks_found_link')}
+            {t('no_courses_found_link')}
           </Link>
         </div>
       )}

@@ -20,8 +20,8 @@ export default async function PracticeResultsPage({ params }: { params: Promise<
   // todo verify that only the user that made a respective practice-attempt can view the attmept.
   // if (course) forbidden()
 
-  const tExamResults = await getScopedI18n('Checks.ExaminatonResults')
-  const t = await getScopedI18n('Checks.PracticeResults')
+  const tExamResults = await getScopedI18n('Courses.ExaminatonResults')
+  const t = await getScopedI18n('Courses.PracticeResults')
 
   return (
     <>

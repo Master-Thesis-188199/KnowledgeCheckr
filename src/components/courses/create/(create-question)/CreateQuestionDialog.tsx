@@ -72,7 +72,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const { addQuestion, questionCategories } = useCourseStore((state) => state)
 
   const tQuestion = useScopedI18n('Shared.Question')
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog')
 
   const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults('drag-drop') : initialValues), [initialValues])
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
@@ -263,7 +263,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
 }
 
 function QuestionDialogHeader({ type }: { type: 'create' | 'edit' }) {
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.Header')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog.Header')
   const title = type === 'create' ? t('title_create') : t('title_edit')
   const description = type === 'create' ? t('description_create') : t('description_edit')
 
@@ -298,7 +298,7 @@ function AnswerOptions(options: AnswerOptionProps) {
 }
 
 function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptionProps) {
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog')
   const form = useFormContext<Question>()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -354,7 +354,7 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
 }
 
 function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<Question>['append']; type: 'choice-question' | DragDropQuestion['type']; watch: UseFormReturn<Question>['watch'] }) {
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.buttons')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog.buttons')
 
   const generateNewAnswer = () => {
     switch (type) {
@@ -383,14 +383,14 @@ function AddAnswerButton({ type, watch, append }: { append: UseFieldArrayReturn<
 }
 
 function OpenQuestionAnswers() {
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.placeholders')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog.placeholders')
   const form = useFormContext()
 
   return <Field form={form} name='expectation' id='expectation' placeholder={t('open_question_expectation')} showLabel={false} />
 }
 
 function DragDropQuestionAnswers({ register, errors, control, watch, setValue }: AnswerOptionProps) {
-  const t = useScopedI18n('Checks.Create.CreateQuestionDialog.tooltips')
+  const t = useScopedI18n('Courses.Create.CreateQuestionDialog.tooltips')
   const form = useFormContext()
   const { fields, append, remove, move } = useFieldArray({
     control,

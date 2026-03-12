@@ -15,7 +15,7 @@ import debounceFunction from '@/src/hooks/Shared/debounceFunction'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export function DiscoverFilterFields() {
-  const t = useScopedI18n('Checks.Discover')
+  const t = useScopedI18n('Courses.Discover')
   const { filter, setFuncProps } = useDiscoverFilterOptionsContext()
 
   const filterOperands = ['contains' as const, 'startsWith' as const, 'endsWith' as const, 'eq' as const]
@@ -111,7 +111,7 @@ export function DiscoverFilterFields() {
           <Link href='/courses/create'>
             <Button>
               <PlusIcon className='size-5' />
-              {t('FilterFields.create_check_button_label')}
+              {t('FilterFields.create_course_button_label')}
             </Button>
           </Link>
         </div>

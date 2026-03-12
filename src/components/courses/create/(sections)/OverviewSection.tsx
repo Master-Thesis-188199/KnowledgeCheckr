@@ -4,7 +4,7 @@ import SettingsSection from '@/src/components/courses/create/(sections)/Settings
 import { getScopedI18n } from '@/src/i18n/server-localization'
 
 export async function OverviewSection() {
-  const t = await getScopedI18n('Checks.Create.OverviewSection')
+  const t = await getScopedI18n('Courses.Create.OverviewSection')
 
   return (
     <>

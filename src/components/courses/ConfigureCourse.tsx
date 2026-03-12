@@ -29,7 +29,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
   const { user } = await requireAuthentication()
   const users = await getUsers()
   const tButtons = await getScopedI18n('Shared')
-  const t = await getScopedI18n('Checks.Create.MultiStages')
+  const t = await getScopedI18n('Courses.Create.MultiStages')
 
   // when users start editing from e.g. '/discover', '/courses' redirect them back to that page after save. When creating new courses redirect to '/courses'
   const callbackPath = mode === 'edit' ? await getReferer() : '/courses'

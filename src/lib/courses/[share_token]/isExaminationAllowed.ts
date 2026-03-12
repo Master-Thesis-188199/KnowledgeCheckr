@@ -21,7 +21,7 @@ export default async function isExaminationAllowed(course: Course, user: BetterA
 
   if (isFuture(course.settings.examination.startDate)) return { allowed: false, reason: t('notOpenYet', { openDate: course.settings.examination.startDate.toLocaleDateString(currentLocale) }) }
   if (course.settings.examination.endDate !== null && isPast(course.settings.examination.endDate))
-    return { allowed: false, reason: t('checkClosed', { closeDate: course.settings.examination.endDate?.toLocaleDateString(currentLocale) }) }
+    return { allowed: false, reason: t('courseClosed', { closeDate: course.settings.examination.endDate?.toLocaleDateString(currentLocale) }) }
 
   if (!course.settings.examination.allowAnonymous && user.isAnonymous) return { allowed: false, reason: t('anonymous-users-not-allowed') }
 

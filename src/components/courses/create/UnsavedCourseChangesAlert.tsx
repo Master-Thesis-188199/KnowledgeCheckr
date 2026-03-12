@@ -6,7 +6,7 @@ import { useNavigationAbort } from '@/src/components/navigation-abortion/Navigat
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function UnsavedCourseChangesAlert() {
-  const t = useScopedI18n('Checks.Create.UnsavedChangesAlert')
+  const t = useScopedI18n('Courses.Create.UnsavedChangesAlert')
   const { unsavedChanges } = useCourseStore((state) => state)
   const { enableNavigationAbort } = useNavigationAbort()
 

@@ -34,7 +34,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
   if (!hasCollaborativePermissions(course, user.id)) forbidden()
 
   const dummyAttempts = await getDummyExamAttempts(50)
-  const t = await getScopedI18n('Checks.ExaminatonResults')
+  const t = await getScopedI18n('Courses.ExaminatonResults')
 
   return (
     <>

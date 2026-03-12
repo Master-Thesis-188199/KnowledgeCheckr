@@ -6,7 +6,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 
 export default function PracticeSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<CourseSettings>, 'baseFieldProps'>) {
-  const t = useScopedI18n('Checks.Create.SettingSection.PracticeSettings')
+  const t = useScopedI18n('Courses.Create.SettingSection.PracticeSettings')
   const { control } = useFormContext<CourseSettings>()
   const { practice } = useWatch({ control: control })
 

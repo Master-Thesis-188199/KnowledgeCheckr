@@ -9,16 +9,16 @@ export default async function CoursesPage() {
   const { user } = await requireAuthentication()
   const courses = await getCoursesByOwner(user.id)
 
-  const t = await getScopedI18n('Checks')
+  const t = await getScopedI18n('Courses')
 
   return (
     <>
       <PageHeading title={t('title')} />
       {courses.length === 0 && (
         <div className='flex gap-2'>
-          {t('no_existing_checks')}
+          {t('no_existing_courses')}
           <Link href='/courses/create' className='text-blue-500 underline dark:text-blue-500'>
-            {t('no_existing_checks_action_button')}
+            {t('no_existing_courses_action_button')}
           </Link>
         </div>
       )}

@@ -28,7 +28,7 @@ export default function ShowAnswerDrawer_TableCell({
   setOpenAction?: Dispatch<SetStateAction<boolean>>
 }) {
   const tShared = useScopedI18n('Shared.Question')
-  const t = useScopedI18n('Checks.ExaminatonResults.ShowAnswerDrawer_TableCell')
+  const t = useScopedI18n('Courses.ExaminatonResults.ShowAnswerDrawer_TableCell')
   const isMobile = useIsMobile()
   const [slideValue, setSliderValue] = useState([item.score])
 

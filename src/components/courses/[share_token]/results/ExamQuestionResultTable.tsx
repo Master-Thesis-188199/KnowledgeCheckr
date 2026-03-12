@@ -30,7 +30,7 @@ export type PreviewQuestionResult_QuestionItem = {
 
 export default function ExamQuestionResultTable() {
   const tShared = useScopedI18n('Shared.Question')
-  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationQuestionTable')
+  const t = useScopedI18n('Courses.ExaminatonResults.ExaminationQuestionTable')
 
   const columns: ColumnDef<PreviewQuestionResult_QuestionItem>[] = [
     {

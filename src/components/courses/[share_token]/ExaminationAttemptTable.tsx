@@ -38,7 +38,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
   const currentLocale = useCurrentLocale()
   const tDataTable = useScopedI18n('Components.DataTable')
   const tShared = useScopedI18n('Shared.Timestamp')
-  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable')
+  const t = useScopedI18n('Courses.ExaminatonResults.ExaminationAttemptTable')
 
   const columns = React.useMemo(() => {
     const columns: ColumnDef<ExamAttemptItem>[] = [
@@ -181,7 +181,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
 
 function DrawerActionTableCell({ item, children }: { item: ExamAttemptItem; children: React.ReactNode }) {
   const tShared = useScopedI18n('Shared.Timestamp')
-  const t = useScopedI18n('Checks.ExaminatonResults.ExaminationAttemptTable.Drawer')
+  const t = useScopedI18n('Courses.ExaminatonResults.ExaminationAttemptTable.Drawer')
   const isMobile = useIsMobile()
   const currentLocale = useCurrentLocale()
 

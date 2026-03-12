@@ -12,7 +12,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { Course } from '@/src/schemas/CourseSchema'
 
 export function ShareCourseButton({ course, className }: { course: Course; className?: string }) {
-  const t = useScopedI18n('Components.ShareKnowledgeCheckButton')
+  const t = useScopedI18n('Components.ShareCourseButton')
   const [shareToken, setShareToken] = useState(course.share_key)
   const router = useRouter()
 

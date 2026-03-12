@@ -30,7 +30,7 @@ import { generateToken } from '@/src/lib/Shared/generateToken'
 import { Course } from '@/src/schemas/CourseSchema'
 
 export default function CourseActionMenu({ id, questions, share_key, owner_id, collaborators }: {} & Course) {
-  const t = useScopedI18n('Components.KnowledgeCheckCardMenu')
+  const t = useScopedI18n('Components.CourseActionMenu')
   const [menuOpen, setMenuOpen] = useState(false)
 
   const { data } = useSession()
@@ -136,14 +136,14 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_check.tooltip') }}>
+          <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_course.tooltip') }}>
             <Link href={`/courses/edit/${id}`} className='flex flex-1 justify-between'>
-              {t('edit_check.label')}
+              {t('edit_course.label')}
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='justify-between' disabled>
-            {t('clone_check.label')}
+            {t('clone_course.label')}
             <CopyPlusIcon className='size-4 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
           <DropdownMenuItem disabled>{t('inspect_statistics.label')}</DropdownMenuItem>
@@ -183,7 +183,7 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
           </DropdownMenuItem>
         </ConfirmationDialog>
         <ConfirmationDialog
-          body={t('delete_knowledgeCheck.confirmation_dialog_body')}
+          body={t('delete_course.confirmation_dialog_body')}
           onConfirmSuccess={() => setMenuOpen(false)}
           confirmAction={() => {
             removeCourse({ courseId: id })
@@ -193,11 +193,11 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
                 router.refresh()
                 const pageHeading = document.querySelector('main #page-heading')
                 pageHeading?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-                toast(t('delete_knowledgeCheck.toast_deletion_successful'), { type: 'success' })
+                toast(t('delete_course.toast_deletion_successful'), { type: 'success' })
               })
               .catch((err) => {
                 console.error('[Error]: Removing course failed.', err)
-                toast(t('delete_knowledgeCheck.toast_deletion_failure'), { type: 'error' })
+                toast(t('delete_course.toast_deletion_failure'), { type: 'error' })
               })
           }}>
           <DropdownMenuItem
@@ -210,7 +210,7 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
             onSelect={(e) => e.preventDefault()}
             variant='destructive'
             className='justify-between'>
-            {t('delete_knowledgeCheck.label')}
+            {t('delete_course.label')}
             <TrashIcon />
           </DropdownMenuItem>
         </ConfirmationDialog>

@@ -22,7 +22,7 @@ export default function SettingsSection({
   ...config
 }: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<CourseSettings>, 'resolver' | 'defaultValues'>) {
   const { updateSettings, settings } = useCourseStore((state) => state)
-  const t = useScopedI18n('Checks.Create.SettingSection')
+  const t = useScopedI18n('Courses.Create.SettingSection')
 
   const { form, baseFieldProps } = useRHF(CourseSettingsSchema, {
     mode: 'all',

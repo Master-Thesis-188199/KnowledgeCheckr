@@ -25,7 +25,7 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof Course>
   const now = useCallback(() => new Date(Date.now()), [])()
 
-  const t = useScopedI18n('Checks.Create.GeneralSection')
+  const t = useScopedI18n('Courses.Create.GeneralSection')
 
   const { form, baseFieldProps } = useRHF(CourseSchema, {
     defaultValues: () => ({

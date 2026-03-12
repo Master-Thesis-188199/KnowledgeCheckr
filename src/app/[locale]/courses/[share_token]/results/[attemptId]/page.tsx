@@ -10,7 +10,7 @@ import getDummyExamAttempts from '@/src/lib/dummy/getDummyExamAttempts'
 import ExamQuestionResultTable from '../../../../../../components/courses/[share_token]/results/ExamQuestionResultTable'
 
 export default async function ExamAttemptResultPage({ params }: { params: Promise<{ share_token: string; attemptId: string }> }) {
-  const t = await getScopedI18n('Checks.ExaminatonResults.ExamAttemptResultPage')
+  const t = await getScopedI18n('Courses.ExaminatonResults.ExamAttemptResultPage')
   const { share_token, attemptId } = await params
   const { user } = await requireAuthentication()
 

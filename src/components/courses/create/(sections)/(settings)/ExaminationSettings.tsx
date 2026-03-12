@@ -7,7 +7,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 
 export function ExaminationSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<CourseSettings>, 'baseFieldProps'>) {
-  const t = useScopedI18n('Checks.Create.SettingSection.ExaminationSettings')
+  const t = useScopedI18n('Courses.Create.SettingSection.ExaminationSettings')
   const {
     control,
     formState: { errors },

@@ -6,7 +6,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 
 export default function ShareSettings({ baseFieldProps }: {} & Pick<RHFBaseReturn<CourseSettings>, 'baseFieldProps'>) {
-  const t = useScopedI18n('Checks.Create.SettingSection.ShareSettings')
+  const t = useScopedI18n('Courses.Create.SettingSection.ShareSettings')
   const { control } = useFormContext<CourseSettings>()
   const { shareAccessibility } = useWatch({ control: control })
 
