@@ -10,10 +10,7 @@ import { QuestionSchema } from '@/src/schemas/QuestionSchema'
 
 export const KnowledgeCheckSchema = z
   .object({
-    id: z
-      .string()
-      .uuid()
-      .default(() => getUUID()),
+    id: z.uuidv4().default(() => getUUID()),
 
     name: z.string().default('Knowledge Check').describe('The name under which the created check is associated with.'),
 
@@ -104,7 +101,7 @@ export const KnowledgeCheckSchema = z
     }
   })
 
-export type KnowledgeCheck = z.infer<typeof KnowledgeCheckSchema>
+export type KnowledgeCheck = z.output<typeof KnowledgeCheckSchema>
 
 const { validate: validateKnowledgeCheck, instantiate: instantiateKnowledgeCheck, safeParse: safeParseKnowledgeCheck } = schemaUtilities(KnowledgeCheckSchema)
 export { instantiateKnowledgeCheck, safeParseKnowledgeCheck, validateKnowledgeCheck }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useIsFirstRender } from '@uidotdev/usehooks'
-import { useForm, useFormContext, useWatch } from 'react-hook-form'
+import { Resolver, useForm, useFormContext, useWatch } from 'react-hook-form'
 import DisplayChoiceQuestionAnswer from '@/src/components/checks/[share_token]/(shared)/(questions)/ChoiceQuestionAnswer'
 import { OpenQuestionAnswer } from '@/src/components/checks/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import { useExaminationStore } from '@/src/components/checks/[share_token]/ExaminationStoreProvider'
@@ -24,7 +24,7 @@ export default function RenderExamQuestion() {
   const question = state.knowledgeCheck.questions.at(currentQuestionIndex)!
 
   const form = useForm<QuestionInput>({
-    resolver: zodResolver(QuestionInputSchema),
+    resolver: zodResolver(QuestionInputSchema) as unknown as Resolver<QuestionInput>,
     defaultValues: {
       ...state.results[currentQuestionIndex],
       question_id: question.id,

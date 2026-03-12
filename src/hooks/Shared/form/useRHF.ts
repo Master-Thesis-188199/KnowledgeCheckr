@@ -1,6 +1,6 @@
 import { useActionState, useCallback, useMemo, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { FieldValues, Resolver, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { RHFBaseReturn, RHFServerAction, RHFServerReturn, RHFServerState, RHFWithServerReturn, UseRHFFormProps, UseRHFOptions } from '@/src/hooks/Shared/form/react-hook-form/type'
 import { buildBaseReturn, createNoopServerAction, isServerAction, useServerValidationResults } from '@/src/hooks/Shared/form/react-hook-form/utilts'
@@ -37,22 +37,22 @@ function useServerValidation<Type extends object>(options?: UseRHFOptions<Type>)
 }
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>): RHFBaseReturn<z.infer<TSchema>>
+export default function useRHF<TSchema extends z.ZodType<X>, X extends object = object>( schema: TSchema, formProps?: UseRHFFormProps<z.output<TSchema>>): RHFBaseReturn<z.output<TSchema>>
 
 // prettier-ignore
-export default function useRHF<TSchema extends z.ZodSchema >( schema: TSchema, formProps: UseRHFFormProps<z.infer<TSchema>> | undefined, options: UseRHFOptions<z.infer<TSchema>>): RHFWithServerReturn<z.infer<TSchema>>
+export default function useRHF<TSchema extends z.ZodType<X>, X extends object = object>( schema: TSchema, formProps: UseRHFFormProps<z.output<TSchema>> | undefined, options: UseRHFOptions<z.output<TSchema>>): RHFWithServerReturn<z.output<TSchema>>
 
 /**
  * Combines react-hook-form initialization with Zod schema validation + schema descriptions.
  * Optionally wires up a Next.js server action (useActionState) for server-side validation.
  */
-export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, formProps?: UseRHFFormProps<z.infer<TSchema>>, options?: UseRHFOptions<z.infer<TSchema>>) {
+export default function useRHF<TSchema extends z.ZodType<X>, X extends object = object>(schema: TSchema, formProps?: UseRHFFormProps<z.output<TSchema>>, options?: UseRHFOptions<z.output<TSchema>>) {
   const descriptions = useMemo(() => extractDescriptionMap(schema), [schema])
-  const { hasServerValidation, ...serverReturnProps } = useServerValidation<z.infer<TSchema>>(options)
+  const { hasServerValidation, ...serverReturnProps } = useServerValidation<z.output<TSchema>>(options)
   const { instantiate } = schemaUtilities(schema)
 
-  const form = useForm<z.infer<TSchema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<z.output<TSchema>>({
+    resolver: zodResolver(schema as z.ZodType<X, FieldValues>) as unknown as Resolver<z.output<TSchema>>,
     ...formProps,
     defaultValues:
       typeof formProps?.defaultValues === 'function' ? formProps.defaultValues(serverReturnProps.state.values, instantiate({ stripDefaultValues: true, generateRandomNumbers: false })) : undefined,
@@ -64,7 +64,7 @@ export default function useRHF<TSchema extends z.ZodSchema>(schema: TSchema, for
 
   if (!hasServerValidation) return base
 
-  const serverReturn: RHFWithServerReturn<z.infer<TSchema>> = {
+  const serverReturn: RHFWithServerReturn<z.output<TSchema>> = {
     ...base,
     ...serverReturnProps,
     isValidationComplete:
