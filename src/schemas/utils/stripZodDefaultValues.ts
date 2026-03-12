@@ -1,16 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment */
-import { z } from 'zod'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import z from 'zod'
+import { Any } from '@/types'
 
+/**
+ * Type-level helper that unwraps ZodDefault recursively and preserves schema structure.
+ */
 type StripZodDefault<T extends z.ZodTypeAny> =
-  T extends z.ZodDefault<infer Inner>
+  // Ensure inferred schema types remain constrained to ZodTypeAny
+  T extends z.ZodDefault<infer Inner extends z.ZodTypeAny>
     ? StripZodDefault<Inner>
-    : T extends z.ZodObject<infer Shape, infer UnknownKeys, infer Catchall>
-      ? z.ZodObject<{ [K in keyof Shape]: StripZodDefault<Shape[K]> }, UnknownKeys, Catchall>
-      : T extends z.ZodArray<infer Element, infer ArrayCardinality>
-        ? z.ZodArray<StripZodDefault<Element>, ArrayCardinality>
-        : T extends z.ZodOptional<infer InnerOpt>
+    : T extends z.ZodObject<infer Shape extends z.ZodRawShape, infer Config>
+      ? z.ZodObject<{ [K in keyof Shape]: Shape[K] extends z.ZodTypeAny ? StripZodDefault<Shape[K]> : Shape[K] }, Config>
+      : T extends z.ZodArray<infer Element extends z.ZodTypeAny>
+        ? z.ZodArray<StripZodDefault<Element>>
+        : T extends z.ZodOptional<infer InnerOpt extends z.ZodTypeAny>
           ? z.ZodOptional<StripZodDefault<InnerOpt>>
-          : T extends z.ZodNullable<infer InnerNull>
+          : T extends z.ZodNullable<infer InnerNull extends z.ZodTypeAny>
             ? z.ZodNullable<StripZodDefault<InnerNull>>
             : T extends z.ZodUnion<infer Options>
               ? Options extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
@@ -20,137 +25,197 @@ type StripZodDefault<T extends z.ZodTypeAny> =
                 ? Items extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
                   ? z.ZodTuple<MapTuple<Items>>
                   : never
-                : T extends z.ZodIntersection<infer Left, infer Right>
+                : T extends z.ZodIntersection<infer Left extends z.ZodTypeAny, infer Right extends z.ZodTypeAny>
                   ? z.ZodIntersection<StripZodDefault<Left>, StripZodDefault<Right>>
-                  : T extends z.ZodDiscriminatedUnion<infer Disc, infer Options>
-                    ? Options extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
-                      ? z.ZodDiscriminatedUnion<Disc, MapTuple<Options>>
-                      : never
+                  : T extends z.ZodDiscriminatedUnion<infer A, infer B>
+                    ? // Some Zod v4 builds use <Discriminator, Options>, others use <Options, Discriminator>
+                      B extends string
+                      ? A extends readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
+                        ? z.ZodDiscriminatedUnion<MapTuple<A>, B>
+                        : z.ZodDiscriminatedUnion<any, B>
+                      : T
                     : T
 
-type MapTuple<T extends readonly any[]> = T extends readonly [any, ...any[]] ? { [K in keyof T]: StripZodDefault<T[K]> } : never
+type MapTuple<T extends readonly z.ZodTypeAny[]> = { [K in keyof T]: StripZodDefault<T[K]> }
 
 /**
  * Recursively unwraps ZodDefault<T> and returns a schema with the same shape but without the `.default()` wrapper.
- * @param schema
+ *
  * @internal
  */
 export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): StripZodDefault<Schema> {
-  switch (schema._def.typeName) {
-    // Unwrap ZodDefault by stripping its inner type.
-    case z.ZodFirstPartyTypeKind.ZodDefault: {
-      const inner = (schema as unknown as z.ZodDefault<z.ZodTypeAny>)._def.innerType
+  const getDef = (s: any) => {
+    if (s === undefined) {
+      console.warn("Couldn't find schema definition... because schema was undefined...")
+      return undefined
+    }
+    const typeDef = s?._zod?.def ?? s?.def ?? s?._def
+    if (typeDef?.type) return typeDef
+
+    if (s.type === 'pipe') {
+      return s.in.def
+    }
+  }
+  const getType = (s: any): string | undefined => {
+    const def = getDef(s)
+    return typeof def?.type === 'string' ? def.type : undefined
+  }
+  const unwrapInner = (s: any) => {
+    const def = getDef(s)
+    return def?.innerType ?? def?.inner ?? def?.schema
+  }
+
+  const type = getType(schema)
+
+  switch (type) {
+    case 'default': {
+      const inner = unwrapInner(schema)
       return stripZodDefault(inner) as StripZodDefault<Schema>
     }
 
-    // For objects, recursively strip each property.
-    case z.ZodFirstPartyTypeKind.ZodObject: {
-      const objSchema = schema as unknown as z.ZodObject<any>
+    case 'object': {
+      const def = getDef(schema)
+      const shape = (schema as any).shape ?? def?.shape
       const newShape: Record<string, z.ZodTypeAny> = {}
-      for (const key in objSchema.shape) {
-        newShape[key] = stripZodDefault(objSchema.shape[key])
+
+      if (shape && typeof shape === 'object' && !Array.isArray(shape)) {
+        for (const key of Object.keys(shape)) {
+          newShape[key] = stripZodDefault(shape[key])
+        }
+
+        // @ts-expect-error - type 'unknown' for object properties does not align with generic Schema
+        return z.object(newShape) as StripZodDefault<Schema>
       }
-      return z.object(newShape) as StripZodDefault<Schema>
+
+      // Defensive fallback: some internal shapes can be arrays of { key, value }
+      if (Array.isArray(shape)) {
+        for (const p of shape) {
+          newShape[p.key] = stripZodDefault(p.value)
+        }
+
+        // @ts-expect-error - type 'unknown' for object properties does not align with generic Schema
+        return z.object(newShape) as StripZodDefault<Schema>
+      }
+
+      return z.object({}) as StripZodDefault<Schema>
     }
 
-    // For arrays, strip the element type.
-    case z.ZodFirstPartyTypeKind.ZodArray: {
-      const arrSchema = schema as unknown as z.ZodArray<z.ZodTypeAny>
-      const elementStripped = stripZodDefault(arrSchema.element)
+    case 'array': {
+      const def = getDef(schema)
+      const element = (schema as any).element ?? def?.element ?? def?.items
+      const elementStripped = stripZodDefault(element)
+      console.warn('Warning stripping all checks and effects from array, while removing nested default-values.')
       return z.array(elementStripped) as StripZodDefault<Schema>
     }
 
-    // For optional types, strip the inner type then reapply optional.
-    case z.ZodFirstPartyTypeKind.ZodOptional: {
-      const unwrapped = (schema as unknown as z.ZodOptional<z.ZodTypeAny>).unwrap()
-      const strippedInner = stripZodDefault(unwrapped)
+    case 'optional': {
+      const inner = unwrapInner(schema)
+      const strippedInner = stripZodDefault(inner)
       return z.optional(strippedInner) as StripZodDefault<Schema>
     }
 
-    // For nullable types, strip the inner type then reapply nullable.
-    case z.ZodFirstPartyTypeKind.ZodNullable: {
-      const unwrapped = (schema as unknown as z.ZodNullable<z.ZodTypeAny>).unwrap()
-      const strippedInner = stripZodDefault(unwrapped)
+    case 'nullable': {
+      const inner = unwrapInner(schema)
+      const strippedInner = stripZodDefault(inner)
       return z.nullable(strippedInner) as StripZodDefault<Schema>
     }
 
-    // For unions, strip each option and rebuild the union.
-    case z.ZodFirstPartyTypeKind.ZodUnion: {
-      const unionSchema = schema as unknown as z.ZodUnion<[z.ZodTypeAny, ...z.ZodTypeAny[]]>
-      const strippedOptions = unionSchema._def.options.map((option: z.ZodTypeAny) => stripZodDefault(option))
+    case 'union': {
+      const def = getDef(schema)
+      const options = (def?.options ?? def?.elements) as z.ZodTypeAny[]
+      const strippedOptions = options.map((opt) => stripZodDefault(opt))
 
-      // @ts-ignore
+      // @ts-ignore - z.union expects a tuple type at compile time
       return z.union(strippedOptions) as unknown as StripZodDefault<Schema>
     }
 
-    // For tuples, strip each element and rebuild the tuple.
-    case z.ZodFirstPartyTypeKind.ZodTuple: {
-      const tupleSchema = schema as unknown as z.ZodTuple<[z.ZodTypeAny, ...z.ZodTypeAny[]]>
-      const strippedItems = tupleSchema._def.items.map((item: z.ZodTypeAny) => stripZodDefault(item))
+    case 'tuple': {
+      const def = getDef(schema)
+      const items = (def?.items ?? def?.prefixItems) as z.ZodTypeAny[]
+      const strippedItems = items.map((item) => stripZodDefault(item))
 
-      // @ts-ignore
-      return z.tuple(strippedItems) as StripZodDefault<Schema>
+      // @ts-ignore - z.tuple expects a tuple type at compile time
+      return z.tuple(strippedItems) as unknown as StripZodDefault<Schema>
     }
-    // For literal types, no default wrapper is applied, so just return the schema.
-    case z.ZodFirstPartyTypeKind.ZodLiteral: {
+
+    case 'literal':
+    case 'enum':
       return schema as StripZodDefault<Schema>
+
+    case 'catch': {
+      const def = getDef(schema)
+      const inner = unwrapInner(schema)
+      const strippedInner = stripZodDefault(inner)
+
+      // Preserve catch fallback
+      const catchValue = def?.catchValue
+      return (strippedInner as any).catch(catchValue) as StripZodDefault<Schema>
     }
 
-    // For enum types, return the schema as-is.
-    case z.ZodFirstPartyTypeKind.ZodEnum: {
-      return schema as StripZodDefault<Schema>
+    case 'transform': {
+      // Unwrap and then reapply the transform/refinement/preprocess
+      const inner = unwrapInner(schema)
+      const base = stripZodDefault(inner)
+      return reapplyEffects(schema as any, base as any) as StripZodDefault<Schema>
     }
 
-    // For catch wrappers, remove the catch and use the inner type.
-    case z.ZodFirstPartyTypeKind.ZodCatch: {
-      const catchSchema = schema as unknown as z.ZodCatch<z.ZodTypeAny>
-      const inner = catchSchema._def.innerType
+    case 'pipe': {
+      const def = getDef(schema)
+      const out = def?.out ?? def?.output ?? def?.right ?? def?.to
 
-      //? Re-apply catch value to ensure fallback values are preserved
-      return stripZodDefault(inner).catch(catchSchema._def.catchValue) as unknown as StripZodDefault<Schema>
+      const inner = unwrapPipe(schema as Any)
+      if (!out) return stripZodDefault(inner) as StripZodDefault<Schema>
+
+      return z.pipe(stripZodDefault(inner), out.type !== 'transform' ? stripZodDefault(out) : out) as unknown as StripZodDefault<Schema>
     }
 
-    // For effects wrappers, remove the effects and return the underlying schema.
-    case z.ZodFirstPartyTypeKind.ZodEffects: {
-      const effectsSchema = schema as unknown as z.ZodEffects<z.ZodTypeAny>
-      return reapplyEffects(effectsSchema, stripZodDefault(effectsSchema._def.schema)) as StripZodDefault<Schema>
-    }
-
-    case z.ZodFirstPartyTypeKind.ZodIntersection: {
-      const intersectionSchema = schema as unknown as z.ZodIntersection<z.ZodTypeAny, z.ZodTypeAny>
-      const leftStripped = stripZodDefault(intersectionSchema._def.left)
-      const rightStripped = stripZodDefault(intersectionSchema._def.right)
+    case 'intersection': {
+      const def = getDef(schema)
+      const left = def?.left
+      const right = def?.right
+      const leftStripped = stripZodDefault(left)
+      const rightStripped = stripZodDefault(right)
       return z.intersection(leftStripped, rightStripped) as StripZodDefault<Schema>
     }
 
-    // For discriminated unions, strip each option and rebuild the discriminated union.
-    case z.ZodFirstPartyTypeKind.ZodDiscriminatedUnion: {
-      const discUnion = schema as any // treat as ZodDiscriminatedUnion
-      const strippedOptions = discUnion._def.options.map((option: z.ZodTypeAny) => stripZodDefault(option))
-      return z.discriminatedUnion(discUnion._def.discriminator, strippedOptions) as unknown as StripZodDefault<Schema>
+    case 'discriminated_union': {
+      const def = getDef(schema)
+      const discriminator = def?.discriminator
+      const options = (def?.options ?? def?.elements) as z.ZodTypeAny[]
+      const strippedOptions = options.map((opt) => stripZodDefault(opt))
+
+      return z.discriminatedUnion(discriminator, strippedOptions as any) as unknown as StripZodDefault<Schema>
     }
 
-    // For all other types (primitives, etc.), return the schema unchanged.
+    case 'readonly': {
+      const inner = unwrapInner(schema)
+      return stripZodDefault(inner).readonly() as StripZodDefault<Schema>
+    }
+
+    case 'nonoptional': {
+      const inner = unwrapInner(schema)
+      return stripZodDefault(inner).nonoptional() as StripZodDefault<Schema>
+    }
+
     default:
       return schema as StripZodDefault<Schema>
   }
 }
 
 /**
- * Re-applies ZodEffects to a `base` schema that was unwrapped.
- * @param original The original schema that holds the effects.
- * @param base The schema to which the effects should be reapplied.
+ * Re-applies transform/refinement/preprocess effects after unwrapping/stripping.
  */
-function reapplyEffects(original: z.ZodEffects<z.ZodTypeAny>, base: z.ZodTypeAny): z.ZodTypeAny {
-  const effect = (original as any)._def.effect as
+function reapplyEffects(original: z.ZodTypeAny, base: z.ZodTypeAny): z.ZodTypeAny {
+  const def = (original as any)?._zod?.def ?? (original as any)?.def ?? (original as any)?._def
+
+  // in Zod v4 effects are usually stored within `def.effect` for 'transform' wrappers.
+  const effect = def?.effect as
     | { type: 'transform'; transform: (arg: unknown, ctx: any) => unknown | Promise<unknown> }
     | { type: 'refinement'; refinement: (arg: unknown, ctx: any) => void | Promise<void> }
     | { type: 'preprocess'; transform: (arg: unknown) => unknown | Promise<unknown> }
     | undefined
 
-  if (!effect) {
-    return base
-  }
+  if (!effect) return base
 
   switch (effect.type) {
     case 'transform':
@@ -165,4 +230,8 @@ function reapplyEffects(original: z.ZodEffects<z.ZodTypeAny>, base: z.ZodTypeAny
     default:
       return base
   }
+}
+
+function unwrapPipe<TSchema extends z.ZodPipe>(pipedSchema: TSchema): TSchema['in'] {
+  return pipedSchema.in
 }

@@ -14,7 +14,7 @@ export const PracticeSchema = z.object({
   results: z.array(QuestionInputSchema).default([]),
 })
 
-export type PracticeData = z.infer<typeof PracticeSchema>
+export type PracticeData = z.output<typeof PracticeSchema>
 
 const { validate: validatePracticeData, instantiate: instantiatePracticeData, safeParse: safeParsePracticeData } = schemaUtilities(PracticeSchema)
 export { instantiatePracticeData, safeParsePracticeData, validatePracticeData }

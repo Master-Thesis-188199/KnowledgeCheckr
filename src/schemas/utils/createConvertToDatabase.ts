@@ -153,7 +153,7 @@ export default function createConvertToDatabase<Schema extends z.ZodTypeAny, Tab
    * @typeParam Obj - Inferred from the passed object; do not annotate unless necessary.
    * @param obj - The object to convert.
    */
-  return function convertToDatabase<const Type extends z.infer<Schema>>(obj: Type): DbConversionResult<Type, Table> {
+  return function convertToDatabase<const Type extends z.output<Schema>>(obj: Type): DbConversionResult<Type, Table> {
     const out: Record<string, unknown> = {}
     const columns = getTableColumns(table)
 

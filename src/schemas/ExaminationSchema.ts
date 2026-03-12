@@ -13,7 +13,7 @@ export const ExaminationSchema = z.object({
   results: z.array(QuestionInputSchema).default([]),
 })
 
-export type ExaminationSchema = z.infer<typeof ExaminationSchema>
+export type ExaminationSchema = z.output<typeof ExaminationSchema>
 
 const { validate: validateExaminationSchema, instantiate: instantiateExaminationSchema, safeParse: safeParseExaminationSchema } = schemaUtilities(ExaminationSchema)
 export { instantiateExaminationSchema, safeParseExaminationSchema, validateExaminationSchema }

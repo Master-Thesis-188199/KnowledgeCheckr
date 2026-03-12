@@ -155,22 +155,22 @@ export const db_courseSettings = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.allowAnonymous._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.allowAnonymous._zod.def.defaultValue ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.allowFreeNavigation._def.defaultValue() ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.questionOrder._def.defaultValue()),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.answerOrder._def.defaultValue()),
-    examTimeFrameSeconds: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examTimeFrameSeconds._def.defaultValue()),
-    examinationAttemptCount: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examinationAttemptCount._def.defaultValue()),
+      .default(CourseSettingsSchema.shape.examination.shape.allowFreeNavigation._zod.def.defaultValue ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.questionOrder._zod.def.defaultValue),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.answerOrder._zod.def.defaultValue),
+    examTimeFrameSeconds: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examTimeFrameSeconds._zod.def.defaultValue),
+    examinationAttemptCount: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examinationAttemptCount._zod.def.defaultValue),
     shareAccessibility: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.shareAccessibility._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.shareAccessibility._zod.def.defaultValue ? 1 : 0),
 
     // -----
     enableExaminations: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.enableExaminations._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.enableExaminations._zod.def.defaultValue ? 1 : 0),
     startDate: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -181,7 +181,7 @@ export const db_courseSettings = mysqlTable(
 
     enablePracticing: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.practice.shape.enablePracticing._def.defaultValue() ? 1 : 0),
+      .default(CourseSettingsSchema.shape.practice.shape.enablePracticing._zod.def.defaultValue ? 1 : 0),
 
     allowedPracticeCount: int().default(sql`NULL`),
   },
