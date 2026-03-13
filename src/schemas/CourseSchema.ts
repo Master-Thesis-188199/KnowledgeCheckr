@@ -1,0 +1,107 @@
+import { isBefore } from 'date-fns/isBefore'
+import { z } from 'zod'
+import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { getUUID } from '@/src/lib/Shared/getUUID'
+import lorem from '@/src/lib/Shared/Lorem'
+import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
+import { StringDate } from '@/src/schemas/CustomZodTypes'
+import { QuestionSchema } from '@/src/schemas/QuestionSchema'
+
+export const CourseSchema = z
+  .object({
+    id: z.uuidv4().default(() => getUUID()),
+
+    name: z.string().default('KnowledgeCheck Course').describe('The name under which the created course is associated with.'),
+
+    description: z
+      .string()
+      .nullable()
+      .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
+      .describe('Describe the concept of your course using a few words.'),
+
+    difficulty: z
+      .number()
+      .min(1, 'Please specify a difficulty between 1 and 10.')
+      .max(10, 'Please specify a difficulty between 1 and 10.')
+      .optional()
+      .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
+      .describe('Defines the skill level needed for this course.'),
+
+    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
+    questionCategories: z
+      .array(CategorySchema)
+      .optional()
+      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
+
+    share_key: z.string().nullable().default(null),
+
+    openDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+      // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
+      .default(() => new Date(Date.now()))
+      .describe('The day on which users can start to use the course.'),
+    closeDate: z
+      .date()
+      .or(z.string())
+      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+      // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
+      .nullable()
+      .default(null)
+      .describe('The last day on which the course can be used by others.'),
+
+    createdAt: StringDate.default(() => new Date(Date.now())).optional(),
+    updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
+
+    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
+    collaborators: z.array(z.string()).default([]),
+
+    settings: CourseSettingsSchema,
+
+    /* todo:
+      - question-order: 'shuffle, static, ...'
+      - question-answer-type: 'drag-drop', 'select', ....
+
+    */
+  })
+  //* Declares missing question-catgegories in `questionCategories`
+  .transform((course) => {
+    const questionCategories = course.questionCategories
+
+    // declare missing question categories
+    Array.from(new Set(course.questions.map((q) => q.category)))
+      .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
+      .forEach((missingCategoryName) => {
+        questionCategories.push({
+          id: getUUID(),
+          name: missingCategoryName,
+          prequisiteCategoryId: null,
+          skipOnMissingPrequisite: false,
+        })
+      })
+
+    return course
+  })
+  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
+    message: 'Please define question categories before assigning them to questions.',
+  })
+  .superRefine(({ openDate, closeDate }, ctx) => {
+    if (closeDate === null) return
+
+    if (isBefore(closeDate, openDate)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'The closeDate cannot be before the start date',
+        path: ['closeDate'],
+      })
+    }
+  })
+
+export type Course = z.output<typeof CourseSchema>
+
+const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = schemaUtilities(CourseSchema)
+export { instantiateCourse, safeParseCourse, validateCourse }

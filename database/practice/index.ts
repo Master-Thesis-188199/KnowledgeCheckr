@@ -2,16 +2,16 @@
 
 import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
-import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle'
+import { db_userHasDoneCourse } from '@/database/drizzle'
 import { insertPracticeResults } from '@/database/practice/insert'
 import { updatePracticeResults } from '@/database/practice/update'
-import { PracticeState } from '@/src/hooks/checks/[share_token]/practice/PracticeStore'
+import { PracticeState } from '@/src/hooks/courses/[share_token]/practice/PracticeStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 
 export async function savePracticeResults(
   props: { results: PracticeState['results']; startedAt: PracticeState['startedAt'] } & Omit<
-    typeof db_userHasDoneKnowledgeCheck.$inferInsert,
+    typeof db_userHasDoneCourse.$inferInsert,
     'startedAt' | 'results' | 'finishedAt' | 'id' | 'userId' | 'type'
   >,
 ) {
@@ -23,13 +23,13 @@ export async function savePracticeResults(
 
   const [update] = await db
     .select()
-    .from(db_userHasDoneKnowledgeCheck)
+    .from(db_userHasDoneCourse)
     .where(
       and(
-        eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, props.knowledgeCheckId),
-        eq(db_userHasDoneKnowledgeCheck.startedAt, formatDatetime(props.startedAt)),
-        eq(db_userHasDoneKnowledgeCheck.userId, userId),
-        eq(db_userHasDoneKnowledgeCheck.type, 'practice'),
+        eq(db_userHasDoneCourse.knowledgeCheckId, props.knowledgeCheckId),
+        eq(db_userHasDoneCourse.startedAt, formatDatetime(props.startedAt)),
+        eq(db_userHasDoneCourse.userId, userId),
+        eq(db_userHasDoneCourse.type, 'practice'),
       ),
     )
     .limit(1)

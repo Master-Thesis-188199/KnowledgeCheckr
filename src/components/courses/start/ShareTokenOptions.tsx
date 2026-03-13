@@ -1,0 +1,130 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { isAfter } from 'date-fns/isAfter'
+import { isBefore } from 'date-fns/isBefore'
+import { ExternalLinkIcon } from 'lucide-react'
+import Link from 'next/link'
+import { getCourseByShareToken } from '@/database/course/select'
+import { useShareTokenFormContext } from '@/src/components/courses/start/ShareTokenFormContext'
+import { Button } from '@/src/components/shadcn/button'
+import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
+import debounceFunction from '@/src/hooks/Shared/debounceFunction'
+import { useScopedI18n } from '@/src/i18n/client-localization'
+
+export default function ShareTokenOptions() {
+  const t = useScopedI18n('StartOptionsPage.ShareTokenOptions')
+  const {
+    isDone,
+    setIsDone,
+    formState: { isValid },
+    getValues,
+    ...form
+  } = useShareTokenFormContext()
+  const token = getValues().shareToken
+
+  const [status, setStatus] = useState<'waiting' | 'practice-only' | 'exam-only' | 'both'>('waiting')
+  const [input, setInput] = useState<string>(token)
+  const debounceInput = debounceFunction((input) => {
+    setInput(input)
+  }, 350)
+
+  // indirectly re-validates options by applying updated token when the form remains to be valid but has changed; by changing input state.
+  useEffect(() => {
+    if (input === token) return
+
+    debounceInput(token)
+
+    return () => debounceInput.abort()
+  }, [token])
+
+  useEffect(() => {
+    if (!isValid) {
+      // clear options, when user changed input which made the form-input inValid again.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus('waiting')
+      return
+    }
+
+    let aborted = false
+
+    getCourseByShareToken(token)
+      .then((course) => {
+        if (aborted) return
+
+        if (!course) {
+          form.setError('root', { message: t('not_found_error_message') })
+          setStatus('waiting')
+          return
+        }
+
+        if (
+          course.settings.practice.enablePracticing &&
+          course.settings.examination.enableExaminations &&
+          isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+          (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
+        )
+          return setStatus('both')
+
+        if (
+          course.settings.practice.enablePracticing &&
+          !(
+            course.settings.examination.enableExaminations &&
+            isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+            (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
+          )
+        )
+          return setStatus('practice-only')
+
+        if (
+          !course.settings.practice.enablePracticing &&
+          course.settings.examination.enableExaminations &&
+          isBefore(course.settings.examination.startDate, new Date(Date.now())) &&
+          (course.settings.examination.endDate === null || isAfter(course.settings.examination.endDate, new Date(Date.now())))
+        )
+          return setStatus('exam-only')
+      })
+      .catch(() => (aborted ? null : form.setError('root', { message: t('retrieval_error_message') })))
+
+    return () => {
+      aborted = true
+    }
+  }, [isValid, input])
+
+  useEffect(() => {
+    if (status === 'waiting' && isDone) {
+      setIsDone(false)
+      return
+    }
+
+    if (!isDone && status !== 'waiting') setIsDone(true)
+  }, [status])
+
+  return (
+    <SmoothPresenceTransition
+      active={isDone}
+      presenceTiming={{ showDelayMs: 300 }}
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 1, margin: 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className='flex justify-center gap-6 text-muted-foreground'>
+      <Link href={`/courses/${token}/practice`} className='flex-1' onClick={status === 'exam-only' ? (e) => e.preventDefault() : undefined} tabIndex={-1}>
+        <Button variant='base' disabled={status === 'exam-only'} className='flex min-h-12 w-full items-center justify-center rounded-md'>
+          {t('start_practice_label')}
+          <ExternalLinkIcon />
+        </Button>
+      </Link>
+      <Link href={`/courses/${token}/`} className='flex-1' tabIndex={-1}>
+        <Button
+          variant='base'
+          disabled={status === 'practice-only'}
+          onClick={status === 'practice-only' ? (e) => e.preventDefault() : undefined}
+          className='flex min-h-12 w-full items-center justify-center rounded-md'>
+          {t('start_examination_label')}
+          <ExternalLinkIcon />
+        </Button>
+      </Link>
+    </SmoothPresenceTransition>
+  )
+}

@@ -12,7 +12,7 @@ import { Any } from '@/types'
 
 export function ExamQuestionDurationChart({ title, description, questions }: { title: string; description?: string; questions?: Question[] }) {
   const tShared = useScopedI18n('Shared.Timestamp')
-  const t = useScopedI18n('Checks.ExaminatonResults.Charts.ExamQuestionDurationChart')
+  const t = useScopedI18n('Courses.ExaminatonResults.Charts.ExamQuestionDurationChart')
   if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion())
 
   const dataQuestions = React.useMemo(() => {
