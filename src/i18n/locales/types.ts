@@ -1,43 +1,37 @@
+import type { CreateParams, FlattenLocale, LocaleKeys, LocaleValue, ParamsObject, ScopedValue, Scopes } from 'international-types'
 import englishTranslations from './en'
 
 type Translations = typeof englishTranslations
 
-type Primitive = string | number | boolean | bigint | symbol | null | undefined
+type FlattenedTranslations = Translations extends Record<string, string> ? Translations : FlattenLocale<Translations>
 
-type Join<K extends string, P extends string> = `${K}.${P}`
-
-type LeafKeys<T> = T extends Primitive
-  ? never
-  : {
-      [K in Extract<keyof T, string>]: T[K] extends Primitive ? K : Join<K, LeafKeys<T[K]>>
-    }[Extract<keyof T, string>]
-
-type ScopeKeys<T> = T extends Primitive
-  ? never
-  : {
-      [K in Extract<keyof T, string>]: T[K] extends Primitive ? never : K | Join<K, ScopeKeys<T[K]>>
-    }[Extract<keyof T, string>]
+type PluralSuffix = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other'
+type PluralKey<Key extends string> = `${Key}#${PluralSuffix}`
 
 type ValueAtPath<T, Path extends string> = Path extends `${infer Head}.${infer Rest}` ? (Head extends keyof T ? ValueAtPath<T[Head], Rest> : never) : Path extends keyof T ? T[Path] : never
 
-type ExtractPlaceholders<T extends string> = T extends `${string}{${infer Param}}${infer Rest}` ? Param | ExtractPlaceholders<Rest> : never
+export type TranslationKeys =
+  Extract<keyof FlattenedTranslations, string> extends infer T ? (T extends Extract<keyof FlattenedTranslations, string> ? (T extends `${infer Head}#${PluralSuffix}` ? Head : T) : never) : never
 
-export type TranslationScopes = ScopeKeys<Translations>
+export type TranslationScopes = Scopes<FlattenedTranslations>
 
-export type TranslationKeys = LeafKeys<Translations>
-
-type TranslationValue<Key extends TranslationKeys> = ValueAtPath<Translations, Key>
-
-type TranslationParams<Value> = Value extends string ? ([ExtractPlaceholders<Value>] extends [never] ? never : { [K in ExtractPlaceholders<Value>]: string | number }) : never
-
-type TranslationArgs<Value> = TranslationParams<Value> extends never ? [] : [params: TranslationParams<Value>]
-
-export type Translator = <Key extends TranslationKeys>(key: Key, ...args: TranslationArgs<TranslationValue<Key>>) => string
-
-export type ScopedTranslationKeys<Scope extends TranslationScopes> = LeafKeys<ValueAtPath<Translations, Scope>>
+export type ScopedTranslationKeys<Scope extends TranslationScopes> = LocaleKeys<FlattenedTranslations, Scope, Extract<keyof FlattenedTranslations, string>>
 
 export type ScopedTranslations<Scope extends TranslationScopes> = ValueAtPath<Translations, Scope>
 
-type ScopedTranslationValue<Scope extends TranslationScopes, Key extends ScopedTranslationKeys<Scope>> = ValueAtPath<ScopedTranslations<Scope>, Key>
+type TranslationValue<Key extends TranslationKeys> = (PluralKey<Key> & keyof FlattenedTranslations extends never ? false : true) extends true
+  ? FlattenedTranslations[PluralKey<Key> & keyof FlattenedTranslations]
+  : FlattenedTranslations[Key]
 
-export type ScopedTranslator<Scope extends TranslationScopes> = <Key extends ScopedTranslationKeys<Scope>>(key: Key, ...args: TranslationArgs<ScopedTranslationValue<Scope, Key>>) => string
+type ScopedTranslationValue<Scope extends TranslationScopes, Key extends ScopedTranslationKeys<Scope>> = ScopedValue<FlattenedTranslations, Scope, Key>
+
+export type Translator = <Key extends TranslationKeys, Value extends LocaleValue = TranslationValue<Key>>(
+  key: Key,
+  ...params: CreateParams<ParamsObject<Value>, FlattenedTranslations, undefined, Key, Value>
+) => string
+
+//@ts-expect-error Given the size of translation the type definition is very deep.
+export type ScopedTranslator<Scope extends TranslationScopes> = <Key extends ScopedTranslationKeys<Scope>, Value extends LocaleValue = ScopedTranslationValue<Scope, Key>>(
+  key: Key,
+  ...params: CreateParams<ParamsObject<Value>, FlattenedTranslations, Scope, Key, Value>
+) => string
