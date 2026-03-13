@@ -1,13 +1,20 @@
+'use server'
+
 import { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
 import { convertSettings } from '@/database/course/settings/transform'
 import { DatabaseOptions } from '@/database/course/type'
 import getDatabase from '@/database/Database'
 import { DrizzleSchema } from '@/database/drizzle'
 import buildCourseWhere, { CourseFilterBundle } from '@/database/utils/buildCourseWhere'
+import { Translator } from '@/src/i18n/locales/types'
+import { getI18n } from '@/src/i18n/server-localization'
+import _logger from '@/src/lib/log/Logger'
 import { Course, safeParseCourse } from '@/src/schemas/CourseSchema'
 import { CourseSettings, instantiateCourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { ChoiceQuestion, DragDropQuestion, OpenQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 //* joins the knowledgeCheck table with the following tables and aggregates the results: `Settings`, `Questions`, `Answers` and `Category`
 const courseWithAllConfig = {
@@ -58,6 +65,7 @@ type CourseTableConfig = Tables['db_course']
 export type CourseWithAll = BuildQueryResult<Tables, CourseTableConfig, { with: typeof courseWithAllConfig }>
 
 export async function getCourses({ limit = 10, offset, ...filterBundle }: {} & CourseFilterBundle & DatabaseOptions = {}): Promise<Course[]> {
+  const t = await getI18n()
   const db = await getDatabase()
 
   const courses = await db.query.db_course.findMany({
@@ -68,11 +76,11 @@ export async function getCourses({ limit = 10, offset, ...filterBundle }: {} & C
     offset,
   })
 
-  return courses.map(parseCourse).filter((course) => course !== null)
+  return courses.map((c) => parseCourse({ ...c, t })).filter((course) => course !== null)
 }
 
-function parseCourse({ questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...course }: CourseWithAll): Course | null {
-  const result = safeParseCourse({
+function parseCourse({ t, questions, knowledgeCheckSettings: settings, categories, userContributesToKnowledgeChecks: collaboratorIds, ...course }: CourseWithAll & { t: Translator }): Course | null {
+  const result = safeParseCourse(t, {
     ...course,
     collaborators: collaboratorIds.map((c) => c.userId),
     questions: questions.map(parseQuestion),
@@ -84,7 +92,7 @@ function parseCourse({ questions, knowledgeCheckSettings: settings, categories, 
   })
 
   if (!result.success) {
-    console.error(`Failed to parse course instance ${course.id} because: `, result.error)
+    logger.error(`Failed to parse course instance ${course.id} because: `, result.error)
   }
 
   return result.data ?? null

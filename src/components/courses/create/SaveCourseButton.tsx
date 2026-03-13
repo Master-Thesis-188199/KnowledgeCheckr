@@ -6,6 +6,7 @@ import { useCourseStore } from '@/src/components/courses/create/CreateCourseProv
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import Tooltip from '@/src/components/Shared/Tooltip'
+import { useI18n } from '@/src/i18n/client-localization'
 import { saveAction } from '@/src/lib/courses/create/SaveAction'
 import { cn } from '@/src/lib/Shared/utils'
 import { safeParseCourse } from '@/src/schemas/CourseSchema'
@@ -13,7 +14,8 @@ import { safeParseCourse } from '@/src/schemas/CourseSchema'
 export function SaveCourseButton({ cacheKey, callbackPath }: { cacheKey?: string; callbackPath?: string }) {
   const store = useCourseStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
-  const safeParse = safeParseCourse(store)
+  const translator = useI18n()
+  const safeParse = safeParseCourse(translator, store)
 
   if (!safeParse.success) {
     console.error('[SaveCourseButton]: Parsing of store data failed, save-button disabled. ', safeParse.error)

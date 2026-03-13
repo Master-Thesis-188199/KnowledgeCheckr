@@ -2,6 +2,7 @@ import insertCourse from '@/database/course/insert'
 import { Button } from '@/src/components/shadcn/button'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
@@ -28,8 +29,9 @@ export default function DummyDataPage() {
 async function createPracticeCourse() {
   'use server'
   await requireAuthentication()
+  const t = await getI18n()
 
-  const course = instantiateCourse()
+  const course = instantiateCourse(t)
 
   course.name = `Practice Course ${Math.floor(Math.random() * 1000)}`
   course.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'
@@ -44,7 +46,7 @@ async function createPracticeCourse() {
 
   course.questions = [
     {
-      ...instantiateSingleChoice(),
+      ...instantiateSingleChoice(t),
       question: 'What does RGB stand for?',
       category: 'Design',
       points: 7,
@@ -56,7 +58,7 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateSingleChoice(),
+      ...instantiateSingleChoice(t),
       question: 'What does USB stand for?',
       category: 'Tech',
       points: 9,
@@ -68,7 +70,7 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateMultipleChoice(),
+      ...instantiateMultipleChoice(t),
       question: 'Which of these colors exist?',
       category: 'Design',
       points: 4,
@@ -81,7 +83,7 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateMultipleChoice(),
+      ...instantiateMultipleChoice(t),
       question: 'Which of these statements are true?',
       category: 'general',
       points: 4,
@@ -94,7 +96,7 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateDragDropQuestion(),
+      ...instantiateDragDropQuestion(t),
       question: 'Order these activities by the occurence',
       category: 'Daily',
       points: 4,
@@ -107,7 +109,7 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateDragDropQuestion(),
+      ...instantiateDragDropQuestion(t),
       question: 'Order these statements by the importance',
       category: 'Daily',
       points: 4,
@@ -119,14 +121,14 @@ async function createPracticeCourse() {
       ],
     },
     {
-      ...instantiateOpenQuestion(),
+      ...instantiateOpenQuestion(t),
       question: 'Describe the acronym RGB and its use-cases',
       category: 'Design',
       points: 4,
       expectation: 'Used to define colors through by setting the intensity of the three main colors (Red, Green, Blue).',
     },
     {
-      ...instantiateOpenQuestion(),
+      ...instantiateOpenQuestion(t),
       question: 'Describe the term web-dev',
       category: 'Tech',
       points: 4,
