@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SafeParseReturnType, z } from 'zod'
+import { z } from 'zod'
 import schemaDefaults, { SchemaOptionalProps } from '@/schemas/utils/schemaDefaults'
 import { stripZodDefault } from '@/schemas/utils/stripZodDefaultValues'
 
@@ -14,14 +14,15 @@ export function schemaUtilities<Schema extends z.ZodTypeAny>(schema: Schema) {
    * Validates a given object against a given schema. Throws an error if the object is invalid
    * @param object - The object to be validated
    */
-  const validate = (object: any): z.infer<Schema> | never => stripZodDefault(schema).parse(object)
+  const validate = (object: any): z.output<Schema> | never => stripZodDefault(schema).parse(object)
 
   /**
    * Returns a dummy object based on a given schema
    * @param options - Defines how optional properties should be handled in terms of their instantiation (undefined / value)
    */
-  function instantiate(options?: SchemaOptionalProps & { validate?: boolean }): z.infer<Schema> {
-    const dummyData = schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options)
+  function instantiate(options?: SchemaOptionalProps & { validate?: boolean }): z.output<Schema> {
+    const dummyData = schemaDefaults(options?.stripDefaultValues ? stripZodDefault(schema) : schema, options) as z.output<Schema>
+
     //* ensure that generated dummy data satisfies with schema constraints
     return options?.validate ? validate(dummyData) : dummyData
   }
@@ -30,7 +31,7 @@ export function schemaUtilities<Schema extends z.ZodTypeAny>(schema: Schema) {
    * Safely parses an object against its schema and returns the result of the zod.safeParse method
    * @param object - The object to be parsed / validated
    */
-  const safeParse = (object: any): z.SafeParseReturnType<any, z.infer<Schema>> => stripZodDefault(schema).safeParse(object) as SafeParseReturnType<any, z.infer<Schema>>
+  const safeParse = (object: any): z.ZodSafeParseResult<z.output<Schema>> => stripZodDefault(schema).safeParse(object)
 
   return {
     instantiate,

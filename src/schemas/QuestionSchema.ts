@@ -1,4 +1,4 @@
-import { z, ZodIssueCode } from 'zod'
+import { z } from 'zod'
 import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
@@ -10,8 +10,8 @@ const AnswerId = z
   .catch(() => getUUID())
 
 const baseQuestion = z.object({
-  id: z.string().uuid(),
-  points: z.number().positive(),
+  id: z.uuidv4(),
+  points: z.number().positive('Number must be greater than 0'),
   category: z.string().default('general'),
 
   question: z
@@ -109,7 +109,8 @@ const dragDropAnswerSchema = z.object({
 
       if (minPos !== 0) {
         ctx.addIssue({
-          code: ZodIssueCode.too_small,
+          code: 'too_small',
+          origin: 'number',
           minimum: 0,
           type: 'number',
           inclusive: true,
@@ -122,7 +123,7 @@ const dragDropAnswerSchema = z.object({
       answers.forEach((answer, i) => {
         if (seen.has(answer.position)) {
           ctx.addIssue({
-            code: ZodIssueCode.custom,
+            code: 'custom',
             message: `[drag-drop] duplicate position: ${answer.position}`,
             path: [i, 'position'],
           })
@@ -134,7 +135,7 @@ const dragDropAnswerSchema = z.object({
       for (let pos = 0; pos <= n - 1; pos++) {
         if (!seen.has(pos)) {
           ctx.addIssue({
-            code: ZodIssueCode.custom,
+            code: 'custom',
             message: `[drag-drop] positions must form a continuous range: [0...${n - 1}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
           })
 
@@ -160,7 +161,7 @@ const questionAnswerTypes = z.discriminatedUnion('type', [singleChoiceAnswerSche
 
 export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes).default(() => generateRandomQuestion())
 
-export type Question = z.infer<typeof QuestionSchema>
+export type Question = z.output<typeof QuestionSchema>
 
 const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities(QuestionSchema)
 export { instantiateQuestion, safeParseQuestion, validateQuestion }
@@ -183,7 +184,7 @@ const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQues
 export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }
 
 // #region Dummy Data
-function generateRandomQuestion(): z.infer<typeof baseQuestion> & z.infer<typeof questionAnswerTypes> {
+function generateRandomQuestion(): z.output<typeof baseQuestion> & z.output<typeof questionAnswerTypes> {
   return {
     id: getUUID(),
     category: 'general',
@@ -193,8 +194,8 @@ function generateRandomQuestion(): z.infer<typeof baseQuestion> & z.infer<typeof
   }
 }
 
-function generateRandomQuestionType(): z.infer<typeof questionAnswerTypes> & Pick<z.infer<typeof baseQuestion>, 'question'> {
-  const dummyQuestions: (z.infer<typeof questionAnswerTypes> & Pick<z.infer<typeof baseQuestion>, 'question'> & Partial<z.infer<typeof baseQuestion>>)[] = [
+function generateRandomQuestionType(): z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> {
+  const dummyQuestions: (z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> & Partial<z.output<typeof baseQuestion>>)[] = [
     {
       type: 'multiple-choice',
       question: 'In the PAYDAY series, who betrayed the PAYDAY gang that got Hoxton arrested?',

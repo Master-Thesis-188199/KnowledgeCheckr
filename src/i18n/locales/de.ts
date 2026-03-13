@@ -42,17 +42,17 @@ export default {
     jump_back_button_label: 'Bearbeiten'
   },
   Home: {
-    description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (de)'
+    description: 'Create your own Course to boost your knowledge to the next level. (de)'
   },
-  Checks: {
-    title: 'Deine Wissenschecks',
-    no_existing_checks: 'Keine Wissenschecks gefunden. Erstelle einen',
-    no_existing_checks_action_button: 'hier',
+  Courses: {
+    title: 'Deine Kurse',
+    no_existing_courses: 'Keine Kurse gefunden. Erstelle einen',
+    no_existing_courses_action_button: 'hier',
     Create: {
       GeneralSection: {
         title: 'Allgemein',
         name_label: 'Name',
-        name_placeholder: 'Österreich Wissenscheck',
+        name_placeholder: 'Österreich Kurs',
         description_label: 'Beschreibung',
         description_placeholder: 'Erfahren Sie mehr über Österreich',
         difficulty_label: 'Schwierigkeit',
@@ -121,9 +121,9 @@ export default {
       CreateQuestionDialog: {
         Header: {
           title_create: 'Frage erstellen',
-          description_create: 'Erstellen Sie eine neue Frage für diesen KnowledgeCheck',
+          description_create: 'Erstellen Sie eine neue Frage für diesen Kurs',
           title_edit: 'Frage bearbeiten',
-          description_edit: 'Bearbeiten Sie Ihre bestehende Frage Ihres KnowledgeChecks'
+          description_edit: 'Bearbeiten Sie Ihre bestehende Frage Ihres Kurses'
         },
         placeholders: {
           question: 'Formuliere deine Frage hier',
@@ -150,13 +150,12 @@ export default {
       }
     },
     Discover: {
-      title: 'Entdecken Sie neue Wissenschecks',
-      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' +
-        'Erstellen Sie Ihren eigenen KnowledgeCheck',
-      no_checks_found_link: 'hier',
+      title: 'Entdecken Sie neue Kurse',
+      no_courses_found_base: 'Keine Wissensüberprüfungen gefunden. \nErstellen Sie Ihren eigenen Kurs',
+      no_courses_found_link: 'hier',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operatoren',
-        create_check_button_label: 'Erstelle deinen eigenen Check',
+        create_course_button_label: 'Erstelle deinen eigenen Kurs',
         filter_input_placeholder: 'nach Namen filtern',
         tooltips: {
           filter_case_sensitive: 'Filter beachtet die Groß-/Kleinschreibung',
@@ -306,15 +305,15 @@ export default {
   Examination: {
     attempt_not_possible: {
       title: 'Wissensüberprüfungs nicht möglich',
-      checkClosed: 'Leider wurde die Prüfung am {closeDate} geschlossen, sodass Sie nach diesem Tag keine Prüfungen mehr starten können.',
+      courseClosed: 'Leider wurde die Prüfung am {closeDate} geschlossen, sodass Sie nach diesem Tag keine Prüfungen mehr starten können.',
       notOpenYet: 'Leider ist die Prüfung noch nicht für Prüfungen geöffnet. Bitte warten Sie bis zum {openDate}, um mit der Prüfung zu beginnen',
-      unavailable: 'Der Wissenscheck, auf den Sie zugreifen wollten, ist derzeit für Benutzer nicht verfügbar.',
+      unavailable: 'Der Kurs, auf den Sie zugreifen wollten, ist derzeit für Benutzer nicht verfügbar.',
       'anonymous-users-not-allowed': 'Anonyme Benutzer sind bei dieser Prüfung nicht zugelassen. Bitte melden Sie sich mit einem anderen Konto an'
     }
   },
   Practice: {
     practicing_not_allowed: {
-      disabled: 'Das Üben dieses KnowledgeChecks ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des KnowledgeChecks, um das Üben zu aktivieren.',
+      disabled: 'Das Üben dieses Kurses ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des Kurses, um das Üben zu aktivieren.',
       title: 'Üben nicht erlaubt',
       toManyAttempts: 'Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht.'
     },
@@ -325,13 +324,30 @@ export default {
         confirm_button_label: 'Beenden',
         cancel_button_label: 'Fortsezten',
         title: 'Mit dem Üben aufhören?',
-        body: 'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
+        body:
+          'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
           'Bitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben.'
       }
     }
   },
+  StartOptionsPage: {
+    title: 'Übung oder Prüfungsversuch starten',
+    Card: {
+      title: 'Kurs per Share-Token finden',
+      description: 'Geben Sie einen Share-Token ein, um eine Übung oder einen Prüfungsversuch zu starten.'
+    },
+    ShareTokenInput: {
+      parse_token_label: 'Token wird überprüft'
+    },
+    ShareTokenOptions: {
+      not_found_error_message: 'Kurs wurde nicht gefunden.',
+      retrieval_error_message: 'Der Kurs konnte nicht geladen werden.',
+      start_examination_label: 'Prüfungsversuch starten',
+      start_practice_label: 'Übung starten'
+    }
+  },
   Components: {
-    KnowledgeCheckCard: {
+    CourseCard: {
       last_modified_label: 'zuletzt geändert',
       Statistics: {
         questions_label: 'Fragen',
@@ -344,15 +360,15 @@ export default {
         is_Guest_role: 'Gast'
       }
     },
-    ShareKnowledgeCheckButton: {
-      tooltip_message: 'Teile diesen KnowledgeCheck',
-      tooltip_empty_message: 'Dieser KnowledgeCheck hat keine Fragen und kann deswegen nicht geteilt werden.',
+    ShareCourseButton: {
+      tooltip_message: 'Teile diesen Kurs',
+      tooltip_empty_message: 'Dieser Kurs hat keine Fragen und kann deswegen nicht geteilt werden.',
       successfully_copied_toast_message: 'Freigabelink erfolgreich in Zwischenablage gespeichert',
       failed_copy_toast_message: 'Der Freigabelink konnte nicht in Zwischenablage gespeichert werden.'
     },
-    KnowledgeCheckCardMenu: {
+    CourseActionMenu: {
       menu_label: 'Aktionen',
-      invite_to_submenu_label: 'Teile diesen Check',
+      invite_to_submenu_label: 'Teile diesen Kurs',
       copy_practice: {
         label: 'Kopiere Übungslink',
         toast_success: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
@@ -360,7 +376,7 @@ export default {
       },
       start_practice: {
         label: 'Beginne zu Üben',
-        tooltip: 'Dieser KnowledgeCheck hat keine Fragen, Übung deaktiviert.',
+        tooltip: 'Dieser Kurs hat keine Fragen, Übung deaktiviert.',
         toast: 'Starten der Übungsumgebung fehlgeschlagen.'
       },
       copy_examination: {
@@ -373,39 +389,36 @@ export default {
         tooltip: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
         toast: 'Erstellen des Übungslinks fehlgeschlagen.'
       },
-      edit_check: {
-        label: 'Check bearbeiten',
-        tooltip: 'Dir fehlen die Berechtigungen um diese Check zu bearbeiten.'
+      edit_course: {
+        label: 'Kurs bearbeiten',
+        tooltip: 'Dir fehlen die Berechtigungen um diesen Kurs zu bearbeiten.'
       },
-      clone_check: {
-        label: 'Check duplizieren'
+      clone_course: {
+        label: 'Kurs duplizieren'
       },
       inspect_statistics: {
         label: 'Statistik anzeigen'
       },
       remove_share_token: {
-        tooltip: 'Dieser Check hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
+        tooltip: 'Dieser Kurs hat keinen Freigabe schlüssel.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
-      delete_knowledgeCheck: {
-        label: 'Check löschen',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
-        toast_deletion_successful: 'KnowledgeCheck erfolgreich gelöscht',
-        toast_deletion_failure: 'Löschen des KnowledgeChecks fehlgeschlagen!'
+      delete_course: {
+        label: 'Kurs löschen',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        toast_deletion_successful: 'Kurs erfolgreich gelöscht',
+        toast_deletion_failure: 'Löschen des Kurses fehlgeschlagen!'
       },
       Shared: {
         tooltip_not_allowed: 'Dir fehlen die Berechtigungen um diese Aktion durchzuführen.',
-        toast_deletion_not_found: 'Löschvorgang fehlgeschlagen, Check nicht gefunden.'
+        toast_deletion_not_found: 'Löschvorgang fehlgeschlagen, Kurs nicht gefunden.'
       }
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     },

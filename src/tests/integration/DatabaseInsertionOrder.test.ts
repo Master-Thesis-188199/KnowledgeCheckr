@@ -1,12 +1,12 @@
 import { describe, expect, it } from '@jest/globals'
 import { eq } from 'drizzle-orm'
+import insertCourse from '@/database/course/insert'
+import { getCourseById } from '@/database/course/select'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck, db_user } from '@/database/drizzle/schema'
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
-import { getKnowledgeCheckById } from '@/database/knowledgeCheck/select'
-import prepareExaminationCheck from '@/src/lib/checks/[share_token]/prepareExminationCheck'
-import { instantiateKnowledgeCheck, KnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
-import { KnowledgeCheckSettings } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { db_course, db_user } from '@/database/drizzle/schema'
+import prepareExaminationCourse from '@/src/lib/courses/[share_token]/prepareExaminationCourse'
+import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
+import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
@@ -20,37 +20,37 @@ describe('Validate the order of inserted database elements', () => {
     const [testUser] = await db.select().from(db_user).limit(1).where(eq(db_user.email, 'test@email.com'))
     expect(testUser).toBeDefined()
 
-    const dummyCheck = Object.assign(instantiateKnowledgeCheck({ validate: true }), { owner_id: testUser.id })
-    await insertKnowledgeCheck(dummyCheck)
+    const dummyCourse = Object.assign(instantiateCourse({ validate: true }), { owner_id: testUser.id })
+    await insertCourse(dummyCourse)
 
-    const [{ id }] = await db.select().from(db_knowledgeCheck).where(eq(db_knowledgeCheck.id, dummyCheck.id)).limit(1)
-    expect(id).toBe(dummyCheck.id)
+    const [{ id }] = await db.select().from(db_course).where(eq(db_course.id, dummyCourse.id)).limit(1)
+    expect(id).toBe(dummyCourse.id)
 
-    const retrieved = await getKnowledgeCheckById(dummyCheck.id)
+    const retrieved = await getCourseById(dummyCourse.id)
     expect(retrieved).toBeDefined()
 
-    if (!retrieved) throw new Error('Retrieved knowledge check is undefined')
+    if (!retrieved) throw new Error('Retrieved course is undefined')
 
-    expect(retrieved.questions.length).toBe(dummyCheck.questions.length)
-    expect(retrieved.questions.map((q) => q.id).join('\n')).toBe(dummyCheck.questions.map((q) => q.id).join('\n'))
+    expect(retrieved.questions.length).toBe(dummyCourse.questions.length)
+    expect(retrieved.questions.map((q) => q.id).join('\n')).toBe(dummyCourse.questions.map((q) => q.id).join('\n'))
     expect(
       retrieved.questions
         .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
         .flatMap((q) => q.answers.map((a) => a.id))
         .join('\n'),
     ).toBe(
-      dummyCheck.questions
+      dummyCourse.questions
         .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
         .flatMap((q) => q.answers.map((a) => a.id))
         .join('\n'),
     )
   })
 
-  it.each(['create-order', 'random'] as Array<KnowledgeCheckSettings['examination']['questionOrder']>)(
-    "Ensure that `prepareExaminationCheck` shuffled questions & answers do/don't match input order based on order-settings",
+  it.each(['create-order', 'random'] as Array<CourseSettings['examination']['questionOrder']>)(
+    "Ensure that `prepareExaminationCourse` shuffled questions & answers do/don't match input order based on order-settings",
     async (order) => {
-      const check: KnowledgeCheck = {
-        ...instantiateKnowledgeCheck(),
+      const course: Course = {
+        ...instantiateCourse(),
 
         questions: [
           { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
@@ -60,37 +60,37 @@ describe('Validate the order of inserted database elements', () => {
         ],
       }
 
-      check.settings.examination.questionOrder = order
-      check.settings.examination.answerOrder = order
+      course.settings.examination.questionOrder = order
+      course.settings.examination.answerOrder = order
 
       for (let i = 0; i < 10; i++) {
-        const preparedCheck = await prepareExaminationCheck(check)
+        const preparedCourse = await prepareExaminationCourse(course)
 
         if (order === 'random') {
-          expect(preparedCheck.questions.map((q) => q.id).join(',')).not.toBe(check.questions.map((q) => q.id).join(','))
+          expect(preparedCourse.questions.map((q) => q.id).join(',')).not.toBe(course.questions.map((q) => q.id).join(','))
 
           //* validate answer-order is random
           expect(
-            preparedCheck.questions
+            preparedCourse.questions
               .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
               .flatMap((q) => q.answers.map((a) => a.id))
               .join(','),
           ).not.toBe(
-            check.questions
+            course.questions
               .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
               .flatMap((q) => q.answers.map((a) => a.id))
               .join(','),
           )
         } else {
-          expect(preparedCheck.questions.map((q) => q.id).join(',')).toBe(check.questions.map((q) => q.id).join(','))
+          expect(preparedCourse.questions.map((q) => q.id).join(',')).toBe(course.questions.map((q) => q.id).join(','))
           //* validate answer-order is not random
           expect(
-            preparedCheck.questions
+            preparedCourse.questions
               .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
               .flatMap((q) => q.answers.map((a) => a.id))
               .join(','),
           ).toBe(
-            check.questions
+            course.questions
               .filter((q) => q.type === 'single-choice' || q.type === 'multiple-choice' || q.type === 'drag-drop')
               .flatMap((q) => q.answers.map((a) => a.id))
               .join(','),

@@ -1,5 +1,5 @@
-import CreateQuestionDialog from '@/src/components/checks/create/(create-question)/CreateQuestionDialog'
-import { CheckStoreProvider } from '@/src/components/checks/create/CreateCheckProvider'
+import CreateQuestionDialog from '@/src/components/courses/create/(create-question)/CreateQuestionDialog'
+import { CourseStoreProvider } from '@/src/components/courses/create/CreateCourseProvider'
 import { I18nProvider } from '@/src/components/root/I18nProvider'
 import RootProviders from '@/src/components/root/RootProviders'
 
@@ -9,11 +9,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.mount(
       <RootProviders>
         <I18nProvider locale='en'>
-          <CheckStoreProvider>
+          <CourseStoreProvider>
             <CreateQuestionDialog>
               <div className='trigger'>Trigger</div>
             </CreateQuestionDialog>
-          </CheckStoreProvider>
+          </CourseStoreProvider>
         </I18nProvider>
       </RootProviders>,
     )
@@ -31,11 +31,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.mount(
       <I18nProvider locale='en'>
         <RootProviders>
-          <CheckStoreProvider>
+          <CourseStoreProvider>
             <CreateQuestionDialog>
               <div className='trigger'>Trigger</div>
             </CreateQuestionDialog>
-          </CheckStoreProvider>
+          </CourseStoreProvider>
         </RootProviders>
         ,
       </I18nProvider>,
@@ -60,11 +60,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.mount(
       <I18nProvider locale='en'>
         <RootProviders>
-          <CheckStoreProvider>
+          <CourseStoreProvider>
             <CreateQuestionDialog>
               <div className='trigger'>Trigger</div>
             </CreateQuestionDialog>
-          </CheckStoreProvider>
+          </CourseStoreProvider>
         </RootProviders>
       </I18nProvider>,
     )
@@ -84,11 +84,11 @@ describe('<CreateQuestionDialog />', () => {
     cy.mount(
       <I18nProvider locale='en'>
         <RootProviders>
-          <CheckStoreProvider>
+          <CourseStoreProvider>
             <CreateQuestionDialog>
               <div className='trigger'>Trigger</div>
             </CreateQuestionDialog>
-          </CheckStoreProvider>
+          </CourseStoreProvider>
         </RootProviders>
       </I18nProvider>,
     )
