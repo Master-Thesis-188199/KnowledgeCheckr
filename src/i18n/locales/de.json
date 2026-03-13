@@ -462,5 +462,35 @@
     "signout_button_label": "Abmelden",
     "signout_delete_notice": "Daten löschen",
     "title": "Kontoinformationen"
+  },
+  "schemas": {
+    "Course": {
+      "name": {
+        "default": "Wissenskurs",
+        "description": "Der Name, unter dem der erstellte Kurs zugeordnet wird."
+      },
+      "description": {
+        "description": "Beschreiben Sie das Konzept Ihres Kurses mit ein paar Worten."
+      },
+      "difficulty": {
+        "description": "Legt das für diesen Kurs erforderliche Kenntnisniveau fest.",
+        "min_max_message": "Bitte geben Sie einen Schwierigkeitsgrad zwischen 1 und 10 an."
+      },
+      "questions": {
+        "refinement_message": "Die IDs der Fragen müssen eindeutig sein!"
+      },
+      "openDate": {
+        "description": "Der Tag, an dem Benutzer den Kurs nutzen können."
+      },
+      "closeDate": {
+        "description": "Der letzte Tag, an dem der Kurs von anderen genutzt werden kann."
+      },
+      "owner_id": {
+        "max_message": "Bitte geben Sie eine gültige Benutzer-ID an, die der Definition von `db_user`.id entspricht. (maximale Länge: 36)"
+      }
+    },
+    "Shared": {
+      "date_nan_time": "Ungültiger Datumswert angegeben"
+    }
   }
 }

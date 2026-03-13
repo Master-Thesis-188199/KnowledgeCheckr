@@ -463,5 +463,39 @@ export default {
       'question_status_partly-correct': 'partly-correct',
       question_status_unanswered: 'unanswered'
     }
+  },
+  schemas: {
+    Course: {
+      name: {
+        default: 'KnowledgeCheck Course',
+        description: 'The name under which the created course is associated with.'
+      },
+      description: {
+        description: 'Describe the concept of your course using a few words.'
+      },
+      difficulty: {
+        description: 'Defines the skill level needed for this course.',
+        min_max_message: 'Please specify a difficulty between 1 and 10.'
+      },
+      questions: {
+        refinement_message: 'The ids of questions must be unique!'
+      },
+      openDate: {
+        description: 'The day on which users can start to use the course.'
+      },
+      closeDate: {
+        description: 'The last day on which the course can be used by others.',
+        superRefine_message: 'The closeDate cannot be before the start date'
+      },
+      owner_id: {
+        max_message: 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'
+      },
+      questionCategories: {
+        refinement_message: 'Please define question categories before assigning them to questions.'
+      }
+    },
+    Shared: {
+      date_nan_time: 'Invalid date value provided'
+    }
   }
 } as const

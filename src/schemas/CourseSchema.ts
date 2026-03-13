@@ -12,23 +12,23 @@ export const CourseSchema = z
   .object({
     id: z.uuidv4().default(() => getUUID()),
 
-    name: z.string().default('KnowledgeCheck Course').describe('The name under which the created course is associated with.'),
+    name: z.string().default('schemas.Course.name.default').describe('schemas.Course.name.description'),
 
     description: z
       .string()
       .nullable()
       .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
-      .describe('Describe the concept of your course using a few words.'),
+      .describe('schemas.Course.description.description'),
 
     difficulty: z
       .number()
-      .min(1, 'Please specify a difficulty between 1 and 10.')
-      .max(10, 'Please specify a difficulty between 1 and 10.')
+      .min(1, 'schemas.Course.difficulty.min_max_message')
+      .max(10, 'schemas.Course.difficulty.min_max_message')
       .optional()
       .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
-      .describe('Defines the skill level needed for this course.'),
+      .describe('schemas.Course.difficulty.description'),
 
-    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
+    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'schemas.Course.questions.refinement_message ' }),
     questionCategories: z
       .array(CategorySchema)
       .optional()
@@ -40,24 +40,24 @@ export const CourseSchema = z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'schemas.Shared.date_nan_time')
       // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
       .default(() => new Date(Date.now()))
-      .describe('The day on which users can start to use the course.'),
+      .describe('schemas.Course.openDate.description'),
     closeDate: z
       .date()
       .or(z.string())
       .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+      .refine((course) => !isNaN(course.getTime()), 'schemas.Shared.date_nan_time')
       // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
       .nullable()
       .default(null)
-      .describe('The last day on which the course can be used by others.'),
+      .describe('schemas.Course.closeDate.description'),
 
     createdAt: StringDate.default(() => new Date(Date.now())).optional(),
     updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
 
-    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
+    owner_id: z.string().nonempty().max(36, 'schemas.Course.owner_id.max_message').default('unknown'),
     collaborators: z.array(z.string()).default([]),
 
     settings: CourseSettingsSchema,
@@ -87,7 +87,7 @@ export const CourseSchema = z
     return course
   })
   .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
-    message: 'Please define question categories before assigning them to questions.',
+    message: 'schemas.Course.questionCategories.refinement_message',
   })
   .superRefine(({ openDate, closeDate }, ctx) => {
     if (closeDate === null) return
@@ -95,7 +95,7 @@ export const CourseSchema = z
     if (isBefore(closeDate, openDate)) {
       ctx.addIssue({
         code: 'custom',
-        message: 'The closeDate cannot be before the start date',
+        message: 'schemas.Course.closeDate.superRefine_message',
         path: ['closeDate'],
       })
     }
