@@ -1,6 +1,5 @@
 import { getTableColumns } from 'drizzle-orm'
 import type { MySqlTableWithColumns } from 'drizzle-orm/mysql-core'
-import { z } from 'zod'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import getKeys from '@/src/lib/Shared/Keys'
 import { Any } from '@/types'
@@ -136,34 +135,22 @@ export function toDatabaseScalar(value: unknown, columnName: string = 'unknown')
 }
 
 /**
- * Creates a strongly-typed converter that maps an input object (validated by the provided Zod schema)
- * to a Drizzle insert object for the given table.
+ * Convert a given input object into a DB insert object containing only matched columns.
  *
- * The returned converter’s output type is dependent on the *actual* input object type at the call site:
- * only keys that can be matched (deeply) from the input object’s type to DB columns will appear.
- *
- * @param schema - Zod schema that describes the input data shape.
+ * @typeParam Type - Inferred from the passed object; do not annotate unless necessary.
+ * @param obj - The object to convert.
  * @param table - Drizzle table to convert into.
- * @returns A `convertToDatabase` function for this schema+table pair.
  */
-export default function createConvertToDatabase<Schema extends z.ZodTypeAny, Table extends MySqlTableWithColumns<Any>>(schema: Schema, table: Table) {
-  /**
-   * Convert a given input object into a DB insert object containing only matched columns.
-   *
-   * @typeParam Obj - Inferred from the passed object; do not annotate unless necessary.
-   * @param obj - The object to convert.
-   */
-  return function convertToDatabase<const Type extends z.output<Schema>>(obj: Type): DbConversionResult<Type, Table> {
-    const out: Record<string, unknown> = {}
-    const columns = getTableColumns(table)
+export default function convertToDatabase<const Type extends object, Table extends MySqlTableWithColumns<Any>>(obj: Type | null, table: Table): DbConversionResult<Type, Table> {
+  const out: Record<string, unknown> = {}
+  const columns = getTableColumns(table)
 
-    for (const col of getKeys(columns)) {
-      const raw = findDeepPropertyValue(String(col), obj)
-      if (raw === undefined) continue // don't emit missing keys
+  for (const col of getKeys(columns)) {
+    const raw = findDeepPropertyValue(String(col), obj)
+    if (raw === undefined) continue // don't emit missing keys
 
-      out[String(col)] = toDatabaseScalar(raw, String(col))
-    }
-
-    return out as DbConversionResult<Type, Table>
+    out[String(col)] = toDatabaseScalar(raw, String(col))
   }
+
+  return out as DbConversionResult<Type, Table>
 }

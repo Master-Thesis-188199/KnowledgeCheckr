@@ -10,8 +10,8 @@ import { db_course } from '@/database/drizzle/schema'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import { LodashDifferences } from '@/src/lib/courses/create/SaveAction'
 import _logger from '@/src/lib/log/Logger'
-import { Course, CourseSchema } from '@/src/schemas/CourseSchema'
-import createConvertToDatabase from '@/src/schemas/utils/createConvertToDatabase'
+import { Course } from '@/src/schemas/CourseSchema'
+import convertToDatabase from '@/src/schemas/utils/convertToDatabase'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
@@ -56,10 +56,8 @@ export async function updateCourse(modifiedCourse: Course, changes: LodashDiffer
 }
 
 async function updateBaseCourseProperties(db: DrizzleDB, course: Course) {
-  const convertTo = createConvertToDatabase(CourseSchema, db_course)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, updatedAt, ...updates } = convertTo(course)
+  const { id, updatedAt, ...updates } = convertToDatabase(course, db_course)
 
   await db.update(db_course).set(updates).where(eq(db_course.id, course.id))
 }
