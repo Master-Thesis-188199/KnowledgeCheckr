@@ -9,10 +9,12 @@ import { useNavigationAbort } from '@/src/components/navigation-abortion/Navigat
 import { Button } from '@/src/components/shadcn/button'
 import { CountdownTime } from '@/src/components/Shared/CountdownTime'
 import { useLogger } from '@/src/hooks/log/useLogger'
+import { useI18n } from '@/src/i18n/client-localization'
 import finishExaminationAttempt from '@/src/lib/courses/[share_token]/FinishExaminationAttempt'
 import { validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
 
 export function ExamQuestionNavigationMenu({ className }: { className?: string }) {
+  const t = useI18n()
   const { error } = useLogger('ExamQuestionNavigationMenu')
   const { course, setCurrentQuestionIndex, currentQuestionIndex, startedAt, ...examinationState } = useExaminationStore((store) => store)
   const { clearNavigationAbort } = useNavigationAbort()
@@ -23,7 +25,7 @@ export function ExamQuestionNavigationMenu({ className }: { className?: string }
         <span className='text-sm text-neutral-500 dark:text-neutral-400'>
           <CountdownTime
             onTimeUp={() =>
-              finishExaminationAttempt(validateExaminationSchema({ course, startedAt, ...examinationState }))
+              finishExaminationAttempt(validateExaminationSchema(t, { course, startedAt, ...examinationState }))
                 .catch((e) => {
                   toast(`Failed to submit examination results. ${e}`, { type: 'error' })
                   error('Failed to finish examination attempt', e)

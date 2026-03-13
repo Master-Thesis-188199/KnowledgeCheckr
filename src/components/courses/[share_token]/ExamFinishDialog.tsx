@@ -8,6 +8,7 @@ import { useExaminationStore } from '@/src/components/courses/[share_token]/Exam
 import { useNavigationAbort } from '@/src/components/navigation-abortion/NavigationAbortProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
+import { useI18n } from '@/src/i18n/client-localization'
 import finishExaminationAttempt from '@/src/lib/courses/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
@@ -15,6 +16,7 @@ import { Question } from '@/src/schemas/QuestionSchema'
 import { safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default function ExamFinishDialog({ children, triggerClassname }: { children: React.ReactNode; triggerClassname?: string }) {
+  const t = useI18n()
   const { course, ...examinationState } = useExaminationStore((state) => state)
   const { clearNavigationAbort } = useNavigationAbort()
 
@@ -56,7 +58,7 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
             </DialogClose>
             <Button
               onClick={() =>
-                finishExaminationAttempt(validateExaminationSchema({ course, ...examinationState }))
+                finishExaminationAttempt(validateExaminationSchema(t, { course, ...examinationState }))
                   .catch((e) => {
                     toast(`Failed to submit examination results. ${e}`, { type: 'error' })
                   })
