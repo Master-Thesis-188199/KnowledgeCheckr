@@ -8,7 +8,7 @@ import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTool
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export function ExaminationSuccessPieChart({ title, description }: { title: string; description?: string }) {
-  const t = useScopedI18n('Checks.ExaminatonResults.Charts.ExaminationSuccessPieChart')
+  const t = useScopedI18n('Courses.ExaminatonResults.Charts.ExaminationSuccessPieChart')
   const total = Math.max(Math.round(Math.random() * 150), Math.round(Math.max(48, Math.random() * 120)))
   const passedRate = Math.min(0.95, Math.max(0.6, Math.random()))
 

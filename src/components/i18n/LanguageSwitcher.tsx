@@ -7,7 +7,7 @@ import { FileQuestionIcon } from 'lucide-react'
 import z from 'zod'
 import * as zodLocales from 'zod/locales'
 import { Button } from '@/src/components/shadcn/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/Shared/Popover'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 import { useChangeLocale, useCurrentLocale } from '@/src/i18n/client-localization'
 import { i18nLocale, locales } from '@/src/i18n/i18nConfig'
 
@@ -20,32 +20,30 @@ export default function LanguageSwitcher() {
   }, [currentLocale])
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button aria-label='change app language' className='flex size-auto items-center p-1' variant='ghost' size='icon'>
           {Icon}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className='w-32 p-2 text-sm'>
-        <div className='grid gap-1'>
-          {locales.map((locale) => (
-            <LocaleButton key={locale} locale={locale} />
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent sideOffset={10} className={'w-32 p-2 text-sm'}>
+        {locales.map((locale) => (
+          <LocaleItem locale={locale} key={locale} />
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
-function LocaleButton({ locale }: { locale: i18nLocale }) {
+function LocaleItem({ locale }: { locale: i18nLocale }) {
   const { Icon, long } = useLocale(locale)
   const changeLocale = useChangeLocale()
 
   return (
-    <Button type='button' variant='ghost' onClick={() => changeLocale(locale)} className='flex items-center gap-2.5 capitalize *:[svg]:size-5'>
+    <DropdownMenuItem onClick={() => changeLocale(locale)} className='flex h-9 items-center gap-2.5 px-4 py-2 capitalize *:[svg]:size-5'>
       {Icon}
       <span>{long}</span>
-    </Button>
+    </DropdownMenuItem>
   )
 }
 

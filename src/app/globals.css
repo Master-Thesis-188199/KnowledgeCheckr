@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant hocus (&:is(:hover, :focus-visible));
 
 @theme {
   --breakpoint-3xl: 120rem;

@@ -1,4 +1,4 @@
-import { FolderSearchIcon, HouseIcon, PlusIcon, SearchIcon } from 'lucide-react'
+import { FolderSearchIcon, HouseIcon, NotebookPenIcon, PlusIcon, SearchIcon } from 'lucide-react'
 import { SideBarProps } from '@/components/root/Navigation/SideBar'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -15,15 +15,22 @@ export const sideBarConfiguration: SideBarProps = {
     },
     {
       type: 'navigation',
-      label: 'Your Checks',
-      href: '/checks',
+      label: 'Your Courses',
+      href: '/courses',
       icon: <FolderSearchIcon className={iconClasses} />,
     },
     {
       type: 'navigation',
-      label: 'Discover Checks',
-      href: '/checks/discover',
+      label: 'Discover Courses',
+      href: '/courses/discover',
       icon: <SearchIcon className={iconClasses} />,
+    },
+
+    {
+      type: 'navigation',
+      label: 'Begin Practice / Examination',
+      href: '/courses/start',
+      icon: <NotebookPenIcon className={iconClasses} />,
     },
     {
       type: 'separator',
@@ -31,8 +38,8 @@ export const sideBarConfiguration: SideBarProps = {
     },
     {
       type: 'navigation',
-      label: 'Create New Check',
-      href: '/checks/create',
+      label: 'Create New Course',
+      href: '/courses/create',
       icon: <PlusIcon className={iconClasses} />,
     },
   ],

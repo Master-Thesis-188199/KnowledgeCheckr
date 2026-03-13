@@ -5,7 +5,7 @@ import { ItemSwapEvent } from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItemPositionCounter } from '@/src/components/Shared/drag-drop/DragDropPositionCounter'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 
-interface DragDropItemProps extends Pick<React.ComponentProps<'div'>, 'onClick'> {
+interface DragDropItemProps extends React.ComponentProps<'div'> {
   children: React.ReactNode
   className?: string
   onSwap?: (e: ItemSwapEvent) => void

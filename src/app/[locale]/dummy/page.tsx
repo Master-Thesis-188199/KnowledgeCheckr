@@ -1,4 +1,4 @@
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import insertCourse from '@/database/course/insert'
 import { Button } from '@/src/components/shadcn/button'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
@@ -6,7 +6,7 @@ import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -16,33 +16,33 @@ export default function DummyDataPage() {
     <>
       <PageHeading title='Create Dummy Data' />
       <Card as='form' className='flex max-w-lg flex-col gap-6'>
-        <h1 className='text-lg font-semibold'>Create Practice Check</h1>
-        <Button className='mx-auto min-w-3xs' formAction={createPracticeCheck}>
-          Create Check
+        <h1 className='text-lg font-semibold'>Create Practice Course</h1>
+        <Button className='mx-auto min-w-3xs' formAction={createPracticeCourse}>
+          Create Course
         </Button>
       </Card>
     </>
   )
 }
 
-async function createPracticeCheck() {
+async function createPracticeCourse() {
   'use server'
   await requireAuthentication()
 
-  const check = instantiateKnowledgeCheck()
+  const course = instantiateCourse()
 
-  check.name = `Practice Knowledge ${Math.floor(Math.random() * 1000)}`
-  check.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'
-  check.difficulty = 6
+  course.name = `Practice Course ${Math.floor(Math.random() * 1000)}`
+  course.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'
+  course.difficulty = 6
 
-  check.questionCategories = [
+  course.questionCategories = [
     { ...instantiateCategory(), name: 'Design' },
     { ...instantiateCategory(), name: 'Tech' },
     { ...instantiateCategory(), name: 'Daily' },
     { ...instantiateCategory(), name: 'general' },
   ]
 
-  check.questions = [
+  course.questions = [
     {
       ...instantiateSingleChoice(),
       question: 'What does RGB stand for?',
@@ -134,6 +134,6 @@ async function createPracticeCheck() {
     },
   ]
 
-  logger.info('Inserting new check...')
-  await insertKnowledgeCheck(check) //.then(() => redirect('/checks'))
+  logger.info('Inserting new course...')
+  await insertCourse(course) //.then(() => redirect('/courses'))
 }

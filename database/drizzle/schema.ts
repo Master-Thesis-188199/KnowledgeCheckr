@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { KnowledgeCheckSettingsSchema } from '@/src/schemas/KnowledgeCheckSettingsSchema'
+import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
@@ -93,11 +93,11 @@ export const db_category = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
   },
   (table) => [
-    unique().on(table.knowledgecheckId, table.name), //* ensure a check can not have duplicate categories
+    unique().on(table.knowledgecheckId, table.name), //* ensure a course can not have duplicate categories
     index('fk_Category_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_Category_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -113,7 +113,7 @@ export const db_category = mysqlTable(
   ],
 )
 
-export const db_knowledgeCheck = mysqlTable(
+export const db_course = mysqlTable(
   'KnowledgeCheck',
   {
     id: primaryKeyUUID,
@@ -148,29 +148,29 @@ export const db_knowledgeCheck = mysqlTable(
   ],
 )
 
-export const db_knowledgeCheckSettings = mysqlTable(
+export const db_courseSettings = mysqlTable(
   'KnowledgeCheck_Settings',
   {
     id: primaryKeyUUID,
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowAnonymous._zod.def.defaultValue ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.allowAnonymous._zod.def.defaultValue ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.allowFreeNavigation._zod.def.defaultValue ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.questionOrder._zod.def.defaultValue),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.answerOrder._zod.def.defaultValue),
-    examTimeFrameSeconds: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examTimeFrameSeconds._zod.def.defaultValue),
-    examinationAttemptCount: int().notNull().default(KnowledgeCheckSettingsSchema.shape.examination.shape.examinationAttemptCount._zod.def.defaultValue),
+      .default(CourseSettingsSchema.shape.examination.shape.allowFreeNavigation._zod.def.defaultValue ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.questionOrder._zod.def.defaultValue),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.answerOrder._zod.def.defaultValue),
+    examTimeFrameSeconds: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examTimeFrameSeconds._zod.def.defaultValue),
+    examinationAttemptCount: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examinationAttemptCount._zod.def.defaultValue),
     shareAccessibility: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.shareAccessibility._zod.def.defaultValue ? 1 : 0),
+      .default(CourseSettingsSchema.shape.shareAccessibility._zod.def.defaultValue ? 1 : 0),
 
     // -----
     enableExaminations: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.examination.shape.enableExaminations._zod.def.defaultValue ? 1 : 0),
+      .default(CourseSettingsSchema.shape.examination.shape.enableExaminations._zod.def.defaultValue ? 1 : 0),
     startDate: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -181,7 +181,7 @@ export const db_knowledgeCheckSettings = mysqlTable(
 
     enablePracticing: int()
       .notNull()
-      .default(KnowledgeCheckSettingsSchema.shape.practice.shape.enablePracticing._zod.def.defaultValue ? 1 : 0),
+      .default(CourseSettingsSchema.shape.practice.shape.enablePracticing._zod.def.defaultValue ? 1 : 0),
 
     allowedPracticeCount: int().default(sql`NULL`),
   },
@@ -189,7 +189,7 @@ export const db_knowledgeCheckSettings = mysqlTable(
     index('fk_KnowledgeCheck_Settings_KnowledgeCheck1_idx').on(table.knowledgecheckId),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_KnowledgeCheck_Settings_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -234,7 +234,7 @@ export const db_question = mysqlTable(
       .onUpdate('no action'),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_Question_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -277,7 +277,7 @@ export const db_user = mysqlTable('User', {
   isAnonymous: boolean(),
 })
 
-export const db_userContributesToKnowledgeCheck = mysqlTable(
+export const db_userContributesToCourse = mysqlTable(
   'User_contributesTo_KnowledgeCheck',
   {
     userId: varchar('user_id', { length: 36 }).notNull(),
@@ -296,7 +296,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
       .onUpdate('cascade'),
     foreignKey({
       columns: [table.knowledgecheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck1',
     })
       .onDelete('cascade')
@@ -304,7 +304,7 @@ export const db_userContributesToKnowledgeCheck = mysqlTable(
   ],
 )
 
-export const db_userHasDoneKnowledgeCheck = mysqlTable(
+export const db_userHasDoneCourse = mysqlTable(
   'User_has_done_KnowledgeCheck',
   {
     id: int().autoincrement().notNull(),
@@ -329,7 +329,7 @@ export const db_userHasDoneKnowledgeCheck = mysqlTable(
       .onUpdate('no action'),
     foreignKey({
       columns: [table.knowledgeCheckId],
-      foreignColumns: [db_knowledgeCheck.id],
+      foreignColumns: [db_course.id],
       name: 'fk_user_has_KnowledgeCheck_KnowledgeCheck2',
     })
       .onDelete('cascade')
