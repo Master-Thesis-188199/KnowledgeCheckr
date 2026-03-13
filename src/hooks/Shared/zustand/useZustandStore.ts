@@ -4,6 +4,7 @@
 import { useRef } from 'react'
 import { StoreApi } from 'zustand'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
+import { useI18n } from '@/src/i18n/client-localization'
 import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type useStoreCachingOptions<Store extends object> = StoreCachingOptions & {
@@ -39,11 +40,12 @@ type useStoreProps<Store extends object, TInitial = StoreState_fromStore<Store>>
  */
 export function useZustandStore<TStore extends object, TInitial extends object = StoreState_fromStore<TStore>>({ initialStoreProps, ...rest }: useStoreProps<TStore, TInitial>): StoreApi<TStore> {
   const storeRef = useRef<ReturnType<typeof rest.createStoreFunc>>(null)
+  const translator = useI18n()
   const { getStoredValue } = useSessionStorageContext()
 
   //* Re-create store when caching is disabled
   if (!rest.caching) {
-    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps })
+    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, translator })
 
     return storeRef.current
   }
@@ -54,7 +56,7 @@ export function useZustandStore<TStore extends object, TInitial extends object =
 
     const initStore = (props: TInitial | StoreState_fromStore<TStore> | undefined) => {
       // initialize store either with the cached-props or the initialStoreProps
-      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options })
+      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options, translator })
       return storeRef.current
     }
 
