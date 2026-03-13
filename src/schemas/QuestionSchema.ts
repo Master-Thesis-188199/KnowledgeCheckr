@@ -1,14 +1,45 @@
 import { z } from 'zod'
-import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
+import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 import identifyDuplicateFields from '@/src/schemas/utils/refinements/IdentifyDuplicateFields'
+
+const getAnswerId = (t: Translator) =>
+  z
+    .string()
+    .uuid('An answer must have an uuid to identify it!')
+    .catch(() => getUUID())
 
 const AnswerId = z
   .string()
   .uuid('An answer must have an uuid to identify it!')
   .catch(() => getUUID())
 
+function getBaseQuestionSchema(translator: Translator) {
+  return z.object({
+    id: z.uuidv4(),
+    points: z.number().positive('Number must be greater than 0'),
+    category: z.string().default('general'),
+
+    question: z
+      .string()
+      .refine((q) => q.split(' ').length > 2, 'Please reformulate your question to be at least 3 words long.')
+      .default(
+        lorem()
+          .substring(0, Math.floor(Math.random() * 100) + 20)
+          .split('\n')
+          .join(''),
+      ),
+
+    //* specifies how / in which environments the question should be displayed to users.
+    accessibility: z.enum(['all', 'practice-only', 'exam-only']).default('all').catch('all'),
+  })
+}
+
+/**
+ * @deprecated
+ */
 const baseQuestion = z.object({
   id: z.uuidv4(),
   points: z.number().positive('Number must be greater than 0'),
@@ -50,6 +81,32 @@ const uniqueAnswerConstraints = (answers: Array<{ answer: string; id: string }>,
   })
 }
 
+function getMultipleChoiceAnswerSchema(translator: Translator) {
+  return z.object({
+    type: z.literal('multiple-choice'),
+    answers: z
+      .array(
+        z.object({
+          id: getAnswerId(translator),
+          answer: z.string().min(1, 'An answer must not be empty!'),
+          correct: z.boolean(),
+        }),
+      )
+      .min(1, 'Please provide at least one answer')
+      .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
+      .superRefine(uniqueAnswerConstraints)
+      .default(() => [
+        { id: getUUID(), answer: 'Answer 1', correct: false },
+        { id: getUUID(), answer: 'Answer 2', correct: true },
+        { id: getUUID(), answer: 'Answer 3', correct: true },
+        { id: getUUID(), answer: 'Answer 4', correct: false },
+      ]),
+  })
+}
+
+/**
+ * @deprecated
+ */
 const multipleChoiceAnswerSchema = z.object({
   type: z.literal('multiple-choice'),
   answers: z
@@ -71,6 +128,32 @@ const multipleChoiceAnswerSchema = z.object({
     ]),
 })
 
+function getSingleChoiceAnswerSchema(translator: Translator) {
+  return z.object({
+    type: z.literal('single-choice'),
+    answers: z
+      .array(
+        z.object({
+          id: getAnswerId(translator),
+          answer: z.string(),
+          correct: z.boolean(),
+        }),
+      )
+      .min(1, 'Please provide at least one answer')
+      .superRefine(uniqueAnswerConstraints)
+      .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
+      .default(() => [
+        { id: getUUID(), answer: 'Answer 1', correct: false },
+        { id: getUUID(), answer: 'Answer 2', correct: true },
+        { id: getUUID(), answer: 'Answer 3', correct: false },
+        { id: getUUID(), answer: 'Answer 4', correct: false },
+      ]),
+  })
+}
+
+/**
+ * @deprecated
+ */
 const singleChoiceAnswerSchema = z.object({
   type: z.literal('single-choice'),
   answers: z
@@ -92,6 +175,71 @@ const singleChoiceAnswerSchema = z.object({
     ]),
 })
 
+function getDragDropAnswerSchema(translator: Translator) {
+  return z.object({
+    type: z.literal('drag-drop'),
+    answers: z
+      .array(
+        z.object({
+          id: getAnswerId(translator),
+          answer: z.string(),
+          position: z.number().min(0, 'Position must be positive'),
+        }),
+      )
+      .superRefine((answers, ctx) => {
+        const n = answers.length
+        const seen = new Set<number>()
+        const minPos = Math.min(...answers.map((a) => a.position))
+
+        if (minPos !== 0) {
+          ctx.addIssue({
+            code: 'too_small',
+            origin: 'number',
+            minimum: 0,
+            type: 'number',
+            inclusive: true,
+            message: `[drag-drop] positions must begin from 0; received: ${minPos} `,
+            path: [answers.findIndex((a) => a.position === minPos), 'position'],
+          })
+          return
+        }
+
+        answers.forEach((answer, i) => {
+          if (seen.has(answer.position)) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `[drag-drop] duplicate position: ${answer.position}`,
+              path: [i, 'position'],
+            })
+          }
+          seen.add(answer.position)
+        })
+
+        //* Identify gaps in continuous range of positions
+        for (let pos = 0; pos <= n - 1; pos++) {
+          if (!seen.has(pos)) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `[drag-drop] positions must form a continuous range: [0...${n - 1}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
+            })
+
+            break
+          }
+        }
+      })
+      .superRefine(uniqueAnswerConstraints)
+      .default(() => [
+        { id: getUUID(), answer: 'Answer 1', position: 0 },
+        { id: getUUID(), answer: 'Answer 2', position: 1 },
+        { id: getUUID(), answer: 'Answer 3', position: 2 },
+        { id: getUUID(), answer: 'Answer 4', position: 3 },
+      ]),
+  })
+}
+
+/**
+ * @deprecated
+ */
 const dragDropAnswerSchema = z.object({
   type: z.literal('drag-drop'),
   answers: z
@@ -152,39 +300,74 @@ const dragDropAnswerSchema = z.object({
     ]),
 })
 
+function getOpenAnswerSchema(translator: Translator) {
+  return z.object({
+    type: z.literal('open-question'),
+    expectation: z.string().optional(),
+  })
+}
+
+/**
+ * @deprecated
+ */
 const openAnswerSchema = z.object({
   type: z.literal('open-question'),
   expectation: z.string().optional(),
 })
 
+function getQuestionAnswerTypes(t: Translator) {
+  return z.discriminatedUnion('type', [getSingleChoiceAnswerSchema(t), getMultipleChoiceAnswerSchema(t), getDragDropAnswerSchema(t), getOpenAnswerSchema(t)])
+}
+
+/**
+ * @deprecated
+ */
 const questionAnswerTypes = z.discriminatedUnion('type', [singleChoiceAnswerSchema, multipleChoiceAnswerSchema, openAnswerSchema, dragDropAnswerSchema])
 
-export const QuestionSchema = z.intersection(baseQuestion, questionAnswerTypes).default(() => generateRandomQuestion())
+export function getQuestionSchema(t: Translator) {
+  return z.intersection(getBaseQuestionSchema(t), getQuestionAnswerTypes(t)).default(() => generateRandomQuestion())
+}
 
-export type Question = z.output<typeof QuestionSchema>
+type BaseQuestion = z.output<ReturnType<typeof getBaseQuestionSchema>>
+type AnswerTypes = z.output<ReturnType<typeof getQuestionAnswerTypes>>
+export type Question = z.output<ReturnType<typeof getQuestionSchema>>
 
-const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = schemaUtilities(QuestionSchema)
+const { validate: validateQuestion, instantiate: instantiateQuestion, safeParse: safeParseQuestion } = localizedSchemaUtilities(getQuestionSchema)
 export { instantiateQuestion, safeParseQuestion, validateQuestion }
 
 export type ChoiceQuestion = Extract<Question, { type: 'single-choice' | 'multiple-choice' }>
 export type SingleChoice = Extract<Question, { type: 'single-choice' }>
-const { validate: validateSingleChoice, instantiate: instantiateSingleChoice, safeParse: safeParseSingleChoice } = schemaUtilities(z.intersection(baseQuestion, singleChoiceAnswerSchema))
+function getSingleChoiceQuestionSchema(t: Translator) {
+  return z.intersection(getBaseQuestionSchema(t), getSingleChoiceAnswerSchema(t))
+}
+const { validate: validateSingleChoice, instantiate: instantiateSingleChoice, safeParse: safeParseSingleChoice } = localizedSchemaUtilities(getSingleChoiceQuestionSchema)
 export { instantiateSingleChoice, safeParseSingleChoice, validateSingleChoice }
 
 export type MultipleChoice = Extract<Question, { type: 'multiple-choice' }>
-const { validate: validateMultipleChoice, instantiate: instantiateMultipleChoice, safeParse: safeParseMultipleChoice } = schemaUtilities(z.intersection(baseQuestion, multipleChoiceAnswerSchema))
+
+function getMultipleChoiceQuestionSchema(t: Translator) {
+  return z.intersection(getBaseQuestionSchema(t), getMultipleChoiceAnswerSchema(t))
+}
+const { validate: validateMultipleChoice, instantiate: instantiateMultipleChoice, safeParse: safeParseMultipleChoice } = localizedSchemaUtilities(getMultipleChoiceQuestionSchema)
 export { instantiateMultipleChoice, safeParseMultipleChoice, validateMultipleChoice }
 
 export type OpenQuestion = Extract<Question, { type: 'open-question' }>
-const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = schemaUtilities(z.intersection(baseQuestion, openAnswerSchema))
+function getOpenQuestionSchema(t: Translator) {
+  return z.intersection(getBaseQuestionSchema(t), getOpenAnswerSchema(t))
+}
+const { validate: validateOpenQuestion, instantiate: instantiateOpenQuestion, safeParse: safeParseOpenQuestion } = localizedSchemaUtilities(getOpenQuestionSchema)
 export { instantiateOpenQuestion, safeParseOpenQuestion, validateOpenQuestion }
 
 export type DragDropQuestion = Extract<Question, { type: 'drag-drop' }>
-const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = schemaUtilities(z.intersection(baseQuestion, dragDropAnswerSchema))
+
+function getDragDropQuestionSchema(t: Translator) {
+  return z.intersection(getBaseQuestionSchema(t), getDragDropAnswerSchema(t))
+}
+const { validate: validateDragDropQuestion, instantiate: instantiateDragDropQuestion, safeParse: safeParseDragDropQuestion } = localizedSchemaUtilities(getDragDropQuestionSchema)
 export { instantiateDragDropQuestion, safeParseDragDropQuestion, validateDragDropQuestion }
 
 // #region Dummy Data
-function generateRandomQuestion(): z.output<typeof baseQuestion> & z.output<typeof questionAnswerTypes> {
+function generateRandomQuestion(): Question {
   return {
     id: getUUID(),
     category: 'general',
@@ -194,7 +377,7 @@ function generateRandomQuestion(): z.output<typeof baseQuestion> & z.output<type
   }
 }
 
-function generateRandomQuestionType(): z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> {
+function generateRandomQuestionType(): AnswerTypes & Pick<BaseQuestion, 'question'> {
   const dummyQuestions: (z.output<typeof questionAnswerTypes> & Pick<z.output<typeof baseQuestion>, 'question'> & Partial<z.output<typeof baseQuestion>>)[] = [
     {
       type: 'multiple-choice',

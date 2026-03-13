@@ -6,7 +6,7 @@ import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
 import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 export function getCourseSchema(t: Translator) {
   return (
@@ -30,7 +30,7 @@ export function getCourseSchema(t: Translator) {
           .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
           .describe(t('schemas.Course.difficulty.description')),
 
-        questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: t('schemas.Course.questions.refinement_message') }),
+        questions: z.array(getQuestionSchema(t)).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: t('schemas.Course.questions.refinement_message') }),
         questionCategories: z
           .array(CategorySchema)
           .optional()

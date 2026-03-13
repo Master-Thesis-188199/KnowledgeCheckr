@@ -16,45 +16,46 @@ import FieldError from '@/src/components/Shared/form/FormFieldError'
 import { default as CreateableSelect, default as Select } from '@/src/components/Shared/form/Select'
 import Tooltip, { TooltipProps } from '@/src/components/Shared/Tooltip'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
+import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import {
   ChoiceQuestion,
   DragDropQuestion,
+  getQuestionSchema,
   instantiateDragDropQuestion,
   instantiateMultipleChoice,
   instantiateOpenQuestion,
   instantiateSingleChoice,
   Question,
-  QuestionSchema,
 } from '@/src/schemas/QuestionSchema'
 import { Any } from '@/types'
 
-const generateQuestionDefaults = (type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
+const generateQuestionDefaults = (t: Translator, type: Question['type']): Partial<Question> & Pick<Question, 'id'> => {
   switch (type) {
     case 'multiple-choice':
       return {
-        ...instantiateMultipleChoice({ overrideArraySize: 4 }),
+        ...instantiateMultipleChoice(t, { overrideArraySize: 4 }),
         question: '',
         points: 1,
       }
     case 'single-choice':
       return {
-        ...instantiateSingleChoice({ overrideArraySize: 4 }),
+        ...instantiateSingleChoice(t, { overrideArraySize: 4 }),
         question: '',
         points: 1,
       }
 
     case 'open-question':
       return {
-        ...instantiateOpenQuestion({ overrideArraySize: 4 }),
+        ...instantiateOpenQuestion(t, { overrideArraySize: 4 }),
         question: '',
         points: 1,
       }
 
     case 'drag-drop':
-      const dragQuestion = instantiateDragDropQuestion({ overrideArraySize: 4 })
+      const dragQuestion = instantiateDragDropQuestion(t, { overrideArraySize: 4 })
       return {
         ...dragQuestion,
         question: '',
@@ -71,14 +72,15 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
   const [dialogOpenState, setDialogOpenState] = useState<boolean>(false)
   const { addQuestion, questionCategories } = useCourseStore((state) => state)
 
+  const translator = useI18n()
   const tQuestion = useScopedI18n('Shared.Question')
   const t = useScopedI18n('Courses.Create.CreateQuestionDialog')
 
-  const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults('drag-drop') : initialValues), [initialValues])
+  const computeFormDefaults = useCallback(() => (initialValues === undefined || isEmpty(initialValues) ? generateQuestionDefaults(translator, 'drag-drop') : initialValues), [initialValues])
   const mode: 'edit' | 'create' = isEmpty(initialValues) ? 'create' : 'edit'
 
   const form = useForm<Question>({
-    resolver: zodResolver(QuestionSchema as z.ZodType<Question, FieldValues>) as unknown as Resolver<Question>,
+    resolver: zodResolver(getQuestionSchema(translator) as z.ZodType<Question, FieldValues>) as unknown as Resolver<Question>,
     defaultValues: computeFormDefaults(),
     mode: 'onChange',
     delayError: DELAY_ERROR_TIME,
@@ -163,7 +165,7 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   defaultValue={{ label: tQuestion(`type.${watch('type')}`), value: watch('type') }}
                   onChange={(type) => {
                     if (type !== watch('type')) {
-                      let defaults = generateQuestionDefaults(type as Any)
+                      let defaults = generateQuestionDefaults(translator, type as Any)
 
                       if (mode === 'edit' && type === initialValues?.type && watch('type') === 'open-question') {
                         //* Fill the initival values when swapping back to initial-edit-question and the values were lost because the user swapped to e.g. an open-question in between
