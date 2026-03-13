@@ -1,6 +1,5 @@
 import { isBefore } from 'date-fns/isBefore'
 import { z } from 'zod'
-import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
@@ -8,6 +7,7 @@ import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 export function getCourseSchema(t: Translator) {
   return (
     z
@@ -203,5 +203,6 @@ export const CourseSchema = z
 
 export type Course = z.output<ReturnType<typeof getCourseSchema>>
 
-const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = schemaUtilities(CourseSchema)
+const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = localizedSchemaUtilities(getCourseSchema)
+
 export { instantiateCourse, safeParseCourse, validateCourse }

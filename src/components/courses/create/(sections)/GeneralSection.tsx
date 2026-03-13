@@ -69,7 +69,7 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
           form.clearErrors()
 
-          const { success, error } = safeParseCourse(values)
+          const { success, error } = safeParseCourse(translator, values)
           if (!success) {
             for (const [, issue] of Object.entries(error.issues)) {
               if (!issue) continue
