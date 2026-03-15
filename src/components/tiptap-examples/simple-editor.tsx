@@ -171,17 +171,9 @@ export function SimpleEditor() {
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor w-full lg:max-w-[85%]'>
+      <div data-slot='rich-text-editor-container' className='@container/editor flex h-[stretch] max-h-[53dvh] w-full flex-col lg:max-w-[85%]'>
         <EditorContext.Provider value={{ editor }}>
-          <Toolbar
-            ref={toolbarRef}
-            style={{
-              ...(isMobile
-                ? {
-                    bottom: `calc(100% - ${height - rect.y}px)`,
-                  }
-                : {}),
-            }}>
+          <Toolbar ref={toolbarRef}>
             {mobileView === 'main' ? (
               <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
             ) : (
@@ -199,7 +191,7 @@ export function SimpleEditor() {
             }}
             editor={editor}
             role='presentation'
-            className={cn('rounded-md border border-input-ring', 'flex size-full flex-1 flex-col', 'min-h-72 p-5', 'cursor-text')}
+            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto')}
           />
         </EditorContext.Provider>
       </div>

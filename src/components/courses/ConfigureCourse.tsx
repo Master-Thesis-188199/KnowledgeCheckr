@@ -51,7 +51,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
         <PageHeading title={`${mode === 'create' ? 'Create Course' : initialStoreProps?.name}`} />
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
-        <div className='mx-[1.5%] grid grid-cols-1 gap-8'>
+        <div className='mx-[1.5%] grid h-full grid-cols-1 gap-8'>
           <CollaboratorProviderContext users={users}>
             <MutliStageRenderer stage={1}>
               <GeneralSection />
