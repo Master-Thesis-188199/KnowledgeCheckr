@@ -8,7 +8,6 @@ import '@/components/tiptap-node/image-node/image-node.scss'
 import '@/components/tiptap-node/heading-node/heading-node.scss'
 import '@/components/tiptap-node/paragraph-node/paragraph-node.scss'
 // --- Styles ---
-import '@/components/tiptap-examples/simple-editor.scss'
 import { useEffect, useRef, useState } from 'react'
 import { Highlight } from '@tiptap/extension-highlight'
 import { TaskItem, TaskList } from '@tiptap/extension-list'
@@ -44,6 +43,7 @@ import { useCursorVisibility } from '@/hooks/use-cursor-visibility'
 import { useIsBreakpoint } from '@/hooks/use-is-breakpoint'
 import { useWindowSize } from '@/hooks/use-window-size'
 import { Button as ShadcnButton } from '@/src/components/shadcn/button'
+import { cn } from '@/src/lib/Shared/utils'
 
 const MainToolbarContent = ({ onHighlighterClick, onLinkClick, isMobile }: { onHighlighterClick: () => void; onLinkClick: () => void; isMobile: boolean }) => {
   return (
@@ -172,6 +172,7 @@ export function SimpleEditor() {
 
   const rect = useCursorVisibility({
     editor,
+    // eslint-disable-next-line react-hooks/refs
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   })
 
@@ -182,9 +183,10 @@ export function SimpleEditor() {
   }, [isMobile, mobileView])
 
   return (
-    <div className='simple-editor-wrapper'>
+    <div className='flex flex-col items-center'>
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
+          className='max-w-[75vw]'
           ref={toolbarRef}
           style={{
             ...(isMobile
@@ -200,7 +202,7 @@ export function SimpleEditor() {
           )}
         </Toolbar>
 
-        <EditorContent editor={editor} role='presentation' className='simple-editor-content' />
+        <EditorContent editor={editor} role='presentation' className={cn('rounded-md border-2', 'flex size-full max-w-[75%] flex-1 flex-col', 'min-h-72 p-5')} />
       </EditorContext.Provider>
     </div>
   )
