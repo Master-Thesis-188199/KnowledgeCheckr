@@ -40,7 +40,6 @@ import { useCursorVisibility } from '@/hooks/use-cursor-visibility'
 // --- Hooks ---
 import { useWindowSize } from '@/hooks/use-window-size'
 import { Button, Button as ShadcnButton } from '@/src/components/shadcn/button'
-import { BlockquoteButton } from '@/src/components/tiptap-ui/blockquote-button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -59,8 +58,6 @@ const MainToolbarContent = ({ onHighlighterClick, onLinkClick, isMobile, onFontC
       <ToolbarGroup>
         <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
         <ListDropdownMenu modal={false} types={['bulletList', 'orderedList', 'taskList']} />
-        <BlockquoteButton />
-        {/* <CodeBlockButton /> */}
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -90,29 +87,13 @@ const MainToolbarContent = ({ onHighlighterClick, onLinkClick, isMobile, onFontC
 
       <ToolbarSeparator />
 
-      {/* <ToolbarGroup>
-        <MarkButton type='superscript' />
-        <MarkButton type='subscript' />
-      </ToolbarGroup> */}
-
-      {/* <ToolbarSeparator /> */}
-
       <ToolbarGroup>
         <TextAlignButton align='left' />
         <TextAlignButton align='center' />
         <TextAlignButton align='right' />
-        <TextAlignButton align='justify' />
       </ToolbarGroup>
 
-      <ToolbarSeparator />
-
-      {/* <ToolbarGroup>
-        <ImageUploadButton text='Add' />
-      </ToolbarGroup> */}
-
       <Spacer />
-
-      {isMobile && <ToolbarSeparator />}
     </>
   )
 }
@@ -179,18 +160,8 @@ export function SimpleEditor() {
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      // Image,
       Typography,
-      // Superscript,
-      // Subscript,
       Selection,
-      // ImageUploadNode.configure({
-      //   accept: 'image/*',
-      //   maxSize: MAX_FILE_SIZE,
-      //   limit: 3,
-      //   upload: handleImageUpload,
-      //   onError: (error) => console.error('Upload failed:', error),
-      // }),
     ],
     content,
   })
