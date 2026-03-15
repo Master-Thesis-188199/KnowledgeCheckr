@@ -143,6 +143,7 @@ export function SimpleEditor() {
   const { height } = useWindowSize()
   const [mobileView, setMobileView] = useState<'main' | 'highlighter' | 'link' | 'font'>('main')
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const editorInputRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -207,7 +208,18 @@ export function SimpleEditor() {
             )}
           </Toolbar>
 
-          <EditorContent editor={editor} role='presentation' className={cn('rounded-md border border-input-ring', 'flex size-full flex-1 flex-col', 'min-h-72 p-5')} />
+          <EditorContent
+            ref={editorInputRef}
+            onClick={() => {
+              const paragraphs = editorInputRef.current!.children
+              const lastParagraph = paragraphs.item(paragraphs.length - 1)! as HTMLParagraphElement
+              // focusses the last paragraph when the editor-pane is clicked.
+              lastParagraph.focus()
+            }}
+            editor={editor}
+            role='presentation'
+            className={cn('rounded-md border border-input-ring', 'flex size-full flex-1 flex-col', 'min-h-72 p-5', 'cursor-text')}
+          />
         </EditorContext.Provider>
       </div>
     </div>
