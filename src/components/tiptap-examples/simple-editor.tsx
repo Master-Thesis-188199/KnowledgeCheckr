@@ -149,6 +149,7 @@ export function SimpleEditor() {
     immediatelyRender: false,
     editorProps: {
       attributes: {
+        'autofocus': 'on',
         'autocomplete': 'off',
         'autocorrect': 'off',
         'autocapitalize': 'off',
