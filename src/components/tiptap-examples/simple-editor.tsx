@@ -73,43 +73,32 @@ const MainToolbarContent = ({
       <ToolbarGroup>
         <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
         <ListDropdownMenu modal={false} types={['bulletList', 'orderedList', 'taskList']} />
-
-        {isMobile && (
-          <>
-            <ToolbarSeparator />
-            <Button variant={'ghost'} onClick={onFontClick}>
-              A
-            </Button>
-
-            <ToolbarSeparator />
-            <TextAlignmentMenu options={['left', 'center', 'right']} />
-          </>
-        )}
       </ToolbarGroup>
 
-      {!isMobile && (
-        <>
-          <ToolbarSeparator />
-          <ToolbarGroup>
-            <MarkButton type='bold' />
-            <MarkButton type='italic' />
-            <MarkButton type='strike' />
-            <MarkButton type='code' />
-            <MarkButton type='underline' />
-            {!isMobile ? <ColorHighlightPopover /> : <ColorHighlightPopoverButton onClick={onHighlighterClick} />}
-            {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
-          </ToolbarGroup>
-          <ToolbarSeparator />
-        </>
-      )}
+      <ToolbarSeparator />
 
-      {!isMobile && (
-        <ToolbarGroup>
-          <TextAlignButton align='left' />
-          <TextAlignButton align='center' />
-          <TextAlignButton align='right' />
-        </ToolbarGroup>
-      )}
+      <Button variant={'ghost'} onClick={onFontClick} className='@[30rem]/editor:hidden!'>
+        A
+      </Button>
+
+      <ToolbarGroup className='hidden! @[30rem]/editor:flex!'>
+        <MarkButton type='bold' />
+        <MarkButton type='italic' />
+        <MarkButton type='strike' />
+        <MarkButton type='code' />
+        <MarkButton type='underline' />
+        {!isMobile ? <ColorHighlightPopover /> : <ColorHighlightPopoverButton onClick={onHighlighterClick} />}
+        {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      <TextAlignmentMenu options={['left', 'center', 'right']} className='@[34rem]/editor:hidden!' />
+      <ToolbarGroup className='hidden! @[34rem]/editor:flex!'>
+        <TextAlignButton align='left' />
+        <TextAlignButton align='center' />
+        <TextAlignButton align='right' />
+      </ToolbarGroup>
 
       <Spacer />
     </>
@@ -225,7 +214,7 @@ export function SimpleEditor() {
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='w-full lg:max-w-[85%]'>
+      <div data-slot='rich-text-editor-container' className='@container/editor w-full lg:max-w-[85%]'>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar
             ref={toolbarRef}
