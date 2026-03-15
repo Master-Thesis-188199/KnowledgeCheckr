@@ -17,7 +17,6 @@ import { Selection } from '@tiptap/extensions'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
-import { TextAlignJustifyIcon } from 'lucide-react'
 import content from '@/components/tiptap-examples/data/content.json'
 // --- Components ---
 // --- Icons ---
@@ -46,19 +45,7 @@ import { Button } from '@/src/components/tiptap-ui-primitive/button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
 import { cn } from '@/src/lib/Shared/utils'
 
-const MainToolbarContent = ({
-  onHighlighterClick,
-  onLinkClick,
-  isMobile,
-  onFontClick,
-  onAlignmentClick,
-}: {
-  onAlignmentClick: () => void
-  onFontClick: () => void
-  onHighlighterClick: () => void
-  onLinkClick: () => void
-  isMobile: boolean
-}) => {
+const MainToolbarContent = ({ onHighlighterClick, onLinkClick, isMobile, onFontClick }: { onFontClick: () => void; onHighlighterClick: () => void; onLinkClick: () => void; isMobile: boolean }) => {
   return (
     <>
       <Spacer />
@@ -105,16 +92,6 @@ const MainToolbarContent = ({
   )
 }
 
-const AlignmentMobileSubMenuContent = () => {
-  return (
-    <>
-      <TextAlignButton align='left' />
-      <TextAlignButton align='center' />
-      <TextAlignButton align='right' />
-    </>
-  )
-}
-
 const FontMobileSubMenuContent = ({ onHighlighterClick, onLinkClick }: { onHighlighterClick: () => void; onLinkClick: () => void }) => {
   return (
     <>
@@ -135,7 +112,7 @@ const MobileToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
 }: {
-  type: 'highlighter' | 'link' | 'font' | 'alignment'
+  type: 'highlighter' | 'link' | 'font'
   onBack: () => void
   onHighlighterClick: () => void
   onLinkClick: () => void
@@ -149,7 +126,6 @@ const MobileToolbarContent = ({
         {type === 'highlighter' && <HighlighterIcon className='tiptap-button-icon' />}
         {type === 'link' && <LinkIcon className='tiptap-button-icon' />}
         {type === 'font' && <>A</>}
-        {type === 'alignment' && <TextAlignJustifyIcon />}
       </ShadcnButton>
     </ToolbarGroup>
 
@@ -158,7 +134,6 @@ const MobileToolbarContent = ({
     {type === 'highlighter' && <ColorHighlightPopoverContent />}
     {type === 'link' && <LinkContent />}
     {type === 'font' && <FontMobileSubMenuContent onHighlighterClick={onHighlighterClick} onLinkClick={onLinkClick} />}
-    {type === 'alignment' && <AlignmentMobileSubMenuContent />}
     <Spacer />
   </>
 )
@@ -166,7 +141,7 @@ const MobileToolbarContent = ({
 export function SimpleEditor() {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
-  const [mobileView, setMobileView] = useState<'main' | 'highlighter' | 'link' | 'font' | 'alignment'>('main')
+  const [mobileView, setMobileView] = useState<'main' | 'highlighter' | 'link' | 'font'>('main')
   const toolbarRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
@@ -226,13 +201,7 @@ export function SimpleEditor() {
                 : {}),
             }}>
             {mobileView === 'main' ? (
-              <MainToolbarContent
-                onAlignmentClick={() => setMobileView('alignment')}
-                onFontClick={() => setMobileView('font')}
-                onHighlighterClick={() => setMobileView('highlighter')}
-                onLinkClick={() => setMobileView('link')}
-                isMobile={isMobile}
-              />
+              <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} onLinkClick={() => setMobileView('link')} isMobile={isMobile} />
             ) : (
               <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} onLinkClick={() => setMobileView('link')} />
             )}
