@@ -40,7 +40,8 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/components/tiptap-ui-
 import { useCursorVisibility } from '@/hooks/use-cursor-visibility'
 // --- Hooks ---
 import { useWindowSize } from '@/hooks/use-window-size'
-import { Button, Button as ShadcnButton } from '@/src/components/shadcn/button'
+import { Button as ShadcnButton } from '@/src/components/shadcn/button'
+import { Button } from '@/src/components/tiptap-ui-primitive/button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
 import { cn } from '@/src/lib/Shared/utils'
 
@@ -71,19 +72,26 @@ const MainToolbarContent = ({
       <ToolbarGroup>
         <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
         <ListDropdownMenu modal={false} types={['bulletList', 'orderedList', 'taskList']} />
-      </ToolbarGroup>
 
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        {isMobile ? (
+        {isMobile && (
           <>
+            <ToolbarSeparator />
             <Button variant={'ghost'} onClick={onFontClick}>
               A
             </Button>
+
+            <ToolbarSeparator />
+            <Button variant={'ghost'} onClick={onAlignmentClick}>
+              <TextAlignJustifyIcon className='size-4' />
+            </Button>
           </>
-        ) : (
-          <>
+        )}
+      </ToolbarGroup>
+
+      {!isMobile && (
+        <>
+          <ToolbarSeparator />
+          <ToolbarGroup>
             <MarkButton type='bold' />
             <MarkButton type='italic' />
             <MarkButton type='strike' />
@@ -91,27 +99,18 @@ const MainToolbarContent = ({
             <MarkButton type='underline' />
             {!isMobile ? <ColorHighlightPopover /> : <ColorHighlightPopoverButton onClick={onHighlighterClick} />}
             {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
-          </>
-        )}
-      </ToolbarGroup>
+          </ToolbarGroup>
+          <ToolbarSeparator />
+        </>
+      )}
 
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        {isMobile ? (
-          <>
-            <Button variant={'ghost'} onClick={onAlignmentClick}>
-              <TextAlignJustifyIcon />
-            </Button>
-          </>
-        ) : (
-          <>
-            <TextAlignButton align='left' />
-            <TextAlignButton align='center' />
-            <TextAlignButton align='right' />
-          </>
-        )}
-      </ToolbarGroup>
+      {!isMobile && (
+        <ToolbarGroup>
+          <TextAlignButton align='left' />
+          <TextAlignButton align='center' />
+          <TextAlignButton align='right' />
+        </ToolbarGroup>
+      )}
 
       <Spacer />
     </>
