@@ -24,7 +24,6 @@ import content from '@/components/tiptap-examples/data/content.json'
 import { ArrowLeftIcon } from '@/components/tiptap-icons/arrow-left-icon'
 import { HighlighterIcon } from '@/components/tiptap-icons/highlighter-icon'
 import { LinkIcon } from '@/components/tiptap-icons/link-icon'
-import { HorizontalRule } from '@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension'
 // --- Tiptap Node ---
 import { ColorHighlightPopover, ColorHighlightPopoverButton, ColorHighlightPopoverContent } from '@/components/tiptap-ui/color-highlight-popover'
 // --- Tiptap UI ---
@@ -41,6 +40,8 @@ import { useCursorVisibility } from '@/hooks/use-cursor-visibility'
 // --- Hooks ---
 import { useWindowSize } from '@/hooks/use-window-size'
 import { Button as ShadcnButton } from '@/src/components/shadcn/button'
+import { HorizontalRule } from '@/src/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension'
+import { TextAlignmentMenu } from '@/src/components/tiptap-ui/text-alignment-menu/TextAlignmentMenu'
 import { Button } from '@/src/components/tiptap-ui-primitive/button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
 import { cn } from '@/src/lib/Shared/utils'
@@ -81,9 +82,7 @@ const MainToolbarContent = ({
             </Button>
 
             <ToolbarSeparator />
-            <Button variant={'ghost'} onClick={onAlignmentClick}>
-              <TextAlignJustifyIcon className='size-4' />
-            </Button>
+            <TextAlignmentMenu options={['left', 'center', 'right']} />
           </>
         )}
       </ToolbarGroup>
