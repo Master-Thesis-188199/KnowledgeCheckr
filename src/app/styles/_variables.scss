@@ -178,7 +178,7 @@
 }
 
 /* Global colors - Dark mode */
-.dark {
+html[data-theme='dark'] {
   --tt-bg-color: var(--black);
   --tt-border-color: var(--tt-gray-dark-a-200);
   --tt-border-color-tint: var(--tt-gray-dark-a-100);
@@ -215,7 +215,7 @@
   --tt-color-text-red-contrast: hsla(8, 79%, 79%, 0.4);
 }
 
-.dark {
+html[data-theme='dark'] {
   --tt-color-text-gray: hsl(0, 0%, 61%);
   --tt-color-text-brown: hsl(18, 35%, 58%);
   --tt-color-text-orange: hsl(25, 53%, 53%);
@@ -260,7 +260,7 @@
   --tt-color-highlight-pink-contrast: rgba(225, 136, 179, 0.27);
 }
 
-.dark {
+html[data-theme='dark'] {
   --tt-color-highlight-yellow: #6b6524;
   --tt-color-highlight-green: #509568;
   --tt-color-highlight-blue: #6e92aa;

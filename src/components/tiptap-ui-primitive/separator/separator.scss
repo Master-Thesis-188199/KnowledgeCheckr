@@ -1,7 +1,7 @@
 .tiptap-separator {
   --tt-link-border-color: var(--tt-gray-light-a-200);
 
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-link-border-color: var(--tt-gray-dark-a-200);
   }
 }

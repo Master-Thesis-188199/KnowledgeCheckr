@@ -20,7 +20,7 @@
     filter: brightness(95%);
     mix-blend-mode: multiply;
 
-    .dark & {
+    html[data-theme='dark'] & {
       filter: brightness(140%);
       mix-blend-mode: lighten;
     }
@@ -36,11 +36,11 @@
     }
   }
 
-  .dark & {
+  html[data-theme='dark'] & {
     &[data-active-state='on'] {
       .tiptap-button-highlight {
         &::after {
-          // Andere Eigenschaft für .dark Kontext
+          // Andere Eigenschaft für html[data-theme='dark'] Kontext
           filter: brightness(180%);
         }
       }

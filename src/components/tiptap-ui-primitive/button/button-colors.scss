@@ -15,7 +15,7 @@
   --tt-button-disabled-bg-color: var(--tt-gray-light-a-50);
 
   /* Dark mode */
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-button-default-bg-color: var(--tt-gray-dark-a-100);
     --tt-button-hover-bg-color: var(--tt-gray-dark-200);
     --tt-button-active-bg-color: var(--tt-gray-dark-a-200);
@@ -40,7 +40,7 @@
   --tt-button-disabled-text-color: var(--tt-gray-light-a-400);
 
   /* Dark mode */
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-button-default-text-color: var(--tt-gray-dark-a-600);
     --tt-button-hover-text-color: var(--tt-gray-dark-a-900);
     --tt-button-active-text-color: var(--tt-gray-dark-a-900);
@@ -62,7 +62,7 @@
   --tt-button-disabled-icon-color: var(--tt-gray-light-a-400);
 
   /* Dark mode */
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-button-default-icon-color: var(--tt-gray-dark-a-600);
     --tt-button-hover-icon-color: var(--tt-gray-dark-a-900);
     --tt-button-active-icon-color: var(--tt-brand-color-400);
@@ -84,7 +84,7 @@
   --tt-button-disabled-icon-sub-color: var(--tt-gray-light-a-100);
 
   /* Dark mode */
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-button-default-icon-sub-color: var(--tt-gray-dark-a-300);
     --tt-button-hover-icon-sub-color: var(--tt-gray-dark-a-400);
     --tt-button-active-icon-sub-color: var(--tt-gray-dark-a-300);
@@ -106,7 +106,7 @@
   --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
   /* Dark mode */
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-button-default-dropdown-arrows-color: var(--tt-gray-dark-a-600);
     --tt-button-hover-dropdown-arrows-color: var(--tt-gray-dark-a-700);
     --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);
@@ -136,7 +136,7 @@
     --tt-button-disabled-bg-color: var(--transparent);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-bg-color: var(--transparent);
       --tt-button-hover-bg-color: var(--tt-gray-dark-200);
       --tt-button-active-bg-color: var(--tt-gray-dark-a-100);
@@ -161,7 +161,7 @@
     --tt-button-disabled-text-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-text-color: var(--tt-gray-dark-a-600);
       --tt-button-hover-text-color: var(--tt-gray-dark-a-900);
       --tt-button-active-text-color: var(--tt-gray-dark-a-900);
@@ -183,7 +183,7 @@
     --tt-button-disabled-icon-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-icon-color: var(--tt-gray-dark-a-600);
       --tt-button-hover-icon-color: var(--tt-gray-dark-a-900);
       --tt-button-active-icon-color: var(--tt-brand-color-400);
@@ -205,7 +205,7 @@
     --tt-button-disabled-icon-sub-color: var(--tt-gray-light-a-100);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-icon-sub-color: var(--tt-gray-dark-a-300);
       --tt-button-hover-icon-sub-color: var(--tt-gray-dark-a-400);
       --tt-button-active-icon-sub-color: var(--tt-gray-dark-a-300);
@@ -227,7 +227,7 @@
     --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-dropdown-arrows-color: var(--tt-gray-dark-a-600);
       --tt-button-hover-dropdown-arrows-color: var(--tt-gray-dark-a-700);
       --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);
@@ -258,7 +258,7 @@
     --tt-button-disabled-bg-color: var(--tt-gray-light-a-100);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-bg-color: var(--tt-brand-color-500);
       --tt-button-hover-bg-color: var(--tt-brand-color-600);
       --tt-button-active-bg-color: var(--tt-brand-color-900);
@@ -283,7 +283,7 @@
     --tt-button-disabled-text-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-text-color: var(--white);
       --tt-button-hover-text-color: var(--white);
       --tt-button-active-text-color: var(--tt-gray-dark-a-900);
@@ -305,7 +305,7 @@
     --tt-button-disabled-icon-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-icon-color: var(--white);
       --tt-button-hover-icon-color: var(--white);
       --tt-button-active-icon-color: var(--tt-brand-color-400);
@@ -327,7 +327,7 @@
     --tt-button-disabled-icon-sub-color: var(--tt-gray-light-a-100);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-icon-sub-color: var(--tt-gray-dark-a-400);
       --tt-button-hover-icon-sub-color: var(--tt-gray-dark-a-500);
       --tt-button-active-icon-sub-color: var(--tt-gray-dark-a-300);
@@ -349,7 +349,7 @@
     --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
-    .dark & {
+    html[data-theme='dark'] & {
       --tt-button-default-dropdown-arrows-color: var(--white);
       --tt-button-hover-dropdown-arrows-color: var(--white);
       --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);

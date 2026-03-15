@@ -19,7 +19,6 @@ import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import content from '@/components/tiptap-examples/data/content.json'
 // --- Components ---
-import { ThemeToggle } from '@/components/tiptap-examples/theme-toggle'
 // --- Icons ---
 import { ArrowLeftIcon } from '@/components/tiptap-icons/arrow-left-icon'
 import { HighlighterIcon } from '@/components/tiptap-icons/highlighter-icon'
@@ -101,10 +100,6 @@ const MainToolbarContent = ({ onHighlighterClick, onLinkClick, isMobile }: { onH
       <Spacer />
 
       {isMobile && <ToolbarSeparator />}
-
-      <ToolbarGroup>
-        <ThemeToggle />
-      </ToolbarGroup>
     </>
   )
 }

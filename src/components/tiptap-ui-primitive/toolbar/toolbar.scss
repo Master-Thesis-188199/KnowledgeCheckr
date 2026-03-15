@@ -5,7 +5,7 @@
   --tt-toolbar-border-color: var(--tt-gray-light-a-100);
 }
 
-.dark {
+html[data-theme='dark'] {
   --tt-toolbar-bg-color: var(--black);
   --tt-toolbar-border-color: var(--tt-gray-dark-a-50);
 }

@@ -3,7 +3,7 @@
   --tt-popover-border-color: var(--tt-gray-light-a-100);
   --tt-popover-text-color: var(--tt-gray-light-a-600);
 
-  .dark & {
+  html[data-theme='dark'] & {
     --tt-popover-border-color: var(--tt-gray-dark-a-50);
     --tt-popover-bg-color: var(--tt-gray-dark-50);
     --tt-popover-text-color: var(--tt-gray-dark-a-600);

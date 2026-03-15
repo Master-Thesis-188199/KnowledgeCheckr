@@ -1,25 +1,25 @@
 'use client'
 
+import '@/components/tiptap-ui-primitive/tooltip/tooltip.scss'
 import { cloneElement, createContext, forwardRef, isValidElement, useContext, useMemo, useState, version } from 'react'
 import {
-  useFloating,
   autoUpdate,
-  offset,
   flip,
+  FloatingDelayGroup,
+  FloatingPortal,
+  offset,
+  type Placement,
+  type ReferenceType,
   shift,
-  useHover,
-  useFocus,
   useDismiss,
-  useRole,
+  useFloating,
+  type UseFloatingReturn,
+  useFocus,
+  useHover,
   useInteractions,
   useMergeRefs,
-  FloatingPortal,
-  type Placement,
-  type UseFloatingReturn,
-  type ReferenceType,
-  FloatingDelayGroup,
+  useRole,
 } from '@floating-ui/react'
-import '@/components/tiptap-ui-primitive/tooltip/tooltip.scss'
 
 interface TooltipProviderProps {
   children: React.ReactNode
