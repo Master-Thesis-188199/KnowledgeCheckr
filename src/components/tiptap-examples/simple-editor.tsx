@@ -81,9 +81,6 @@ const MainToolbarContent = ({
             <Button variant={'ghost'} onClick={onFontClick}>
               A
             </Button>
-
-            {!isMobile ? <ColorHighlightPopover /> : <ColorHighlightPopoverButton onClick={onHighlighterClick} />}
-            {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
           </>
         ) : (
           <>
@@ -131,7 +128,7 @@ const AlignmentMobileSubMenuContent = () => {
   )
 }
 
-const FontMobileSubMenuContent = () => {
+const FontMobileSubMenuContent = ({ onHighlighterClick, onLinkClick }: { onHighlighterClick: () => void; onLinkClick: () => void }) => {
   return (
     <>
       <MarkButton type='bold' />
@@ -139,11 +136,23 @@ const FontMobileSubMenuContent = () => {
       <MarkButton type='strike' />
       <MarkButton type='code' />
       <MarkButton type='underline' />
+      {<ColorHighlightPopoverButton onClick={onHighlighterClick} />}
+      {<LinkButton onClick={onLinkClick} />}
     </>
   )
 }
 
-const MobileToolbarContent = ({ type, onBack }: { type: 'highlighter' | 'link' | 'font' | 'alignment'; onBack: () => void }) => (
+const MobileToolbarContent = ({
+  type,
+  onBack,
+  onHighlighterClick,
+  onLinkClick,
+}: {
+  type: 'highlighter' | 'link' | 'font' | 'alignment'
+  onBack: () => void
+  onHighlighterClick: () => void
+  onLinkClick: () => void
+}) => (
   <>
     <ToolbarGroup>
       <ShadcnButton variant='ghost' onClick={onBack}>
@@ -160,7 +169,7 @@ const MobileToolbarContent = ({ type, onBack }: { type: 'highlighter' | 'link' |
 
     {type === 'highlighter' && <ColorHighlightPopoverContent />}
     {type === 'link' && <LinkContent />}
-    {type === 'font' && <FontMobileSubMenuContent />}
+    {type === 'font' && <FontMobileSubMenuContent onHighlighterClick={onHighlighterClick} onLinkClick={onLinkClick} />}
     {type === 'alignment' && <AlignmentMobileSubMenuContent />}
   </>
 )
@@ -235,7 +244,7 @@ export function SimpleEditor() {
               isMobile={isMobile}
             />
           ) : (
-            <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} />
+            <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} onLinkClick={() => setMobileView('link')} />
           )}
         </Toolbar>
 
