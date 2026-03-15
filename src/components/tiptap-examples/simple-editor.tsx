@@ -224,32 +224,34 @@ export function SimpleEditor() {
   }, [isMobile, mobileView])
 
   return (
-    <div className='flex flex-col items-center'>
-      <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}>
-          {mobileView === 'main' ? (
-            <MainToolbarContent
-              onAlignmentClick={() => setMobileView('alignment')}
-              onFontClick={() => setMobileView('font')}
-              onHighlighterClick={() => setMobileView('highlighter')}
-              onLinkClick={() => setMobileView('link')}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} onLinkClick={() => setMobileView('link')} />
-          )}
-        </Toolbar>
+    <div data-slot='rich-text-editor-wrapper' className='flex flex-col items-center'>
+      <div data-slot='rich-text-editor-container' className='w-full lg:max-w-[85%]'>
+        <EditorContext.Provider value={{ editor }}>
+          <Toolbar
+            ref={toolbarRef}
+            style={{
+              ...(isMobile
+                ? {
+                    bottom: `calc(100% - ${height - rect.y}px)`,
+                  }
+                : {}),
+            }}>
+            {mobileView === 'main' ? (
+              <MainToolbarContent
+                onAlignmentClick={() => setMobileView('alignment')}
+                onFontClick={() => setMobileView('font')}
+                onHighlighterClick={() => setMobileView('highlighter')}
+                onLinkClick={() => setMobileView('link')}
+                isMobile={isMobile}
+              />
+            ) : (
+              <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} onLinkClick={() => setMobileView('link')} />
+            )}
+          </Toolbar>
 
-        <EditorContent editor={editor} role='presentation' className={cn('rounded-md border border-input-ring', 'flex size-full flex-1 flex-col lg:max-w-[75%]', 'min-h-72 p-5')} />
-      </EditorContext.Provider>
+          <EditorContent editor={editor} role='presentation' className={cn('rounded-md border border-input-ring', 'flex size-full flex-1 flex-col', 'min-h-72 p-5')} />
+        </EditorContext.Provider>
+      </div>
     </div>
   )
 }
