@@ -153,6 +153,7 @@ const MobileToolbarContent = ({
   onLinkClick: () => void
 }) => (
   <>
+    <Spacer />
     <ToolbarGroup>
       <ShadcnButton variant='ghost' onClick={onBack}>
         <ArrowLeftIcon className='tiptap-button-icon' />
@@ -170,6 +171,7 @@ const MobileToolbarContent = ({
     {type === 'link' && <LinkContent />}
     {type === 'font' && <FontMobileSubMenuContent onHighlighterClick={onHighlighterClick} onLinkClick={onLinkClick} />}
     {type === 'alignment' && <AlignmentMobileSubMenuContent />}
+    <Spacer />
   </>
 )
 
