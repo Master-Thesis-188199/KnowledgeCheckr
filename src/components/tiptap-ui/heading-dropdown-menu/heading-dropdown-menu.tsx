@@ -1,22 +1,18 @@
 'use client'
 
 import { forwardRef, useCallback, useState } from 'react'
-
 // --- Icons ---
 import { ChevronDownIcon } from '@/components/tiptap-icons/chevron-down-icon'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
-
 // --- Tiptap UI ---
 import { HeadingButton } from '@/components/tiptap-ui/heading-button'
 import type { UseHeadingDropdownMenuConfig } from '@/components/tiptap-ui/heading-dropdown-menu'
 import { useHeadingDropdownMenu } from '@/components/tiptap-ui/heading-dropdown-menu'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/components/tiptap-ui-primitive/button'
 import { Button } from '@/components/tiptap-ui-primitive/button'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup } from '@/components/tiptap-ui-primitive/dropdown-menu'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 
 export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, UseHeadingDropdownMenuConfig {
   /**
@@ -59,7 +55,7 @@ export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdown
 
     return (
       <DropdownMenu modal={modal} open={isOpen} onOpenChange={handleOpenChange}>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild variant='ghost'>
           <Button
             type='button'
             variant='ghost'
@@ -84,7 +80,7 @@ export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdown
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align='start'>
+        <DropdownMenuContent align='start' className='rounded-xl' variant='ghost'>
           <DropdownMenuGroup>
             {levels.map((level) => (
               <DropdownMenuItem key={`heading-${level}`} asChild>
