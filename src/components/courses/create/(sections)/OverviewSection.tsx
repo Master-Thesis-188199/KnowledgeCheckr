@@ -8,7 +8,7 @@ export async function OverviewSection() {
 
   return (
     <>
-      <div className='mt-4 mb-8 flex flex-col gap-1'>
+      <div className='mt-4 flex flex-col gap-1'>
         <span className='text-xl font-semibold'>{t('title')}</span>
         <p className='text-neutral-600 dark:text-neutral-300'>{t('description')}</p>
       </div>
