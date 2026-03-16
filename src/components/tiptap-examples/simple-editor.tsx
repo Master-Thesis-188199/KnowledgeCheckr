@@ -32,9 +32,7 @@ import { UndoRedoButton } from '@/components/tiptap-ui/undo-redo-button'
 // --- UI Primitives ---
 import { Spacer } from '@/components/tiptap-ui-primitive/spacer'
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/components/tiptap-ui-primitive/toolbar'
-import { useCursorVisibility } from '@/hooks/use-cursor-visibility'
 // --- Hooks ---
-import { useWindowSize } from '@/hooks/use-window-size'
 import { Button as ShadcnButton } from '@/src/components/shadcn/button'
 import { HorizontalRule } from '@/src/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension'
 import { TextAlignmentMenu } from '@/src/components/tiptap-ui/text-alignment-menu/TextAlignmentMenu'
@@ -125,9 +123,7 @@ type SubmenuKey = 'main' | 'highlighter' | 'font'
 
 export function SimpleEditor() {
   const isMobile = useIsBreakpoint()
-  const { height } = useWindowSize()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
-  const toolbarRef = useRef<HTMLDivElement>(null)
   const editorInputRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
@@ -156,15 +152,9 @@ export function SimpleEditor() {
     ],
   })
 
-  const rect = useCursorVisibility({
-    editor,
-
-    // eslint-disable-next-line react-hooks/refs
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  })
-
   useEffect(() => {
     if (!isMobile && mobileView !== 'main') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMobileView('main')
     }
   }, [isMobile, mobileView])
@@ -173,7 +163,7 @@ export function SimpleEditor() {
     <div data-slot='rich-text-editor-wrapper' className='flex flex-col items-center'>
       <div data-slot='rich-text-editor-container' className='@container/editor flex h-[stretch] max-h-[53dvh] w-full flex-col lg:max-w-[85%]'>
         <EditorContext.Provider value={{ editor }}>
-          <Toolbar ref={toolbarRef}>
+          <Toolbar>
             {mobileView === 'main' ? (
               <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
             ) : (
