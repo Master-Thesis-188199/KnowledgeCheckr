@@ -51,39 +51,41 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
         <PageHeading title={`${mode === 'create' ? 'Create Course' : initialStoreProps?.name}`} />
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
-        <div className='mx-[1.5%] grid h-full grid-cols-1 gap-8'>
-          <CollaboratorProviderContext users={users}>
-            <MutliStageRenderer stage={1}>
-              <GeneralSection />
-            </MutliStageRenderer>
+        <div className='flex flex-col gap-4'>
+          <div className='mx-[1.5%] grid h-full grid-cols-1 gap-8'>
+            <CollaboratorProviderContext users={users}>
+              <MutliStageRenderer stage={1}>
+                <GeneralSection />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={2}>
-              <SimpleEditor />
-            </MutliStageRenderer>
+              <MutliStageRenderer stage={2}>
+                <SimpleEditor />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={3}>
-              <QuestionsSection />
-            </MutliStageRenderer>
+              <MutliStageRenderer stage={3}>
+                <QuestionsSection />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={4}>
-              <SettingsSection />
-            </MutliStageRenderer>
+              <MutliStageRenderer stage={4}>
+                <SettingsSection />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={5}>
-              <OverviewSection />
-            </MutliStageRenderer>
-          </CollaboratorProviderContext>
+              <MutliStageRenderer stage={5}>
+                <OverviewSection />
+              </MutliStageRenderer>
+            </CollaboratorProviderContext>
+          </div>
+          <div className='mx-[1.5%] mt-4 flex justify-between'>
+            <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
+            <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
+          </div>
+          <MutliStageRenderer stage={5}>
+            <form className='mt-4 flex justify-center gap-4'>
+              <SaveCourseButton callbackPath={callbackPath} />
+            </form>
+          </MutliStageRenderer>
+          <div />
         </div>
-        <div className='mx-[1.5%] mt-4 flex justify-between'>
-          <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
-          <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
-        </div>
-        <MutliStageRenderer stage={5}>
-          <form className='mt-4 flex justify-center gap-4'>
-            <SaveCourseButton callbackPath={callbackPath} />
-          </form>
-        </MutliStageRenderer>
-        <div />
       </MultiStageStoreProvider>
     </CourseStoreProvider>
   )
