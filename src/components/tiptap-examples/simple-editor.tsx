@@ -17,7 +17,6 @@ import { Selection } from '@tiptap/extensions'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
-import content from '@/components/tiptap-examples/data/content.json'
 // --- Components ---
 // --- Icons ---
 import { ArrowLeftIcon } from '@/components/tiptap-icons/arrow-left-icon'
@@ -155,7 +154,6 @@ export function SimpleEditor() {
       Typography,
       Selection,
     ],
-    content,
   })
 
   const rect = useCursorVisibility({
