@@ -102,7 +102,7 @@ const FontMobileSubMenuContent = ({ onHighlighterClick }: { onHighlighterClick: 
   )
 }
 
-const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: 'highlighter' | 'font'; onBack: () => void; onHighlighterClick: () => void }) => (
+const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: SubmenuKey; onBack: () => void; onHighlighterClick: () => void }) => (
   <>
     <Spacer />
     <ToolbarGroup>
@@ -122,10 +122,12 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: 'hig
   </>
 )
 
+type SubmenuKey = 'main' | 'highlighter' | 'font'
+
 export function SimpleEditor() {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
-  const [mobileView, setMobileView] = useState<'main' | 'highlighter' | 'font'>('main')
+  const [mobileView, setMobileView] = useState<SubmenuKey>('main')
   const toolbarRef = useRef<HTMLDivElement>(null)
   const editorInputRef = useRef<HTMLDivElement>(null)
 
