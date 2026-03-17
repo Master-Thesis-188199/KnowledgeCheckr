@@ -136,9 +136,8 @@ export function SimpleEditor() {
       },
     },
     extensions: [
-      StarterKit.configure({
-        horizontalRule: false,
-      }),
+      //@ts-expect-error Internal package type-assertion issue
+      StarterKit.configure({ horizontalRule: false }),
       HorizontalRule,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       TaskList,
