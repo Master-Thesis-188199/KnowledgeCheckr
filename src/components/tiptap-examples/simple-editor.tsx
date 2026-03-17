@@ -11,7 +11,7 @@ import { TaskItem, TaskList } from '@tiptap/extension-list'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Typography } from '@tiptap/extension-typography'
 import { Selection } from '@tiptap/extensions'
-import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
+import { Content, EditorContent, EditorContext, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
 // --- Components ---
@@ -118,12 +118,13 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: Subm
 
 type SubmenuKey = 'main' | 'highlighter' | 'font'
 
-export function SimpleEditor() {
+export function SimpleEditor({ onUpdateAction, defaultContent }: { onUpdateAction?: (content: object) => void; defaultContent?: Content }) {
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 
   const editor = useEditor({
     immediatelyRender: false,
+
     editorProps: {
       attributes: {
         'autofocus': 'on',
@@ -145,6 +146,8 @@ export function SimpleEditor() {
       Typography,
       Selection,
     ],
+    onUpdate: ({ editor }) => onUpdateAction?.(editor.getJSON()),
+    content: defaultContent,
   })
 
   useEffect(() => {
