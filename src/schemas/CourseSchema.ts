@@ -20,6 +20,15 @@ export const CourseSchema = z
       .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
       .describe('Describe the concept of your course using a few words.'),
 
+    contents: z
+      .array(
+        z.object({
+          categoryId: z.uuidv4(),
+          content: z.object(),
+        }),
+      )
+      .default([]),
+
     difficulty: z
       .number()
       .min(1, 'Please specify a difficulty between 1 and 10.')

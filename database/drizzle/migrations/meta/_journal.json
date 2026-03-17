@@ -120,6 +120,13 @@
       "when": 1769680435180,
       "tag": "0016_explicit-has-done-result-types",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1773757858849,
+      "tag": "0017_course-contents-property",
+      "breakpoints": true
     }
   ]
 }

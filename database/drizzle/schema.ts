@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { Course } from '@/src/schemas/CourseSchema'
 import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
@@ -119,6 +120,7 @@ export const db_course = mysqlTable(
     id: primaryKeyUUID,
     name: tinytext().notNull(),
     description: mediumtext(),
+    contents: json().$type<Course['contents']>().notNull(),
     owner_id: varchar('owner_id', { length: 36 }).notNull(),
 
     share_key: varchar('public_token', { length: 50 }).unique(),
