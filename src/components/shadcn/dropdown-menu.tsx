@@ -14,24 +14,31 @@ function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMe
   return <DropdownMenuPrimitive.Portal data-slot='dropdown-menu-portal' {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+function DropdownMenuTrigger({ variant = 'default', ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger> & { variant?: 'default' | 'ghost' }) {
   return (
     <DropdownMenuPrimitive.Trigger
       data-slot='dropdown-menu-trigger'
+      data-variant={variant}
       {...props}
-      className={cn('ring-ring data-[state=open]:bg-neutral-200 data-[state=open]:ring-1 dark:data-[state=open]:bg-neutral-700', props.className)}
+      className={cn(
+        'ring-ring data-[variant=default]:data-[state=open]:bg-neutral-200 data-[variant=default]:data-[state=open]:ring-1 dark:data-[variant=default]:data-[state=open]:bg-neutral-700',
+        props.className,
+      )}
     />
   )
 }
 
-function DropdownMenuContent({ className, sideOffset = 4, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+function DropdownMenuContent({ className, sideOffset = 4, variant = 'default', ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { variant?: 'default' | 'ghost' }) {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         data-slot='dropdown-menu-content'
+        data-variant={variant}
         sideOffset={sideOffset}
         className={cn(
           'z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-ring-subtle/40 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+
+          'data-[variant=ghost]:border-0! data-[variant=ghost]:bg-(--tt-dropdown-menu-bg-color) data-[variant=ghost]:shadow-(--tt-shadow-elevated-md) data-[variant=ghost]:ring-0!',
           className,
         )}
         {...props}
