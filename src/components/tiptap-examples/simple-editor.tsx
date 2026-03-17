@@ -5,7 +5,7 @@ import '@/components/tiptap-node/list-node/list-node.scss'
 import '@/components/tiptap-node/heading-node/heading-node.scss'
 import '@/components/tiptap-node/paragraph-node/paragraph-node.scss'
 // --- Styles ---
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Highlight } from '@tiptap/extension-highlight'
 import { TaskItem, TaskList } from '@tiptap/extension-list'
 import { TextAlign } from '@tiptap/extension-text-align'
@@ -121,7 +121,6 @@ type SubmenuKey = 'main' | 'highlighter' | 'font'
 export function SimpleEditor() {
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
-  const editorInputRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -168,12 +167,11 @@ export function SimpleEditor() {
           </Toolbar>
 
           <EditorContent
-            ref={editorInputRef}
-            onClick={() => {
-              const paragraphs = editorInputRef.current!.children
-              const lastParagraph = paragraphs.item(paragraphs.length - 1)! as HTMLParagraphElement
-              // focusses the last paragraph when the editor-pane is clicked.
-              lastParagraph.focus()
+            onClick={(e) => {
+              // Only focus at end if clicking outside the actual content area
+              if (e.target === e.currentTarget && editor) {
+                editor.commands.focus('end')
+              }
             }}
             editor={editor}
             role='presentation'
