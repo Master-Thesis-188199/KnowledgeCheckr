@@ -171,8 +171,8 @@
   --tt-border-color-tint: var(--tt-gray-light-a-100);
   --tt-sidebar-bg-color: var(--tt-gray-light-100);
   --tt-scrollbar-color: var(--tt-gray-light-a-200);
-  --tt-cursor-color: var(--tt-brand-color-500);
-  --tt-selection-color: rgba(157, 138, 255, 0.2);
+  --tt-cursor-color: var(--color-black);
+  /* --tt-selection-color: color-mix(in oklab, var(--color-black) 60%, transparent); */
   --tt-card-bg-color: var(--white);
   --tt-card-border-color: var(--tt-gray-light-a-100);
 }
@@ -184,8 +184,8 @@ html[data-theme='dark'] {
   --tt-border-color-tint: var(--tt-gray-dark-a-100);
   --tt-sidebar-bg-color: var(--tt-gray-dark-100);
   --tt-scrollbar-color: var(--tt-gray-dark-a-200);
-  --tt-cursor-color: var(--tt-brand-color-400);
-  --tt-selection-color: rgba(122, 82, 255, 0.2);
+  --tt-cursor-color: var(--color-white);
+  /* --tt-selection-color: color-mix(in oklab, var(--color-white) 60%, transparent); */
   --tt-card-bg-color: var(--tt-gray-dark-50);
   --tt-card-border-color: var(--tt-gray-dark-a-50);
 
