@@ -2,7 +2,7 @@ import type { Node as PMNode } from '@tiptap/pm/model'
 import type { Transaction } from '@tiptap/pm/state'
 import { AllSelection, NodeSelection, Selection, TextSelection } from '@tiptap/pm/state'
 import { cellAround, CellSelection } from '@tiptap/pm/tables'
-import { findParentNodeClosestToPos, type Editor, type NodeWithPos } from '@tiptap/react'
+import { type Editor, findParentNodeClosestToPos, type NodeWithPos } from '@tiptap/react'
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -33,10 +33,6 @@ export const SR_ONLY = {
   whiteSpace: 'nowrap',
   borderWidth: 0,
 } as const
-
-export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ')
-}
 
 /**
  * Determines if the current platform is macOS
@@ -352,9 +348,7 @@ type ProtocolOptions = {
 
 type ProtocolConfig = Array<ProtocolOptions | string>
 
-const ATTR_WHITESPACE =
-  // eslint-disable-next-line no-control-regex
-  /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
+const ATTR_WHITESPACE = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
 
 export function isAllowedUri(uri: string | undefined, protocols?: ProtocolConfig) {
   const allowedProtocols: string[] = ['http', 'https', 'ftp', 'ftps', 'mailto', 'tel', 'callto', 'sms', 'cid', 'xmpp']
@@ -369,16 +363,7 @@ export function isAllowedUri(uri: string | undefined, protocols?: ProtocolConfig
     })
   }
 
-  return (
-    !uri ||
-    uri.replace(ATTR_WHITESPACE, '').match(
-      new RegExp(
-        // eslint-disable-next-line no-useless-escape
-        `^(?:(?:${allowedProtocols.join('|')}):|[^a-z]|[a-z0-9+.\-]+(?:[^a-z+.\-:]|$))`,
-        'i',
-      ),
-    )
-  )
+  return !uri || uri.replace(ATTR_WHITESPACE, '').match(new RegExp(`^(?:(?:${allowedProtocols.join('|')}):|[^a-z]|[a-z0-9+.\-]+(?:[^a-z+.\-:]|$))`, 'i'))
 }
 
 export function sanitizeUrl(inputUrl: string, baseUrl: string, protocols?: ProtocolConfig): string {
