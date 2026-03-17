@@ -160,8 +160,8 @@ export function SimpleEditor() {
   }, [isMobile, mobileView])
 
   return (
-    <div data-slot='rich-text-editor-wrapper' className='flex flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor flex h-[stretch] max-h-[53dvh] w-full flex-col lg:max-w-[85%]'>
+    <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
+      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col lg:max-w-[85%]'>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar>
             {mobileView === 'main' ? (
