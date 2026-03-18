@@ -118,12 +118,13 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: Subm
 
 type SubmenuKey = 'main' | 'highlighter' | 'font'
 
-export function SimpleEditor({ onUpdateAction, defaultContent }: { onUpdateAction?: (content: object) => void; defaultContent?: Content }) {
+export function SimpleEditor({ onUpdateAction, defaultContent, disabled, readOnly }: { onUpdateAction?: (content: object) => void; defaultContent?: Content; disabled?: boolean; readOnly?: boolean }) {
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 
   const editor = useEditor({
     immediatelyRender: false,
+    editable: !(readOnly || disabled),
 
     editorProps: {
       attributes: {
@@ -159,9 +160,9 @@ export function SimpleEditor({ onUpdateAction, defaultContent }: { onUpdateActio
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col lg:max-w-[85%]'>
+      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col'>
         <EditorContext.Provider value={{ editor }}>
-          <Toolbar>
+          <Toolbar className={cn(readOnly && 'hidden!')}>
             {mobileView === 'main' ? (
               <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
             ) : (
