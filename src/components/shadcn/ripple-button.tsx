@@ -13,7 +13,7 @@ interface Ripple {
   y: number
 }
 
-interface RippleButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>, SimpleButtonProps {
+interface RippleButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>, Omit<SimpleButtonProps, 'asChild'> {
   scale?: number
   transition?: Transition
   rippleClassname?: string
