@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Content } from '@tiptap/react'
 import { PlusCircleIcon } from 'lucide-react'
 import z from 'zod'
@@ -13,7 +13,9 @@ import Field from '@/src/components/Shared/form/Field'
 import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
+import { CategorySchema } from '@/src/schemas/CategorySchema'
 import { Any } from '@/types'
 
 export default function ContentSection() {
@@ -61,7 +63,10 @@ const createContentSchema = z.object({
 function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [content, setContent] = useState<Content>()
-  const { updateContent, questionCategories, contents } = useCourseStore((store) => store)
+  const { updateContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
+  const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
+
+  const [query, setQuery] = useState<string>('')
 
   const rhf = useRHF(createContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations }) })
   const {
@@ -77,6 +82,13 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
     updateContent(data.categoryId, content! as Any)
     setDialogOpen(false)
     rhf.form.reset()
+  }
+
+  function createCategory(name: string) {
+    const newCategory: CategorySchema = { id: getUUID(), name, prequisiteCategoryId: null, skipOnMissingPrequisite: false }
+
+    addCategory(newCategory)
+    setValue('categoryId', newCategory.id)
   }
 
   return (
@@ -99,12 +111,25 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
               <Field {...baseFieldProps} name='title' />
 
               <Combobox
-                items={questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id))}
+                items={categories}
                 itemToStringLabel={(category: (typeof questionCategories)[number]) => category.name}
                 onValueChange={(item) => setValue('categoryId', item?.id as Any, { shouldValidate: true })}>
-                <ComboboxInput showClear placeholder='Select a category' />
+                <ComboboxInput showClear placeholder='Select a category' onChange={(e) => setQuery(e.target.value)} />
                 <ComboboxContent className='pointer-events-auto'>
-                  <ComboboxEmpty>No category found.</ComboboxEmpty>
+                  <ComboboxEmpty
+                    onClick={() => {
+                      createCategory(query)
+                      setQuery('')
+                    }}>
+                    {query.trim().length > 0 ? (
+                      <Button variant='ghost'>
+                        <p>Create: </p>
+                        <p className='block max-w-48 truncate font-semibold text-primary'>{query}</p>
+                      </Button>
+                    ) : (
+                      <>No category found.</>
+                    )}
+                  </ComboboxEmpty>
                   <ComboboxList>
                     {(item: (typeof questionCategories)[number]) => (
                       <ComboboxItem key={item.id} value={item}>
