@@ -19,16 +19,16 @@ export default function ContentSection() {
         </span>
       </div>
 
-      <div className='grid grid-cols-2 gap-8'>
+      <div className='grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12'>
         <CourseContentDialog mode='create'>
-          <Card className='flex h-full w-lg items-center justify-center'>
+          <Card className='flex h-full items-center justify-center'>
             <CardContent className='flex gap-4 text-primary'>
               <PlusCircleIcon /> Create new Content
             </CardContent>
           </Card>
         </CourseContentDialog>
         {contents.map((content) => (
-          <Card key={content.categoryId} className='max-h-72 w-lg'>
+          <Card key={content.categoryId} className='max-h-72'>
             <CardHeader>
               <CardTitle>{content.title}</CardTitle>
               <CardDescription>{content.description}</CardDescription>
