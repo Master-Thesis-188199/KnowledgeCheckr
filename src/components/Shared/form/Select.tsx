@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useIsFirstRender } from '@uidotdev/usehooks'
 import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
 import { cn } from '@/lib/Shared/utils'
@@ -12,6 +13,24 @@ interface Option {
   value: string
   label: string
 }
+
+type BaseSelectProps = Classnames & {
+  mode: 'basic'
+  id?: string
+  name?: string
+  options: Option[]
+  defaultValue?: Option
+  isLoading?: boolean
+  disabled?: boolean
+  onSelect: (option: Option) => void
+}
+
+type CreateSelectProps = Omit<BaseSelectProps, 'mode'> & {
+  mode: 'create'
+  onCreate: (label: string) => Option
+}
+
+type SelectProps = BaseSelectProps | CreateSelectProps
 
 interface CreatableSelectProps extends Classnames {
   options: Option[]
@@ -69,8 +88,11 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function Select({ options, defaultValue, isLoading = false, name, id, onChange, createable, popoverContentClassname, selectTriggerClassname, disabled }: CreatableSelectProps) {
+export default function Select({ options, defaultValue, isLoading, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, mode }: BaseSelectProps): React.ReactNode
+export default function Select({ options, defaultValue, isLoading, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, mode, onCreate }: CreateSelectProps): React.ReactNode
+export default function Select({ options, defaultValue, isLoading = false, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, ...rest }: SelectProps) {
   const [keySelection, setKeySelection] = React.useState<number>(options.findIndex((o) => o.value === defaultValue?.value) || -1)
+  const isFirstRender = useIsFirstRender()
 
   const initialState: State = {
     open: false,
@@ -92,8 +114,11 @@ export default function Select({ options, defaultValue, isLoading = false, name,
   }, [keySelection, state.query])
 
   React.useEffect(() => {
-    if (onChange && !state.open) {
-      onChange(state.value)
+    if (isFirstRender) return console.log(`[Select] blocking first-render 'onSelect' call with defaultValue.`)
+
+    if (!state.open) {
+      console.debug(`[Select] User has selected '${state.label}' with value ${state.value}`)
+      onSelect({ label: state.label, value: state.value })
     }
   }, [state.value])
 
@@ -103,10 +128,12 @@ export default function Select({ options, defaultValue, isLoading = false, name,
   }, [])
 
   const createOption = () => {
+    if (rest.mode !== 'create') return
+
     if (!state.newOptions.find((o) => o.value === state.query)) {
-      const newOption = { value: state.query, label: state.query }
+      const newOption = rest.onCreate(state.query)
       dispatch({ type: 'ADD_OPTION', payload: newOption })
-      console.log(`Creating new option => ${newOption.value}`)
+      console.debug(`[Select] new option has been created:`, newOption)
     }
 
     dispatch({ type: 'SET_OPEN', payload: false })
@@ -170,7 +197,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   case 'Enter':
                     if (!state.query || state.newOptions.filter((o) => o.value.includes(state.query)).length > 0) {
                       dispatch({ type: 'SET_OPEN', payload: false })
-                      if (onChange) onChange(state.value)
+                      onSelect({ label: state.label, value: state.value })
                     } else {
                       createOption()
                     }
@@ -211,7 +238,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   No Categories found
                 </div>
               )}
-              {createable && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
+              {rest.mode === 'create' && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
                 <CommandItem
                   key={state.query}
                   value={state.query}
