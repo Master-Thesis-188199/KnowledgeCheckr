@@ -216,7 +216,14 @@ export default function Select<Options extends readonly Option<Any>[]>({
           <ChevronDown className='ml-2 size-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
-          <Command className='bg-neutral-100 dark:bg-neutral-800'>
+          <Command
+            className='bg-neutral-100 dark:bg-neutral-800'
+            filter={(_, search) => {
+              // by default the filter-mechanisms compares just the values and not the labels.
+              // this way the filter yields options that match the query with their value **and/or** label
+              if (state.newOptions.filter((o) => o.label.includes(search) || o.value.includes(search))) return 1
+              return 0
+            }}>
             <CommandInput
               value={state.query}
               onValueChange={(query) => dispatch({ type: 'SET_QUERY', payload: query })}
@@ -233,7 +240,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
                     break
 
                   case 'Enter':
-                    if (!state.query || state.newOptions.filter((o) => o.value.includes(state.query)).length > 0) {
+                    if (!state.query || state.newOptions.filter((o) => o.label.toLowerCase().includes(state.query.toLowerCase()) || o.value.includes(state.query)).length > 0) {
                       dispatch({ type: 'SET_OPEN', payload: false })
                       onSelect({ label: state.label, value: state.value })
                     } else {
@@ -246,7 +253,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
             />
             <CommandGroup className='*:space-y-1'>
               {state.newOptions
-                .filter((o) => o.value.includes(state.query))
+                .filter((o) => o.label.includes(state.query) || o.value.includes(state.query))
                 .map((option, i) => (
                   <CommandItem
                     className={cn(
@@ -270,13 +277,13 @@ export default function Select<Options extends readonly Option<Any>[]>({
                     <Check className={cn('ml-auto size-4 hover:cursor-pointer', state.value === option.value ? 'opacity-100' : 'opacity-0')} />
                   </CommandItem>
                 ))}
-              {state.newOptions.filter((option) => matches(option.value, state.query)).length === 0 && (
+              {state.newOptions.filter((o) => o.label.includes(state.query) || o.value.includes(state.query)).length === 0 && (
                 <div className='flex items-center gap-2 px-2 text-sm text-neutral-600/80 dark:text-neutral-400'>
                   <SearchX className='size-4' />
                   No Categories found
                 </div>
               )}
-              {rest.mode === 'create' && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true)) && (
+              {rest.mode === 'create' && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true) || matches(option.value, state.query, true)) && (
                 <CommandItem
                   key={state.query}
                   value={state.query}
