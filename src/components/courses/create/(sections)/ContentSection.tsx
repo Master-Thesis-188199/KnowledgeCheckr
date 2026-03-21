@@ -7,9 +7,9 @@ import z from 'zod'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/src/components/shadcn/combobox'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Field from '@/src/components/Shared/form/Field'
+import Select from '@/src/components/Shared/form/Select'
 import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
@@ -66,8 +66,6 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
   const { updateContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
   const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
 
-  const [query, setQuery] = useState<string>('')
-
   const rhf = useRHF(createContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations }) })
   const {
     baseFieldProps,
@@ -110,35 +108,20 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
               )}>
               <Field {...baseFieldProps} name='title' />
 
-              <Combobox
-                items={categories}
-                itemToStringLabel={(category: (typeof questionCategories)[number]) => category.name}
-                onValueChange={(item) => setValue('categoryId', item?.id as Any, { shouldValidate: true })}>
-                <ComboboxInput showClear placeholder='Select a category' onChange={(e) => setQuery(e.target.value)} />
-                <ComboboxContent className='pointer-events-auto'>
-                  <ComboboxEmpty
-                    onClick={() => {
-                      createCategory(query)
-                      setQuery('')
-                    }}>
-                    {query.trim().length > 0 ? (
-                      <Button variant='ghost'>
-                        <p>Create: </p>
-                        <p className='block max-w-48 truncate font-semibold text-primary'>{query}</p>
-                      </Button>
-                    ) : (
-                      <>No category found.</>
-                    )}
-                  </ComboboxEmpty>
-                  <ComboboxList>
-                    {(item: (typeof questionCategories)[number]) => (
-                      <ComboboxItem key={item.id} value={item}>
-                        {item.name}
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+              <Select
+                selectTriggerClassname='-ml-0.5'
+                popoverContentClassname='auto-popover-content-width'
+                onChange={(category) => {
+                  if (!categories.find((c) => c.name === category)) {
+                    createCategory(category)
+                  } else {
+                    form.register('categoryId').onChange({ target: { value: category, name: 'categoryId' } })
+                  }
+                }}
+                options={[...categories.map((cat) => ({ label: cat.name, value: cat.id }))]}
+                createable
+                // defaultValue={{ label: categories.find(c => c.id === form.watch("categoryId"))?.name, value: watch('category') }}
+              />
             </div>
             <SimpleEditor onUpdateAction={setContent} />
             <Button type='submit' disabled={!isValid}>
