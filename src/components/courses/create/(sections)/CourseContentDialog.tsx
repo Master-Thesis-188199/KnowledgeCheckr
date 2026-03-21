@@ -117,7 +117,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
               <Select
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='auto-popover-content-width'
-                onSelect={({ value: categoryId }) => setValue('categoryId', categoryId)}
+                onSelect={({ value: categoryId }) => setValue('categoryId', categoryId, { shouldValidate: true })}
                 options={[...categories.map((cat) => ({ label: cat.name, value: cat.id }))]}
                 mode='create'
                 onCreate={(name) => {
