@@ -41,7 +41,7 @@ export default function ContentSection() {
                 </CourseContentDialog>
               </CardAction>
             </CardHeader>
-            <CardContent className='px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:p-2.5 **:[div]:[[role=presentation]]:text-xs'>
+            <CardContent className='pointer-events-none flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5 **:[div]:[[role=presentation]]:text-xs'>
               <SimpleEditor defaultContent={content.content} readOnly />
             </CardContent>
           </Card>
