@@ -203,7 +203,9 @@ export default function Select<Options extends readonly Option<Any>[]>({
           data-selected-key={state.value}
           disabled={isLoading || disabled}
           className={cn(
-            'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap capitalize placeholder:text-[15px] hover:cursor-pointer',
+            'inline-flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap placeholder:text-[15px] hover:cursor-pointer',
+            //capitalize labels, but not placeholder
+            !!state.label ? 'capitalize' : 'normal-case',
             'border border-input-ring transition-[color,box-shadow] outline-none',
             'bg-input text-neutral-600 placeholder:text-neutral-400/90 dark:text-neutral-300/80 dark:placeholder:text-neutral-600',
             'hover:border-ring-hover focus:border-ring-focus dark:hover:border-ring-hover dark:focus:border-ring-focus',
