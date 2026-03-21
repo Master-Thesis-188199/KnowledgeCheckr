@@ -148,7 +148,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
             selectTriggerClassname,
           )}>
           {isLoading ? <Loader2Icon className='size-4 animate-spin' /> : state.label || 'Select option...'}
-          <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+          <ChevronDown className='ml-2 size-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
           <Command className='bg-neutral-100 dark:bg-neutral-800'>
@@ -179,7 +179,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                 }
               }}
             />
-            <CommandGroup className='mb-1 *:space-y-1'>
+            <CommandGroup className='*:space-y-1'>
               {state.newOptions
                 .filter((o) => o.value.includes(state.query))
                 .map((option, i) => (
@@ -202,7 +202,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                       dispatch({ type: 'SET_OPEN', payload: false })
                     }}>
                     {option.label}
-                    <Check className={cn('ml-auto h-4 w-4 hover:cursor-pointer', state.value === option.value ? 'opacity-100' : 'opacity-0')} />
+                    <Check className={cn('ml-auto size-4 hover:cursor-pointer', state.value === option.value ? 'opacity-100' : 'opacity-0')} />
                   </CommandItem>
                 ))}
               {state.newOptions.filter((option) => matches(option.value, state.query)).length === 0 && (
@@ -216,19 +216,19 @@ export default function Select({ options, defaultValue, isLoading = false, name,
                   key={state.query}
                   value={state.query}
                   className={cn(
-                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 hover:cursor-pointer hover:ring-1',
-                    'border-neutral-400/80 text-neutral-800 dark:border-neutral-500 dark:text-neutral-300/90',
-                    'hover:bg-neutral-300 hover:ring-ring dark:hover:bg-neutral-600 dark:hover:ring-ring',
+                    'mt-2 rounded-t-none border-t-[1.5px] border-dashed pt-2 ring-ring-hover hover:cursor-pointer hover:ring-1',
+                    'data-[selected=true]:bg-transparent dark:data-[selected=true]:bg-transparent',
+                    'group hover:bg-accent/50!',
                   )}
                   onSelect={() => createOption()}>
-                  Create category &quot;{state.query}&quot;
                   <Plus
-                    className='ml-auto h-4 w-4 cursor-pointer'
+                    className='h-4 w-4 cursor-pointer text-accent-foreground'
                     onClick={(e) => {
                       e.stopPropagation()
                       dispatch({ type: 'SET_QUERY', payload: '' })
                     }}
                   />
+                  <span className='underline-offset-4 group-hover:underline'>Create new Category &quot;{state.query}&quot;</span>
                 </CommandItem>
               )}
             </CommandGroup>
