@@ -158,10 +158,11 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                   {tQuestion('type_label')}
                 </label>
                 <CreateableSelect
+                  mode='basic'
                   disabled={disabled}
                   name='type'
                   defaultValue={{ label: tQuestion(`type.${watch('type')}`), value: watch('type') }}
-                  onChange={(type) => {
+                  onSelect={({ value: type }) => {
                     if (type !== watch('type')) {
                       let defaults = generateQuestionDefaults(type as Any)
 
@@ -191,12 +192,14 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                     }
                     register('type').onChange({ target: { value: type, name: 'type' } })
                   }}
-                  options={[
-                    { label: tQuestion('type.single-choice'), value: 'single-choice' },
-                    { label: tQuestion('type.multiple-choice'), value: 'multiple-choice' },
-                    { label: tQuestion('type.open-question'), value: 'open-question' },
-                    { label: tQuestion('type.drag-drop'), value: 'drag-drop' },
-                  ]}
+                  options={
+                    [
+                      { label: tQuestion('type.single-choice'), value: 'single-choice' },
+                      { label: tQuestion('type.multiple-choice'), value: 'multiple-choice' },
+                      { label: tQuestion('type.open-question'), value: 'open-question' },
+                      { label: tQuestion('type.drag-drop'), value: 'drag-drop' },
+                    ] as const
+                  }
                 />
                 <FieldError field='type' errors={errors} />
               </div>
@@ -206,15 +209,18 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 </label>
 
                 <Select
+                  mode='basic'
                   disabled={disabled}
                   selectTriggerClassname='-ml-0.5 min-w-36'
                   popoverContentClassname='w-[170px]'
-                  onChange={(accessibility) => register('accessibility').onChange({ target: { value: accessibility, name: 'accessibility' } })}
-                  options={[
-                    { label: tQuestion('accessibility.all'), value: 'all' },
-                    { label: tQuestion('accessibility.practice-only'), value: 'practice-only' },
-                    { label: tQuestion('accessibility.exam-only'), value: 'exam-only' },
-                  ]}
+                  onSelect={({ value }) => setValue('accessibility', value)}
+                  options={
+                    [
+                      { label: tQuestion('accessibility.all'), value: 'all' },
+                      { label: tQuestion('accessibility.practice-only'), value: 'practice-only' },
+                      { label: tQuestion('accessibility.exam-only'), value: 'exam-only' },
+                    ] as const
+                  }
                   defaultValue={{
                     label: tQuestion(`accessibility.${watch('accessibility')}`),
                     value: watch('accessibility'),
@@ -232,9 +238,10 @@ export default function CreateQuestionDialog({ children, initialValues }: { chil
                 disabled={disabled}
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='w-[470px]'
-                onChange={(category) => register('category').onChange({ target: { value: category, name: 'category' } })}
+                onSelect={({ label }) => setValue('category', label)}
+                onCreate={(name) => ({ label: name, value: name })}
                 options={[...questionCategories.map((cat) => ({ label: cat.name, value: cat.name }))]}
-                createable
+                mode='create'
                 defaultValue={{ label: watch('category'), value: watch('category') }}
               />
               <FieldError field='category' errors={errors} />

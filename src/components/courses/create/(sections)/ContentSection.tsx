@@ -87,6 +87,7 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
 
     addCategory(newCategory)
     setValue('categoryId', newCategory.id)
+    return newCategory
   }
 
   return (
@@ -111,16 +112,14 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
               <Select
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='auto-popover-content-width'
-                onChange={(category) => {
-                  if (!categories.find((c) => c.name === category)) {
-                    createCategory(category)
-                  } else {
-                    form.register('categoryId').onChange({ target: { value: category, name: 'categoryId' } })
-                  }
-                }}
+                onSelect={({ value: categoryId }) => setValue('categoryId', categoryId)}
                 options={[...categories.map((cat) => ({ label: cat.name, value: cat.id }))]}
-                createable
-                // defaultValue={{ label: categories.find(c => c.id === form.watch("categoryId"))?.name, value: watch('category') }}
+                mode='create'
+                onCreate={(name) => {
+                  console.log(`Oncreate has received: '${name}' as the new category-name`)
+                  const cat = createCategory(name)
+                  return { label: cat.name, value: cat.id }
+                }}
               />
             </div>
             <SimpleEditor onUpdateAction={setContent} />
