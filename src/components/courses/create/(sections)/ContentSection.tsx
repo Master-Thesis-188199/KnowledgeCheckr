@@ -125,6 +125,7 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
                   const cat = createCategory(name)
                   return { label: cat.name, value: cat.id }
                 }}
+                triggerPlaceholder='Select a category'
               />
             </div>
             <SimpleEditor onUpdateAction={(content) => setValue('content', content)} />

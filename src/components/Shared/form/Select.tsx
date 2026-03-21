@@ -15,7 +15,7 @@ type Option<ValueType> = {
   label: string
 }
 
-type BaseSelectProps<Options extends readonly Option<Any>[]> = Classnames & {
+type BaseSelectProps<Options extends readonly Option<Any>[]> = ConfigOptions & {
   mode: 'basic'
   id?: string
   name?: string
@@ -28,12 +28,13 @@ type BaseSelectProps<Options extends readonly Option<Any>[]> = Classnames & {
 
 type CreateSelectProps<Options extends readonly Option<Any>[]> = Omit<BaseSelectProps<Options>, 'mode'> & {
   mode: 'create'
+  createOptionText?: (searchQuery: string) => string
   onCreate: (label: string) => Options[number]
 }
 
 type SelectProps<Options extends readonly Option<Any>[]> = BaseSelectProps<Options> | CreateSelectProps<Options>
 
-interface CreatableSelectProps extends Classnames {
+interface CreatableSelectProps extends ConfigOptions {
   options: Option<Any>[]
   defaultValue?: Option<Any>
   isLoading?: boolean
@@ -45,9 +46,11 @@ interface CreatableSelectProps extends Classnames {
   disabled?: boolean
 }
 
-interface Classnames {
+interface ConfigOptions {
   selectTriggerClassname?: string
   popoverContentClassname?: string
+  triggerPlaceholder?: string
+  notFoundText?: string
 }
 
 interface State<Options extends readonly Option<Any>[]> {
@@ -127,6 +130,8 @@ export default function Select<Options extends readonly Option<Any>[]>({
   popoverContentClassname,
   selectTriggerClassname,
   disabled,
+  triggerPlaceholder = 'Search Option',
+  notFoundText = 'No Categories found',
   ...rest
 }: SelectProps<Options>) {
   const [keySelection, setKeySelection] = React.useState<number>(options.findIndex((o) => o.value === defaultValue?.value) || -1)
@@ -212,7 +217,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
             'disabled:cursor-not-allowed disabled:opacity-50 disabled:ring-ring-subtle dark:disabled:ring-ring-subtle',
             selectTriggerClassname,
           )}>
-          {isLoading ? <Loader2Icon className='size-4 animate-spin' /> : state.label || 'Select option...'}
+          {isLoading ? <Loader2Icon className='size-4 animate-spin' /> : state.label || triggerPlaceholder}
           <ChevronDown className='ml-2 size-4 shrink-0 opacity-50' />
         </PopoverTrigger>
         <PopoverContent aria-label={`popover-content-${name}`} className={cn('w-[210px] overflow-auto border-neutral-400/60 p-0 dark:border-neutral-600', popoverContentClassname)}>
@@ -227,7 +232,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
             <CommandInput
               value={state.query}
               onValueChange={(query) => dispatch({ type: 'SET_QUERY', payload: query })}
-              placeholder='Search option...'
+              placeholder={triggerPlaceholder}
               className='h-9 text-neutral-700 placeholder:text-neutral-500 dark:text-neutral-200 dark:placeholder:text-neutral-400'
               onKeyDown={(e) => {
                 switch (e.key) {
@@ -280,7 +285,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
               {state.newOptions.filter((o) => o.label.includes(state.query) || o.value.includes(state.query)).length === 0 && (
                 <div className='flex items-center gap-2 px-2 text-sm text-neutral-600/80 dark:text-neutral-400'>
                   <SearchX className='size-4' />
-                  No Categories found
+                  {notFoundText}
                 </div>
               )}
               {rest.mode === 'create' && state.query && !state.newOptions.some((option) => matches(option.label, state.query, true) || matches(option.value, state.query, true)) && (
@@ -300,7 +305,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
                       dispatch({ type: 'SET_QUERY', payload: '' })
                     }}
                   />
-                  <span className='underline-offset-4 group-hover:underline'>Create new Category &quot;{state.query}&quot;</span>
+                  <span className='underline-offset-4 group-hover:underline'>{rest.createOptionText?.(state.query) ?? `Create new Category "${state.query}"`}</span>
                 </CommandItem>
               )}
             </CommandGroup>
