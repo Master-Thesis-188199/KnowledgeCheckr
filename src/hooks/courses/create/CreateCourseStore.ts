@@ -20,6 +20,7 @@ export type CourseActions = {
   updateCourse: (update: Partial<Course>) => void
   updateCollaborators: (collaborators: Course['collaborators']) => void
   storeCourseContent: (props: Course['contents'][number]) => void
+  removeCourseContent: (categoryId: Course['contents'][number]['categoryId']) => void
   addCategory: (category: CategorySchema) => void
 }
 
@@ -117,6 +118,7 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
           }),
 
         addCategory: (category) => set((prev) => ({ questionCategories: [...prev.questionCategories.filter((c) => c.id !== category.id), category] })),
+        removeCourseContent: (categoryId) => set((prev) => ({ contents: prev.contents.filter((c) => c.categoryId !== categoryId) })),
       }
     },
   })
