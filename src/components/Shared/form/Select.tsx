@@ -4,37 +4,38 @@ import { Check, ChevronDown, Loader2Icon, Plus, SearchX } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/Shared/Popover'
 import { cn } from '@/lib/Shared/utils'
 import { Command, CommandGroup, CommandInput, CommandItem } from '@/src/components/shadcn/command'
+import { Any } from '@/types'
 
 /*
   Credits: This component originates from: https://github.com/merthanmerter/shadcn-creatable-select/tree/main
 */
 
-interface Option {
-  value: string
+type Option<ValueType> = {
+  value: ValueType
   label: string
 }
 
-type BaseSelectProps = Classnames & {
+type BaseSelectProps<Options extends readonly Option<Any>[]> = Classnames & {
   mode: 'basic'
   id?: string
   name?: string
-  options: Option[]
-  defaultValue?: Option
+  options: Options
+  defaultValue?: Options[number]
   isLoading?: boolean
   disabled?: boolean
-  onSelect: (option: Option) => void
+  onSelect: (option: Options[number]) => void
 }
 
-type CreateSelectProps = Omit<BaseSelectProps, 'mode'> & {
+type CreateSelectProps<Options extends readonly Option<Any>[]> = Omit<BaseSelectProps<Options>, 'mode'> & {
   mode: 'create'
-  onCreate: (label: string) => Option
+  onCreate: (label: string) => Options[number]
 }
 
-type SelectProps = BaseSelectProps | CreateSelectProps
+type SelectProps<Options extends readonly Option<Any>[]> = BaseSelectProps<Options> | CreateSelectProps<Options>
 
 interface CreatableSelectProps extends Classnames {
-  options: Option[]
-  defaultValue?: Option
+  options: Option<Any>[]
+  defaultValue?: Option<Any>
   isLoading?: boolean
   name?: string
   id?: string
@@ -49,24 +50,24 @@ interface Classnames {
   popoverContentClassname?: string
 }
 
-interface State {
+interface State<Options extends readonly Option<Any>[]> {
   open: boolean
   label: string
   value: string
   query: string
-  newOptions: Option[]
+  newOptions: Options
 }
 
-type Action =
+type Action<Options extends readonly Option<Any>[]> =
   | { type: 'SET_OPEN'; payload: boolean }
-  | { type: 'SET_VALUE'; value: string; label: string }
-  | { type: 'SET_QUERY'; payload: string }
-  | { type: 'SET_NEW_OPTIONS'; payload: Option[] }
-  | { type: 'ADD_OPTION'; payload: Option }
+  | { type: 'SET_VALUE'; value: Options[number]['value']; label: Options[number]['label'] }
+  | { type: 'SET_QUERY'; payload: Options[number]['label'] }
+  | { type: 'SET_NEW_OPTIONS'; payload: Options }
+  | { type: 'ADD_OPTION'; payload: Options[number] }
 
 const matches = (str: string, query: string, exact: boolean = false) => (exact ? str.toLowerCase() === query.toLowerCase() : str.toLowerCase().includes(query.toLowerCase()))
 
-function reducer(state: State, action: Action): State {
+function reducer<Options extends readonly Option<Any>[]>(state: State<Options>, action: Action<Options>): State<Options> {
   switch (action.type) {
     case 'SET_OPEN':
       return { ...state, open: action.payload }
@@ -77,9 +78,12 @@ function reducer(state: State, action: Action): State {
     case 'SET_NEW_OPTIONS':
       return { ...state, newOptions: action.payload }
     case 'ADD_OPTION':
+      //@ts-expect-error Options[number] does not fully satisfy Options. This means that the newly added Option will not show up in the Options-type.
+      const options = [...state.newOptions, action.payload] as Options
+
       return {
         ...state,
-        newOptions: [...state.newOptions, action.payload],
+        newOptions: options,
         value: action.payload.value,
         label: action.payload.label,
       }
@@ -88,13 +92,47 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function Select({ options, defaultValue, isLoading, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, mode }: BaseSelectProps): React.ReactNode
-export default function Select({ options, defaultValue, isLoading, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, mode, onCreate }: CreateSelectProps): React.ReactNode
-export default function Select({ options, defaultValue, isLoading = false, name, id, onSelect, popoverContentClassname, selectTriggerClassname, disabled, ...rest }: SelectProps) {
+export default function Select<Options extends readonly Option<Any>[]>({
+  options,
+  defaultValue,
+  isLoading,
+  name,
+  id,
+  onSelect,
+  popoverContentClassname,
+  selectTriggerClassname,
+  disabled,
+  mode,
+}: BaseSelectProps<Options>): React.ReactNode
+export default function Select<Options extends readonly Option<Any>[]>({
+  options,
+  defaultValue,
+  isLoading,
+  name,
+  id,
+  onSelect,
+  popoverContentClassname,
+  selectTriggerClassname,
+  disabled,
+  mode,
+  onCreate,
+}: CreateSelectProps<Options>): React.ReactNode
+export default function Select<Options extends readonly Option<Any>[]>({
+  options,
+  defaultValue,
+  isLoading = false,
+  name,
+  id,
+  onSelect,
+  popoverContentClassname,
+  selectTriggerClassname,
+  disabled,
+  ...rest
+}: SelectProps<Options>) {
   const [keySelection, setKeySelection] = React.useState<number>(options.findIndex((o) => o.value === defaultValue?.value) || -1)
   const isFirstRender = useIsFirstRender()
 
-  const initialState: State = {
+  const initialState: State<Options> = {
     open: false,
     label: defaultValue?.label ?? '',
     value: defaultValue?.value ?? '',
@@ -102,7 +140,7 @@ export default function Select({ options, defaultValue, isLoading = false, name,
     newOptions: options,
   }
 
-  const [state, dispatch] = React.useReducer(reducer, initialState)
+  const [state, dispatch] = React.useReducer<State<Options>, Any>(reducer, initialState)
   // const reset = () => dispatch({ type: 'SET_VALUE', payload: defaultValue?.value || '' })
 
   React.useEffect(() => {
