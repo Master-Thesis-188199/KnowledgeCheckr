@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from '@heroui/theme'
 import { useIsFirstRender } from '@uidotdev/usehooks'
 import z from 'zod'
@@ -38,7 +38,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
   const { storeCourseContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
   const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
 
-  const rhf = useRHF(CourseContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations, description: lorem().split(' ').slice(0, 10).join(' ') }) })
+  const RHF = useRHF(CourseContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations, description: lorem().split(' ').slice(0, 10).join(' ') }) })
   const {
     baseFieldProps,
     form: {
@@ -46,7 +46,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
       setValue,
       ...form
     },
-  } = rhf
+  } = RHF
 
   useEffect(() => {
     if (isFirstRender) return
@@ -63,19 +63,25 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
     }
   }, [rest.mode, (rest as EditContentDialogProps).courseContent])
 
-  function submitHandler(data: z.output<typeof CourseContentSchema>) {
-    storeCourseContent(data)
-    setDialogOpen(false)
-    rhf.form.reset()
-  }
+  const submitHandler = useCallback(
+    (data: z.output<typeof CourseContentSchema>) => {
+      storeCourseContent(data)
+      setDialogOpen(false)
+      form.reset()
+    },
+    [storeCourseContent, setDialogOpen, form.reset, form],
+  )
 
-  function createCategory(name: string) {
-    const newCategory: CategorySchema = { id: getUUID(), name, prequisiteCategoryId: null, skipOnMissingPrequisite: false }
+  const createCategory = useCallback(
+    (name: string) => {
+      const newCategory: CategorySchema = { id: getUUID(), name, prequisiteCategoryId: null, skipOnMissingPrequisite: false }
 
-    addCategory(newCategory)
-    setValue('categoryId', newCategory.id)
-    return newCategory
-  }
+      addCategory(newCategory)
+      setValue('categoryId', newCategory.id)
+      return newCategory
+    },
+    [addCategory, setValue],
+  )
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -85,8 +91,8 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
         <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
           <DialogTitle>{rest.mode === 'create' ? 'Create new' : 'Edit'} Content</DialogTitle>
         </DialogHeader>
-        <RHFProvider {...rhf}>
-          <form className='flex flex-col gap-6 p-2' onSubmit={rhf.form.handleSubmit(submitHandler)}>
+        <RHFProvider {...RHF}>
+          <form className='flex flex-col gap-6 p-2' onSubmit={form.handleSubmit(submitHandler)}>
             <div className='flex gap-8'>
               <div
                 className={cn(
