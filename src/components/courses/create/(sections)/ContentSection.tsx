@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Content } from '@tiptap/react'
 import { PlusCircleIcon } from 'lucide-react'
 import z from 'zod'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
@@ -16,7 +15,7 @@ import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { cn } from '@/src/lib/Shared/utils'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
-import { Any } from '@/types'
+import { CourseContentSchema } from '@/src/schemas/CourseContentSchema'
 
 export default function ContentSection() {
   const { contents } = useCourseStore((store) => store)
@@ -54,19 +53,12 @@ export default function ContentSection() {
   )
 }
 
-const createContentSchema = z.object({
-  title: z.string().nonempty(),
-  categoryId: z.string().nonempty(),
-  content: z.object(),
-})
-
 function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [content, setContent] = useState<Content>()
-  const { updateContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
+  const { storeCourseContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
   const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
 
-  const rhf = useRHF(createContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations }) })
+  const rhf = useRHF(CourseContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations }) })
   const {
     baseFieldProps,
     form: {
@@ -76,8 +68,8 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
     },
   } = rhf
 
-  function submitHandler(data: z.output<typeof createContentSchema>) {
-    updateContent(data.categoryId, content! as Any)
+  function submitHandler(data: z.output<typeof CourseContentSchema>) {
+    storeCourseContent(data)
     setDialogOpen(false)
     rhf.form.reset()
   }
@@ -108,6 +100,7 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
                 '-mb-4',
               )}>
               <Field {...baseFieldProps} name='title' />
+              <Field {...baseFieldProps} name='description' />
 
               <Select
                 selectTriggerClassname='-ml-0.5'
@@ -122,7 +115,7 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
                 }}
               />
             </div>
-            <SimpleEditor onUpdateAction={setContent} />
+            <SimpleEditor onUpdateAction={(content) => setValue('content', content)} />
             <Button type='submit' disabled={!isValid}>
               Submit
             </Button>

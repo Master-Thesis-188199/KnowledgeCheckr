@@ -4,6 +4,7 @@ import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { CourseContentSchema } from '@/src/schemas/CourseContentSchema'
 import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { QuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -20,14 +21,7 @@ export const CourseSchema = z
       .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
       .describe('Describe the concept of your course using a few words.'),
 
-    contents: z
-      .array(
-        z.object({
-          categoryId: z.uuidv4(),
-          content: z.object(),
-        }),
-      )
-      .default([]),
+    contents: z.array(CourseContentSchema).default([]),
 
     difficulty: z
       .number()
