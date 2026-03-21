@@ -1,4 +1,4 @@
-import { ChangeEvent, HTMLProps, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
@@ -32,7 +32,7 @@ export default function Field<Values extends FieldValues>({
   containerClassname?: string
   onChange?: (values: ChangeEvent<HTMLInputElement>['target']) => unknown
   modifyValue?: (value: Any) => Any
-} & Omit<HTMLProps<HTMLInputElement>, 'onChange' | 'name' | 'form'>) {
+} & Omit<React.ComponentProps<'input'>, 'onChange' | 'name' | 'form'>) {
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const previousFocusState = useRef(false)
