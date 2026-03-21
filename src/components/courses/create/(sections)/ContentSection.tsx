@@ -6,6 +6,7 @@ import z from 'zod'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
+import { Label } from '@/src/components/shadcn/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Field from '@/src/components/Shared/form/Field'
 import Select from '@/src/components/Shared/form/Select'
@@ -91,17 +92,28 @@ function CreateNewContentDialog({ children }: { children: React.ReactNode }) {
           <DialogTitle>Create new Content</DialogTitle>
         </DialogHeader>
         <RHFProvider {...rhf}>
-          <form className='flex flex-col gap-6' onSubmit={rhf.form.handleSubmit(submitHandler)}>
-            <div
-              className={cn(
-                'grid p-2',
-                'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
-                '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
-                '-mb-4',
-              )}>
-              <Field {...baseFieldProps} name='title' />
-              <Field {...baseFieldProps} name='description' />
+          <form className='flex flex-col gap-6 p-2' onSubmit={rhf.form.handleSubmit(submitHandler)}>
+            <div className='flex gap-8'>
+              <div
+                className={cn(
+                  'grid flex-1',
+                  'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
+                  '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
+                )}>
+                <Field {...baseFieldProps} name='title' placeholder='Basic History of Austria' />
+              </div>
+              <div
+                className={cn(
+                  'grid flex-1',
+                  'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
+                  '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
+                )}>
+                <Field {...baseFieldProps} name='description' placeholder='Includes fundamental information about Austria.' />
+              </div>
+            </div>
 
+            <div className='flex flex-1 flex-col gap-3 *:w-full'>
+              <Label className='px-1'>Category</Label>
               <Select
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='auto-popover-content-width'
