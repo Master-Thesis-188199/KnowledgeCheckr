@@ -127,7 +127,7 @@ export function findDeepPropertyValue(searchKey: string, value: unknown, visited
  * @throws If the value type cannot be converted.
  */
 export function toDatabaseScalar(value: unknown, columnName: string = 'unknown'): unknown {
-  if (typeof value === 'string' || typeof value === 'number') return value
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'object') return value
   if (typeof value === 'boolean') return value ? 1 : 0
   if (value instanceof Date) return formatDatetime(value)
   if (value === undefined || value === null) return value
