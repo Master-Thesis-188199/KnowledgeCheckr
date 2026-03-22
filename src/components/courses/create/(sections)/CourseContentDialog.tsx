@@ -7,6 +7,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { Label } from '@/src/components/shadcn/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Field from '@/src/components/Shared/form/Field'
+import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import Select from '@/src/components/Shared/form/Select'
 import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
@@ -51,7 +52,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
   const {
     baseFieldProps,
     form: {
-      formState: { isValid },
+      formState: { errors },
       setValue,
       ...form
     },
@@ -123,32 +124,33 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
 
             <div className='flex flex-1 flex-col gap-3 *:w-full'>
               <Label className='px-1'>{t('Fields.categoryId_label')}</Label>
-              <Select
-                selectTriggerClassname='-ml-0.5'
-                popoverContentClassname='auto-popover-content-width'
-                onSelect={({ value: categoryId }) => setValue('categoryId', categoryId, { shouldValidate: true })}
-                options={[...categories.map((cat) => ({ label: cat.name, value: cat.id }))]}
-                mode='create'
-                onCreate={(name) => {
-                  console.log(`Oncreate has received: '${name}' as the new category-name`)
-                  const cat = createCategory(name)
-                  return { label: cat.name, value: cat.id }
-                }}
-                triggerPlaceholder={t('Fields.categoryId_trigger_placerholder')}
-                defaultValue={
-                  rest.mode === 'edit'
-                    ? {
-                        label: questionCategories.find((c) => c.id === rest.courseContent.categoryId)?.name ?? 'unknown',
-                        value: rest.courseContent.categoryId,
-                      }
-                    : undefined
-                }
-              />
+              <div className='flex flex-col gap-1'>
+                <Select
+                  selectTriggerClassname='-ml-0.5'
+                  popoverContentClassname='auto-popover-content-width'
+                  onSelect={({ value: categoryId }) => setValue('categoryId', categoryId, { shouldValidate: true })}
+                  options={[...categories.map((cat) => ({ label: cat.name, value: cat.id }))]}
+                  mode='create'
+                  onCreate={(name) => {
+                    console.log(`Oncreate has received: '${name}' as the new category-name`)
+                    const cat = createCategory(name)
+                    return { label: cat.name, value: cat.id }
+                  }}
+                  triggerPlaceholder={t('Fields.categoryId_trigger_placerholder')}
+                  defaultValue={
+                    rest.mode === 'edit'
+                      ? {
+                          label: questionCategories.find((c) => c.id === rest.courseContent.categoryId)?.name ?? 'unknown',
+                          value: rest.courseContent.categoryId,
+                        }
+                      : undefined
+                  }
+                />
+                <FormFieldError showIcon errors={errors} field='categoryId' />
+              </div>
             </div>
             <RichTextEditor defaultContent={rest.mode === 'edit' ? rest.courseContent.content : undefined} onUpdateAction={(content) => setValue('content', content)} />
-            <Button type='submit' disabled={!isValid}>
-              {rest.mode === 'create' ? t('submit_create_button_label') : t('submit_update_button_label')}
-            </Button>
+            <Button type='submit'>{rest.mode === 'create' ? t('submit_create_button_label') : t('submit_update_button_label')}</Button>
           </form>
         </RHFProvider>
       </DialogContent>
