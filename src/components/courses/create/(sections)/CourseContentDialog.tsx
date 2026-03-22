@@ -38,7 +38,14 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
   const { storeCourseContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
   const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
 
-  const RHF = useRHF(CourseContentSchema, { mode: 'all', defaultValues: (_, instantiations) => ({ ...instantiations, description: lorem().split(' ').slice(0, 10).join(' ') }) })
+  const RHF = useRHF(CourseContentSchema, {
+    mode: 'all',
+    defaultValues: (_, instantiations) => {
+      if (rest.mode === 'edit') return { ...instantiations, description: lorem().split(' ').slice(0, 10).join(' '), ...rest.courseContent }
+
+      return { ...instantiations, description: lorem().split(' ').slice(0, 10).join(' ') }
+    },
+  })
   const {
     baseFieldProps,
     form: {
