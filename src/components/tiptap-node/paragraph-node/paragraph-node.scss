@@ -110,11 +110,14 @@
   outline: none;
   caret-color: var(--tt-cursor-color);
 
-  // Paragraph spacing
-  p:not(:first-child):not(td p):not(th p) {
+  // defines font-size, line-height and margin for paragraphs
+  p:not(td p):not(th p) {
     font-size: var(--tt-font-size-body);
     line-height: var(--tt-line-height-body);
     font-weight: normal;
+  }
+  // Removes the margin for a given paragraph when its the first element in the editor-content
+  p:not(:first-child):not(td p):not(th p) {
     margin-top: var(--tt-spacing-paragraph);
   }
 
