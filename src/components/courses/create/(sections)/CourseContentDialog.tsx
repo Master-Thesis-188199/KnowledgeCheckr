@@ -11,6 +11,7 @@ import Select from '@/src/components/Shared/form/Select'
 import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { CategorySchema } from '@/src/schemas/CategorySchema'
@@ -33,6 +34,7 @@ type ContentDialogProps = CreateContentDialogProps | EditContentDialogProps
 export default function CourseContentDialog({ children }: CreateContentDialogProps): React.ReactNode
 export default function CourseContentDialog({ children }: EditContentDialogProps): React.ReactNode
 export default function CourseContentDialog({ children, ...rest }: ContentDialogProps) {
+  const t = useScopedI18n('Courses.Create.ContentSection.CourseContentDialog')
   const isFirstRender = useIsFirstRender()
   const [dialogOpen, setDialogOpen] = useState(false)
   const { storeCourseContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
@@ -96,7 +98,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
 
       <DialogContent className='sm:max-w-[70dvw]'>
         <DialogHeader className='border-b border-b-neutral-400/80 pb-3 text-left dark:border-b-neutral-500/80'>
-          <DialogTitle>{rest.mode === 'create' ? 'Create new' : 'Edit'} Content</DialogTitle>
+          <DialogTitle>{rest.mode === 'create' ? t('title_create') : t('title_edit')}</DialogTitle>
         </DialogHeader>
         <RHFProvider {...RHF}>
           <form className='flex flex-col gap-6 p-2' onSubmit={form.handleSubmit(submitHandler)}>
@@ -107,7 +109,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
                   'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
                   '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
                 )}>
-                <Field {...baseFieldProps} name='title' placeholder='Basic History of Austria' />
+                <Field {...baseFieldProps} name='title' label={t('Fields.title_label')} placeholder={t('Fields.title_placeholder')} />
               </div>
               <div
                 className={cn(
@@ -115,12 +117,12 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
                   'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
                   '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
                 )}>
-                <Field {...baseFieldProps} name='description' placeholder='Includes fundamental information about Austria.' />
+                <Field {...baseFieldProps} name='description' label={t('Fields.description_label')} placeholder={t('Fields.description_placeholder')} />
               </div>
             </div>
 
             <div className='flex flex-1 flex-col gap-3 *:w-full'>
-              <Label className='px-1'>Category</Label>
+              <Label className='px-1'>{t('Fields.categoryId_label')}</Label>
               <Select
                 selectTriggerClassname='-ml-0.5'
                 popoverContentClassname='auto-popover-content-width'
@@ -132,7 +134,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
                   const cat = createCategory(name)
                   return { label: cat.name, value: cat.id }
                 }}
-                triggerPlaceholder='Select a category'
+                triggerPlaceholder={t('Fields.categoryId_trigger_placerholder')}
                 defaultValue={
                   rest.mode === 'edit'
                     ? {
@@ -145,7 +147,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
             </div>
             <SimpleEditor defaultContent={rest.mode === 'edit' ? rest.courseContent.content : undefined} onUpdateAction={(content) => setValue('content', content)} />
             <Button type='submit' disabled={!isValid}>
-              Submit
+              {rest.mode === 'create' ? t('submit_create_button_label') : t('submit_update_button_label')}
             </Button>
           </form>
         </RHFProvider>

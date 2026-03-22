@@ -75,6 +75,33 @@
           "command_empty_min_input": "You must provide at least 3 characters to find matches"
         }
       },
+      "ContentSection": {
+        "title": "Course Contents",
+        "description": "Create new contents for this course. These contents can be used by users to increase their knowledge and to understand why questions were incorrectly answered.",
+        "Actions": {
+          "create_new_button_label": "Create new Content",
+          "edit_content_button_label": "Edit",
+          "delete_content_confirm_label": "Delete Content",
+          "delete_content_dialog_body": "This action cannot be undone. This will permanently delete this course conent from this course and remove its data from our servers.",
+          "delete_course_button_label": "Remove",
+          "edit_content_button_aria_label": "edit course content",
+          "delete_content_button_aria_label": "delete course content"
+        },
+        "CourseContentDialog": {
+          "title_create": "Create new Content",
+          "title_edit": "Edit Content",
+          "Fields": {
+            "title_placeholder": "Basic History of Austria",
+            "description_placeholder": "Includes fundamental information about Austria.",
+            "title_label": "Content Title",
+            "description_label": "Short Description",
+            "categoryId_label": "Category",
+            "categoryId_trigger_placerholder": "Select a category"
+          },
+          "submit_create_button_label": "Create Content",
+          "submit_update_button_label": "Update Content"
+        }
+      },
       "QuestionSection": {
         "title": "Questions",
         "create_button": "Create Question",
@@ -352,7 +379,6 @@
       "retrieval_error_message": "Searching for course failed unexpectedly."
     }
   },
-
   "Components": {
     "CourseCard": {
       "last_modified_label": "last modified",

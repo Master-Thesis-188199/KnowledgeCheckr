@@ -7,24 +7,24 @@ import { Button } from '@/src/components/shadcn/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function ContentSection() {
   const { contents, removeCourseContent } = useCourseStore((store) => store)
+  const t = useScopedI18n('Courses.Create.ContentSection')
 
   return (
     <div className='flex flex-1 flex-col gap-10'>
       <div className='flex flex-col gap-1'>
-        <h2 className='h-fit text-xl font-semibold'>Course Contents</h2>
-        <span className='text-muted-foreground'>
-          Create your new contents for this course. These contents can be used by users to increase their knowledge and to understand why questions were incorrectly answered.
-        </span>
+        <h2 className='h-fit text-xl font-semibold'>{t('title')}</h2>
+        <span className='text-muted-foreground'>{t('description')}</span>
       </div>
 
       <div className='grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12'>
         <CourseContentDialog mode='create'>
           <Card className='flex h-full items-center justify-center'>
             <CardContent className='flex gap-4 text-primary'>
-              <PlusCircleIcon /> Create new Content
+              <PlusCircleIcon /> {t('Actions.create_new_button_label')}
             </CardContent>
           </Card>
         </CourseContentDialog>
@@ -35,19 +35,19 @@ export default function ContentSection() {
               <CardDescription>{content.description}</CardDescription>
               <CardAction>
                 <CourseContentDialog mode='edit' courseContent={content}>
-                  <Button variant='link' asChild aria-label='edit course content' className='enabled:text-orange-400 dark:enabled:text-orange-300/80'>
+                  <Button variant='link' asChild aria-label={t('Actions.edit_content_button_aria_label')} className='enabled:text-orange-400 dark:enabled:text-orange-300/80'>
                     <PenIcon />
-                    Edit
+                    {t('Actions.edit_content_button_label')}
                   </Button>
                 </CourseContentDialog>
 
                 <ConfirmationDialog
                   confirmAction={() => removeCourseContent(content.categoryId)}
-                  confirmLabel='Delete Content'
-                  body='This action cannot be undone. This will permanently delete this course conent from this course and remove its data from our servers.'>
-                  <Button variant='link' asChild aria-label='edit course content' className='enabled:text-destructive/80'>
+                  confirmLabel={t('Actions.delete_content_confirm_label')}
+                  body={t('Actions.delete_content_dialog_body')}>
+                  <Button variant='link' asChild aria-label={t('Actions.delete_content_button_aria_label')} className='enabled:text-destructive/80'>
                     <TrashIcon />
-                    Remove
+                    {t('Actions.delete_course_button_label')}
                   </Button>
                 </ConfirmationDialog>
               </CardAction>
