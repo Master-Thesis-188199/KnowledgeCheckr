@@ -29,7 +29,7 @@ export default function ContentSection() {
           </Card>
         </CourseContentDialog>
         {contents.map((content) => (
-          <Card key={content.categoryId} className='max-h-72'>
+          <Card key={content.categoryId} className=''>
             <CardHeader>
               <CardTitle>{content.title}</CardTitle>
               <CardDescription>{content.description}</CardDescription>
