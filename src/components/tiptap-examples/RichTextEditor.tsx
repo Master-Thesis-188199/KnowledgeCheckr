@@ -52,8 +52,8 @@ function MainToolbarContent({ onHighlighterClick, isMobile, onFontClick }: { onF
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
-        <ListDropdownMenu modal={false} types={['bulletList', 'orderedList', 'taskList']} />
+        <HeadingDropdownMenu modal levels={[1, 2, 3, 4]} />
+        <ListDropdownMenu modal types={['bulletList', 'orderedList', 'taskList']} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
