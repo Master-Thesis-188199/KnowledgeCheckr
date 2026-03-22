@@ -25,9 +25,9 @@ export default function FormFieldError<FormData extends FieldValues>({
   if (!error || !error.message) return null
 
   return (
-    <div data-slot='icon-form-field-error-wrapper' className={cn('flex items-center gap-2 text-red-400 dark:text-red-400/80', className)}>
+    <div data-slot='icon-form-field-error-wrapper' className={cn('flex items-center gap-2 text-destructive', className)}>
       {showIcon && <TriangleAlertIcon className='size-4.5' />}
-      <p data-field-error={field} aria-label={`field-error-${String(field)}`} className={twMerge('text-[15px] text-red-400 dark:text-red-400/80')}>
+      <p data-field-error={field} aria-label={`field-error-${String(field)}`} className={twMerge('text-[15px] text-destructive')}>
         {error.message}
       </p>
     </div>
