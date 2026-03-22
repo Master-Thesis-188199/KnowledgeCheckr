@@ -2,7 +2,7 @@ import { JSONContent } from '@tiptap/core'
 import z from 'zod'
 import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
 
-const tiptapContent: z.ZodType<JSONContent> = z.object().loose()
+const tiptapContent: z.ZodType<JSONContent> = z.any()
 
 export const CourseContentSchema = z.object({
   title: z.string().nonempty().describe('Used to quickly identify a given content of a category'),
