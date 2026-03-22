@@ -7,7 +7,7 @@ const tiptapContent: z.ZodType<JSONContent> = z.any()
 export const CourseContentSchema = z.object({
   title: z.string().nonempty("A content's title can not be empty.").describe('Used to quickly identify a given content of a category'),
   description: z.string().optional().describe('Describes the content associated to a given category.'),
-  categoryId: z.uuidv4().nonempty(),
+  categoryId: z.uuidv4('Selecting a category is required'),
   content: tiptapContent.optional(),
 })
 
