@@ -136,11 +136,13 @@ export function RichTextEditor({
   defaultContent,
   disabled,
   readOnly,
+  size = 'md',
 }: {
   onUpdateAction?: (content: object) => void
   defaultContent?: Content
   disabled?: boolean
   readOnly?: boolean
+  size?: 'sm' | 'md' | 'lg'
 }) {
   const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
@@ -158,6 +160,7 @@ export function RichTextEditor({
         'autocapitalize': 'off',
         'aria-label': t('Content.input_aria_label'),
         'class': 'simple-editor',
+        ...(size ? { 'data-size': size } : {}),
       },
     },
     extensions: RichTextEditorExtensions,
