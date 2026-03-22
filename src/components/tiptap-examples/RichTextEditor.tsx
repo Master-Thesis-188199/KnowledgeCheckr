@@ -118,7 +118,17 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: Subm
 
 type SubmenuKey = 'main' | 'highlighter' | 'font'
 
-export function SimpleEditor({ onUpdateAction, defaultContent, disabled, readOnly }: { onUpdateAction?: (content: object) => void; defaultContent?: Content; disabled?: boolean; readOnly?: boolean }) {
+export function RichTextEditor({
+  onUpdateAction,
+  defaultContent,
+  disabled,
+  readOnly,
+}: {
+  onUpdateAction?: (content: object) => void
+  defaultContent?: Content
+  disabled?: boolean
+  readOnly?: boolean
+}) {
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 

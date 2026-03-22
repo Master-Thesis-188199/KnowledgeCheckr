@@ -8,7 +8,7 @@ import { Label } from '@/src/components/shadcn/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import Field from '@/src/components/Shared/form/Field'
 import Select from '@/src/components/Shared/form/Select'
-import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
+import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { useScopedI18n } from '@/src/i18n/client-localization'
@@ -145,7 +145,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
                 }
               />
             </div>
-            <SimpleEditor defaultContent={rest.mode === 'edit' ? rest.courseContent.content : undefined} onUpdateAction={(content) => setValue('content', content)} />
+            <RichTextEditor defaultContent={rest.mode === 'edit' ? rest.courseContent.content : undefined} onUpdateAction={(content) => setValue('content', content)} />
             <Button type='submit' disabled={!isValid}>
               {rest.mode === 'create' ? t('submit_create_button_label') : t('submit_update_button_label')}
             </Button>

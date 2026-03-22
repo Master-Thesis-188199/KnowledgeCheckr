@@ -6,7 +6,7 @@ import { useCourseStore } from '@/src/components/courses/create/CreateCourseProv
 import { Button } from '@/src/components/shadcn/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
-import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
+import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export default function ContentSection() {
@@ -53,7 +53,7 @@ export default function ContentSection() {
               </CardAction>
             </CardHeader>
             <CardContent className='pointer-events-none flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5 **:[div]:[[role=presentation]]:text-xs'>
-              <SimpleEditor defaultContent={content.content} readOnly />
+              <RichTextEditor defaultContent={content.content} readOnly />
             </CardContent>
           </Card>
         ))}
