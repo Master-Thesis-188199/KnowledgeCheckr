@@ -479,6 +479,45 @@
       "question_status_incorrect": "falsch",
       "question_status_partly-correct": "fast richtig",
       "question_status_unanswered": "unbeantwortet"
+    },
+    "RichTextEditor": {
+      "Content": {
+        "input_aria_label": ""
+      },
+      "Toolbar": {
+        "undo_tooltip_label": "Rückgängig",
+        "redo_tooltip_label": "Wiederholen",
+        "Headings": {
+          "trigger_tooltip_label": "Überschrift",
+          "trigger_aria_label": "Text als Überschrift formatieren",
+          "heading_level_label": "Überschrift {level}"
+        },
+        "ListOptions": {
+          "trigger_label": "Liste",
+          "trigger_aria_label": "Listenoptionen",
+          "Options": {
+            "bulletList": "Aufzählungsliste",
+            "orderedList": "Geordnete Liste",
+            "taskList": "Aufgabenliste"
+          }
+        },
+        "FontOptions": {
+          "trigger_tooltip_label": "Schriftartoptionen",
+          "bold_label": "Fett",
+          "italic_label": "Kursiv",
+          "strike_label": "Durchstreichen",
+          "code_label": "Code",
+          "underline_label": "Unterstreichen"
+        },
+        "Alignment": {
+          "trigger_aria_label": "Textausrichtung formatieren",
+          "trigger_tooltip_label": "Ausrichtungs Optionen",
+          "left_label": "Links ausrichten",
+          "center_label": "Mittig ausrichten",
+          "right_label": "Rechts ausrichten",
+          "justify_label": "Ausrichten"
+        }
+      }
     }
   },
   "AccountPage": {

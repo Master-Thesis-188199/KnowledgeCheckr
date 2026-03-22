@@ -35,9 +35,11 @@ import { HorizontalRule } from '@/src/components/tiptap-node/horizontal-rule-nod
 import { TextAlignmentMenu } from '@/src/components/tiptap-ui/text-alignment-menu/TextAlignmentMenu'
 import { Button } from '@/src/components/tiptap-ui-primitive/button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
-const MainToolbarContent = ({ onHighlighterClick, isMobile, onFontClick }: { onFontClick: () => void; onHighlighterClick: () => void; isMobile: boolean }) => {
+function MainToolbarContent({ onHighlighterClick, isMobile, onFontClick }: { onFontClick: () => void; onHighlighterClick: () => void; isMobile: boolean }) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   return (
     <>
       <Spacer />
@@ -56,7 +58,7 @@ const MainToolbarContent = ({ onHighlighterClick, isMobile, onFontClick }: { onF
 
       <ToolbarSeparator />
 
-      <Button variant={'ghost'} onClick={onFontClick} className='@[30rem]/editor:hidden!'>
+      <Button tooltip={t('FontOptions.trigger_tooltip_label')} variant={'ghost'} onClick={onFontClick} className='@[30rem]/editor:hidden!'>
         A
       </Button>
 
@@ -129,6 +131,7 @@ export function RichTextEditor({
   disabled?: boolean
   readOnly?: boolean
 }) {
+  const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 
@@ -142,7 +145,7 @@ export function RichTextEditor({
         'autocomplete': 'off',
         'autocorrect': 'off',
         'autocapitalize': 'off',
-        'aria-label': 'Main content area, start typing to enter text.',
+        'aria-label': t('Content.input_aria_label'),
         'class': 'simple-editor',
       },
     },

@@ -2,20 +2,17 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
-
 // --- Icons ---
 import { ListIcon } from '@/components/tiptap-icons/list-icon'
 import { ListOrderedIcon } from '@/components/tiptap-icons/list-ordered-icon'
 import { ListTodoIcon } from '@/components/tiptap-icons/list-todo-icon'
-
-// --- Lib ---
-import { isNodeInSchema } from '@/lib/tiptap-utils'
-
 // --- Tiptap UI ---
 import { canToggleList, isListActive, listIcons, type ListType } from '@/components/tiptap-ui/list-button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isNodeInSchema } from '@/lib/tiptap-utils'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 /**
  * Configuration for the list dropdown menu functionality
@@ -141,6 +138,7 @@ export function getActiveListType(editor: Editor | null, availableTypes: ListTyp
  * ```
  */
 export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   const { editor: providedEditor, types = ['bulletList', 'orderedList', 'taskList'], hideWhenUnavailable = false } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
@@ -186,7 +184,7 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
     canToggle: canToggleAny,
     types,
     filteredLists,
-    label: 'List',
+    label: t('ListOptions.trigger_label'),
     Icon: activeList ? listIcons[activeList.type] : ListIcon,
   }
 }

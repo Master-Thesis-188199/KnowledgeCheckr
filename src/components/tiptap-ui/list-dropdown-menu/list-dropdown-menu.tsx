@@ -2,22 +2,18 @@
 
 import { useCallback, useState } from 'react'
 import { type Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
-
 // --- Icons ---
 import { ChevronDownIcon } from '@/components/tiptap-icons/chevron-down-icon'
-
 // --- Tiptap UI ---
 import { ListButton, type ListType } from '@/components/tiptap-ui/list-button'
-
 import { useListDropdownMenu } from '@/components/tiptap-ui/list-dropdown-menu/use-list-dropdown-menu'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/components/tiptap-ui-primitive/button'
 import { Button } from '@/components/tiptap-ui-primitive/button'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup } from '@/components/tiptap-ui-primitive/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/tiptap-ui-primitive/dropdown-menu'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export interface ListDropdownMenuProps extends Omit<ButtonProps, 'type'> {
   /**
@@ -51,6 +47,7 @@ export function ListDropdownMenu({
   modal = true,
   ...props
 }: ListDropdownMenuProps) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   const { editor } = useTiptapEditor(providedEditor)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -83,8 +80,8 @@ export function ListDropdownMenu({
           tabIndex={-1}
           disabled={!canToggle}
           data-disabled={!canToggle}
-          aria-label='List options'
-          tooltip='List'
+          aria-label={t('ListOptions.trigger_aria_label')}
+          tooltip={t('ListOptions.trigger_label')}
           {...props}>
           <Icon className='tiptap-button-icon' />
           <ChevronDownIcon className='tiptap-button-dropdown-small' />
@@ -95,7 +92,7 @@ export function ListDropdownMenu({
         <DropdownMenuGroup>
           {filteredLists.map((option) => (
             <DropdownMenuItem key={option.type} asChild>
-              <ListButton editor={editor} type={option.type} text={option.label} showTooltip={false} />
+              <ListButton editor={editor} type={option.type} text={t(`ListOptions.Options.${option.type}`)} showTooltip={false} />
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>

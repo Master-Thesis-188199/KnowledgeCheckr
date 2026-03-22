@@ -489,6 +489,45 @@ export default {
       question_status_incorrect: 'incorrect',
       'question_status_partly-correct': 'partly-correct',
       question_status_unanswered: 'unanswered'
+    },
+    RichTextEditor: {
+      Content: {
+        input_aria_label: 'Main content area, start typing to enter text.'
+      },
+      Toolbar: {
+        undo_tooltip_label: 'Undo',
+        redo_tooltip_label: 'Redo',
+        Headings: {
+          trigger_tooltip_label: 'Heading',
+          trigger_aria_label: 'Format text as heading',
+          heading_level_label: 'Heading {level}'
+        },
+        ListOptions: {
+          trigger_aria_label: 'List options',
+          trigger_label: 'List',
+          Options: {
+            bulletList: 'Bullet List',
+            orderedList: 'Ordered List',
+            taskList: 'Task List'
+          }
+        },
+        FontOptions: {
+          trigger_tooltip_label: 'Font Options',
+          bold_label: 'Bold',
+          italic_label: 'Italic',
+          strike_label: 'Strike',
+          code_label: 'Code',
+          underline_label: 'Underline'
+        },
+        Alignment: {
+          trigger_aria_label: 'Format text alignment',
+          trigger_tooltip_label: 'Alignment options',
+          left_label: 'Align left',
+          center_label: 'Align center',
+          right_label: 'Align right',
+          justify_label: 'Align justify'
+        }
+      }
     }
   }
 } as const

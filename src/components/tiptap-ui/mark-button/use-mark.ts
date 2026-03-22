@@ -12,6 +12,7 @@ import { UnderlineIcon } from '@/components/tiptap-icons/underline-icon'
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
 // --- Lib ---
 import { isMarkInSchema, isNodeTypeSelected } from '@/lib/tiptap-utils'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export type Mark = 'bold' | 'italic' | 'strike' | 'code' | 'underline'
 
@@ -150,6 +151,7 @@ export function getFormattedMarkName(type: Mark): string {
  * ```
  */
 export function useMark(config: UseMarkConfig) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   const { editor: providedEditor, type, hideWhenUnavailable = false, onToggled } = config
 
   const { editor } = useTiptapEditor(providedEditor)
@@ -188,7 +190,7 @@ export function useMark(config: UseMarkConfig) {
     isActive,
     handleMark,
     canToggle,
-    label: getFormattedMarkName(type),
+    label: t(`FontOptions.${type}_label`),
     shortcutKeys: MARK_SHORTCUT_KEYS[type],
     Icon: markIcons[type],
   }
