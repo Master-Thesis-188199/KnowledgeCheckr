@@ -27,6 +27,44 @@
   --tt-spacing-list-nested-y: 0;
   --tt-spacing-list-indent: 1.5em;
 
+  &[data-size='lg'] {
+    --tt-font-size-body: 0.95rem;
+    --tt-line-height-body: 1.55;
+    --tt-spacing-paragraph: 18px;
+
+    --tt-font-size-h1: 1.4em;
+    --tt-font-size-h2: 1.2em;
+    --tt-font-size-h3: 1.08em;
+    --tt-font-size-h4: 0.98em;
+
+    --tt-spacing-h1: 2.5em;
+    --tt-spacing-h2: 2.1em;
+    --tt-spacing-h3: 1.75em;
+    --tt-spacing-h4: 1.5em;
+
+    --tt-spacing-list-y: 1.35em;
+    --tt-spacing-list-indent: 1.4em;
+  }
+
+  &[data-size='md'] {
+    --tt-font-size-body: 0.9rem;
+    --tt-line-height-body: 1.5;
+    --tt-spacing-paragraph: 16px;
+
+    --tt-font-size-h1: 1.3em;
+    --tt-font-size-h2: 1.15em;
+    --tt-font-size-h3: 1.02em;
+    --tt-font-size-h4: 0.95em;
+
+    --tt-spacing-h1: 2em;
+    --tt-spacing-h2: 1.7em;
+    --tt-spacing-h3: 1.35em;
+    --tt-spacing-h4: 1.1em;
+
+    --tt-spacing-list-y: 1.15em;
+    --tt-spacing-list-indent: 1.3em;
+  }
+
   &[data-size='sm'] {
     --tt-font-size-body: 0.875rem;
     --tt-line-height-body: 1.5;
