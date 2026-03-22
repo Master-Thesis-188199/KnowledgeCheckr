@@ -56,8 +56,8 @@ export default function ContentSection() {
                   </ConfirmationDialog>
                 </CardAction>
               </CardHeader>
-              <CardContent className='flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:cursor-default **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5 **:[div]:[[role=presentation]]:*:[&_p]:text-sm!'>
-                <RichTextEditor key={htmlContent} defaultContent={content.content} readOnly />
+              <CardContent className='flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:cursor-default **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5'>
+                <RichTextEditor key={htmlContent} defaultContent={content.content} readOnly size='sm' />
               </CardContent>
             </Card>
           )
