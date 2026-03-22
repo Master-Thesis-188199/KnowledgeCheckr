@@ -150,6 +150,7 @@ export default {
       },
       MultiStages: {
         'basic-information': 'Basic Information',
+        contents: 'Contents',
         questions: 'Questions',
         settings: 'Settings',
         conclusion: 'Conclusion'

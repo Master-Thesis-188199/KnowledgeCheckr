@@ -140,6 +140,7 @@
       },
       "MultiStages": {
         "basic-information": "Allgemein",
+        "contents": "Kursinhalte",
         "questions": "Fragen",
         "settings": "Einstellungen",
         "conclusion": "Zusammenfassung"

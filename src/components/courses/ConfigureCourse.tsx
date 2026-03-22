@@ -43,7 +43,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
         initialStoreProps={{
           stages: [
             { stage: 1, title: t('basic-information') },
-            { stage: 2, title: 'Contents' },
+            { stage: 2, title: t('contents') },
             { stage: 3, title: t('questions') },
             { stage: 4, title: t('settings') },
             { stage: 5, title: t('conclusion') },
