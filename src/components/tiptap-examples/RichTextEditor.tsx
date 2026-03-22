@@ -11,7 +11,7 @@ import { TaskItem, TaskList } from '@tiptap/extension-list'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Typography } from '@tiptap/extension-typography'
 import { Selection } from '@tiptap/extensions'
-import { Content, EditorContent, EditorContext, useEditor } from '@tiptap/react'
+import { Content, EditorContent, EditorContext, Extension, Extensions, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
 // --- Components ---
@@ -120,6 +120,17 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: Subm
 
 type SubmenuKey = 'main' | 'highlighter' | 'font'
 
+export const RichTextEditorExtensions: Extensions = [
+  StarterKit.configure({ horizontalRule: false }) as Extension,
+  HorizontalRule,
+  TextAlign.configure({ types: ['heading', 'paragraph'] }),
+  TaskList,
+  TaskItem.configure({ nested: true }),
+  Highlight.configure({ multicolor: true }),
+  Typography,
+  Selection,
+]
+
 export function RichTextEditor({
   onUpdateAction,
   defaultContent,
@@ -149,17 +160,7 @@ export function RichTextEditor({
         'class': 'simple-editor',
       },
     },
-    extensions: [
-      //@ts-expect-error Internal package type-assertion issue
-      StarterKit.configure({ horizontalRule: false }),
-      HorizontalRule,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Typography,
-      Selection,
-    ],
+    extensions: RichTextEditorExtensions,
     onUpdate: ({ editor }) => onUpdateAction?.(editor.getJSON()),
     content: defaultContent,
   })
