@@ -39,7 +39,13 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
   const isFirstRender = useIsFirstRender()
   const [dialogOpen, setDialogOpen] = useState(false)
   const { storeCourseContent, questionCategories, contents, addCategory } = useCourseStore((store) => store)
-  const categories = useMemo(() => questionCategories.filter((category) => !contents.some((existingContents) => existingContents.categoryId === category.id)), [questionCategories, contents])
+  // allows users to re-select the category of the content they are currently editing, even though a content is also associated to this category.
+  const currentCategoryId = rest.mode === 'edit' ? rest.courseContent.categoryId : undefined
+
+  const categories = useMemo(
+    () => questionCategories.filter((category) => category.id === currentCategoryId || !contents.some((existingContents) => existingContents.categoryId === category.id)),
+    [questionCategories, contents, currentCategoryId],
+  )
 
   const RHF = useRHF(CourseContentSchema, {
     mode: 'all',
