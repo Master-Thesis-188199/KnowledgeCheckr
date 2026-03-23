@@ -228,7 +228,7 @@ export default function Select<Options extends readonly Option<Any>[]>({
             filter={(_, search) => {
               // by default the filter-mechanisms compares just the values and not the labels.
               // this way the filter yields options that match the query with their value **and/or** label
-              if (state.newOptions.filter((o) => o.label.includes(search) || o.value.includes(search))) return 1
+              if (state.newOptions.filter((o) => o.label.includes(search) || o.value.includes(search)).length > 0) return 1
               return 0
             }}>
             <CommandInput
