@@ -3,7 +3,7 @@ import englishTranslations from './en'
 
 type Translations = typeof englishTranslations
 
-type FlattenedTranslations = Translations extends Record<string, string> ? Translations : FlattenLocale<Translations>
+export type FlattenedTranslations = Translations extends Record<string, string> ? Translations : FlattenLocale<Translations>
 
 type PluralSuffix = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other'
 type PluralKey<Key extends string> = `${Key}#${PluralSuffix}`
@@ -19,7 +19,7 @@ export type ScopedTranslationKeys<Scope extends TranslationScopes> = LocaleKeys<
 
 export type ScopedTranslations<Scope extends TranslationScopes> = ValueAtPath<Translations, Scope>
 
-type TranslationValue<Key extends TranslationKeys> = (PluralKey<Key> & keyof FlattenedTranslations extends never ? false : true) extends true
+export type TranslationValue<Key extends TranslationKeys> = (PluralKey<Key> & keyof FlattenedTranslations extends never ? false : true) extends true
   ? FlattenedTranslations[PluralKey<Key> & keyof FlattenedTranslations]
   : FlattenedTranslations[Key]
 
