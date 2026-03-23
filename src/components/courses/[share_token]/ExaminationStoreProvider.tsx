@@ -5,6 +5,8 @@ import { format } from 'date-fns'
 import { useStore } from 'zustand'
 import { createExaminationStore, ExaminationState, ExaminationStore } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import { useStoreCachingOptions, useZustandStore } from '@/src/hooks/Shared/zustand/useZustandStore'
+import { Course } from '@/src/schemas/CourseSchema'
+import { Question } from '@/src/schemas/QuestionSchema'
 
 export type ExaminationStoreApi = ReturnType<typeof createExaminationStore>
 
@@ -12,11 +14,11 @@ export const ExaminationStoreContext = createContext<ExaminationStoreApi | undef
 
 export interface ExaminationStoreProviderProps {
   children: ReactNode
-  initialStoreProps?: ExaminationState
+  initialStoreProps?: Partial<ExaminationState>
   options?: Partial<useStoreCachingOptions<ExaminationStore>>
 }
 
-export function ExaminationStoreProvider({ children, initialStoreProps, options }: ExaminationStoreProviderProps) {
+export function ExaminationStoreProvider({ children, initialStoreProps = {}, options }: ExaminationStoreProviderProps) {
   //todo consider switching to localStorage to ensure that users do not loose their progress e.g. when their browser / system crashes
   const props = useZustandStore({
     caching: true,
@@ -24,7 +26,7 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
     initialStoreProps,
     options: {
       expiresAfter: 10 * 60 * 1000,
-      discardCache: (cache) => cache?.course.id !== initialStoreProps?.course.id,
+      discardCache: (cache) => cache?.course.id !== initialStoreProps?.course?.id,
       cacheKey: 'examination-store',
       modifyCache: (cache) => {
         const formatUpdateDate = (date?: Date | string) => {
@@ -38,18 +40,17 @@ export function ExaminationStoreProvider({ children, initialStoreProps, options 
         }
 
         // mutate cache when the underlying course (initialStoreProps) change, but preserve order, results and startedAt values
-        if (initialStoreProps !== undefined && formatUpdateDate(cache?.course.updatedAt) !== formatUpdateDate(initialStoreProps?.course.updatedAt)) {
+        if (initialStoreProps !== undefined && formatUpdateDate(cache?.course.updatedAt) !== formatUpdateDate(initialStoreProps?.course?.updatedAt)) {
           console.warn('[Examination]: Course has been updated, mutating cache!')
 
           // preserve the cached order of questions
-          const preservedQuestionsOrder = initialStoreProps.course.questions.toSorted(
-            (a, b) => cache.course.questions.findIndex((q) => q.id === a.id) - cache.course.questions.findIndex((q) => q.id === b.id),
-          )
+          const preservedQuestionsOrder: Question[] =
+            initialStoreProps?.course?.questions.toSorted((a, b) => cache.course.questions.findIndex((q) => q.id === a.id) - cache.course.questions.findIndex((q) => q.id === b.id)) ?? []
 
           const update: typeof initialStoreProps = {
             ...initialStoreProps,
             course: {
-              ...initialStoreProps.course,
+              ...(initialStoreProps?.course ?? ({} as Course)),
               questions: preservedQuestionsOrder,
             },
           }

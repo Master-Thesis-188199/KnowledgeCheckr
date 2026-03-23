@@ -21,20 +21,21 @@ export type ExaminationActions = {
 
 export type ExaminationStore = ExaminationState & ExaminationActions
 
-const defaultInitState: ExaminationState = {
-  ...instantiateExaminationSchema(),
-  course: instantiateCourse(),
-  startedAt: new Date(Date.now()),
-  currentQuestionIndex: 0,
-  isLastQuestion: false,
-}
+export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore, Partial<ExaminationState>>> = ({ initialState, options, translator }) => {
+  const defaultInitState: ExaminationState = {
+    ...instantiateExaminationSchema(translator),
+    course: instantiateCourse(translator),
+    startedAt: new Date(Date.now()),
+    currentQuestionIndex: 0,
+    isLastQuestion: false,
+  }
 
-export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>> = ({ initialState = defaultInitState, options }) =>
-  createZustandStore({
+  return createZustandStore({
     caching: true,
     options,
     initializer: (set) => {
       return {
+        ...defaultInitState,
         ...initialState,
 
         // isLastQuestion: set((prev) => ({ ...prev, isLastQuestion: prev.currentQuestionIndex + 1 === prev.course.questions.length })),
@@ -65,5 +66,4 @@ export const createExaminationStore: WithCaching<ZustandStore<ExaminationStore>>
       }
     },
   })
-
-export const defaultExaminationStoreProps = defaultInitState
+}

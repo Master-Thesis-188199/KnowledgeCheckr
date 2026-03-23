@@ -23,29 +23,29 @@ export type CourseActions = {
 
 export type CourseStore = CourseState & CourseActions
 
-const defaultInitState: CourseState = {
-  ...instantiateCourse(),
-  id: uuid(),
-  name: '',
-  questions: [],
-  description: '',
-  questionCategories: [
-    {
-      ...instantiateCategory(),
-      name: 'general',
-    },
-  ],
+export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<CourseState>>> = ({ initialState, options, translator }) => {
+  const defaultInitState: CourseState = {
+    ...instantiateCourse(translator),
+    id: uuid(),
+    name: '',
+    questions: [],
+    description: '',
+    questionCategories: [
+      {
+        ...instantiateCategory(),
+        name: 'general',
+      },
+    ],
 
-  closeDate: null,
-  difficulty: 4,
-  openDate: new Date(Date.now()),
-  share_key: generateToken(8),
+    closeDate: null,
+    difficulty: 4,
+    openDate: new Date(Date.now()),
+    share_key: generateToken(8),
 
-  unsavedChanges: false,
-}
+    unsavedChanges: false,
+  }
 
-export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<CourseState>>> = ({ initialState, options }) =>
-  createZustandStore({
+  return createZustandStore({
     caching: true,
     options,
     initializer: (set) => {
@@ -105,3 +105,4 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
       }
     },
   })
+}

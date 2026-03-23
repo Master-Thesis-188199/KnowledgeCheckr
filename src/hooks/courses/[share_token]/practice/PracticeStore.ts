@@ -28,14 +28,15 @@ export type PracticeActions = {
 
 export type PracticeStore = PracticeState & PracticeActions
 
-const defaultInitState: PracticeState = {
-  ...instantiatePracticeData(),
-  startedAt: new Date(Date.now()),
-  practiceQuestions: [],
-  currentQuestionIndex: 0,
-}
-export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState = defaultInitState, options }) =>
-  createZustandStore({
+export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partial<PracticeState>>> = ({ initialState, options, translator }) => {
+  const defaultInitState: PracticeState = {
+    ...instantiatePracticeData(translator),
+    startedAt: new Date(Date.now()),
+    practiceQuestions: [],
+    currentQuestionIndex: 0,
+  }
+
+  return createZustandStore({
     caching: true,
     options,
     initializer: (set, get) => {
@@ -81,5 +82,4 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
       }
     },
   })
-
-export const defaultPracticeStoreProps = defaultInitState
+}

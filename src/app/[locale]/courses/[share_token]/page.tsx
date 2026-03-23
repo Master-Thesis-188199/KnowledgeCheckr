@@ -5,7 +5,6 @@ import { ExaminationStoreProvider } from '@/src/components/courses/[share_token]
 import { ExamQuestionNavigationMenu } from '@/src/components/courses/[share_token]/ExamQuestionNavigationMenu'
 import { ExamQuestionWrapper } from '@/src/components/courses/[share_token]/ExamQuestionWrapper'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { defaultExaminationStoreProps } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import isExaminationAllowed from '@/src/lib/courses/[share_token]/isExaminationAllowed'
 import prepareExaminationCourse from '@/src/lib/courses/[share_token]/prepareExaminationCourse'
@@ -31,7 +30,7 @@ export default async function CoursePage({ params }: { params: Promise<{ share_t
   }
 
   return (
-    <ExaminationStoreProvider initialStoreProps={{ ...defaultExaminationStoreProps, course: preparedCourse, startedAt: new Date() }}>
+    <ExaminationStoreProvider initialStoreProps={{ course: preparedCourse, startedAt: new Date() }}>
       <PageHeading title={course.name ?? '<course-name>'} />
 
       <div className='grid gap-12 @3xl:grid-cols-[1fr_auto] @3xl:gap-[7vw]'>
