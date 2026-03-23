@@ -8,6 +8,7 @@ import {
   Question,
   SingleChoice,
 } from '@/src/schemas/QuestionSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 /**
  * This helper function creates / adds a new question by opening the `CreateQuestionDialog` entering question specific values and then submitting the form by clicking "Add Question".
@@ -101,7 +102,7 @@ function verifyOpenCloseEditMenu(
 
 // --------------------------------- TESTS -------------------------------
 const scQuestion: SingleChoice = {
-  ...instantiateSingleChoice(),
+  ...instantiateSingleChoice(TestTranslator),
   question: 'This is a single-choice question',
   answers: [
     {
@@ -128,7 +129,7 @@ const scQuestion: SingleChoice = {
 }
 
 const mcQuestion: MultipleChoice = {
-  ...instantiateMultipleChoice(),
+  ...instantiateMultipleChoice(TestTranslator),
   question: 'This is a multiple-choice question',
   answers: [
     {
@@ -155,7 +156,7 @@ const mcQuestion: MultipleChoice = {
 }
 
 const ddQuestion: DragDropQuestion = {
-  ...instantiateDragDropQuestion(),
+  ...instantiateDragDropQuestion(TestTranslator),
   question: 'This is an open-question question',
 
   answers: [
@@ -182,7 +183,7 @@ const ddQuestion: DragDropQuestion = {
   ],
 }
 
-const dummyQuestions = [mcQuestion, scQuestion, { ...instantiateOpenQuestion(), question: 'This is a open-question question' }, ddQuestion]
+const dummyQuestions = [mcQuestion, scQuestion, { ...instantiateOpenQuestion(TestTranslator), question: 'This is a open-question question' }, ddQuestion]
 
 describe('Verify behavior of CreateQuestionDialog: ', { viewportHeight: 980 }, () => {
   beforeEach(() => {

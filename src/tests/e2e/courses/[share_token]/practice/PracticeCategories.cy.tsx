@@ -3,6 +3,7 @@ import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 describe('Verify selection of practice questions by category', () => {
   beforeEach(() => {
@@ -12,7 +13,7 @@ describe('Verify selection of practice questions by category', () => {
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can select '${categorySelection}' category in /practice/category page`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCourse = instantiateCourse()
+      const dummyCourse = instantiateCourse(TestTranslator)
       const dummyCategories = ['general', 'geography', 'mathematics']
 
       dummyCourse.share_key = 'select-category' + generateToken(8)
@@ -21,7 +22,7 @@ describe('Verify selection of practice questions by category', () => {
       const questionCategories: Course['questionCategories'] = []
 
       for (const category of dummyCategories) {
-        questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+        questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
         questionCategories.push({
           ...instantiateCategory(),
           name: category,
@@ -55,7 +56,7 @@ describe('Verify selection of practice questions by category', () => {
 
   it(`Verify users are not asked to select category when course has just 1 category`, () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCourse = instantiateCourse()
+    const dummyCourse = instantiateCourse(TestTranslator)
     const dummyCategories = ['general']
 
     dummyCourse.share_key = 'select-category' + generateToken(8)
@@ -64,7 +65,7 @@ describe('Verify selection of practice questions by category', () => {
     const questionCategories: Course['questionCategories'] = []
 
     for (const category of dummyCategories) {
-      questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+      questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
       questionCategories.push({
         ...instantiateCategory(),
         name: category,
@@ -88,7 +89,7 @@ describe('Verify selection of practice questions by category', () => {
   ParameterizedTest([{ categorySelection: 'random' }, { categorySelection: 'all' }] as const, ({ categorySelection }) =>
     it(`Verify users can switch between practice categories through breadcrumbs (category-selection: ${categorySelection})`, () => {
       const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-      const dummyCourse = instantiateCourse()
+      const dummyCourse = instantiateCourse(TestTranslator)
       const dummyCategories = ['general', 'geography', 'mathematics']
 
       dummyCourse.share_key = 'select-category' + generateToken(8)
@@ -97,7 +98,7 @@ describe('Verify selection of practice questions by category', () => {
       const questionCategories: Course['questionCategories'] = []
 
       for (const category of dummyCategories) {
-        questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+        questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
         questionCategories.push({
           ...instantiateCategory(),
           name: category,
@@ -161,7 +162,7 @@ describe('Verify selection of practice questions by category', () => {
 
   it('Verify that category-selection is re-apply using searchParams', () => {
     const baseURL = Cypress.env('NEXT_PUBLIC_BASE_URL')
-    const dummyCourse = instantiateCourse()
+    const dummyCourse = instantiateCourse(TestTranslator)
     const dummyCategories = ['general', 'geography', 'mathematics']
 
     dummyCourse.share_key = 'select-category' + generateToken(8)
@@ -170,7 +171,7 @@ describe('Verify selection of practice questions by category', () => {
     const questionCategories: Course['questionCategories'] = []
 
     for (const category of dummyCategories) {
-      questions.push({ ...instantiateSingleChoice(), category }, { ...instantiateSingleChoice(), category })
+      questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
       questionCategories.push({
         ...instantiateCategory(),
         name: category,
