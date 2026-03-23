@@ -114,11 +114,11 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
             if (exists) contents = contents.map((c) => (c.categoryId === props.categoryId ? props : c))
             else contents = [...contents, props]
 
-            return { contents }
+            return { contents, unsavedChanges: true }
           }),
 
-        addCategory: (category) => set((prev) => ({ questionCategories: [...prev.questionCategories.filter((c) => c.id !== category.id), category] })),
-        removeCourseContent: (categoryId) => set((prev) => ({ contents: prev.contents.filter((c) => c.categoryId !== categoryId) })),
+        addCategory: (category) => set((prev) => ({ questionCategories: [...prev.questionCategories.filter((c) => c.id !== category.id), category], unsavedChanges: true })),
+        removeCourseContent: (categoryId) => set((prev) => ({ contents: prev.contents.filter((c) => c.categoryId !== categoryId), unsavedChanges: true })),
       }
     },
   })
