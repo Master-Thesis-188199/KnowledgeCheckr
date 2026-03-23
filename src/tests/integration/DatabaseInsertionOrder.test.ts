@@ -8,6 +8,7 @@ import prepareExaminationCourse from '@/src/lib/courses/[share_token]/prepareExa
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { CourseSettings } from '@/src/schemas/CourseSettingsSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
 
@@ -20,7 +21,7 @@ describe('Validate the order of inserted database elements', () => {
     const [testUser] = await db.select().from(db_user).limit(1).where(eq(db_user.email, 'test@email.com'))
     expect(testUser).toBeDefined()
 
-    const dummyCourse = Object.assign(instantiateCourse({ validate: true }), { owner_id: testUser.id })
+    const dummyCourse = Object.assign(instantiateCourse(TestTranslator, { validate: true }), { owner_id: testUser.id })
     await insertCourse(dummyCourse)
 
     const [{ id }] = await db.select().from(db_course).where(eq(db_course.id, dummyCourse.id)).limit(1)
@@ -50,13 +51,13 @@ describe('Validate the order of inserted database elements', () => {
     "Ensure that `prepareExaminationCourse` shuffled questions & answers do/don't match input order based on order-settings",
     async (order) => {
       const course: Course = {
-        ...instantiateCourse(),
+        ...instantiateCourse(TestTranslator),
 
         questions: [
-          { ...instantiateSingleChoice(), question: 'This is a single-choice question' },
-          { ...instantiateMultipleChoice(), question: 'This is a multiple-choice question' },
-          { ...instantiateDragDropQuestion(), question: 'This is a drag-drop question' },
-          { ...instantiateOpenQuestion(), question: 'This is an open-question question' },
+          { ...instantiateSingleChoice(TestTranslator), question: 'This is a single-choice question' },
+          { ...instantiateMultipleChoice(TestTranslator), question: 'This is a multiple-choice question' },
+          { ...instantiateDragDropQuestion(TestTranslator), question: 'This is a drag-drop question' },
+          { ...instantiateOpenQuestion(TestTranslator), question: 'This is an open-question question' },
         ],
       }
 

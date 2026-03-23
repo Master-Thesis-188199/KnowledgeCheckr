@@ -7,6 +7,7 @@ import { db_user } from '@/database/drizzle/schema'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
 import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateMultipleChoice, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 let db: Awaited<ReturnType<typeof getDatabase>>
 let testUser: typeof db_user.$inferSelect
@@ -21,14 +22,14 @@ describe('Category Insertion / Retrieval Suite: ', () => {
   })
 
   it.each([{ categories: ['general', 'categoryA', 'categoryB'] }, { categories: ['general'] }] as const)('Ensure course categories are inserted properly', async ({ categories }) => {
-    const dummyCourse = instantiateCourse()
+    const dummyCourse = instantiateCourse(TestTranslator)
 
     dummyCourse.owner_id = testUser.id
     dummyCourse.questionCategories = []
     dummyCourse.questions = []
     for (const category of categories) {
       dummyCourse.questionCategories.push({ ...instantiateCategory(), name: category })
-      dummyCourse.questions.push({ ...instantiateSingleChoice(), category: category }, { ...instantiateMultipleChoice(), category: category })
+      dummyCourse.questions.push({ ...instantiateSingleChoice(TestTranslator), category: category }, { ...instantiateMultipleChoice(TestTranslator), category: category })
     }
 
     await insertCourse(dummyCourse)
