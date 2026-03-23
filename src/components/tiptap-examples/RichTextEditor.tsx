@@ -148,25 +148,28 @@ export function RichTextEditor({
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 
-  const editor = useEditor({
-    immediatelyRender: false,
-    editable: !(readOnly || disabled),
+  const editor = useEditor(
+    {
+      immediatelyRender: false,
+      editable: !(readOnly || disabled),
 
-    editorProps: {
-      attributes: {
-        'autofocus': 'on',
-        'autocomplete': 'off',
-        'autocorrect': 'off',
-        'autocapitalize': 'off',
-        'aria-label': t('Content.input_aria_label'),
-        'class': 'simple-editor',
-        ...(size ? { 'data-size': size } : {}),
+      editorProps: {
+        attributes: {
+          'autofocus': 'on',
+          'autocomplete': 'off',
+          'autocorrect': 'off',
+          'autocapitalize': 'off',
+          'aria-label': t('Content.input_aria_label'),
+          'class': 'simple-editor',
+          ...(size ? { 'data-size': size } : {}),
+        },
       },
+      extensions: RichTextEditorExtensions,
+      onUpdate: ({ editor }) => onUpdateAction?.(editor.getJSON()),
+      content: defaultContent,
     },
-    extensions: RichTextEditorExtensions,
-    onUpdate: ({ editor }) => onUpdateAction?.(editor.getJSON()),
-    content: defaultContent,
-  })
+    [readOnly, disabled, size, defaultContent],
+  )
 
   useEffect(() => {
     if (!isMobile && mobileView !== 'main') {
