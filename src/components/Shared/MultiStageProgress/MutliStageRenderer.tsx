@@ -16,11 +16,11 @@ export function MutliStageRenderer<C extends ElementType = 'div'>({ children, st
   const { stage: currentStage } = useMultiStageStore((store) => store)
   const Component = (as ?? 'div') as ElementType
 
+  if (currentStage !== stage) return null
+
   if (Component === React.Fragment) {
     return <>{children}</>
   }
-
-  if (currentStage !== stage) return null
 
   return (
     <Component className={cn(currentStage !== stage && 'hidden', className)} {...rest}>
