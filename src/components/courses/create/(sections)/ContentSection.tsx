@@ -30,7 +30,7 @@ export default function ContentSection() {
           </Card>
         </CourseContentDialog>
         {contents.map((content) => {
-          const htmlContent = generateHTML(content.content!, RichTextEditorExtensions)
+          const htmlContent = content.content ? generateHTML(content.content, RichTextEditorExtensions) : ''
 
           return (
             <Card key={content.categoryId} className=''>
