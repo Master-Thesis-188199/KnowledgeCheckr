@@ -33,17 +33,10 @@ function interpolate(template: string, params?: Record<string, string | number>)
  * @returns The translator function that is identical to i18n's `t`.
  */
 export function createTranslator(locale: 'de' | 'en' = 'en') {
-  return function t<Key extends TranslationKeys, Value extends LocaleValue = TranslationValue<Key>>(
-    key: Key,
-    ...params: CreateParams<ParamsObject<Value>, FlattenedTranslations, undefined, Key, Value>
-  ) {
-    const value = getByPath(locale === 'de' ? messagesDe : messagesDe, key)
+  const messages = locale === 'de' ? messagesDe : messagesEn
 
-    if (typeof value !== 'string') {
-      // fallback: return key
-      return key
-    }
-
-    return interpolate(value, params as Any)
-  }
+  return ((key: string, params?: Any) => {
+    const raw = getByPath(messages, key) as string | undefined
+    return typeof raw === 'string' ? interpolate(raw, params) : key
+  }) as unknown as Translator
 }
