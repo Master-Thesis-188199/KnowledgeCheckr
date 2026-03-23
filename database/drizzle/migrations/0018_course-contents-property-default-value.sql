@@ -1,1 +1,0 @@
-ALTER TABLE `KnowledgeCheck` MODIFY COLUMN `contents` json NOT NULL DEFAULT ('[]');

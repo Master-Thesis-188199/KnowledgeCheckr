@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "2b14779e-81c6-4be3-984d-3a594f8673de",
+  "id": "f1ee005c-6c9f-4092-932c-68e57d216a51",
   "prevId": "38ad2079-8710-4f2b-aec9-c5500bd4defc",
   "tables": {
     "Account": {
@@ -338,7 +338,8 @@
           "type": "json",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "('[]')"
         },
         "owner_id": {
           "name": "owner_id",

@@ -124,15 +124,8 @@
     {
       "idx": 17,
       "version": "5",
-      "when": 1773757858849,
+      "when": 1774295871970,
       "tag": "0017_course-contents-property",
-      "breakpoints": true
-    },
-    {
-      "idx": 18,
-      "version": "5",
-      "when": 1774101394573,
-      "tag": "0018_course-contents-property-default-value",
       "breakpoints": true
     }
   ]
