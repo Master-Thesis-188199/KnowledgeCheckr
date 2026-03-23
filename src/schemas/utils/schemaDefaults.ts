@@ -155,6 +155,9 @@ export default function schemaDefaults<Schema extends z.ZodTypeAny>(schema: Sche
 
       return (options.instantiate_Optional_PrimitiveProps ? schemaDefaults(inner, options) : undefined) as z.output<Schema>
     }
+    case 'custom': {
+      return undefined as z.output<Schema>
+    }
 
     case 'undefined':
     case 'unknown':
