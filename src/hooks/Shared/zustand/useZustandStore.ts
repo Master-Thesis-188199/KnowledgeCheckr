@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/refs */
 'use client'
 
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { StoreApi } from 'zustand'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { useI18n } from '@/src/i18n/client-localization'
+import { I18nClientContext, useI18n } from '@/src/i18n/client-localization'
+import { Translator } from '@/src/i18n/locales/types'
 import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type useStoreCachingOptions<Store extends object> = StoreCachingOptions & {
@@ -40,7 +40,20 @@ type useStoreProps<Store extends object, TInitial = StoreState_fromStore<Store>>
  */
 export function useZustandStore<TStore extends object, TInitial extends object = StoreState_fromStore<TStore>>({ initialStoreProps, ...rest }: useStoreProps<TStore, TInitial>): StoreApi<TStore> {
   const storeRef = useRef<ReturnType<typeof rest.createStoreFunc>>(null)
-  const translator = useI18n()
+  const i18nContext = useContext(I18nClientContext)
+  let translator: Translator
+
+  if (!i18nContext) {
+    translator = ((k: string) => k) as Translator
+    console.warn(`[useZustandStore]: i18n context is not available, instantiating translator as '(key) => key'`)
+  } else {
+    //! Warning: Unwrapping conditional `useI18n` hook will cause Runtime errors, when `useZustandStore` is used by Providers outside the `/[locale]` directory and thus outside of `I18nProvider`.
+    // At the time this would mean that Providers used in `RootProviders` that use the `useZustandStore` would cause useContext outside of Provider errors.
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    translator = useI18n()
+  }
+
   const { getStoredValue } = useSessionStorageContext()
 
   //* Re-create store when caching is disabled
