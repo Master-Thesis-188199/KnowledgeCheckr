@@ -51,7 +51,7 @@ export default function ContentSection() {
                     body={t('Actions.delete_content_dialog_body')}>
                     <Button variant='link' asChild aria-label={t('Actions.delete_content_button_aria_label')} className='enabled:text-destructive/80'>
                       <TrashIcon />
-                      {t('Actions.delete_course_button_label')}
+                      {t('Actions.delete_content_button_label')}
                     </Button>
                   </ConfirmationDialog>
                 </CardAction>

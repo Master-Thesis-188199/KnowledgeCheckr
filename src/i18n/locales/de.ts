@@ -77,7 +77,7 @@ export default {
           delete_content_confirm_label: 'Inhalt löschen',
           delete_content_dialog_body:
             'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
-          delete_course_button_label: 'Löschen',
+          delete_content_button_label: 'Löschen',
           edit_content_button_aria_label: 'Kursinhalt bearbeiten',
           delete_content_button_aria_label: 'Kursinhalt löschen'
         },
