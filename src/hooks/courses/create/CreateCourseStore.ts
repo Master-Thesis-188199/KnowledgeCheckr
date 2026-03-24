@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { CategorySchema, instantiateCategory } from '@/src/schemas/CategorySchema'
+import { Category, instantiateCategory } from '@/src/schemas/CategorySchema'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
@@ -21,7 +21,7 @@ export type CourseActions = {
   updateCollaborators: (collaborators: Course['collaborators']) => void
   storeCourseContent: (props: Course['contents'][number]) => void
   removeCourseContent: (categoryId: Course['contents'][number]['categoryId']) => void
-  addCategory: (category: CategorySchema) => void
+  addCategory: (category: Category) => void
 }
 
 export type CourseStore = CourseState & CourseActions
