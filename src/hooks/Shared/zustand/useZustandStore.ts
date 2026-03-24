@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/refs */
 'use client'
 
-import { useContext, useRef } from 'react'
+import { useMemo, useRef } from 'react'
+import { parseCookies } from 'nookies'
 import { StoreApi } from 'zustand'
+import { createTranslator } from '@/cypress/support/i18n'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
-import { I18nClientContext, useI18n } from '@/src/i18n/client-localization'
-import { Translator } from '@/src/i18n/locales/types'
 import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
 export type useStoreCachingOptions<Store extends object> = StoreCachingOptions & {
@@ -40,25 +41,15 @@ type useStoreProps<Store extends object, TInitial = StoreState_fromStore<Store>>
  */
 export function useZustandStore<TStore extends object, TInitial extends object = StoreState_fromStore<TStore>>({ initialStoreProps, ...rest }: useStoreProps<TStore, TInitial>): StoreApi<TStore> {
   const storeRef = useRef<ReturnType<typeof rest.createStoreFunc>>(null)
-  const i18nContext = useContext(I18nClientContext)
-  let translator: Translator
-
-  if (!i18nContext) {
-    translator = ((k: string) => k) as Translator
-    console.warn(`[useZustandStore]: i18n context is not available, instantiating translator as '(key) => key'`)
-  } else {
-    //! Warning: Unwrapping conditional `useI18n` hook will cause Runtime errors, when `useZustandStore` is used by Providers outside the `/[locale]` directory and thus outside of `I18nProvider`.
-    // At the time this would mean that Providers used in `RootProviders` that use the `useZustandStore` would cause useContext outside of Provider errors.
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    translator = useI18n()
-  }
+  const cookies = parseCookies()
+  const currentLocale = cookies['Next-Locale']
+  const t = useMemo(() => createTranslator(currentLocale === 'de' ? 'de' : 'en'), [currentLocale])
 
   const { getStoredValue } = useSessionStorageContext()
 
   //* Re-create store when caching is disabled
   if (!rest.caching) {
-    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, translator })
+    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, translator: t })
 
     return storeRef.current
   }
@@ -69,7 +60,7 @@ export function useZustandStore<TStore extends object, TInitial extends object =
 
     const initStore = (props: TInitial | StoreState_fromStore<TStore> | undefined) => {
       // initialize store either with the cached-props or the initialStoreProps
-      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options, translator })
+      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options, translator: t })
       return storeRef.current
     }
 
