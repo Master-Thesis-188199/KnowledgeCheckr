@@ -5,7 +5,7 @@ import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { getCategorySchema } from '@/src/schemas/CategorySchema'
 import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
-import { StringDate } from '@/src/schemas/CustomZodTypes'
+import { getStringDate } from '@/src/schemas/CustomZodTypes'
 import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
 import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 export function getCourseSchema(t: Translator) {
@@ -56,8 +56,12 @@ export function getCourseSchema(t: Translator) {
           .default(null)
           .describe(t('schemas.Course.closeDate.description')),
 
-        createdAt: StringDate.default(() => new Date(Date.now())).optional(),
-        updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
+        createdAt: getStringDate(t)
+          .default(() => new Date(Date.now()))
+          .optional(),
+        updatedAt: getStringDate(t)
+          .default(() => new Date(Date.now()))
+          .optional(),
 
         owner_id: z.string().nonempty().max(36, t('schemas.Course.owner_id.max_message')).default('unknown'),
         collaborators: z.array(z.string()).default([]),

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { Translator } from '@/src/i18n/locales/types'
 import { getCourseSchema } from '@/src/schemas/CourseSchema'
-import { StringDate } from '@/src/schemas/CustomZodTypes'
+import { getStringDate } from '@/src/schemas/CustomZodTypes'
 import { getQuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'
@@ -13,7 +13,7 @@ export function getPracticeSchema(translator: Translator) {
 
   return z.object({
     courseId: pureCourseSchema.shape.id,
-    startedAt: StringDate,
+    startedAt: getStringDate(translator),
     score: z.number().default(0),
     questions: pureCourseSchema.shape.questions.default([]),
     results: z.array(getQuestionInputSchema(translator)).default([]),
