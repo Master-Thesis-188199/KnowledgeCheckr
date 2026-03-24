@@ -31,6 +31,7 @@ export default async function insertCourse(course: Course) {
           owner_id: course.owner_id,
           openDate: formatDatetime(course.openDate),
           closeDate: course.closeDate ? formatDatetime(course.closeDate) : null,
+          contents: course.contents,
         })
         .$returningId()
 

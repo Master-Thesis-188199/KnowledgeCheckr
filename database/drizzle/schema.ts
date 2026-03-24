@@ -3,6 +3,7 @@ import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum,
 import { createTranslator } from '@/cypress/support/i18n'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
+import { Course, getCourseSchema } from '@/src/schemas/CourseSchema'
 import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
@@ -122,6 +123,7 @@ export const db_course = mysqlTable(
     id: primaryKeyUUID,
     name: tinytext().notNull(),
     description: mediumtext(),
+    contents: json().$type<Course['contents']>().notNull().default(getCourseSchema(defaultEnglishTranslator)._zod.def.in._zod.def.shape.contents._zod.def.defaultValue),
     owner_id: varchar('owner_id', { length: 36 }).notNull(),
 
     share_key: varchar('public_token', { length: 50 }).unique(),

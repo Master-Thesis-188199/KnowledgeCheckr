@@ -1,0 +1,45 @@
+.tiptap.ProseMirror {
+  h1,
+  h2,
+  h3,
+  h4 {
+    position: relative;
+    color: inherit;
+    font-style: inherit;
+  }
+
+  > h1:first-child,
+  > h2:first-child,
+  > h3:first-child,
+  > h4:first-child,
+  > .ProseMirror-widget + h1,
+  > .ProseMirror-widget + h2,
+  > .ProseMirror-widget + h3,
+  > .ProseMirror-widget + h4 {
+    margin-top: 0;
+  }
+
+  h1 {
+    font-size: var(--tt-font-size-h1);
+    font-weight: 700;
+    margin-top: var(--tt-spacing-h1);
+  }
+
+  h2 {
+    font-size: var(--tt-font-size-h2);
+    font-weight: 700;
+    margin-top: var(--tt-spacing-h2);
+  }
+
+  h3 {
+    font-size: var(--tt-font-size-h3);
+    font-weight: 600;
+    margin-top: var(--tt-spacing-h3);
+  }
+
+  h4 {
+    font-size: var(--tt-font-size-h4);
+    font-weight: 600;
+    margin-top: var(--tt-spacing-h4);
+  }
+}

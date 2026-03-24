@@ -1,5 +1,7 @@
+import React from 'react'
 import { getUsers } from '@/database/User/select'
 import CollaboratorProviderContext from '@/src/components/courses/create/(sections)/CollaboratorProvider'
+import ContentSection from '@/src/components/courses/create/(sections)/ContentSection'
 import GeneralSection from '@/src/components/courses/create/(sections)/GeneralSection'
 import { OverviewSection } from '@/src/components/courses/create/(sections)/OverviewSection'
 import QuestionsSection from '@/src/components/courses/create/(sections)/QuestionsSection'
@@ -41,42 +43,50 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
         initialStoreProps={{
           stages: [
             { stage: 1, title: t('basic-information') },
-            { stage: 2, title: t('questions') },
-            { stage: 3, title: t('settings') },
-            { stage: 4, title: t('conclusion') },
+            { stage: 2, title: t('contents') },
+            { stage: 3, title: t('questions') },
+            { stage: 4, title: t('settings') },
+            { stage: 5, title: t('conclusion') },
           ],
         }}>
         <PageHeading title={`${mode === 'create' ? 'Create Course' : initialStoreProps?.name}`} />
         <MultiStageProgressBar className='-mt-2 mb-12' />
 
-        <div className='mx-[1.5%] grid grid-cols-1 gap-8'>
-          <CollaboratorProviderContext users={users}>
-            <MutliStageRenderer stage={1}>
-              <GeneralSection />
-            </MutliStageRenderer>
-            <MutliStageRenderer stage={2}>
-              <QuestionsSection />
-            </MutliStageRenderer>
+        <div className='flex flex-1 flex-col gap-4'>
+          <div className='mx-[1.5%] grid flex-1 grid-cols-1 gap-8'>
+            <CollaboratorProviderContext users={users}>
+              <MutliStageRenderer stage={1}>
+                <GeneralSection />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={3}>
-              <SettingsSection />
-            </MutliStageRenderer>
+              <MutliStageRenderer stage={2} className='flex flex-col'>
+                <ContentSection />
+              </MutliStageRenderer>
 
-            <MutliStageRenderer stage={4}>
-              <OverviewSection />
-            </MutliStageRenderer>
-          </CollaboratorProviderContext>
+              <MutliStageRenderer stage={3}>
+                <QuestionsSection />
+              </MutliStageRenderer>
+
+              <MutliStageRenderer stage={4}>
+                <SettingsSection />
+              </MutliStageRenderer>
+
+              <MutliStageRenderer stage={5}>
+                <OverviewSection />
+              </MutliStageRenderer>
+            </CollaboratorProviderContext>
+          </div>
+          <div className='mx-[1.5%] mt-4 flex justify-between'>
+            <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
+            <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
+          </div>
+          <MutliStageRenderer stage={5}>
+            <form className='mt-4 flex justify-center gap-4'>
+              <SaveCourseButton callbackPath={callbackPath} />
+            </form>
+          </MutliStageRenderer>
+          <div />
         </div>
-        <div className='mx-[1.5%] mt-4 flex justify-between'>
-          <MultiStageBackButton variant='outline' children={tButtons('navigation_button_previous')} />
-          <MultiStageNextButton variant='primary' children={tButtons('navigation_button_next')} />
-        </div>
-        <MutliStageRenderer stage={4}>
-          <form className='mt-4 flex justify-center gap-4'>
-            <SaveCourseButton callbackPath={callbackPath} />
-          </form>
-        </MutliStageRenderer>
-        <div />
       </MultiStageStoreProvider>
     </CourseStoreProvider>
   )

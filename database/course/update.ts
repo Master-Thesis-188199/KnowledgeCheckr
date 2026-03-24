@@ -49,8 +49,8 @@ export async function updateCourse(modifiedCourse: Course, changes: LodashDiffer
         await updateBaseCourseProperties(tx, modifiedCourse)
       }
     } catch (err) {
-      await tx.rollback()
       logger.error('[Rollback]: Error updating course:', err)
+      await tx.rollback()
     }
   })
 }

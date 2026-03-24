@@ -75,6 +75,33 @@
           "command_empty_min_input": "You must provide at least 3 characters to find matches"
         }
       },
+      "ContentSection": {
+        "title": "Course Contents",
+        "description": "Create new contents for this course. These contents can be used by users to increase their knowledge and to understand why questions were incorrectly answered.",
+        "Actions": {
+          "create_new_button_label": "Create new Content",
+          "edit_content_button_label": "Edit",
+          "delete_content_confirm_label": "Delete Content",
+          "delete_content_dialog_body": "This action cannot be undone. This will permanently delete this course content from this course and remove its data from our servers.",
+          "delete_content_button_label": "Remove",
+          "edit_content_button_aria_label": "edit course content",
+          "delete_content_button_aria_label": "delete course content"
+        },
+        "CourseContentDialog": {
+          "title_create": "Create new Content",
+          "title_edit": "Edit Content",
+          "Fields": {
+            "title_placeholder": "Basic History of Austria",
+            "description_placeholder": "Includes fundamental information about Austria.",
+            "title_label": "Content Title",
+            "description_label": "Short Description",
+            "categoryId_label": "Category",
+            "categoryId_trigger_placerholder": "Select a category"
+          },
+          "submit_create_button_label": "Create Content",
+          "submit_update_button_label": "Update Content"
+        }
+      },
       "QuestionSection": {
         "title": "Questions",
         "create_button": "Create Question",
@@ -122,6 +149,7 @@
       },
       "MultiStages": {
         "basic-information": "Basic Information",
+        "contents": "Contents",
         "questions": "Questions",
         "settings": "Settings",
         "conclusion": "Conclusion"
@@ -461,6 +489,45 @@
       "question_status_incorrect": "incorrect",
       "question_status_partly-correct": "partly-correct",
       "question_status_unanswered": "unanswered"
+    },
+    "RichTextEditor": {
+      "Content": {
+        "input_aria_label": "Main content area, start typing to enter text."
+      },
+      "Toolbar": {
+        "undo_tooltip_label": "Undo",
+        "redo_tooltip_label": "Redo",
+        "Headings": {
+          "trigger_tooltip_label": "Heading",
+          "trigger_aria_label": "Format text as heading",
+          "heading_level_label": "Heading {level}"
+        },
+        "ListOptions": {
+          "trigger_aria_label": "List options",
+          "trigger_label": "List",
+          "Options": {
+            "bulletList": "Bullet List",
+            "orderedList": "Ordered List",
+            "taskList": "Task List"
+          }
+        },
+        "FontOptions": {
+          "trigger_tooltip_label": "Font Options",
+          "bold_label": "Bold",
+          "italic_label": "Italic",
+          "strike_label": "Strike",
+          "code_label": "Code",
+          "underline_label": "Underline"
+        },
+        "Alignment": {
+          "trigger_aria_label": "Format text alignment",
+          "trigger_tooltip_label": "Alignment options",
+          "left_label": "Align left",
+          "center_label": "Align center",
+          "right_label": "Align right",
+          "justify_label": "Align justify"
+        }
+      }
     }
   },
   "schemas": {
