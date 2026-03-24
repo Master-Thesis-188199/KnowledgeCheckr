@@ -28,7 +28,7 @@ describe('Category Insertion / Retrieval Suite: ', () => {
     dummyCourse.questionCategories = []
     dummyCourse.questions = []
     for (const category of categories) {
-      dummyCourse.questionCategories.push({ ...instantiateCategory(), name: category })
+      dummyCourse.questionCategories.push({ ...instantiateCategory(TestTranslator), name: category })
       dummyCourse.questions.push({ ...instantiateSingleChoice(TestTranslator), category: category }, { ...instantiateMultipleChoice(TestTranslator), category: category })
     }
 

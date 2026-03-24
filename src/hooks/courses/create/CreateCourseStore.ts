@@ -32,7 +32,7 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
     description: '',
     questionCategories: [
       {
-        ...instantiateCategory(),
+        ...instantiateCategory(translator),
         name: 'general',
       },
     ],
@@ -85,7 +85,7 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
             // Add new category if not part of course-categories
             if (!questionCategories.find((category) => category.name === question.category)) {
               questionCategories.push({
-                ...instantiateCategory(),
+                ...instantiateCategory(translator),
                 name: question.category,
               })
             }

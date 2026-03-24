@@ -38,10 +38,10 @@ async function createPracticeCourse() {
   course.difficulty = 6
 
   course.questionCategories = [
-    { ...instantiateCategory(), name: 'Design' },
-    { ...instantiateCategory(), name: 'Tech' },
-    { ...instantiateCategory(), name: 'Daily' },
-    { ...instantiateCategory(), name: 'general' },
+    { ...instantiateCategory(t), name: 'Design' },
+    { ...instantiateCategory(t), name: 'Tech' },
+    { ...instantiateCategory(t), name: 'Daily' },
+    { ...instantiateCategory(t), name: 'general' },
   ]
 
   course.questions = [

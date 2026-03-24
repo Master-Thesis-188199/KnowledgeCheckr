@@ -24,7 +24,7 @@ describe('Verify selection of practice questions by category', () => {
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
         questionCategories.push({
-          ...instantiateCategory(),
+          ...instantiateCategory(TestTranslator),
           name: category,
         })
       }
@@ -67,7 +67,7 @@ describe('Verify selection of practice questions by category', () => {
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
       questionCategories.push({
-        ...instantiateCategory(),
+        ...instantiateCategory(TestTranslator),
         name: category,
       })
     }
@@ -100,7 +100,7 @@ describe('Verify selection of practice questions by category', () => {
       for (const category of dummyCategories) {
         questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
         questionCategories.push({
-          ...instantiateCategory(),
+          ...instantiateCategory(TestTranslator),
           name: category,
         })
       }
@@ -173,7 +173,7 @@ describe('Verify selection of practice questions by category', () => {
     for (const category of dummyCategories) {
       questions.push({ ...instantiateSingleChoice(TestTranslator), category }, { ...instantiateSingleChoice(TestTranslator), category })
       questionCategories.push({
-        ...instantiateCategory(),
+        ...instantiateCategory(TestTranslator),
         name: category,
       })
     }

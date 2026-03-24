@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
-import { CategorySchema } from '@/src/schemas/CategorySchema'
+import { getCategorySchema } from '@/src/schemas/CategorySchema'
 import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -32,7 +32,7 @@ export function getCourseSchema(t: Translator) {
 
         questions: z.array(getQuestionSchema(t)).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: t('schemas.Course.questions.refinement_message') }),
         questionCategories: z
-          .array(CategorySchema)
+          .array(getCategorySchema(t))
           .optional()
           .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
 
