@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { Translator } from '@/src/i18n/locales/types'
 import { getCourseSchema } from '@/src/schemas/CourseSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { getQuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
 import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'
 import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
@@ -16,7 +16,7 @@ export function getPracticeSchema(translator: Translator) {
     startedAt: StringDate,
     score: z.number().default(0),
     questions: pureCourseSchema.shape.questions.default([]),
-    results: z.array(QuestionInputSchema).default([]),
+    results: z.array(getQuestionInputSchema(translator)).default([]),
   })
 }
 

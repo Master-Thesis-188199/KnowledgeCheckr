@@ -18,13 +18,15 @@ import { usePracticeFeeback } from '@/src/hooks/courses/[share_token]/practice/u
 import { useLogger } from '@/src/hooks/log/useLogger'
 import { RHFProvider, useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
+import { useI18n } from '@/src/i18n/client-localization'
 import { EvaluateAnswer } from '@/src/lib/courses/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, Question } from '@/src/schemas/QuestionSchema'
-import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { getQuestionInputSchema, QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
+  const t = useI18n()
   const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
@@ -39,7 +41,7 @@ export function RenderPracticeQuestion() {
   }
 
   const RHFForm = useRHF(
-    QuestionInputSchema,
+    getQuestionInputSchema(t),
     {
       // Warning: Type assertion is intentional.
       // By setting the question_id and type, the form-values are (re-) set when the question changes, setting `values` makes the form controlled.

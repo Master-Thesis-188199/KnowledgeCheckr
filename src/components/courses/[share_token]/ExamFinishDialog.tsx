@@ -9,6 +9,7 @@ import { useNavigationAbort } from '@/src/components/navigation-abortion/Navigat
 import { Button } from '@/src/components/shadcn/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/Shared/Dialog'
 import { useI18n } from '@/src/i18n/client-localization'
+import { Translator } from '@/src/i18n/locales/types'
 import finishExaminationAttempt from '@/src/lib/courses/[share_token]/FinishExaminationAttempt'
 import { cn } from '@/src/lib/Shared/utils'
 import { ExaminationSchema, validateExaminationSchema } from '@/src/schemas/ExaminationSchema'
@@ -38,11 +39,14 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
                 <div
                   className={cn(
                     'relative flex w-9 rounded-md py-1 text-center ring-1 ring-ring dark:ring-ring',
-                    isQuestionAnswered(examinationState.results, q.id) && 'bg-green-700/20 dark:bg-green-800/60',
+                    isQuestionAnswered(examinationState.results, q.id, t) && 'bg-green-700/20 dark:bg-green-800/60',
                   )}
                   key={i}>
                   <div
-                    className={cn('absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]', isQuestionAnswered(examinationState.results, q.id) && 'flex')}>
+                    className={cn(
+                      'absolute -top-2 -right-2 hidden items-center justify-center rounded-tr-md rounded-bl-md p-[2.5px]',
+                      isQuestionAnswered(examinationState.results, q.id, t) && 'flex',
+                    )}>
                     <CheckCheckIcon className={cn('size-4 text-green-700 dark:text-green-400/80')} />
                   </div>
                   <span className={cn('mx-auto')}>{i + 1}</span>
@@ -79,8 +83,8 @@ export default function ExamFinishDialog({ children, triggerClassname }: { child
   )
 }
 
-function isQuestionAnswered(results: ExaminationSchema['results'], id: Question['id']) {
-  const parseResult = safeParseQuestionInput(results.find((r) => r.question_id === id) ?? {})
+function isQuestionAnswered(results: ExaminationSchema['results'], id: Question['id'], t: Translator) {
+  const parseResult = safeParseQuestionInput(t, results.find((r) => r.question_id === id) ?? {})
   // when the user has not made a selection / input then the (saved-) result will not satisfy the schema constraints
   return parseResult.success
 }
