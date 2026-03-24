@@ -4,7 +4,7 @@ import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { getCategorySchema } from '@/src/schemas/CategorySchema'
-import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
+import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { StringDate } from '@/src/schemas/CustomZodTypes'
 import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
 import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
@@ -62,7 +62,7 @@ export function getCourseSchema(t: Translator) {
         owner_id: z.string().nonempty().max(36, t('schemas.Course.owner_id.max_message')).default('unknown'),
         collaborators: z.array(z.string()).default([]),
 
-        settings: CourseSettingsSchema,
+        settings: getCourseSettingsSchema(t),
 
         /* todo:
       - question-order: 'shuffle, static, ...'

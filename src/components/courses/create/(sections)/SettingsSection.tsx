@@ -12,9 +12,9 @@ import { Form } from '@/src/components/shadcn/form'
 import Card from '@/src/components/Shared/Card'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { CourseSettings, CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
+import { CourseSettings, getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 
 export default function SettingsSection({
   jumpBackButtons,
@@ -22,9 +22,10 @@ export default function SettingsSection({
   ...config
 }: { jumpBackButtons?: boolean; className?: string } & Omit<UseFormProps<CourseSettings>, 'resolver' | 'defaultValues'>) {
   const { updateSettings, settings } = useCourseStore((state) => state)
+  const tAll = useI18n()
   const t = useScopedI18n('Courses.Create.SettingSection')
 
-  const { form, baseFieldProps } = useRHF(CourseSettingsSchema, {
+  const { form, baseFieldProps } = useRHF(getCourseSettingsSchema(tAll), {
     mode: 'all',
     delayError: 100,
     defaultValues: () => settings,

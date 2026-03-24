@@ -88,7 +88,7 @@ function parseCourse({ t, questions, knowledgeCheckSettings: settings, categorie
       ...c,
       skipOnMissingPrequisite: false,
     })),
-    settings: parseSetting(settings),
+    settings: parseSetting(t, settings),
   })
 
   if (!result.success) {
@@ -138,6 +138,6 @@ function parseAnswers(
   }
 }
 
-function parseSetting(setting: CourseWithAll['knowledgeCheckSettings']): CourseSettings {
-  return convertSettings('from-database', setting) ?? instantiateCourseSettings()
+function parseSetting(t: Translator, setting: CourseWithAll['knowledgeCheckSettings']): CourseSettings {
+  return convertSettings('from-database', setting, t) ?? instantiateCourseSettings(t)
 }

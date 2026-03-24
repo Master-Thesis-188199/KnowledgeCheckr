@@ -1,8 +1,9 @@
 import { sql } from 'drizzle-orm'
 import { boolean, datetime, foreignKey, index, int, json, mediumtext, mysqlEnum, mysqlTable, primaryKey, tinyint, tinytext, unique, varchar } from 'drizzle-orm/mysql-core'
+import { createTranslator } from '@/cypress/support/i18n'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
 import { getUUID } from '@/src/lib/Shared/getUUID'
-import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
+import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const primaryKeyUUID = varchar({ length: 36 })
@@ -10,6 +11,8 @@ const primaryKeyUUID = varchar({ length: 36 })
   .primaryKey()
   //? default-value declaration is needed so that drizzle returns the inserted-id through $.returnedId()
   .$defaultFn(() => getUUID())
+
+const defaultEnglishTranslator = createTranslator('en')
 
 export const db_account = mysqlTable(
   'Account',
@@ -155,22 +158,22 @@ export const db_courseSettings = mysqlTable(
     knowledgecheckId: varchar('knowledgecheck_id', { length: 36 }).notNull(),
     allowAnonymous: tinyint('allow_anonymous')
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.allowAnonymous._zod.def.defaultValue ? 1 : 0),
+      .default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.allowAnonymous._zod.def.defaultValue ? 1 : 0),
     allowFreeNavigation: tinyint('allow_free_navigation')
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.allowFreeNavigation._zod.def.defaultValue ? 1 : 0),
-    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.questionOrder._zod.def.defaultValue),
-    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(CourseSettingsSchema.shape.examination.shape.answerOrder._zod.def.defaultValue),
-    examTimeFrameSeconds: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examTimeFrameSeconds._zod.def.defaultValue),
-    examinationAttemptCount: int().notNull().default(CourseSettingsSchema.shape.examination.shape.examinationAttemptCount._zod.def.defaultValue),
+      .default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.allowFreeNavigation._zod.def.defaultValue ? 1 : 0),
+    questionOrder: mysqlEnum(['create-order', 'random']).notNull().default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.questionOrder._zod.def.defaultValue),
+    answerOrder: mysqlEnum(['create-order', 'random']).notNull().default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.answerOrder._zod.def.defaultValue),
+    examTimeFrameSeconds: int().notNull().default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.examTimeFrameSeconds._zod.def.defaultValue),
+    examinationAttemptCount: int().notNull().default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.examinationAttemptCount._zod.def.defaultValue),
     shareAccessibility: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.shareAccessibility._zod.def.defaultValue ? 1 : 0),
+      .default(getCourseSettingsSchema(defaultEnglishTranslator).shape.shareAccessibility._zod.def.defaultValue ? 1 : 0),
 
     // -----
     enableExaminations: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.examination.shape.enableExaminations._zod.def.defaultValue ? 1 : 0),
+      .default(getCourseSettingsSchema(defaultEnglishTranslator).shape.examination.shape.enableExaminations._zod.def.defaultValue ? 1 : 0),
     startDate: datetime({ mode: 'string' })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
@@ -181,7 +184,7 @@ export const db_courseSettings = mysqlTable(
 
     enablePracticing: int()
       .notNull()
-      .default(CourseSettingsSchema.shape.practice.shape.enablePracticing._zod.def.defaultValue ? 1 : 0),
+      .default(getCourseSettingsSchema(defaultEnglishTranslator).shape.practice.shape.enablePracticing._zod.def.defaultValue ? 1 : 0),
 
     allowedPracticeCount: int().default(sql`NULL`),
   },
