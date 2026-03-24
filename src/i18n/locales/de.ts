@@ -488,7 +488,7 @@ export default {
     },
     RichTextEditor: {
       Content: {
-        input_aria_label: ''
+        input_aria_label: 'Text Bereichm, beginne mit dem Schreiben.'
       },
       Toolbar: {
         undo_tooltip_label: 'Rückgängig',

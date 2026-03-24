@@ -83,7 +83,7 @@ export default {
           create_new_button_label: 'Create new Content',
           edit_content_button_label: 'Edit',
           delete_content_confirm_label: 'Delete Content',
-          delete_content_dialog_body: 'This action cannot be undone. This will permanently delete this course conent from this course and remove its data from our servers.',
+          delete_content_dialog_body: 'This action cannot be undone. This will permanently delete this course content from this course and remove its data from our servers.',
           delete_content_button_label: 'Remove',
           edit_content_button_aria_label: 'edit course content',
           delete_content_button_aria_label: 'delete course content'
