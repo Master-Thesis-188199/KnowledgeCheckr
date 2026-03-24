@@ -4,7 +4,7 @@ import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
 import { getCategorySchema } from '@/src/schemas/CategorySchema'
-import { CourseContentSchema } from '@/src/schemas/CourseContentSchema'
+import { getCourseContentSchema } from '@/src/schemas/CourseContentSchema'
 import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
 import { getStringDate } from '@/src/schemas/CustomZodTypes'
 import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
@@ -24,7 +24,7 @@ export function getCourseSchema(t: Translator) {
           .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
           .describe(t('schemas.Course.description.description')),
 
-        contents: z.array(CourseContentSchema).default([]),
+        contents: z.array(getCourseContentSchema(t)).default([]),
 
         difficulty: z
           .number()

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from '@heroui/theme'
 import { useIsFirstRender } from '@uidotdev/usehooks'
-import z from 'zod'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
 import { Label } from '@/src/components/shadcn/label'
@@ -12,11 +11,11 @@ import Select from '@/src/components/Shared/form/Select'
 import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
 import { RHFProvider } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
-import { CategorySchema } from '@/src/schemas/CategorySchema'
-import { CourseContent, CourseContentSchema, instantiateCourseContent } from '@/src/schemas/CourseContentSchema'
+import { Category } from '@/src/schemas/CategorySchema'
+import { CourseContent, getCourseContentSchema, instantiateCourseContent } from '@/src/schemas/CourseContentSchema'
 
 type BaseContentDialogProps = {
   children: React.ReactNode
@@ -35,6 +34,7 @@ type ContentDialogProps = CreateContentDialogProps | EditContentDialogProps
 export default function CourseContentDialog({ children }: CreateContentDialogProps): React.ReactNode
 export default function CourseContentDialog({ children }: EditContentDialogProps): React.ReactNode
 export default function CourseContentDialog({ children, ...rest }: ContentDialogProps) {
+  const tAll = useI18n()
   const t = useScopedI18n('Courses.Create.ContentSection.CourseContentDialog')
   const isFirstRender = useIsFirstRender()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -47,7 +47,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
     [questionCategories, contents, currentCategoryId],
   )
 
-  const RHF = useRHF(CourseContentSchema, {
+  const RHF = useRHF(getCourseContentSchema(tAll), {
     mode: 'all',
     defaultValues: (_, instantiations) => {
       if (rest.mode === 'edit') return { ...instantiations, description: lorem().split(' ').slice(0, 10).join(' '), ...rest.courseContent }
@@ -69,7 +69,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
 
     if (rest.mode === 'create') {
       console.debug(`Resetting content-dialog form with mode 'create'`)
-      form.reset({ ...instantiateCourseContent(), description: lorem().split(' ').slice(0, 10).join(' ') })
+      form.reset({ ...instantiateCourseContent(tAll), description: lorem().split(' ').slice(0, 10).join(' ') })
     }
     // pre-fill "default-values" by ressetting form with edit-values
     else {
@@ -80,7 +80,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
   }, [rest.mode, (rest as EditContentDialogProps).courseContent])
 
   const submitHandler = useCallback(
-    (data: z.output<typeof CourseContentSchema>) => {
+    (data: CourseContent) => {
       storeCourseContent(data)
       setDialogOpen(false)
       form.reset()
@@ -90,7 +90,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
 
   const createCategory = useCallback(
     (name: string) => {
-      const newCategory: CategorySchema = { id: getUUID(), name, prequisiteCategoryId: null, skipOnMissingPrequisite: false }
+      const newCategory: Category = { id: getUUID(), name, prequisiteCategoryId: null, skipOnMissingPrequisite: false }
 
       addCategory(newCategory)
       setValue('categoryId', newCategory.id)
