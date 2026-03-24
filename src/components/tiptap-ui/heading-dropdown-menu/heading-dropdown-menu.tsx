@@ -13,6 +13,7 @@ import { Button } from '@/components/tiptap-ui-primitive/button'
 // --- Hooks ---
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, UseHeadingDropdownMenuConfig {
   /**
@@ -32,6 +33,7 @@ export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, Use
  */
 export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdownMenuProps>(
   ({ editor: providedEditor, levels = [1, 2, 3, 4, 5, 6], hideWhenUnavailable = false, onOpenChange, children, modal = true, ...buttonProps }, ref) => {
+    const t = useScopedI18n('Components.RichTextEditor.Toolbar')
     const { editor } = useTiptapEditor(providedEditor)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const { isVisible, isActive, canToggle, Icon } = useHeadingDropdownMenu({
@@ -64,9 +66,9 @@ export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdown
             tabIndex={-1}
             disabled={!canToggle}
             data-disabled={!canToggle}
-            aria-label='Format text as heading'
+            aria-label={t('Headings.trigger_aria_label')}
             aria-pressed={isActive}
-            tooltip='Heading'
+            tooltip={t('Headings.trigger_tooltip_label')}
             {...buttonProps}
             ref={ref}>
             {children ? (
@@ -84,7 +86,7 @@ export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdown
           <DropdownMenuGroup>
             {levels.map((level) => (
               <DropdownMenuItem key={`heading-${level}`} asChild>
-                <HeadingButton editor={editor} level={level} text={`Heading ${level}`} showTooltip={false} />
+                <HeadingButton editor={editor} level={level} text={t('Headings.heading_level_label', { level })} showTooltip={false} />
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>

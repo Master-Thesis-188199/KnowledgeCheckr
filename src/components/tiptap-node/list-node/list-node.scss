@@ -23,9 +23,9 @@
   // Common list styles
   ol,
   ul {
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
-    padding-left: 1.5em;
+    margin-top: var(--tt-spacing-list-y);
+    margin-bottom: var(--tt-spacing-list-y);
+    padding-left: var(--tt-spacing-list-indent);
 
     &:first-child {
       margin-top: 0;
@@ -37,15 +37,16 @@
 
     ol,
     ul {
-      margin-top: 0;
-      margin-bottom: 0;
+      margin-top: var(--tt-spacing-list-nested-y);
+      margin-bottom: var(--tt-spacing-list-nested-y);
     }
   }
 
   li {
     p {
       margin-top: 0;
-      line-height: 1.6;
+      font-size: var(--tt-font-size-body);
+      line-height: var(--tt-line-height-body);
     }
   }
 

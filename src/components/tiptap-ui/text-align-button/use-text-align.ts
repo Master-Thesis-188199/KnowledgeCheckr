@@ -1,20 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ChainedCommands } from '@tiptap/react'
 import { type Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable, isNodeTypeSelected } from '@/lib/tiptap-utils'
-
 // --- Icons ---
 import { AlignCenterIcon } from '@/components/tiptap-icons/align-center-icon'
 import { AlignJustifyIcon } from '@/components/tiptap-icons/align-justify-icon'
 import { AlignLeftIcon } from '@/components/tiptap-icons/align-left-icon'
 import { AlignRightIcon } from '@/components/tiptap-icons/align-right-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable, isNodeTypeSelected } from '@/lib/tiptap-utils'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export type TextAlign = 'left' | 'center' | 'right' | 'justify'
 
@@ -53,13 +51,6 @@ export const textAlignIcons = {
   center: AlignCenterIcon,
   right: AlignRightIcon,
   justify: AlignJustifyIcon,
-}
-
-export const textAlignLabels: Record<TextAlign, string> = {
-  left: 'Align left',
-  center: 'Align center',
-  right: 'Align right',
-  justify: 'Align justify',
 }
 
 /**
@@ -162,12 +153,23 @@ export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavail
  * ```
  */
 export function useTextAlign(config: UseTextAlignConfig) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   const { editor: providedEditor, align, hideWhenUnavailable = false, onAligned } = config
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canAlign = canSetTextAlign(editor, align)
   const isActive = isTextAlignActive(editor, align)
+
+  const textAlignLabels: Record<TextAlign, string> = useMemo(
+    () => ({
+      left: t('Alignment.left_label'),
+      center: t('Alignment.center_label'),
+      right: t('Alignment.right_label'),
+      justify: t('Alignment.justify_label'),
+    }),
+    [t],
+  )
 
   useEffect(() => {
     if (!editor) return

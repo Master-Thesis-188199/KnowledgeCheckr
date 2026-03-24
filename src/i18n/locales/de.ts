@@ -67,6 +67,35 @@ export default {
           command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden'
         }
       },
+      ContentSection: {
+        title: 'Kursinhalte',
+        description:
+          'Erstellen Sie neue Inhalte für diesen Kurs. \n' + 'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
+        Actions: {
+          create_new_button_label: 'Erstelle einen neuen Inhalt',
+          edit_content_button_label: 'Bearbeiten',
+          delete_content_confirm_label: 'Inhalt löschen',
+          delete_content_dialog_body:
+            'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
+          delete_content_button_label: 'Löschen',
+          edit_content_button_aria_label: 'Kursinhalt bearbeiten',
+          delete_content_button_aria_label: 'Kursinhalt löschen'
+        },
+        CourseContentDialog: {
+          title_create: 'Erstellen einen neuen Inhalt',
+          title_edit: 'Inhalt bearbeiten',
+          Fields: {
+            title_placeholder: 'Grundlegende Geschichte Österreichs',
+            description_placeholder: 'Enthält grundlegende Informationen über Österreich.',
+            title_label: 'Inhaltstitel',
+            description_label: 'Kurzbeschreibung',
+            categoryId_label: 'Kategorie',
+            categoryId_trigger_placerholder: 'Wähle eine Kategorie aus'
+          },
+          submit_create_button_label: 'Kursinhalt erstellen',
+          submit_update_button_label: 'Inhalt aktualisieren'
+        }
+      },
       QuestionSection: {
         title: 'Fragen',
         create_button: 'Frage hinzufügen',
@@ -114,6 +143,7 @@ export default {
       },
       MultiStages: {
         'basic-information': 'Allgemein',
+        contents: 'Kursinhalte',
         questions: 'Fragen',
         settings: 'Einstellungen',
         conclusion: 'Zusammenfassung'
@@ -455,6 +485,45 @@ export default {
       question_status_incorrect: 'falsch',
       'question_status_partly-correct': 'fast richtig',
       question_status_unanswered: 'unbeantwortet'
+    },
+    RichTextEditor: {
+      Content: {
+        input_aria_label: 'Text Bereichm, beginne mit dem Schreiben.'
+      },
+      Toolbar: {
+        undo_tooltip_label: 'Rückgängig',
+        redo_tooltip_label: 'Wiederholen',
+        Headings: {
+          trigger_tooltip_label: 'Überschrift',
+          trigger_aria_label: 'Text als Überschrift formatieren',
+          heading_level_label: 'Überschrift {level}'
+        },
+        ListOptions: {
+          trigger_label: 'Liste',
+          trigger_aria_label: 'Listenoptionen',
+          Options: {
+            bulletList: 'Aufzählungsliste',
+            orderedList: 'Geordnete Liste',
+            taskList: 'Aufgabenliste'
+          }
+        },
+        FontOptions: {
+          trigger_tooltip_label: 'Schriftartoptionen',
+          bold_label: 'Fett',
+          italic_label: 'Kursiv',
+          strike_label: 'Durchstreichen',
+          code_label: 'Code',
+          underline_label: 'Unterstreichen'
+        },
+        Alignment: {
+          trigger_aria_label: 'Textausrichtung formatieren',
+          trigger_tooltip_label: 'Ausrichtungs Optionen',
+          left_label: 'Links ausrichten',
+          center_label: 'Mittig ausrichten',
+          right_label: 'Rechts ausrichten',
+          justify_label: 'Ausrichten'
+        }
+      }
     }
   },
   AccountPage: {

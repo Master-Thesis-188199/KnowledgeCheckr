@@ -8,6 +8,83 @@
   // ai
   --tiptap-ai-insertion-color: var(--tt-brand-color-600);
 
+  // typography scale tokens
+  --tt-font-size-body: 1rem;
+  --tt-line-height-body: 1.6;
+  --tt-spacing-paragraph: 20px;
+
+  --tt-font-size-h1: 1.5em;
+  --tt-font-size-h2: 1.25em;
+  --tt-font-size-h3: 1.125em;
+  --tt-font-size-h4: 1em;
+
+  --tt-spacing-h1: 3em;
+  --tt-spacing-h2: 2.5em;
+  --tt-spacing-h3: 2em;
+  --tt-spacing-h4: 2em;
+
+  --tt-spacing-list-y: 1.5em;
+  --tt-spacing-list-nested-y: 0;
+  --tt-spacing-list-indent: 1.5em;
+
+  &[data-size='lg'] {
+    --tt-font-size-body: 0.95rem;
+    --tt-line-height-body: 1.55;
+    --tt-spacing-paragraph: 18px;
+
+    --tt-font-size-h1: 1.4em;
+    --tt-font-size-h2: 1.2em;
+    --tt-font-size-h3: 1.08em;
+    --tt-font-size-h4: 0.98em;
+
+    --tt-spacing-h1: 2.5em;
+    --tt-spacing-h2: 2.1em;
+    --tt-spacing-h3: 1.75em;
+    --tt-spacing-h4: 1.5em;
+
+    --tt-spacing-list-y: 1.35em;
+    --tt-spacing-list-indent: 1.4em;
+  }
+
+  &[data-size='md'] {
+    --tt-font-size-body: 0.9rem;
+    --tt-line-height-body: 1.5;
+    --tt-spacing-paragraph: 16px;
+
+    --tt-font-size-h1: 1.3em;
+    --tt-font-size-h2: 1.15em;
+    --tt-font-size-h3: 1.02em;
+    --tt-font-size-h4: 0.95em;
+
+    --tt-spacing-h1: 2em;
+    --tt-spacing-h2: 1.7em;
+    --tt-spacing-h3: 1.35em;
+    --tt-spacing-h4: 1.1em;
+
+    --tt-spacing-list-y: 1.15em;
+    --tt-spacing-list-indent: 1.3em;
+  }
+
+  &[data-size='sm'] {
+    --tt-font-size-body: 0.875rem;
+    --tt-line-height-body: 1.5;
+    --tt-spacing-paragraph: 12px;
+
+    --tt-font-size-h1: 1.1em;
+    --tt-font-size-h2: 1.05em;
+    --tt-font-size-h3: 0.98em;
+    --tt-font-size-h4: 0.92em;
+
+    --tt-spacing-h1: 1.5em;
+    --tt-spacing-h2: 1.25em;
+    --tt-spacing-h3: 1em;
+    --tt-spacing-h4: 0.75em;
+
+    --tt-spacing-list-y: 1em;
+    --tt-spacing-list-nested-y: 0;
+    --tt-spacing-list-indent: 1.25em;
+  }
+
   html[data-theme='dark'] & {
     --tt-collaboration-carets-label: var(--tt-gray-dark-100);
     --link-text-color: var(--tt-brand-color-400);
@@ -33,12 +110,15 @@
   outline: none;
   caret-color: var(--tt-cursor-color);
 
-  // Paragraph spacing
-  p:not(:first-child):not(td p):not(th p) {
-    font-size: 1rem;
-    line-height: 1.6;
+  // defines font-size, line-height and margin for paragraphs
+  p:not(td p):not(th p) {
+    font-size: var(--tt-font-size-body);
+    line-height: var(--tt-line-height-body);
     font-weight: normal;
-    margin-top: 20px;
+  }
+  // Removes the margin for a given paragraph when its the first element in the editor-content
+  p:not(:first-child):not(td p):not(th p) {
+    margin-top: var(--tt-spacing-paragraph);
   }
 
   // Selection styles

@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isNodeTypeSelected } from '@/lib/tiptap-utils'
-
 // --- Icons ---
 import { Redo2Icon } from '@/components/tiptap-icons/redo2-icon'
 import { Undo2Icon } from '@/components/tiptap-icons/undo2-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isNodeTypeSelected } from '@/lib/tiptap-utils'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export type UndoRedoAction = 'undo' | 'redo'
 
@@ -41,11 +39,6 @@ export interface UseUndoRedoConfig {
 export const UNDO_REDO_SHORTCUT_KEYS: Record<UndoRedoAction, string> = {
   undo: 'mod+z',
   redo: 'mod+shift+z',
-}
-
-export const historyActionLabels: Record<UndoRedoAction, string> = {
-  undo: 'Undo',
-  redo: 'Redo',
 }
 
 export const historyIcons = {
@@ -132,7 +125,16 @@ export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavail
  * ```
  */
 export function useUndoRedo(config: UseUndoRedoConfig) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   const { editor: providedEditor, action, hideWhenUnavailable = false, onExecuted } = config
+
+  const historyActionLabels: Record<UndoRedoAction, string> = useMemo(
+    () => ({
+      undo: t('undo_tooltip_label'),
+      redo: t('redo_tooltip_label'),
+    }),
+    [t],
+  )
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)

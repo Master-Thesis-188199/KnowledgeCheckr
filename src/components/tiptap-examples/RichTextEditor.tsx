@@ -11,7 +11,7 @@ import { TaskItem, TaskList } from '@tiptap/extension-list'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Typography } from '@tiptap/extension-typography'
 import { Selection } from '@tiptap/extensions'
-import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
+import { Content, EditorContent, EditorContext, Extension, Extensions, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
 // --- Components ---
@@ -35,9 +35,11 @@ import { HorizontalRule } from '@/src/components/tiptap-node/horizontal-rule-nod
 import { TextAlignmentMenu } from '@/src/components/tiptap-ui/text-alignment-menu/TextAlignmentMenu'
 import { Button } from '@/src/components/tiptap-ui-primitive/button'
 import { useIsBreakpoint } from '@/src/hooks/use-is-breakpoint'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 
-const MainToolbarContent = ({ onHighlighterClick, isMobile, onFontClick }: { onFontClick: () => void; onHighlighterClick: () => void; isMobile: boolean }) => {
+function MainToolbarContent({ onHighlighterClick, isMobile, onFontClick }: { onFontClick: () => void; onHighlighterClick: () => void; isMobile: boolean }) {
+  const t = useScopedI18n('Components.RichTextEditor.Toolbar')
   return (
     <>
       <Spacer />
@@ -50,13 +52,13 @@ const MainToolbarContent = ({ onHighlighterClick, isMobile, onFontClick }: { onF
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
-        <ListDropdownMenu modal={false} types={['bulletList', 'orderedList', 'taskList']} />
+        <HeadingDropdownMenu modal levels={[1, 2, 3, 4]} />
+        <ListDropdownMenu modal types={['bulletList', 'orderedList', 'taskList']} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
-      <Button variant={'ghost'} onClick={onFontClick} className='@[30rem]/editor:hidden!'>
+      <Button tooltip={t('FontOptions.trigger_tooltip_label')} variant={'ghost'} onClick={onFontClick} className='@[30rem]/editor:hidden!'>
         A
       </Button>
 
@@ -118,34 +120,56 @@ const MobileToolbarContent = ({ type, onBack, onHighlighterClick }: { type: Subm
 
 type SubmenuKey = 'main' | 'highlighter' | 'font'
 
-export function SimpleEditor() {
+export const RichTextEditorExtensions: Extensions = [
+  StarterKit.configure({ horizontalRule: false }) as Extension,
+  HorizontalRule,
+  TextAlign.configure({ types: ['heading', 'paragraph'] }),
+  TaskList,
+  TaskItem.configure({ nested: true }),
+  Highlight.configure({ multicolor: true }),
+  Typography,
+  Selection,
+]
+
+export function RichTextEditor({
+  onUpdateAction,
+  defaultContent,
+  disabled,
+  readOnly,
+  size = 'md',
+}: {
+  onUpdateAction?: (content: object) => void
+  defaultContent?: Content
+  disabled?: boolean
+  readOnly?: boolean
+  size?: 'sm' | 'md' | 'lg'
+}) {
+  const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
   const [mobileView, setMobileView] = useState<SubmenuKey>('main')
 
-  const editor = useEditor({
-    immediatelyRender: false,
-    editorProps: {
-      attributes: {
-        'autofocus': 'on',
-        'autocomplete': 'off',
-        'autocorrect': 'off',
-        'autocapitalize': 'off',
-        'aria-label': 'Main content area, start typing to enter text.',
-        'class': 'simple-editor',
+  const editor = useEditor(
+    {
+      immediatelyRender: false,
+      editable: !(readOnly || disabled),
+
+      editorProps: {
+        attributes: {
+          'autofocus': 'on',
+          'autocomplete': 'off',
+          'autocorrect': 'off',
+          'autocapitalize': 'off',
+          'aria-label': t('Content.input_aria_label'),
+          'class': 'simple-editor',
+          ...(size ? { 'data-size': size } : {}),
+        },
       },
+      extensions: RichTextEditorExtensions,
+      onUpdate: ({ editor }) => onUpdateAction?.(editor.getJSON()),
+      content: defaultContent,
     },
-    extensions: [
-      //@ts-expect-error Internal package type-assertion issue
-      StarterKit.configure({ horizontalRule: false }),
-      HorizontalRule,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Typography,
-      Selection,
-    ],
-  })
+    [readOnly, disabled, size, defaultContent],
+  )
 
   useEffect(() => {
     if (!isMobile && mobileView !== 'main') {
@@ -156,9 +180,9 @@ export function SimpleEditor() {
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col lg:max-w-[85%]'>
+      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col'>
         <EditorContext.Provider value={{ editor }}>
-          <Toolbar>
+          <Toolbar className={cn(readOnly && 'hidden!')}>
             {mobileView === 'main' ? (
               <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
             ) : (

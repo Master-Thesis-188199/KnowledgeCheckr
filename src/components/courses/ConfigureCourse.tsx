@@ -1,5 +1,7 @@
+import React from 'react'
 import { getUsers } from '@/database/User/select'
 import CollaboratorProviderContext from '@/src/components/courses/create/(sections)/CollaboratorProvider'
+import ContentSection from '@/src/components/courses/create/(sections)/ContentSection'
 import GeneralSection from '@/src/components/courses/create/(sections)/GeneralSection'
 import { OverviewSection } from '@/src/components/courses/create/(sections)/OverviewSection'
 import QuestionsSection from '@/src/components/courses/create/(sections)/QuestionsSection'
@@ -11,7 +13,6 @@ import { MultiStageProgressBar } from '@/src/components/Shared/MultiStageProgres
 import { MultiStageStoreProvider } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import { MutliStageRenderer } from '@/src/components/Shared/MultiStageProgress/MutliStageRenderer'
 import PageHeading from '@/src/components/Shared/PageHeading'
-import { SimpleEditor } from '@/src/components/tiptap-examples/simple-editor'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import getReferer from '@/src/lib/Shared/getReferer'
@@ -42,7 +43,7 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
         initialStoreProps={{
           stages: [
             { stage: 1, title: t('basic-information') },
-            { stage: 2, title: 'Contents' },
+            { stage: 2, title: t('contents') },
             { stage: 3, title: t('questions') },
             { stage: 4, title: t('settings') },
             { stage: 5, title: t('conclusion') },
@@ -58,8 +59,8 @@ export async function ConfigureCourse({ mode = 'create', initialStoreProps, opti
                 <GeneralSection />
               </MutliStageRenderer>
 
-              <MutliStageRenderer stage={2} className='flex'>
-                <SimpleEditor />
+              <MutliStageRenderer stage={2} className='flex flex-col'>
+                <ContentSection />
               </MutliStageRenderer>
 
               <MutliStageRenderer stage={3}>

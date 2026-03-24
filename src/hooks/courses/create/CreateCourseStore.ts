@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { instantiateCategory } from '@/src/schemas/CategorySchema'
+import { CategorySchema, instantiateCategory } from '@/src/schemas/CategorySchema'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
@@ -19,6 +19,9 @@ export type CourseActions = {
   updateSettings: (settings: Partial<Course['settings']>) => void
   updateCourse: (update: Partial<Course>) => void
   updateCollaborators: (collaborators: Course['collaborators']) => void
+  storeCourseContent: (props: Course['contents'][number]) => void
+  removeCourseContent: (categoryId: Course['contents'][number]['categoryId']) => void
+  addCategory: (category: CategorySchema) => void
 }
 
 export type CourseStore = CourseState & CourseActions
@@ -102,6 +105,20 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
         updateSettings: (settings) => set((prev) => ({ ...prev, settings: { ...prev.settings, ...settings }, unsavedChanges: true })),
         updateCourse: (update) => set((prev) => ({ ...prev, ...update, unsavedChanges: true })),
         updateCollaborators: (collaborators) => set((prev) => ({ ...prev, collaborators: collaborators, unsavedChanges: true })),
+        storeCourseContent: (props) =>
+          set((prev) => {
+            let contents = prev.contents
+
+            const exists = contents.some((c) => c.categoryId === props.categoryId)
+
+            if (exists) contents = contents.map((c) => (c.categoryId === props.categoryId ? props : c))
+            else contents = [...contents, props]
+
+            return { contents, unsavedChanges: true }
+          }),
+
+        addCategory: (category) => set((prev) => ({ questionCategories: [...prev.questionCategories.filter((c) => c.id !== category.id), category], unsavedChanges: true })),
+        removeCourseContent: (categoryId) => set((prev) => ({ contents: prev.contents.filter((c) => c.categoryId !== categoryId), unsavedChanges: true })),
       }
     },
   })
