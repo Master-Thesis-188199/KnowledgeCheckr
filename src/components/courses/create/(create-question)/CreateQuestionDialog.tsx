@@ -353,9 +353,9 @@ function ChoiceQuestionAnswers({ control, watch, register, errors }: AnswerOptio
         ))}
       </div>
 
-      <FieldError<ChoiceQuestion> field='answers' errors={errors} />
+      <FieldError<ChoiceQuestion> field='answers' errors={errors} showIcon />
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <FieldError<any> field='answers.root' errors={errors} />
+      <FieldError<any> field='answers.root' errors={errors} showIcon />
 
       <AddAnswerButton type='choice-question' watch={watch} append={append} />
     </>
@@ -464,9 +464,9 @@ function DragDropQuestionAnswers({ register, errors, control, watch, setValue }:
         ))}
       </div>
 
-      <FieldError<ChoiceQuestion> field='answers' errors={errors} />
+      <FieldError<ChoiceQuestion> field='answers' errors={errors} showIcon />
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <FieldError<any> field='answers.root' errors={errors} />
+      <FieldError<any> field='answers.root' errors={errors} showIcon />
 
       <AddAnswerButton type='drag-drop' watch={watch} append={append} />
     </>
