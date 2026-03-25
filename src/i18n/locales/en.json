@@ -684,6 +684,20 @@
           "duplicate_position_message": "Duplicate position: {position}"
         }
       }
+    },
+    "QuestionInput": {
+      "SingleChoice": {
+        "empty_selection_message": "Please select an answer"
+      },
+      "MultipleChoice": {
+        "empty_selection_message": "Please select at least one answer"
+      },
+      "OpenQuestion": {
+        "empty_input_message": "Please provide an answer"
+      },
+      "DragDrop": {
+        "missing_ordering_message": "Please arrange the answers in the correct order"
+      }
     }
   }
 }

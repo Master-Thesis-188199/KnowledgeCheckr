@@ -687,6 +687,20 @@ export default {
         }
       }
     },
+    QuestionInput: {
+      SingleChoice: {
+        empty_selection_message: 'Bitte wählen eine Antwort aus'
+      },
+      MultipleChoice: {
+        empty_selection_message: 'Bitte wähle mindestens eine Antwort aus'
+      },
+      OpenQuestion: {
+        empty_input_message: 'Bitte gib eine Antwort'
+      },
+      DragDrop: {
+        missing_ordering_message: 'Ordne die Antworten in der richtigen Reihenfolge an'
+      }
+    },
     Shared: {
       date_nan_time: 'Ungültiger Datumswert angegeben',
       number: {

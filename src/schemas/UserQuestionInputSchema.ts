@@ -10,7 +10,7 @@ const getBaseSchema = (t: Translator) =>
 const getSingleChoiceInputSchema = (t: Translator) =>
   z.object({
     type: z.literal('single-choice'),
-    selection: z.uuidv4().nonempty('Please select an answer'),
+    selection: z.uuidv4().nonempty(t('schemas.QuestionInput.SingleChoice.empty_selection_message')),
   })
 
 const getMultipleChoiceInputSchema = (t: Translator) =>
@@ -26,20 +26,20 @@ const getMultipleChoiceInputSchema = (t: Translator) =>
           .transform((v) => (v === false || v === undefined ? null : v))
           .nullable(),
       )
-      .refine((values) => values.filter((v) => !!v).length > 0, 'Please select at least one answer'),
+      .refine((values) => values.filter((v) => !!v).length > 0, t('schemas.QuestionInput.MultipleChoice.empty_selection_message')),
   })
 
 const getOpenQuestionInputSchema = (t: Translator) =>
   z.object({
     type: z.literal('open-question'),
-    input: z.string().min(1, 'Please provide an answer'),
+    input: z.string().min(1, t('schemas.QuestionInput.OpenQuestion.empty_input_message')),
   })
 
 const getDragDropInputSchema = (t: Translator) =>
   z.object({
     type: z.literal('drag-drop'),
     //* The identifiers of the selected answer [the answer itself]
-    input: z.array(z.string()).min(1, 'Please arrange the answers in the correct order'),
+    input: z.array(z.string()).min(1, t('schemas.QuestionInput.DragDrop.missing_ordering_message')),
   })
 
 const getUserInputSchemaTypes = (t: Translator) =>
