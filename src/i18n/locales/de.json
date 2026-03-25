@@ -638,8 +638,48 @@
         "description": "Definiert, ob dieser Kurs öffentlich zugänglich ist, also ob Benutzer diesen Kurs entdecken können."
       }
     },
+    "Question": {
+      "id": {
+        "uuid_message": "Eine Antwort muss eine id haben, um sie zu identifizieren!"
+      },
+      "question": {
+        "min_words_constraint#one": "Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.",
+        "min_words_constraint#other": "Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.",
+        "min_words_constraint": "Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist."
+      },
+      "Shared": {
+        "unique_answer_text_constraint_message": "Antworten müssen eindeutig sein. \nDuplikat: {text}",
+        "unique_answer_id_constraint_message": "Antwort-IDs müssen eindeutig sein. \nDoppelte ID: {id}",
+        "default_answer_name": "Antwort {pos}"
+      },
+      "MultipleChoice": {
+        "answer": {
+          "min_constraint": "Eine Antwort darf nicht leer sein!"
+        },
+        "answers": {
+          "min_constraint": "Bitte erstelle mindestens eine Antwort",
+          "min_one_correct_answer_constraint": "Mindestens eine Antwort muss richtig sein!"
+        }
+      },
+      "SingleChoice": {
+        "answers": {
+          "min_answer_count": "Bitte erstelle mindestens eine Antwort",
+          "exactly_one_correct_answer_message": "Eine Einzelauswahl Frage kann genau *eine* richtige Antwort haben!"
+        }
+      },
+      "DragDrop": {
+        "refinements": {
+          "continous_order_range": "Positionen müssen einen kontinuierlichen Reihenfolge bilden: [0...{highestPosition}]; \nerhalten: [{receivedPositions}]. \nPosition {missingPosition} fehlt!",
+          "start_index_constraint": "Antwort Positionen müssen bei 0 beginnen; \nerhalten: {receivedStartIndex}",
+          "duplicate_position_message": "Doppelte Position: {position}"
+        }
+      }
+    },
     "Shared": {
-      "date_nan_time": "Ungültiger Datumswert angegeben"
+      "date_nan_time": "Ungültiger Datumswert angegeben",
+      "number": {
+        "positive": "Diese Zahl muss größer als 0 sein"
+      }
     }
   }
 }

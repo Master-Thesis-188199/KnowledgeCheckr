@@ -577,7 +577,10 @@ export default {
       }
     },
     Shared: {
-      date_nan_time: 'Invalid date value provided'
+      date_nan_time: 'Invalid date value provided',
+      number: {
+        positive: 'Number must be greater than 0'
+      }
     },
     Category: {
       prerequisiteCategoryId: {
@@ -644,6 +647,43 @@ export default {
       },
       shareAccessibility: {
         description: 'Defines whether this course is publicly accessible, thus whether users can discover this course.'
+      }
+    },
+    Question: {
+      id: {
+        uuid_message: 'An answer must have an uuid to identify it!'
+      },
+      question: {
+        'min_words_constraint#one': 'Please reformulate your question to be at least {count} word long.',
+        'min_words_constraint#other': 'Please reformulate your question to be at least {count} words long.',
+        min_words_constraint: 'Please reformulate your question to be at least {count} words long.'
+      },
+      Shared: {
+        unique_answer_text_constraint_message: 'Answers must be unique. Duplicate: {text}',
+        unique_answer_id_constraint_message: 'Answer-ids must be unique. Duplicate id: {id}',
+        default_answer_name: 'Answer {pos}'
+      },
+      MultipleChoice: {
+        answer: {
+          min_constraint: 'An answer must not be empty!'
+        },
+        answers: {
+          min_constraint: 'Please provide at least one answer',
+          min_one_correct_answer_constraint: 'At least one answer has to be correct!'
+        }
+      },
+      SingleChoice: {
+        answers: {
+          min_answer_count: 'Please provide at least one answer',
+          exactly_one_correct_answer_message: 'A single-choice question must have *one* correct answer!'
+        }
+      },
+      DragDrop: {
+        refinements: {
+          continous_order_range: 'Positions must form a continuous range: [0...{highestPosition}]; received: [{receivedPositions}]. Position {missingPosition} is missing!',
+          start_index_constraint: 'Positions must begin from 0; received: {receivedStartIndex}',
+          duplicate_position_message: 'Duplicate position: {position}'
+        }
       }
     }
   }

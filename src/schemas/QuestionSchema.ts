@@ -8,18 +8,18 @@ import identifyDuplicateFields from '@/src/schemas/utils/refinements/IdentifyDup
 const getAnswerId = (t: Translator) =>
   z
     .string()
-    .uuid('An answer must have an uuid to identify it!')
+    .uuid(t('schemas.Question.id.uuid_message'))
     .catch(() => getUUID())
 
-function getBaseQuestionSchema(translator: Translator) {
+function getBaseQuestionSchema(t: Translator) {
   return z.object({
     id: z.uuidv4(),
-    points: z.number().positive('Number must be greater than 0'),
+    points: z.number().positive(t('schemas.Shared.number.positive')),
     category: z.string().default('general'),
 
     question: z
       .string()
-      .refine((q) => q.split(' ').length > 2, 'Please reformulate your question to be at least 3 words long.')
+      .refine((q) => q.split(' ').length > 2, t('schemas.Question.question.min_words_constraint', { count: 3 }))
       .default(
         lorem()
           .substring(0, Math.floor(Math.random() * 100) + 20)
@@ -37,78 +37,78 @@ function getBaseQuestionSchema(translator: Translator) {
  * @param answers The array of answers provided by the `superRefine` operrand.
  * @param ctx The superRefine context to create issues with.
  */
-const uniqueAnswerConstraints = (answers: Array<{ answer: string; id: string }>, ctx: z.RefinementCtx) => {
+const getUniqueAnswerConstraints = (t: Translator) => (answers: Array<{ answer: string; id: string }>, ctx: z.RefinementCtx) => {
   identifyDuplicateFields(answers, ctx, {
     field: 'answer',
     key: (a) => a.answer,
     normalizeKey: (s) => s.trim().toLowerCase(),
-    message: (dup) => `Answers must be unique. Duplicate: "${dup}"`,
+    message: (dup) => t('schemas.Question.Shared.unique_answer_text_constraint_message', { text: dup }),
     mark: 'both',
   })
 
   identifyDuplicateFields(answers, ctx, {
     field: 'id',
     key: (a) => a.id,
-    message: (dup) => `Answer-ids must be unique. Duplicate id: "${dup}"`,
+    message: (dup) => t('schemas.Question.Shared.unique_answer_id_constraint_message', { id: dup }),
     mark: 'both',
   })
 }
 
-function getMultipleChoiceAnswerSchema(translator: Translator) {
+function getMultipleChoiceAnswerSchema(t: Translator) {
   return z.object({
     type: z.literal('multiple-choice'),
     answers: z
       .array(
         z.object({
-          id: getAnswerId(translator),
-          answer: z.string().min(1, 'An answer must not be empty!'),
+          id: getAnswerId(t),
+          answer: z.string().min(1, t('schemas.Question.MultipleChoice.answer.min_constraint')),
           correct: z.boolean(),
         }),
       )
-      .min(1, 'Please provide at least one answer')
-      .refine((answers) => answers.find((answer) => answer.correct), { message: 'At least one answer has to be correct!' })
-      .superRefine(uniqueAnswerConstraints)
+      .min(1, t('schemas.Question.MultipleChoice.answers.min_constraint'))
+      .refine((answers) => answers.find((answer) => answer.correct), { message: t('schemas.Question.MultipleChoice.answers.min_one_correct_answer_constraint') })
+      .superRefine(getUniqueAnswerConstraints(t))
       .default(() => [
-        { id: getUUID(), answer: 'Answer 1', correct: false },
-        { id: getUUID(), answer: 'Answer 2', correct: true },
-        { id: getUUID(), answer: 'Answer 3', correct: true },
-        { id: getUUID(), answer: 'Answer 4', correct: false },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 1 }), correct: false },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 2 }), correct: true },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 3 }), correct: true },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 4 }), correct: false },
       ]),
   })
 }
 
-function getSingleChoiceAnswerSchema(translator: Translator) {
+function getSingleChoiceAnswerSchema(t: Translator) {
   return z.object({
     type: z.literal('single-choice'),
     answers: z
       .array(
         z.object({
-          id: getAnswerId(translator),
+          id: getAnswerId(t),
           answer: z.string(),
           correct: z.boolean(),
         }),
       )
-      .min(1, 'Please provide at least one answer')
-      .superRefine(uniqueAnswerConstraints)
-      .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: 'A single-choice question must have *one* correct answer!' })
+      .min(1, t('schemas.Question.SingleChoice.answers.min_answer_count'))
+      .superRefine(getUniqueAnswerConstraints(t))
+      .refine((answers) => answers.filter((answer) => answer.correct).length === 1, { message: t('schemas.Question.SingleChoice.answers.exactly_one_correct_answer_message') })
       .default(() => [
-        { id: getUUID(), answer: 'Answer 1', correct: false },
-        { id: getUUID(), answer: 'Answer 2', correct: true },
-        { id: getUUID(), answer: 'Answer 3', correct: false },
-        { id: getUUID(), answer: 'Answer 4', correct: false },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 1 }), correct: false },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 2 }), correct: true },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 3 }), correct: false },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 4 }), correct: false },
       ]),
   })
 }
 
-function getDragDropAnswerSchema(translator: Translator) {
+function getDragDropAnswerSchema(t: Translator) {
   return z.object({
     type: z.literal('drag-drop'),
     answers: z
       .array(
         z.object({
-          id: getAnswerId(translator),
+          id: getAnswerId(t),
           answer: z.string(),
-          position: z.number().min(0, 'Position must be positive'),
+          position: z.number().min(0, t('schemas.Shared.number.positive')),
         }),
       )
       .superRefine((answers, ctx) => {
@@ -123,7 +123,7 @@ function getDragDropAnswerSchema(translator: Translator) {
             minimum: 0,
             type: 'number',
             inclusive: true,
-            message: `[drag-drop] positions must begin from 0; received: ${minPos} `,
+            message: t('schemas.Question.DragDrop.refinements.start_index_constraint', { receivedStartIndex: minPos }),
             path: [answers.findIndex((a) => a.position === minPos), 'position'],
           })
           return
@@ -133,7 +133,7 @@ function getDragDropAnswerSchema(translator: Translator) {
           if (seen.has(answer.position)) {
             ctx.addIssue({
               code: 'custom',
-              message: `[drag-drop] duplicate position: ${answer.position}`,
+              message: t('schemas.Question.DragDrop.refinements.duplicate_position_message', { position: answer.position }),
               path: [i, 'position'],
             })
           }
@@ -145,24 +145,25 @@ function getDragDropAnswerSchema(translator: Translator) {
           if (!seen.has(pos)) {
             ctx.addIssue({
               code: 'custom',
-              message: `[drag-drop] positions must form a continuous range: [0...${n - 1}]; received: [${answers.map((a) => a.position).join(', ')}]. Position ${pos} is missing!`,
+              path: ['answers'],
+              message: t('schemas.Question.DragDrop.refinements.continous_order_range', { highestPosition: n - 1, missingPosition: pos, receivedPositions: answers.map((a) => a.position).join(', ') }),
             })
 
             break
           }
         }
       })
-      .superRefine(uniqueAnswerConstraints)
+      .superRefine(getUniqueAnswerConstraints(t))
       .default(() => [
-        { id: getUUID(), answer: 'Answer 1', position: 0 },
-        { id: getUUID(), answer: 'Answer 2', position: 1 },
-        { id: getUUID(), answer: 'Answer 3', position: 2 },
-        { id: getUUID(), answer: 'Answer 4', position: 3 },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 1 }), position: 0 },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 2 }), position: 1 },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 3 }), position: 2 },
+        { id: getUUID(), answer: t('schemas.Question.Shared.default_answer_name', { pos: 4 }), position: 3 },
       ]),
   })
 }
 
-function getOpenAnswerSchema(translator: Translator) {
+function getOpenAnswerSchema(t: Translator) {
   return z.object({
     type: z.literal('open-question'),
     expectation: z.string().optional(),
