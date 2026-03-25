@@ -1,0 +1,101 @@
+'use client'
+
+import { forwardRef, useCallback, useState } from 'react'
+// --- Icons ---
+import { ChevronDownIcon } from '@/components/tiptap-icons/chevron-down-icon'
+// --- Tiptap UI ---
+import { HeadingButton } from '@/components/tiptap-ui/heading-button'
+import type { UseHeadingDropdownMenuConfig } from '@/components/tiptap-ui/heading-dropdown-menu'
+import { useHeadingDropdownMenu } from '@/components/tiptap-ui/heading-dropdown-menu'
+// --- UI Primitives ---
+import type { ButtonProps } from '@/components/tiptap-ui-primitive/button'
+import { Button } from '@/components/tiptap-ui-primitive/button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/hooks/use-tiptap-editor'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
+import { useScopedI18n } from '@/src/i18n/client-localization'
+
+export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, UseHeadingDropdownMenuConfig {
+  /**
+   * Callback for when the dropdown opens or closes
+   */
+  onOpenChange?: (isOpen: boolean) => void
+  /**
+   * Whether the dropdown should use a modal
+   */
+  modal?: boolean
+}
+
+/**
+ * Dropdown menu component for selecting heading levels in a Tiptap editor.
+ *
+ * For custom dropdown implementations, use the `useHeadingDropdownMenu` hook instead.
+ */
+export const HeadingDropdownMenu = forwardRef<HTMLButtonElement, HeadingDropdownMenuProps>(
+  ({ editor: providedEditor, levels = [1, 2, 3, 4, 5, 6], hideWhenUnavailable = false, onOpenChange, children, modal = true, ...buttonProps }, ref) => {
+    const t = useScopedI18n('Components.RichTextEditor.Toolbar')
+    const { editor } = useTiptapEditor(providedEditor)
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const { isVisible, isActive, canToggle, Icon } = useHeadingDropdownMenu({
+      editor,
+      levels,
+      hideWhenUnavailable,
+    })
+
+    const handleOpenChange = useCallback(
+      (open: boolean) => {
+        if (!editor || !canToggle) return
+        setIsOpen(open)
+        onOpenChange?.(open)
+      },
+      [canToggle, editor, onOpenChange],
+    )
+
+    if (!isVisible) {
+      return null
+    }
+
+    return (
+      <DropdownMenu modal={modal} open={isOpen} onOpenChange={handleOpenChange}>
+        <DropdownMenuTrigger asChild variant='ghost'>
+          <Button
+            type='button'
+            variant='ghost'
+            data-active-state={isActive ? 'on' : 'off'}
+            role='button'
+            tabIndex={-1}
+            disabled={!canToggle}
+            data-disabled={!canToggle}
+            aria-label={t('Headings.trigger_aria_label')}
+            aria-pressed={isActive}
+            tooltip={t('Headings.trigger_tooltip_label')}
+            {...buttonProps}
+            ref={ref}>
+            {children ? (
+              children
+            ) : (
+              <>
+                <Icon className='tiptap-button-icon' />
+                <ChevronDownIcon className='tiptap-button-dropdown-small' />
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align='start' className='rounded-xl' variant='ghost'>
+          <DropdownMenuGroup>
+            {levels.map((level) => (
+              <DropdownMenuItem key={`heading-${level}`} asChild>
+                <HeadingButton editor={editor} level={level} text={t('Headings.heading_level_label', { level })} showTooltip={false} />
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  },
+)
+
+HeadingDropdownMenu.displayName = 'HeadingDropdownMenu'
+
+export default HeadingDropdownMenu

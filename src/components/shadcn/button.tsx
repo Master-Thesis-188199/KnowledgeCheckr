@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { LoaderCircleIcon } from 'lucide-react'
 import { cn } from '@/lib/Shared/utils'
@@ -37,10 +38,13 @@ const buttonVariants = cva(
         ),
       },
       size: {
-        default: 'h-9 px-4 py-2 has-[>svg]:px-3',
-        sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
-        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
+        'default': 'h-9 px-4 py-2 has-[>svg]:px-3',
+        'sm': 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
+        'lg': 'h-10 rounded-md px-6 has-[>svg]:px-4',
+        'icon': 'size-9',
+        'icon-xs': "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        'icon-sm': 'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
+        'icon-lg': 'size-9',
       },
     },
     defaultVariants: {
@@ -53,16 +57,18 @@ const buttonVariants = cva(
 export type SimpleButtonProps = Omit<React.ComponentProps<'button'>, 'onAnimationStart' | 'onDrag' | 'onDragEnd' | 'onDragStart' | 'style'> &
   VariantProps<typeof buttonVariants> & {
     isLoading?: boolean
+    asChild?: boolean
   }
 
-function Button({ className, variant, size, isLoading, children, ...props }: SimpleButtonProps) {
+function Button({ className, variant, size, isLoading, children, asChild, ...props }: SimpleButtonProps) {
   const LoadingIndicator = <LoaderCircleIcon className='size-4 animate-spin' />
+  const Comp = asChild ? Slot : 'button'
 
   return (
-    <button data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props}>
+    <Comp data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props}>
       {isLoading ? LoadingIndicator : null}
       {children}
-    </button>
+    </Comp>
   )
 }
 

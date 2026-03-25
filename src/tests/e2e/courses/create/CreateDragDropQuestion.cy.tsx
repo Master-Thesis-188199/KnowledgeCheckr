@@ -1,0 +1,110 @@
+import { getUUID } from '@/src/lib/Shared/getUUID'
+import { DragDropQuestion } from '@/src/schemas/QuestionSchema'
+
+describe('Course: Drag Drop Question -', () => {
+  beforeEach(() => {
+    cy.loginTestUser()
+    cy.visit('/courses/create')
+
+    //* Switch to questions-stage
+    cy.get('#multi-stage-list-parent').children().filter(':visible').should('have.length', 1).contains('Questions').click()
+
+    cy.get("[data-slot='dialog-trigger']").should('exist').contains('Create Question').click()
+    cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'open')
+  })
+
+  it('Verify that a drag-drop question can be added when the inputs are valid', () => {
+    const { question, points, type, answers }: Partial<DragDropQuestion> = {
+      question: 'Please arrange the following cities in order of their population size:',
+      points: 5,
+      type: 'drag-drop',
+      answers: [
+        { id: getUUID(), answer: 'Tokyo', position: 0 },
+        { id: getUUID(), answer: 'Delhi', position: 1 },
+        { id: getUUID(), answer: 'Shanghai', position: 2 },
+        { id: getUUID(), answer: 'São Paulo', position: 3 },
+      ],
+    }
+
+    cy.get("input[name='question']").clear().type(question)
+    cy.get("input[name='points']").clear().type(points.toString())
+
+    cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+    cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${type}"]`).click()
+
+    for (let i = 0; i < answers.length; i++) {
+      cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(answers[i].answer)
+      cy.get(`#question-answers * input[name='answers.${i}.position']`).should('exist').should('have.value', answers[i].position)
+    }
+
+    cy.get("#question-dialog * button[type='submit']").should('exist').click({ force: true })
+
+    cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
+  })
+
+  it('Verify that drag-drop answers can be re-ordered', () => {
+    const { question, points, type, answers }: Partial<DragDropQuestion> = {
+      question: 'Please arrange the following cities in order of their population size:',
+      points: 5,
+      type: 'drag-drop',
+      answers: [
+        { id: getUUID(), answer: 'Sao Paulo', position: 3 },
+        { id: getUUID(), answer: 'Delhi', position: 1 },
+        { id: getUUID(), answer: 'Shanghai', position: 2 },
+        { id: getUUID(), answer: 'Tokyo', position: 0 },
+      ],
+    }
+
+    cy.get("input[name='question']").clear().type(question)
+    cy.get("input[name='points']").clear().type(points.toString())
+
+    cy.get("input[name='type'] + button[aria-label='popover-trigger-type']").click()
+    cy.get(`[aria-label="popover-content-type"] * div[data-slot="command-item"][data-value="${type}"]`).click()
+
+    for (let i = 0; i < answers.length; i++) {
+      cy.get(`#question-answers * input[name='answers.${i}.answer']`).should('exist').clear().type(answers[i].answer)
+    }
+
+    for (let i = 0; i < answers.length; i++) {
+      cy.get(`#question-answers * input[name$='.answer']`)
+        .filter((k, el: HTMLInputElement) => {
+          return el.value === answers[i].answer
+        })
+        .should('have.value', answers[i].answer)
+        .parent()
+        .parent()
+        .find(`input[name$='.position']`)
+
+        .invoke('val')
+        .then((val) => {
+          const moves = Number(val) - answers[i].position
+          const direction = moves < 0 ? 'down' : 'up'
+          cy.log(`Moving element: ${Math.abs(moves)} ${direction}`)
+
+          for (let j = 0; j < Math.abs(moves); j++) {
+            cy.log(`Moving ${answers[i].answer} ${direction}`)
+            cy.get(`#question-answers * input[name$='.answer']`)
+              .filter((k, el: HTMLInputElement) => {
+                return el.value === answers[i].answer
+              })
+              .should('have.value', answers[i].answer)
+              .parent()
+              .parent()
+              .find(`button[aria-label='move answer ${direction}']`)
+              .click()
+            cy.wait(500)
+          }
+        })
+      cy.get(`#question-answers * input[name='answers.${answers[i].position}.answer']`).should('exist').invoke('val').should('eq', answers[i].answer)
+
+      cy.get(`#question-answers * input[name='answers.${answers[i].position}.position']`)
+        .should('exist')
+        .invoke('val')
+        .then((pos) => Number(pos))
+        .should('eq', answers[i].position)
+    }
+
+    cy.get("#question-dialog * button[type='submit']").should('exist').click({ force: true })
+    cy.get("[data-slot='dialog-trigger']").contains('Create Question').should('have.attr', 'data-state', 'closed')
+  })
+})

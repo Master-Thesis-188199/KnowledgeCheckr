@@ -22,4 +22,4 @@ export const LogSchema = z.object({
   messages: z.array(z.unknown()).default([]),
 })
 
-export type LoggerOptions = z.infer<typeof LogSchema>
+export type LoggerOptions = z.output<typeof LogSchema>

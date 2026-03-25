@@ -103,7 +103,7 @@ function ProgressRing({ stage, title }: Stage) {
         {stage}
         <span
           className={cn(
-            'absolute -right-12 -bottom-7 -left-12 text-center text-xs opacity-75 @xs:text-sm dark:opacity-65',
+            'absolute -right-13 -bottom-7 -left-13 text-center text-xs opacity-75 @xs:text-sm dark:opacity-65',
             isCompleted(stage) && 'opacity-80 dark:opacity-80',
             isFocussed(stage) && 'opacity-95 dark:opacity-95',
           )}>

@@ -42,7 +42,7 @@ export default {
     jump_back_button_label: 'Jump back'
   },
   Home: {
-    description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
+    description: 'Create your own Courses to boost your knowledge to the next level. (en)'
   },
   AccountPage: {
     title: 'Account Information',
@@ -53,15 +53,15 @@ export default {
       description: 'To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.'
     }
   },
-  Checks: {
-    title: 'Your Checks',
-    no_existing_checks: 'No checks found. Create a new one',
-    no_existing_checks_action_button: 'here',
+  Courses: {
+    title: 'Your Courses',
+    no_existing_courses: 'No courses found. Create a new one',
+    no_existing_courses_action_button: 'here',
     Create: {
       GeneralSection: {
         title: 'General Section',
         name_label: 'Name',
-        name_placeholder: 'Science Fiction Check',
+        name_placeholder: 'Science Fiction Course',
         description_label: 'Description',
         description_placeholder: 'Learn about science fiction',
         difficulty_label: 'Difficulty',
@@ -74,6 +74,33 @@ export default {
           command_loading_message: 'Loading more users',
           command_empty_no_users: 'No matching users found.',
           command_empty_min_input: 'You must provide at least 3 characters to find matches'
+        }
+      },
+      ContentSection: {
+        title: 'Course Contents',
+        description: 'Create new contents for this course. These contents can be used by users to increase their knowledge and to understand why questions were incorrectly answered.',
+        Actions: {
+          create_new_button_label: 'Create new Content',
+          edit_content_button_label: 'Edit',
+          delete_content_confirm_label: 'Delete Content',
+          delete_content_dialog_body: 'This action cannot be undone. This will permanently delete this course content from this course and remove its data from our servers.',
+          delete_content_button_label: 'Remove',
+          edit_content_button_aria_label: 'edit course content',
+          delete_content_button_aria_label: 'delete course content'
+        },
+        CourseContentDialog: {
+          title_create: 'Create new Content',
+          title_edit: 'Edit Content',
+          Fields: {
+            title_placeholder: 'Basic History of Austria',
+            description_placeholder: 'Includes fundamental information about Austria.',
+            title_label: 'Content Title',
+            description_label: 'Short Description',
+            categoryId_label: 'Category',
+            categoryId_trigger_placerholder: 'Select a category'
+          },
+          submit_create_button_label: 'Create Content',
+          submit_update_button_label: 'Update Content'
         }
       },
       QuestionSection: {
@@ -123,6 +150,7 @@ export default {
       },
       MultiStages: {
         'basic-information': 'Basic Information',
+        contents: 'Contents',
         questions: 'Questions',
         settings: 'Settings',
         conclusion: 'Conclusion'
@@ -130,9 +158,9 @@ export default {
       CreateQuestionDialog: {
         Header: {
           title_create: 'Create Question',
-          description_create: 'Create your new question for your KnowledgeCheck',
+          description_create: 'Create your new question for your Course',
           title_edit: 'Edit Question',
-          description_edit: 'Edit your existing question of your KnowledgeCheck'
+          description_edit: 'Edit your existing question of your Course'
         },
         placeholders: {
           question: 'Formulate your question here',
@@ -159,12 +187,12 @@ export default {
       }
     },
     Discover: {
-      title: 'Explore new Checks',
-      no_checks_found_base: 'No checks found. Create your own KnowledgeCheck',
-      no_checks_found_link: 'here',
+      title: 'Explore new Courses',
+      no_courses_found_base: 'No courses found. Create your own Course',
+      no_courses_found_link: 'here',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operands',
-        create_check_button_label: 'Create your own Check',
+        create_course_button_label: 'Create your own Course',
         filter_input_placeholder: 'Filter by name',
         tooltips: {
           filter_case_sensitive: 'Filter is case-sensitive',
@@ -197,7 +225,7 @@ export default {
           }
         },
         title: 'Examination Attempts',
-        description: 'Shows a detailed list of all examination attempts for this check',
+        description: 'Shows a detailed list of all examination attempts for this course',
         status_done: 'Done',
         status_in_progress: 'in-progress',
         user_type_normal: 'normal',
@@ -306,7 +334,7 @@ export default {
         },
         DataTable: {
           title: 'Question Overview',
-          description: 'Shows a detailed list of every question of this check to review your answers.'
+          description: 'Shows a detailed list of every question of this course to review your answers.'
         }
       }
     }
@@ -314,17 +342,17 @@ export default {
   Examination: {
     attempt_not_possible: {
       title: 'Examination not possible',
-      checkClosed: 'Unfortunately the check was closed on {closeDate}, thus you are no longer able to start examinations beyond that day.',
-      notOpenYet: 'Unfortunately the check is not yet open for examinations, please wait until {openDate} to start an examination',
-      unavailable: 'The check you tried to access is currently not available to users.',
-      'anonymous-users-not-allowed': 'Anonymous users are not allowed in this check, please sign-in / login with a different account'
+      courseClosed: 'Unfortunately the course was closed on {closeDate}, thus you are no longer able to start examinations beyond that day.',
+      notOpenYet: 'Unfortunately the course is not yet open for examinations, please wait until {openDate} to start an examination',
+      unavailable: 'The course you tried to access is currently not available to users.',
+      'anonymous-users-not-allowed': 'Anonymous users are not allowed in this course, please sign-in / login with a different account'
     }
   },
   Practice: {
     practicing_not_allowed: {
       title: 'Practicing not allowed',
-      disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
-      toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.'
+      disabled: 'Practicing is disabled for this course, try again later or contact the owner of this course to enable practicing.',
+      toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this course.'
     },
     PracticeQuestionNavigation: {
       session_timer_label: 'Session',
@@ -340,7 +368,7 @@ export default {
   StartOptionsPage: {
     title: 'Start practice or an examination',
     Card: {
-      title: 'Find a KnowledgeCheck by share token',
+      title: 'Find a Course by share token',
       description: 'Enter a share token to start practice or an examination.'
     },
     ShareTokenInput: {
@@ -349,12 +377,12 @@ export default {
     ShareTokenOptions: {
       start_practice_label: 'Start Practicing',
       start_examination_label: 'Start Examination Attempt',
-      not_found_error_message: 'Check was not found.',
-      retrieval_error_message: 'Searching for check failed unexpectedly.'
+      not_found_error_message: 'Course was not found.',
+      retrieval_error_message: 'Searching for course failed unexpectedly.'
     }
   },
   Components: {
-    KnowledgeCheckCard: {
+    CourseCard: {
       last_modified_label: 'last modified',
       Statistics: {
         questions_label: 'Questions',
@@ -367,13 +395,13 @@ export default {
         is_Guest_role: 'Guest'
       }
     },
-    ShareKnowledgeCheckButton: {
-      tooltip_message: 'Share this KnowledgeCheck',
-      tooltip_empty_message: 'This check has no questions, cannot be shared at this moment.',
+    ShareCourseButton: {
+      tooltip_message: 'Share this Course',
+      tooltip_empty_message: 'This course has no questions, cannot be shared at this moment.',
       successfully_copied_toast_message: 'Successfully saved token to your clipboard.',
       failed_copy_toast_message: 'Failed to copy share link to the clipboard.'
     },
-    KnowledgeCheckCardMenu: {
+    CourseActionMenu: {
       menu_label: 'Actions',
       invite_to_submenu_label: 'Invite users to',
       copy_practice: {
@@ -383,7 +411,7 @@ export default {
       },
       start_practice: {
         label: 'Start Practicing',
-        tooltip: 'This check has no questions, practice disabled.',
+        tooltip: 'This course has no questions, practice disabled.',
         toast: 'Unable to start Practice'
       },
       copy_examination: {
@@ -393,34 +421,34 @@ export default {
       },
       start_examination: {
         label: 'Start Examination',
-        tooltip: 'This check has no questions, examination disabled.',
+        tooltip: 'This course has no questions, examination disabled.',
         toast: 'Unable to start Practice'
       },
-      edit_check: {
-        label: 'Edit KnowledgeCheck',
-        tooltip: 'You are not allowed to edit this check!'
+      edit_course: {
+        label: 'Edit Course',
+        tooltip: 'You are not allowed to edit this course!'
       },
-      clone_check: {
-        label: 'Clone KnowledgeCheck'
+      clone_course: {
+        label: 'Clone Course'
       },
       inspect_statistics: {
         label: 'Inspect Statistics'
       },
       remove_share_token: {
-        tooltip: 'There is no share token associated to this check!',
-        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.',
+        tooltip: 'There is no share token associated to this course!',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this Course.',
         toast_deletion_successful: 'Successfully deleted share token',
         toast_deletion_failure: 'Removing share token was unsuccessful!'
       },
-      delete_knowledgeCheck: {
-        label: 'Delete KnowledgeCheck',
-        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.',
-        toast_deletion_successful: 'Successfully deleted knowledgeCheck',
-        toast_deletion_failure: 'Removing knowledgeCheck was unsuccessful!'
+      delete_course: {
+        label: 'Delete Course',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this Course from your account and remove its data from our servers.',
+        toast_deletion_successful: 'Successfully deleted course',
+        toast_deletion_failure: 'Removing course was unsuccessful!'
       },
       Shared: {
         tooltip_not_allowed: 'You are not allowed to perform this action!',
-        toast_deletion_not_found: 'Deletion was unsuccesful, check not found!'
+        toast_deletion_not_found: 'Deletion was unsuccesful, course not found!'
       }
     },
     ConfirmationDialog: {
@@ -462,6 +490,45 @@ export default {
       question_status_incorrect: 'incorrect',
       'question_status_partly-correct': 'partly-correct',
       question_status_unanswered: 'unanswered'
+    },
+    RichTextEditor: {
+      Content: {
+        input_aria_label: 'Main content area, start typing to enter text.'
+      },
+      Toolbar: {
+        undo_tooltip_label: 'Undo',
+        redo_tooltip_label: 'Redo',
+        Headings: {
+          trigger_tooltip_label: 'Heading',
+          trigger_aria_label: 'Format text as heading',
+          heading_level_label: 'Heading {level}'
+        },
+        ListOptions: {
+          trigger_aria_label: 'List options',
+          trigger_label: 'List',
+          Options: {
+            bulletList: 'Bullet List',
+            orderedList: 'Ordered List',
+            taskList: 'Task List'
+          }
+        },
+        FontOptions: {
+          trigger_tooltip_label: 'Font Options',
+          bold_label: 'Bold',
+          italic_label: 'Italic',
+          strike_label: 'Strike',
+          code_label: 'Code',
+          underline_label: 'Underline'
+        },
+        Alignment: {
+          trigger_aria_label: 'Format text alignment',
+          trigger_tooltip_label: 'Alignment options',
+          left_label: 'Align left',
+          center_label: 'Align center',
+          right_label: 'Align right',
+          justify_label: 'Align justify'
+        }
+      }
     }
   }
 } as const

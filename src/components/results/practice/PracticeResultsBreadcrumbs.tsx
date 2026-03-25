@@ -13,13 +13,13 @@ export function PracticeResultsBreadcrumbs({ share_token, ...props }: { share_to
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href={`/checks`}>Checks</Link>
+            <Link href={`/courses`}>Courses</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href={`/checks/${share_token}/practice`}>Practice</Link>
+            <Link href={`/courses/${share_token}/practice`}>Practice</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
