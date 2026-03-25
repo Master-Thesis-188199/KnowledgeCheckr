@@ -576,6 +576,18 @@
         "min_constraint_message": "Eine Voraussetzungskategorie darf nicht leer sein!"
       }
     },
+    "CourseContent": {
+      "title": {
+        "nonempty_message": "Der Titel eines Inhalts darf nicht leer sein.",
+        "description": "Wird verwendet, um einen bestimmten Inhalt einer Kategorie schnell zu identifizieren"
+      },
+      "description": {
+        "description": "Beschreibt den Inhalt, der einer bestimmten Kategorie zugeordnet ist."
+      },
+      "categoryId": {
+        "uuidv4_message": "Die Auswahl einer Kategorie ist erforderlich"
+      }
+    },
     "Shared": {
       "date_nan_time": "Ungültiger Datumswert angegeben"
     }

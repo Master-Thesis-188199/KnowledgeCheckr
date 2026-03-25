@@ -583,6 +583,18 @@ export default {
       prerequisiteCategoryId: {
         min_constraint_message: 'A prerequisite category may not be empty!'
       }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: "A content's title can not be empty.",
+        description: 'Used to quickly identify a given content of a category'
+      },
+      description: {
+        description: 'Describes the content associated to a given category.'
+      },
+      categoryId: {
+        uuidv4_message: 'Selecting a category is required'
+      }
     }
   }
 } as const

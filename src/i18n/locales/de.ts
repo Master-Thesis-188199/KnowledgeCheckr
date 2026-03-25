@@ -69,14 +69,14 @@ export default {
       },
       ContentSection: {
         title: 'Kursinhalte',
-        description:
-          'Erstellen Sie neue Inhalte für diesen Kurs. \n' + 'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
+        description: 'Erstellen Sie neue Inhalte für diesen Kurs. \n' +
+          'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
         Actions: {
           create_new_button_label: 'Erstelle einen neuen Inhalt',
           edit_content_button_label: 'Bearbeiten',
           delete_content_confirm_label: 'Inhalt löschen',
-          delete_content_dialog_body:
-            'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
+          delete_content_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+            'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
           delete_content_button_label: 'Löschen',
           edit_content_button_aria_label: 'Kursinhalt bearbeiten',
           delete_content_button_aria_label: 'Kursinhalt löschen'
@@ -354,8 +354,7 @@ export default {
         confirm_button_label: 'Beenden',
         cancel_button_label: 'Fortsezten',
         title: 'Mit dem Üben aufhören?',
-        body:
-          'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
+        body: 'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
           'Bitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben.'
       }
     }
@@ -431,13 +430,15 @@ export default {
       },
       remove_share_token: {
         tooltip: 'Dieser Kurs hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
       delete_course: {
         label: 'Kurs löschen',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
         toast_deletion_successful: 'Kurs erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des Kurses fehlgeschlagen!'
       },
@@ -448,7 +449,8 @@ export default {
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     },
@@ -579,6 +581,18 @@ export default {
     Category: {
       prerequisiteCategoryId: {
         min_constraint_message: 'Eine Voraussetzungskategorie darf nicht leer sein!'
+      }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: 'Der Titel eines Inhalts darf nicht leer sein.',
+        description: 'Wird verwendet, um einen bestimmten Inhalt einer Kategorie schnell zu identifizieren'
+      },
+      description: {
+        description: 'Beschreibt den Inhalt, der einer bestimmten Kategorie zugeordnet ist.'
+      },
+      categoryId: {
+        uuidv4_message: 'Die Auswahl einer Kategorie ist erforderlich'
       }
     },
     Shared: {

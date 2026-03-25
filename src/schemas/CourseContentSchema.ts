@@ -5,9 +5,9 @@ import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUti
 
 export const getCourseContentSchema = (t: Translator) =>
   z.object({
-    title: z.string().nonempty("A content's title can not be empty.").describe('Used to quickly identify a given content of a category'),
-    description: z.string().optional().describe('Describes the content associated to a given category.'),
-    categoryId: z.uuidv4('Selecting a category is required'),
+    title: z.string().nonempty(t('schemas.CourseContent.title.nonempty_message')).describe(t('schemas.CourseContent.title.description')),
+    description: z.string().optional().describe(t('schemas.CourseContent.description.description')),
+    categoryId: z.uuidv4(t('schemas.CourseContent.categoryId.uuidv4_message')),
     content: z.custom<JSONContent>().optional(),
   })
 
