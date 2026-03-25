@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { Tooltip as ShadcnTooltip, TooltipContent, TooltipTrigger } from '@/src/components/shadcn/tooltip'
 import { cn } from '@/src/lib/Shared/utils'
@@ -12,9 +13,29 @@ export type TooltipProps = Omit<React.ComponentProps<typeof TooltipPrimitive.Con
 }
 
 export default function Tooltip({ disabled, config = {}, delay = 250, variant = 'normal', content, children, ...props }: TooltipProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [isPinned, setPinned] = useState(config.open ?? false)
+
+  useEffect(() => {
+    if (config.open === undefined || config.open === isPinned) return
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPinned(config.open)
+  }, [config.open])
+
   return (
-    <ShadcnTooltip delayDuration={delay} {...config} open={disabled === true ? false : config.open}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+    <ShadcnTooltip
+      delayDuration={delay}
+      {...config}
+      open={disabled === true ? false : isHovered || isPinned}
+      onOpenChange={(isOpen) => {
+        if (!isPinned) setIsHovered(isOpen)
+
+        config.onOpenChange?.(isOpen)
+      }}>
+      <TooltipTrigger asChild onClick={() => setPinned((prev) => !prev)} aria-label='toggle tooltip'>
+        {children}
+      </TooltipTrigger>
       <TooltipContent
         {...props}
         className={cn(
