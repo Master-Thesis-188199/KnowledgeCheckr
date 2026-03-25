@@ -40,7 +40,7 @@ export const getCourseSettingsSchema = (t: Translator) =>
         .or(z.string())
         .default(() => format(new Date(Date.now()), 'yyyy-MM-dd HH:mm:ss'))
         .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-        .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+        .refine((course) => !isNaN(course.getTime()), t('schemas.Shared.date_nan_time'))
         .describe(t('schemas.CourseSettings.examination.startDate.description')),
 
       endDate: z
@@ -48,7 +48,7 @@ export const getCourseSettingsSchema = (t: Translator) =>
         .or(z.string())
         .default(() => format(addYears(new Date(Date.now()), 1), 'yyyy-MM-dd 00:00:00'))
         .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-        .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+        .refine((course) => !isNaN(course.getTime()), t('schemas.Shared.date_nan_time'))
         .nullable()
         .describe(t('schemas.CourseSettings.examination.endDate.description')),
 

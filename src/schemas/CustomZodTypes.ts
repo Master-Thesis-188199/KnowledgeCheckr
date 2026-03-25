@@ -5,4 +5,4 @@ export const getStringDate = (t: Translator) =>
   z
     .union([z.date(), z.string()])
     .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-    .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
+    .refine((course) => !isNaN(course.getTime()), t('schemas.Shared.date_nan_time'))
