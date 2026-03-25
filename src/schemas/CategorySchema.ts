@@ -7,7 +7,7 @@ export const getCategorySchema = (t: Translator) =>
   z.object({
     id: z.uuidv4().default(() => getUUID()),
     name: z.string(),
-    prequisiteCategoryId: z.string().min(1, 'A prerequisite category may not be empty!').nullable().default(null),
+    prequisiteCategoryId: z.string().min(1, t('schemas.Category.prerequisiteCategoryId.min_constraint_message')).nullable().default(null),
     skipOnMissingPrequisite: z.boolean().default(false),
   })
 

@@ -571,6 +571,11 @@
         "min_constraint_message": "Der Name muss mindestens {count} Zeichen lang sein."
       }
     },
+    "Category": {
+      "prerequisiteCategoryId": {
+        "min_constraint_message": "Eine Voraussetzungskategorie darf nicht leer sein!"
+      }
+    },
     "Shared": {
       "date_nan_time": "Ungültiger Datumswert angegeben"
     }

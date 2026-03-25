@@ -578,6 +578,11 @@ export default {
     },
     Shared: {
       date_nan_time: 'Invalid date value provided'
+    },
+    Category: {
+      prerequisiteCategoryId: {
+        min_constraint_message: 'A prerequisite category may not be empty!'
+      }
     }
   }
 } as const
