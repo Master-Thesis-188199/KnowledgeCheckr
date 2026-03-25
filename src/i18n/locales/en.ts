@@ -561,6 +561,21 @@ export default {
         refinement_message: 'Please define question categories before assigning them to questions.'
       }
     },
+    Authentication: {
+      email: {
+        email_constraint_message: 'Please enter a valid email address.'
+      },
+      password: {
+        'min_constraint_message#one': 'The password must be at least {count} character long.',
+        'min_constraint_message#other': 'The password must be at least {count} characters long.',
+        min_constraint_message: 'The password must be at least {count} characters long.'
+      },
+      name: {
+        'min_constraint_message#one': 'The name must be at least {count} character long.',
+        'min_constraint_message#other': 'The name must be at least {count} characters long.',
+        min_constraint_message: 'The name must be at least {count} characters long.'
+      }
+    },
     Shared: {
       date_nan_time: 'Invalid date value provided'
     }

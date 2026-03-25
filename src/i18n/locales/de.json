@@ -556,6 +556,21 @@
         "max_message": "Bitte geben Sie eine gültige Benutzer-ID an, die der Definition von `db_user`.id entspricht. (maximale Länge: 36)"
       }
     },
+    "Authentication": {
+      "email": {
+        "email_constraint_message": "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+      },
+      "password": {
+        "min_constraint_message#one": "Das Passwort muss mindestens {count} Zeichen lang sein.",
+        "min_constraint_message#other": "Das Passwort muss mindestens {count} Zeichen lang sein.",
+        "min_constraint_message": "Das Passwort muss mindestens {count} Zeichen lang sein."
+      },
+      "name": {
+        "min_constraint_message#one": "Der Name muss mindestens {count} Zeichen lang sein.",
+        "min_constraint_message#other": "Der Name muss mindestens {count} Zeichen lang sein.",
+        "min_constraint_message": "Der Name muss mindestens {count} Zeichen lang sein."
+      }
+    },
     "Shared": {
       "date_nan_time": "Ungültiger Datumswert angegeben"
     }

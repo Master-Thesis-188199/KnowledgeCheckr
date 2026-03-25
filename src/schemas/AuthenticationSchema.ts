@@ -4,8 +4,8 @@ import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUti
 
 const getBaseSchema = (t: Translator) =>
   z.object({
-    email: z.string().email('Please enter a valid email address.'),
-    password: z.string().min(8, { message: 'The password must be at least 8 characters long.' }),
+    email: z.string().email(t('schemas.Authentication.email.email_constraint_message')),
+    password: z.string().min(8, { message: t('schemas.Authentication.password.min_constraint_message', { count: 8 }) }),
     callbackURL: z.string().optional().default('/'),
   })
 
@@ -17,7 +17,10 @@ export { instantiateLoginProps, safeParseLoginProps, validateLoginProps }
 
 export const getSignupSchema = (t: Translator) =>
   getBaseSchema(t).extend({
-    name: z.string().trim().min(1, { message: 'The name must be at least 1 characters long.' }),
+    name: z
+      .string()
+      .trim()
+      .min(1, { message: t('schemas.Authentication.name.min_constraint_message', { count: 1 }) }),
   })
 
 export type SignupProps = z.output<ReturnType<typeof getSignupSchema>>
