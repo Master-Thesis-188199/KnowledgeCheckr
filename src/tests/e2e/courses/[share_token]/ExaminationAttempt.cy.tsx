@@ -1,6 +1,7 @@
 import { addSeconds } from 'date-fns'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { instantiateCourse } from '@/src/schemas/CourseSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 describe('ExaminationAttempt Suite: ', () => {
   beforeEach(() => {
@@ -8,7 +9,7 @@ describe('ExaminationAttempt Suite: ', () => {
   })
 
   it('Verify that attempt is automatically closed when time-frame is reached', () => {
-    const course = instantiateCourse()
+    const course = instantiateCourse(TestTranslator)
     course.settings.examination.examTimeFrameSeconds = 60
     course.share_key = generateToken(8) + '-time-frame'
 

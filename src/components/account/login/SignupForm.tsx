@@ -3,13 +3,15 @@
 
 import CredentialProviderForm from '@/src/components/account/login/CredentialProviderForm'
 import Field from '@/src/components/Shared/form/Field'
-import { SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import { useI18n } from '@/src/i18n/client-localization'
+import { getSignupSchema } from '@/src/schemas/AuthenticationSchema'
 import { signupAction } from '../../../lib/account/login/AccountActions'
 
 export default function SignupForm({ callbackUrl, refererCallbackUrl }: { callbackUrl?: string; refererCallbackUrl?: string }) {
+  const t = useI18n()
   return (
     <CredentialProviderForm
-      schema={SignupSchema}
+      schema={getSignupSchema(t)}
       currentMode='signUp'
       formAction={signupAction}
       refererCallbackUrl={refererCallbackUrl}

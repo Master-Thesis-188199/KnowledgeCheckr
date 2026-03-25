@@ -12,6 +12,7 @@ import {
   Question,
   SingleChoice,
 } from '@/src/schemas/QuestionSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 import { DistributiveOmit, UndoPartial } from '@/types/Shared/Utils'
 
 //? Effectively strips the "correctness" option, which leaves on the 'type' and respective 'selection' or 'input' properties.
@@ -20,7 +21,7 @@ type SimulateOptions = DistributiveOmit<UndoPartial<Parameters<typeof cy.simulat
 describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHeight: 900 }, () => {
   const insertCourse = (...question: Question[]) => {
     const course = {
-      ...instantiateCourse(),
+      ...instantiateCourse(TestTranslator),
       share_key: generateToken(16),
       questions: question,
     }
@@ -69,7 +70,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   ;([{ type: 'correct' }, { type: 'incorrect' }] as const).forEach(({ type }) =>
     it(`Verify that users can answer and submit single-choice question, and that feedback is displayed correctly when answered ${type}ly`, () => {
       const question = {
-        ...instantiateSingleChoice(),
+        ...instantiateSingleChoice(TestTranslator),
         question: 'What does the acronym RGB stand for?',
         answers: [
           { id: getUUID(), answer: 'Red Green Blue', correct: true },
@@ -119,7 +120,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   ;([{ type: 'correct' }, { type: 'incorrect' }] as const).forEach(({ type }) =>
     it(`Verify that users can answer and submit multiple-choice question, and that feedback is displayed correctly when answered ${type}ly`, () => {
       const question = {
-        ...instantiateMultipleChoice(),
+        ...instantiateMultipleChoice(TestTranslator),
         question: 'What statements are correct?',
         answers: [
           { id: getUUID(), answer: 'The earth is flat', correct: false },
@@ -170,7 +171,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   ;([{ type: 'correct' }, { type: 'incorrect' }] as const).forEach(({ type }) =>
     it(`Verify that users can answer and submit drag-drop question, and that feedback is displayed correctly when answered ${type}ly`, () => {
       const question: DragDropQuestion = {
-        ...instantiateDragDropQuestion(),
+        ...instantiateDragDropQuestion(TestTranslator),
         question: 'Please arrange these statements in their correct order',
         answers: [
           { id: getUUID(), answer: 'A', position: 0 },
@@ -213,7 +214,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
   ;([{ type: 'correct' }, { type: 'incorrect' }] as const).forEach(({ type }) =>
     it(`Verify that users can answer and submit open-question question, and that feedback is displayed correctly when answered ${type}ly`, () => {
       const question: OpenQuestion = {
-        ...instantiateOpenQuestion(),
+        ...instantiateOpenQuestion(TestTranslator),
         question: 'What does RGB stand for?',
         expectation: 'correct',
       }
@@ -244,7 +245,7 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
     it(`Verify that users can answer & submit correct answers to questions and that their submission is evaluated & displayed ${type}ly`, () => {
       const questions = [
         {
-          ...instantiateSingleChoice(),
+          ...instantiateSingleChoice(TestTranslator),
           question: 'What does the acronym RGB stand for?',
           answers: [
             { id: getUUID(), answer: 'Red Green Blue', correct: true },
@@ -253,9 +254,9 @@ describe('RenderPracticeQuestion Test Suite', { viewportWidth: 1280, viewportHei
             { id: getUUID(), answer: 'Rose Green Baige', correct: false },
           ],
         },
-        { ...instantiateMultipleChoice(), question: 'What is a multiple Choice question?' },
-        { ...instantiateOpenQuestion(), question: 'What is an open question?' },
-        { ...instantiateDragDropQuestion(), question: 'What is an drag-drop question?' },
+        { ...instantiateMultipleChoice(TestTranslator), question: 'What is a multiple Choice question?' },
+        { ...instantiateOpenQuestion(TestTranslator), question: 'What is an open question?' },
+        { ...instantiateDragDropQuestion(TestTranslator), question: 'What is an drag-drop question?' },
       ]
 
       const { share_key } = insertCourse(...questions)

@@ -69,14 +69,14 @@ export default {
       },
       ContentSection: {
         title: 'Kursinhalte',
-        description:
-          'Erstellen Sie neue Inhalte für diesen Kurs. \n' + 'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
+        description: 'Erstellen Sie neue Inhalte für diesen Kurs. \n' +
+          'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
         Actions: {
           create_new_button_label: 'Erstelle einen neuen Inhalt',
           edit_content_button_label: 'Bearbeiten',
           delete_content_confirm_label: 'Inhalt löschen',
-          delete_content_dialog_body:
-            'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
+          delete_content_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+            'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
           delete_content_button_label: 'Löschen',
           edit_content_button_aria_label: 'Kursinhalt bearbeiten',
           delete_content_button_aria_label: 'Kursinhalt löschen'
@@ -354,8 +354,7 @@ export default {
         confirm_button_label: 'Beenden',
         cancel_button_label: 'Fortsezten',
         title: 'Mit dem Üben aufhören?',
-        body:
-          'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
+        body: 'Nachdem Sie Ihren aktuellen Übungsversuch beendet haben, werden Ihre Ergebnisse übermittelt und sind für andere zugänglich. \n' +
           'Bitte beachten Sie, dass Sie genau diesen Übungsversuch nicht fortsetzen können, nachdem Sie sie beendet haben.'
       }
     }
@@ -431,13 +430,15 @@ export default {
       },
       remove_share_token: {
         tooltip: 'Dieser Kurs hat keinen Freigabe schlüssel.',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
       delete_course: {
         label: 'Kurs löschen',
-        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+          'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
         toast_deletion_successful: 'Kurs erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des Kurses fehlgeschlagen!'
       },
@@ -448,7 +449,8 @@ export default {
     },
     ConfirmationDialog: {
       default_title: 'Bist du absolut sicher?',
-      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' + 'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+      default_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+        'Dadurch wird dieses Element dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
       default_cancel_label: 'Abbrechen',
       default_confirm_label: 'Weiter'
     },
@@ -534,5 +536,176 @@ export default {
     signout_button_label: 'Abmelden',
     signout_delete_notice: 'Daten löschen',
     title: 'Kontoinformationen'
+  },
+  schemas: {
+    Course: {
+      name: {
+        default: 'Wissenskurs',
+        description: 'Der Name, unter dem der erstellte Kurs zugeordnet wird.'
+      },
+      description: {
+        description: 'Beschreiben Sie das Konzept Ihres Kurses mit ein paar Worten.'
+      },
+      difficulty: {
+        description: 'Legt das für diesen Kurs erforderliche Kenntnisniveau fest.',
+        min_max_message: 'Bitte geben Sie einen Schwierigkeitsgrad zwischen 1 und 10 an.'
+      },
+      questions: {
+        refinement_message: 'Die IDs der Fragen müssen eindeutig sein!'
+      },
+      openDate: {
+        description: 'Der Tag, an dem Benutzer den Kurs nutzen können.'
+      },
+      closeDate: {
+        description: 'Der letzte Tag, an dem der Kurs von anderen genutzt werden kann.'
+      },
+      owner_id: {
+        max_message: 'Bitte geben Sie eine gültige Benutzer-ID an, die der Definition von `db_user`.id entspricht. (maximale Länge: 36)'
+      }
+    },
+    Authentication: {
+      email: {
+        email_constraint_message: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+      },
+      password: {
+        'min_constraint_message#one': 'Das Passwort muss mindestens {count} Zeichen lang sein.',
+        'min_constraint_message#other': 'Das Passwort muss mindestens {count} Zeichen lang sein.',
+        min_constraint_message: 'Das Passwort muss mindestens {count} Zeichen lang sein.'
+      },
+      name: {
+        'min_constraint_message#one': 'Der Name muss mindestens {count} Zeichen lang sein.',
+        'min_constraint_message#other': 'Der Name muss mindestens {count} Zeichen lang sein.',
+        min_constraint_message: 'Der Name muss mindestens {count} Zeichen lang sein.'
+      }
+    },
+    Category: {
+      prerequisiteCategoryId: {
+        min_constraint_message: 'Eine Voraussetzungskategorie darf nicht leer sein!'
+      }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: 'Der Titel eines Inhalts darf nicht leer sein.',
+        description: 'Wird verwendet, um einen bestimmten Inhalt einer Kategorie schnell zu identifizieren'
+      },
+      description: {
+        description: 'Beschreibt den Inhalt, der einer bestimmten Kategorie zugeordnet ist.'
+      },
+      categoryId: {
+        uuidv4_message: 'Die Auswahl einer Kategorie ist erforderlich'
+      }
+    },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Legt fest, ob Benutzer mit diesem Kurs üben können oder nicht.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Übungsversuche, die Benutzer haben. \n' +
+            'Wenn der Wert auf null gesetzt ist, haben Benutzer unbegrenzte Versuche'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Legt fest, ob Benutzer einen Prüfungsversuch für diesen Kurs starten können oder nicht.'
+        },
+        startDate: {
+          description: 'Das Startdatum, an dem Benutzer mit Prüfungen beginnen können.'
+        },
+        endDate: {
+          description: 'Das Enddatum, nach dem Benutzer keine Prüfungen mehr starten können. \n' +
+            'Bei Null werden keine Endbeschränkungen festgelegt.'
+        },
+        questionOrder: {
+          description: 'Definiert die Reihenfolge der Fragen während der Übung/Prüfung.'
+        },
+        answerOrder: {
+          description: 'Definiert die Reihenfolge der Antworten während der Übung/Prüfung.'
+        },
+        allowAnonymous: {
+          description: 'Gibt an, ob anonyme Benutzer eine Prüfung starten können.'
+        },
+        allowFreeNavigation: {
+          description: 'Gibt an, ob Benutzer frei zwischen den Fragen wechseln können oder nicht.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'Der Prüfungszeitraum muss mindestens {count} Minute betragen!',
+          'min_constraint#other': 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          min_constraint: 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          'max_constraint#one': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunde überschreiten!',
+          'max_constraint#other': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          max_constraint: 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          description: 'Die maximale Dauer, die einem Benutzer für einen Prüfungsversuch zur Verfügung steht.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Prüfungsversuche, die Benutzer haben.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Definiert, ob dieser Kurs öffentlich zugänglich ist, also ob Benutzer diesen Kurs entdecken können.'
+      }
+    },
+    Question: {
+      id: {
+        uuid_message: 'Eine Antwort muss eine id haben, um sie zu identifizieren!'
+      },
+      question: {
+        'min_words_constraint#one': 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.',
+        'min_words_constraint#other': 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.',
+        min_words_constraint: 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.'
+      },
+      Shared: {
+        unique_answer_text_constraint_message: 'Antworten müssen eindeutig sein. \nDuplikat: {text}',
+        unique_answer_id_constraint_message: 'Antwort-IDs müssen eindeutig sein. \nDoppelte ID: {id}',
+        default_answer_name: 'Antwort {pos}'
+      },
+      MultipleChoice: {
+        answer: {
+          min_constraint: 'Eine Antwort darf nicht leer sein!'
+        },
+        answers: {
+          min_constraint: 'Bitte erstelle mindestens eine Antwort',
+          min_one_correct_answer_constraint: 'Mindestens eine Antwort muss richtig sein!'
+        }
+      },
+      SingleChoice: {
+        answers: {
+          min_answer_count: 'Bitte erstelle mindestens eine Antwort',
+          exactly_one_correct_answer_message: 'Eine Einzelauswahl Frage kann genau *eine* richtige Antwort haben!'
+        }
+      },
+      DragDrop: {
+        refinements: {
+          continous_order_range: 'Positionen müssen einen kontinuierlichen Reihenfolge bilden: [0...{highestPosition}]; \n' +
+            'erhalten: [{receivedPositions}]. \n' +
+            'Position {missingPosition} fehlt!',
+          start_index_constraint: 'Antwort Positionen müssen bei 0 beginnen; \n' +
+            'erhalten: {receivedStartIndex}',
+          duplicate_position_message: 'Doppelte Position: {position}'
+        }
+      }
+    },
+    QuestionInput: {
+      SingleChoice: {
+        empty_selection_message: 'Bitte wählen eine Antwort aus'
+      },
+      MultipleChoice: {
+        empty_selection_message: 'Bitte wähle mindestens eine Antwort aus'
+      },
+      OpenQuestion: {
+        empty_input_message: 'Bitte gib eine Antwort'
+      },
+      DragDrop: {
+        missing_ordering_message: 'Ordne die Antworten in der richtigen Reihenfolge an'
+      }
+    },
+    Shared: {
+      date_nan_time: 'Ungültiger Datumswert angegeben',
+      number: {
+        positive: 'Diese Zahl muss größer als 0 sein'
+      }
+    }
   }
 } as const

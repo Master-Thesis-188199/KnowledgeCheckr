@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { Question } from '@/schemas/QuestionSchema'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
 import { generateToken } from '@/src/lib/Shared/generateToken'
-import { CategorySchema, instantiateCategory } from '@/src/schemas/CategorySchema'
+import { Category, instantiateCategory } from '@/src/schemas/CategorySchema'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
@@ -21,34 +21,34 @@ export type CourseActions = {
   updateCollaborators: (collaborators: Course['collaborators']) => void
   storeCourseContent: (props: Course['contents'][number]) => void
   removeCourseContent: (categoryId: Course['contents'][number]['categoryId']) => void
-  addCategory: (category: CategorySchema) => void
+  addCategory: (category: Category) => void
 }
 
 export type CourseStore = CourseState & CourseActions
 
-const defaultInitState: CourseState = {
-  ...instantiateCourse(),
-  id: uuid(),
-  name: '',
-  questions: [],
-  description: '',
-  questionCategories: [
-    {
-      ...instantiateCategory(),
-      name: 'general',
-    },
-  ],
+export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<CourseState>>> = ({ initialState, options, translator }) => {
+  const defaultInitState: CourseState = {
+    ...instantiateCourse(translator),
+    id: uuid(),
+    name: '',
+    questions: [],
+    description: '',
+    questionCategories: [
+      {
+        ...instantiateCategory(translator),
+        name: 'general',
+      },
+    ],
 
-  closeDate: null,
-  difficulty: 4,
-  openDate: new Date(Date.now()),
-  share_key: generateToken(8),
+    closeDate: null,
+    difficulty: 4,
+    openDate: new Date(Date.now()),
+    share_key: generateToken(8),
 
-  unsavedChanges: false,
-}
+    unsavedChanges: false,
+  }
 
-export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<CourseState>>> = ({ initialState, options }) =>
-  createZustandStore({
+  return createZustandStore({
     caching: true,
     options,
     initializer: (set) => {
@@ -88,7 +88,7 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
             // Add new category if not part of course-categories
             if (!questionCategories.find((category) => category.name === question.category)) {
               questionCategories.push({
-                ...instantiateCategory(),
+                ...instantiateCategory(translator),
                 name: question.category,
               })
             }
@@ -122,3 +122,4 @@ export const createCourseStore: WithCaching<ZustandStore<CourseStore, Partial<Co
       }
     },
   })
+}

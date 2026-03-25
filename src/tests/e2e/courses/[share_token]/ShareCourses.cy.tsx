@@ -1,6 +1,7 @@
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 describe('Verify sharing of Courses', () => {
   it('Verify that notFound is displayed for invalid share-token', () => {
@@ -15,7 +16,7 @@ describe('Verify sharing of Courses', () => {
     const dummyShareToken: string = generateToken(8)
 
     //? Insert dummy knowledge course with share-token
-    const dummmyCourse: Course = Object.assign(instantiateCourse(), { share_key: dummyShareToken } as Partial<Course>)
+    const dummmyCourse: Course = Object.assign(instantiateCourse(TestTranslator), { share_key: dummyShareToken } as Partial<Course>)
     cy.request({ url: '/api/insert/course', method: 'POST', body: dummmyCourse })
 
     cy.visit(`/courses/${dummyShareToken}`)
@@ -27,9 +28,9 @@ describe('Verify sharing of Courses', () => {
     cy.loginTestUser()
 
     //? Insert dummy knowledge course with share-token
-    const dummyCourse: Course = Object.assign(instantiateCourse(), {
+    const dummyCourse: Course = Object.assign(instantiateCourse(TestTranslator), {
       share_key: null,
-      questions: [instantiateDragDropQuestion(), instantiateSingleChoice(), instantiateMultipleChoice(), instantiateOpenQuestion()],
+      questions: [instantiateDragDropQuestion(TestTranslator), instantiateSingleChoice(TestTranslator), instantiateMultipleChoice(TestTranslator), instantiateOpenQuestion(TestTranslator)],
     } as Partial<Course>)
 
     cy.request({ url: '/api/insert/course', method: 'POST', body: dummyCourse })

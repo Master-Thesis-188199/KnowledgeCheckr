@@ -1,10 +1,11 @@
 'use server'
 
 import { getCourseQuestionById } from '@/database/course/questions/select'
+import { getI18n } from '@/src/i18n/server-localization'
 import _logger from '@/src/lib/log/Logger'
 import lorem from '@/src/lib/Shared/Lorem'
 import { ChoiceQuestion, DragDropQuestion, MultipleChoice, OpenQuestion, SingleChoice } from '@/src/schemas/QuestionSchema'
-import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { QuestionInput, safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
@@ -17,11 +18,11 @@ export type PracticeFeedbackServerState = {
 }
 
 export async function EvaluateAnswer(_: PracticeFeedbackServerState, data: QuestionInput): Promise<PracticeFeedbackServerState> {
+  const t = await getI18n()
   logger.info('Evaluating practice answers...', data)
 
   await new Promise((r) => setTimeout(r, 500))
-
-  const parsed = QuestionInputSchema.safeParse(data)
+  const parsed = safeParseQuestionInput(t, data)
 
   if (!parsed.success) {
     logger.info("The practice-schema constraints weren't satisfied....", parsed.error.flatten())

@@ -7,11 +7,12 @@ import { usePracticeStore } from '@/src/components/courses/[share_token]/practic
 import { Button } from '@/src/components/shadcn/button'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { StopwatchTime } from '@/src/components/Shared/StopwatchTime'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import { computeQuestionInputScore } from '@/src/lib/courses/computeQuestionScore'
 
 export function PracticeQuestionNavigation() {
   const { practiceQuestions, navigateToQuestion, currentQuestionIndex, startedAt, results, courseId } = usePracticeStore((store) => store)
+  const translator = useI18n()
   const t = useScopedI18n('Practice.PracticeQuestionNavigation')
 
   return (
@@ -21,7 +22,7 @@ export function PracticeQuestionNavigation() {
           const userInput = results.find((r) => r.question_id === q.id)
           if (!userInput) return 'unanswered'
 
-          const score = computeQuestionInputScore(q, userInput)
+          const score = computeQuestionInputScore(q, userInput, translator)
           if (score === null) return 'unanswered'
 
           if (score === 0) return 'incorrect'

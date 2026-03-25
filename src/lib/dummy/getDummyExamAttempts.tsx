@@ -1,10 +1,12 @@
 import { addMinutes, subMinutes } from 'date-fns'
 import { getCourseExaminationAttempts } from '@/database/examination/select'
+import { getI18n } from '@/src/i18n/server-localization'
 import getDummyUsers from '@/src/lib/dummy/getDummyUsers'
 import randomRange from '@/src/lib/Shared/randomRange'
 import { instantiateQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 
 export default async function getDummyExamAttempts(count: number) {
+  const t = await getI18n()
   const users = await getDummyUsers(count)
 
   return Array.from({ length: count }, (_, i): Awaited<ReturnType<typeof getCourseExaminationAttempts>>[number] => ({
@@ -13,7 +15,7 @@ export default async function getDummyExamAttempts(count: number) {
     finishedAt: addMinutes(new Date(Date.now()), randomRange({ min: 1, max: 30, multiplyFactor: 25, rounded: true })).toString(),
     score: randomRange({ min: 0, max: 100, multiplyFactor: 100, rounded: true }),
     type: 'examination',
-    results: Array.from({ length: 15 }, () => instantiateQuestionInput()),
+    results: Array.from({ length: 15 }, () => instantiateQuestionInput(t)),
 
     user: {
       ...users[i],

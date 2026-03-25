@@ -2,6 +2,7 @@ import { generateToken } from '@/src/lib/Shared/generateToken'
 import { Course, instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateSingleChoice, Question } from '@/src/schemas/QuestionSchema'
 import { ParameterizedTest } from '@/src/tests/parameterizedTest'
+import { TestTranslator } from '@/src/tests/TestTranslator'
 
 describe('Accessibility of questions: ', () => {
   beforeEach(() => {
@@ -15,17 +16,18 @@ describe('Accessibility of questions: ', () => {
     ] as const,
     ({ page, accessbilities }) =>
       it(`Verifies the accessibility of ${accessbilities.map((a) => `"${a}"`).join(' and ')} questions in ${page}`, () => {
+        // const t = useI18n()
         const questions: Array<Question> = []
 
         for (const accessibility of accessbilities) {
           questions.push(
-            { ...instantiateSingleChoice(), question: `First ${accessibility} question`, accessibility: accessibility },
-            { ...instantiateSingleChoice(), question: `Second ${accessibility} question`, accessibility: accessibility },
+            { ...instantiateSingleChoice(TestTranslator), question: `First ${accessibility} question`, accessibility: accessibility },
+            { ...instantiateSingleChoice(TestTranslator), question: `Second ${accessibility} question`, accessibility: accessibility },
           )
         }
 
         const dummyCourse: Course = {
-          ...instantiateCourse(),
+          ...instantiateCourse(TestTranslator),
           share_key: 'question-accessibility' + generateToken(8),
           questions,
         }

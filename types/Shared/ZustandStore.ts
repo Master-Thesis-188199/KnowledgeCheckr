@@ -1,4 +1,5 @@
 import type { StoreApi } from 'zustand/vanilla'
+import { Translator } from '@/src/i18n/locales/types'
 import { Any } from '@/types'
 
 export type StoreCachingOptions = { disableCache?: boolean; cacheKey: string; debounceTime?: number }
@@ -6,7 +7,7 @@ export type StoreCachingOptions = { disableCache?: boolean; cacheKey: string; de
 /**
  * Defines the structure of how a `create[ X ]Store` function should look like in terms of its properties and return-type.
  */
-export type ZustandStore<Store extends object, TInitial = Omit<Store, FunctionKeys<Store>>> = (props: { initialState?: TInitial }) => StoreApi<Store>
+export type ZustandStore<Store extends object, TInitial = Omit<Store, FunctionKeys<Store>>> = (props: { initialState?: TInitial; translator: Translator }) => StoreApi<Store>
 
 /**
  * Is used to add caching to the respective `ZustandeStore<T>` type, which basically adds the `CachingOptions` as the second property to the createStore function.
