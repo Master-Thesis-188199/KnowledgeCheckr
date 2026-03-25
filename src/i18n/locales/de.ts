@@ -595,6 +595,58 @@ export default {
         uuidv4_message: 'Die Auswahl einer Kategorie ist erforderlich'
       }
     },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Legt fest, ob Benutzer mit diesem Kurs üben können oder nicht.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Übungsversuche, die Benutzer haben. \n' +
+            'Wenn der Wert auf null gesetzt ist, haben Benutzer unbegrenzte Versuche'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Legt fest, ob Benutzer einen Prüfungsversuch für diesen Kurs starten können oder nicht.'
+        },
+        startDate: {
+          description: 'Das Startdatum, an dem Benutzer mit Prüfungen beginnen können.'
+        },
+        endDate: {
+          description: 'Das Enddatum, nach dem Benutzer keine Prüfungen mehr starten können. \n' +
+            'Bei Null werden keine Endbeschränkungen festgelegt.'
+        },
+        questionOrder: {
+          description: 'Definiert die Reihenfolge der Fragen während der Übung/Prüfung.'
+        },
+        answerOrder: {
+          description: 'Definiert die Reihenfolge der Antworten während der Übung/Prüfung.'
+        },
+        allowAnonymous: {
+          description: 'Gibt an, ob anonyme Benutzer eine Prüfung starten können.'
+        },
+        allowFreeNavigation: {
+          description: 'Gibt an, ob Benutzer frei zwischen den Fragen wechseln können oder nicht.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'Der Prüfungszeitraum muss mindestens {count} Minute betragen!',
+          'min_constraint#other': 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          min_constraint: 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          'max_constraint#one': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunde überschreiten!',
+          'max_constraint#other': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          max_constraint: 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          description: 'Die maximale Dauer, die einem Benutzer für einen Prüfungsversuch zur Verfügung steht.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Prüfungsversuche, die Benutzer haben.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Definiert, ob dieser Kurs öffentlich zugänglich ist, also ob Benutzer diesen Kurs entdecken können.'
+      }
+    },
     Shared: {
       date_nan_time: 'Ungültiger Datumswert angegeben'
     }

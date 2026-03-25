@@ -595,6 +595,56 @@ export default {
       categoryId: {
         uuidv4_message: 'Selecting a category is required'
       }
+    },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Defines whether users are able to practice with this course or not.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of practice attempts users have. When set to null users have unlimited attempts'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Defines whether users are able to start an examination attempt for this course or not.'
+        },
+        startDate: {
+          description: 'The start-date on which users can start examinations.'
+        },
+        endDate: {
+          description: 'The end-date after which users can no longer start examinations. When set to null no end constraints are set.'
+        },
+        questionOrder: {
+          description: 'Defines how questions are ordered during practice / exams.'
+        },
+        answerOrder: {
+          description: 'Defines how answers are ordered during practice / exams.'
+        },
+        allowAnonymous: {
+          description: 'Specifies whether anonymous users can start an examination attempt in this course.'
+        },
+        allowFreeNavigation: {
+          description: 'Specifies whether users can switch between questions freely or not.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'The examination time frame must be at least {count} minute!',
+          'min_constraint#other': 'The examination time frame must be at least {count} minutes!',
+          min_constraint: 'The examination time frame must be at least {count} minutes!',
+          'max_constraint#one': 'The examination time frame cannot exceed more than {count} hour!',
+          'max_constraint#other': 'The examination time frame cannot exceed more than {count} hours!',
+          max_constraint: 'The examination time frame cannot exceed more than {count} hours!',
+          description: 'The max duration users have to finish their examination attempt.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of examination attempts users have.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Defines whether this course is publicly accessible, thus whether users can discover this course.'
+      }
     }
   }
 } as const
