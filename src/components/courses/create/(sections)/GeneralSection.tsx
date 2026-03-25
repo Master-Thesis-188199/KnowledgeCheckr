@@ -14,9 +14,9 @@ import Field from '@/src/components/Shared/form/Field'
 import Input from '@/src/components/Shared/form/Input'
 import { useMultiStageStore } from '@/src/components/Shared/MultiStageProgress/MultiStageStoreProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { Course, CourseSchema, safeParseCourse } from '@/src/schemas/CourseSchema'
+import { Course, getCourseSchema, safeParseCourse } from '@/src/schemas/CourseSchema'
 import { Any } from '@/types'
 
 export default function GeneralSection({ jumpBackButton, ...config }: { jumpBackButton?: boolean } & Omit<UseFormProps<Course>, 'resolver' | 'defaultValues'>) {
@@ -25,9 +25,10 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
   const FIELDS = ['name', 'description', 'closeDate', 'openDate', 'difficulty'] as Array<keyof Course>
   const now = useCallback(() => new Date(Date.now()), [])()
 
+  const translator = useI18n()
   const t = useScopedI18n('Courses.Create.GeneralSection')
 
-  const { form, baseFieldProps } = useRHF(CourseSchema, {
+  const { form, baseFieldProps } = useRHF(getCourseSchema(translator), {
     defaultValues: () => ({
       ...course,
 
@@ -68,7 +69,7 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
 
           form.clearErrors()
 
-          const { success, error } = safeParseCourse(values)
+          const { success, error } = safeParseCourse(translator, values)
           if (!success) {
             for (const [, issue] of Object.entries(error.issues)) {
               if (!issue) continue

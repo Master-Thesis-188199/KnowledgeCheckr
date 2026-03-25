@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/refs */
 'use client'
 
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
+import { parseCookies } from 'nookies'
 import { StoreApi } from 'zustand'
+import { createTranslator } from '@/cypress/support/i18n'
 import { useSessionStorageContext } from '@/src/hooks/root/SessionStorage'
 import { StoreCachingOptions, StoreState_fromStore, WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 
@@ -39,11 +41,15 @@ type useStoreProps<Store extends object, TInitial = StoreState_fromStore<Store>>
  */
 export function useZustandStore<TStore extends object, TInitial extends object = StoreState_fromStore<TStore>>({ initialStoreProps, ...rest }: useStoreProps<TStore, TInitial>): StoreApi<TStore> {
   const storeRef = useRef<ReturnType<typeof rest.createStoreFunc>>(null)
+  const cookies = parseCookies()
+  const currentLocale = cookies['Next-Locale']
+  const t = useMemo(() => createTranslator(currentLocale === 'de' ? 'de' : 'en'), [currentLocale])
+
   const { getStoredValue } = useSessionStorageContext()
 
   //* Re-create store when caching is disabled
   if (!rest.caching) {
-    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps })
+    if (!storeRef.current) storeRef.current = rest.createStoreFunc({ initialState: initialStoreProps, translator: t })
 
     return storeRef.current
   }
@@ -54,7 +60,7 @@ export function useZustandStore<TStore extends object, TInitial extends object =
 
     const initStore = (props: TInitial | StoreState_fromStore<TStore> | undefined) => {
       // initialize store either with the cached-props or the initialStoreProps
-      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options })
+      storeRef.current = rest.createStoreFunc({ initialState: props as TInitial, options: rest.options, translator: t })
       return storeRef.current
     }
 

@@ -11,20 +11,22 @@ import DragDropContainer from '@/src/components/Shared/drag-drop/DragDropContain
 import { DragDropItem } from '@/src/components/Shared/drag-drop/DragDropItem'
 import { ExaminationActions } from '@/src/hooks/courses/[share_token]/ExaminationStore'
 import debounceFunction from '@/src/hooks/Shared/debounceFunction'
+import { useI18n } from '@/src/i18n/client-localization'
 import { ChoiceQuestion, DragDropQuestion } from '@/src/schemas/QuestionSchema'
-import { QuestionInput, QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { getQuestionInputSchema, QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
 /**
  * This component renders a single exam question and will be used to store an user's answer
  */
 export default function RenderExamQuestion() {
+  const t = useI18n()
   const isFirstRender = useIsFirstRender()
   const { saveAnswer, currentQuestionIndex, ...state } = useExaminationStore((state) => state)
   const question = state.course.questions.at(currentQuestionIndex)!
 
   const form = useForm<QuestionInput>({
-    resolver: zodResolver(QuestionInputSchema) as unknown as Resolver<QuestionInput>,
+    resolver: zodResolver(getQuestionInputSchema(t)) as unknown as Resolver<QuestionInput>,
     defaultValues: {
       ...state.results[currentQuestionIndex],
       question_id: question.id,

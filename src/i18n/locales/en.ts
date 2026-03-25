@@ -530,5 +530,175 @@ export default {
         }
       }
     }
+  },
+  schemas: {
+    Course: {
+      name: {
+        default: 'KnowledgeCheck Course',
+        description: 'The name under which the created course is associated with.'
+      },
+      description: {
+        description: 'Describe the concept of your course using a few words.'
+      },
+      difficulty: {
+        description: 'Defines the skill level needed for this course.',
+        min_max_message: 'Please specify a difficulty between 1 and 10.'
+      },
+      questions: {
+        refinement_message: 'The ids of questions must be unique!'
+      },
+      openDate: {
+        description: 'The day on which users can start to use the course.'
+      },
+      closeDate: {
+        description: 'The last day on which the course can be used by others.',
+        superRefine_message: 'The closeDate cannot be before the start date'
+      },
+      owner_id: {
+        max_message: 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'
+      },
+      questionCategories: {
+        refinement_message: 'Please define question categories before assigning them to questions.'
+      }
+    },
+    Authentication: {
+      email: {
+        email_constraint_message: 'Please enter a valid email address.'
+      },
+      password: {
+        'min_constraint_message#one': 'The password must be at least {count} character long.',
+        'min_constraint_message#other': 'The password must be at least {count} characters long.',
+        min_constraint_message: 'The password must be at least {count} characters long.'
+      },
+      name: {
+        'min_constraint_message#one': 'The name must be at least {count} character long.',
+        'min_constraint_message#other': 'The name must be at least {count} characters long.',
+        min_constraint_message: 'The name must be at least {count} characters long.'
+      }
+    },
+    Shared: {
+      date_nan_time: 'Invalid date value provided',
+      number: {
+        positive: 'Number must be greater than 0'
+      }
+    },
+    Category: {
+      prerequisiteCategoryId: {
+        min_constraint_message: 'A prerequisite category may not be empty!'
+      }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: "A content's title can not be empty.",
+        description: 'Used to quickly identify a given content of a category'
+      },
+      description: {
+        description: 'Describes the content associated to a given category.'
+      },
+      categoryId: {
+        uuidv4_message: 'Selecting a category is required'
+      }
+    },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Defines whether users are able to practice with this course or not.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of practice attempts users have. When set to null users have unlimited attempts'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Defines whether users are able to start an examination attempt for this course or not.'
+        },
+        startDate: {
+          description: 'The start-date on which users can start examinations.'
+        },
+        endDate: {
+          description: 'The end-date after which users can no longer start examinations. When set to null no end constraints are set.'
+        },
+        questionOrder: {
+          description: 'Defines how questions are ordered during practice / exams.'
+        },
+        answerOrder: {
+          description: 'Defines how answers are ordered during practice / exams.'
+        },
+        allowAnonymous: {
+          description: 'Specifies whether anonymous users can start an examination attempt in this course.'
+        },
+        allowFreeNavigation: {
+          description: 'Specifies whether users can switch between questions freely or not.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'The examination time frame must be at least {count} minute!',
+          'min_constraint#other': 'The examination time frame must be at least {count} minutes!',
+          min_constraint: 'The examination time frame must be at least {count} minutes!',
+          'max_constraint#one': 'The examination time frame cannot exceed more than {count} hour!',
+          'max_constraint#other': 'The examination time frame cannot exceed more than {count} hours!',
+          max_constraint: 'The examination time frame cannot exceed more than {count} hours!',
+          description: 'The max duration users have to finish their examination attempt.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of examination attempts users have.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Defines whether this course is publicly accessible, thus whether users can discover this course.'
+      }
+    },
+    Question: {
+      id: {
+        uuid_message: 'An answer must have an uuid to identify it!'
+      },
+      question: {
+        'min_words_constraint#one': 'Please reformulate your question to be at least {count} word long.',
+        'min_words_constraint#other': 'Please reformulate your question to be at least {count} words long.',
+        min_words_constraint: 'Please reformulate your question to be at least {count} words long.'
+      },
+      Shared: {
+        unique_answer_text_constraint_message: 'Answers must be unique. Duplicate: {text}',
+        unique_answer_id_constraint_message: 'Answer-ids must be unique. Duplicate id: {id}',
+        default_answer_name: 'Answer {pos}'
+      },
+      MultipleChoice: {
+        answer: {
+          min_constraint: 'An answer must not be empty!'
+        },
+        answers: {
+          min_constraint: 'Please provide at least one answer',
+          min_one_correct_answer_constraint: 'At least one answer has to be correct!'
+        }
+      },
+      SingleChoice: {
+        answers: {
+          min_answer_count: 'Please provide at least one answer',
+          exactly_one_correct_answer_message: 'A single-choice question must have *one* correct answer!'
+        }
+      },
+      DragDrop: {
+        refinements: {
+          continous_order_range: 'Positions must form a continuous range: [0...{highestPosition}]; received: [{receivedPositions}]. Position {missingPosition} is missing!',
+          start_index_constraint: 'Positions must begin from 0; received: {receivedStartIndex}',
+          duplicate_position_message: 'Duplicate position: {position}'
+        }
+      }
+    },
+    QuestionInput: {
+      SingleChoice: {
+        empty_selection_message: 'Please select an answer'
+      },
+      MultipleChoice: {
+        empty_selection_message: 'Please select at least one answer'
+      },
+      OpenQuestion: {
+        empty_input_message: 'Please provide an answer'
+      },
+      DragDrop: {
+        missing_ordering_message: 'Please arrange the answers in the correct order'
+      }
+    }
   }
 } as const

@@ -10,7 +10,7 @@ import { Button } from '@/src/components/shadcn/button'
 import { Checkbox } from '@/src/components/shadcn/checkbox'
 import { Input } from '@/src/components/shadcn/input'
 import { DataTable } from '@/src/components/Shared/Table/DataTable'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import createDummyQuestionInput from '@/src/lib/dummy/createDummyUserInput'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
 import { QuestionInput } from '@/src/schemas/UserQuestionInputSchema'
@@ -30,6 +30,7 @@ export type PreviewQuestionResult_QuestionItem = {
 
 export default function ExamQuestionResultTable() {
   const tShared = useScopedI18n('Shared.Question')
+  const translator = useI18n()
   const t = useScopedI18n('Courses.ExaminatonResults.ExaminationQuestionTable')
 
   const columns: ColumnDef<PreviewQuestionResult_QuestionItem>[] = [
@@ -161,7 +162,7 @@ export default function ExamQuestionResultTable() {
   const dummySize = 15
 
   const data: PreviewQuestionResult_QuestionItem[] = Array.from({ length: dummySize }, (_, i) => {
-    const rawQuestion = instantiateQuestion()
+    const rawQuestion = instantiateQuestion(translator)
     const { id, category, points, question, type } = rawQuestion
 
     return {

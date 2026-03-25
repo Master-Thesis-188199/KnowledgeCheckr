@@ -1,9 +1,10 @@
+import { Translator } from '@/src/i18n/locales/types'
 import { DragDropQuestion, MultipleChoice, OpenQuestion, Question, SingleChoice } from '@/src/schemas/QuestionSchema'
 import { QuestionInput, safeParseQuestionInput } from '@/src/schemas/UserQuestionInputSchema'
 import { Any } from '@/types'
 
-export function computeQuestionInputScore(question: Question, answer: QuestionInput, options?: { selectionTolerance?: number }) {
-  if (!safeParseQuestionInput(answer).success) return null
+export function computeQuestionInputScore(question: Question, answer: QuestionInput, t: Translator, options?: { selectionTolerance?: number }) {
+  if (!safeParseQuestionInput(t, answer).success) return null
 
   const answerScore = handleQuestionType(question, answer, {
     onSingleQuestion: function (singleChoice: SingleChoice, input) {

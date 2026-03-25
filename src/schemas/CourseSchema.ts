@@ -1,110 +1,120 @@
 import { isBefore } from 'date-fns/isBefore'
 import { z } from 'zod'
-import { schemaUtilities } from '@/schemas/utils/schemaUtilities'
+import { Translator } from '@/src/i18n/locales/types'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import lorem from '@/src/lib/Shared/Lorem'
-import { CategorySchema } from '@/src/schemas/CategorySchema'
-import { CourseContentSchema } from '@/src/schemas/CourseContentSchema'
-import { CourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
-import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { QuestionSchema } from '@/src/schemas/QuestionSchema'
+import { getCategorySchema } from '@/src/schemas/CategorySchema'
+import { getCourseContentSchema } from '@/src/schemas/CourseContentSchema'
+import { getCourseSettingsSchema } from '@/src/schemas/CourseSettingsSchema'
+import { getStringDate } from '@/src/schemas/CustomZodTypes'
+import { getQuestionSchema } from '@/src/schemas/QuestionSchema'
+import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 
-export const CourseSchema = z
-  .object({
-    id: z.uuidv4().default(() => getUUID()),
+export function getCourseSchema(t: Translator) {
+  return (
+    z
+      .object({
+        id: z.uuidv4().default(() => getUUID()),
 
-    name: z.string().default('KnowledgeCheck Course').describe('The name under which the created course is associated with.'),
+        name: z.string().default(t('schemas.Course.name.default')).describe(t('schemas.Course.name.description')),
 
-    description: z
-      .string()
-      .nullable()
-      .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
-      .describe('Describe the concept of your course using a few words.'),
+        description: z
+          .string()
+          .nullable()
+          .default(() => lorem().substring(0, Math.floor(Math.random() * 100)))
+          .describe(t('schemas.Course.description.description')),
 
-    contents: z.array(CourseContentSchema).default([]),
+        contents: z.array(getCourseContentSchema(t)).default([]),
 
-    difficulty: z
-      .number()
-      .min(1, 'Please specify a difficulty between 1 and 10.')
-      .max(10, 'Please specify a difficulty between 1 and 10.')
-      .optional()
-      .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
-      .describe('Defines the skill level needed for this course.'),
+        difficulty: z
+          .number()
+          .min(1, t('schemas.Course.difficulty.min_max_message'))
+          .max(10, t('schemas.Course.difficulty.min_max_message'))
+          .optional()
+          .default(() => (Math.floor(Math.random() * 1000) % 10) + 1)
+          .describe(t('schemas.Course.difficulty.description')),
 
-    questions: z.array(QuestionSchema).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: 'The ids of questions must be unique!' }),
-    questionCategories: z
-      .array(CategorySchema)
-      .optional()
-      .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
+        questions: z.array(getQuestionSchema(t)).refine((questions) => questions.length === new Set(questions.map((q) => q.id)).size, { message: t('schemas.Course.questions.refinement_message') }),
+        questionCategories: z
+          .array(getCategorySchema(t))
+          .optional()
+          .default(() => [{ id: getUUID(), name: 'general', skipOnMissingPrequisite: false, prequisiteCategoryId: null }]),
 
-    share_key: z.string().nullable().default(null),
+        share_key: z.string().nullable().default(null),
 
-    openDate: z
-      .date()
-      .or(z.string())
-      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
-      // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
-      .default(() => new Date(Date.now()))
-      .describe('The day on which users can start to use the course.'),
-    closeDate: z
-      .date()
-      .or(z.string())
-      .transform((date) => (typeof date === 'string' ? new Date(date) : date))
-      .refine((course) => !isNaN(course.getTime()), 'Invalid date value provided')
-      // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
-      .nullable()
-      .default(null)
-      .describe('The last day on which the course can be used by others.'),
+        openDate: z
+          .date()
+          .or(z.string())
+          .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+          .refine((course) => !isNaN(course.getTime()), t('schemas.Shared.date_nan_time'))
+          // .refine((date) => isFuture(addDays(date, 1)), 'The openDate cannot be in the past!')
+          .default(() => new Date(Date.now()))
+          .describe(t('schemas.Course.openDate.description')),
+        closeDate: z
+          .date()
+          .or(z.string())
+          .transform((date) => (typeof date === 'string' ? new Date(date) : date))
+          .refine((course) => !isNaN(course.getTime()), t('schemas.Shared.date_nan_time'))
+          // .refine((date) => isFuture(addDays(date, 1)), 'The closeDate cannot be in the past!')
+          .nullable()
+          .default(null)
+          .describe(t('schemas.Course.closeDate.description')),
 
-    createdAt: StringDate.default(() => new Date(Date.now())).optional(),
-    updatedAt: StringDate.default(() => new Date(Date.now())).optional(),
+        createdAt: getStringDate(t)
+          .default(() => new Date(Date.now()))
+          .optional(),
+        updatedAt: getStringDate(t)
+          .default(() => new Date(Date.now()))
+          .optional(),
 
-    owner_id: z.string().nonempty().max(36, 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)').default('unknown'),
-    collaborators: z.array(z.string()).default([]),
+        owner_id: z.string().nonempty().max(36, t('schemas.Course.owner_id.max_message')).default('unknown'),
+        collaborators: z.array(z.string()).default([]),
 
-    settings: CourseSettingsSchema,
+        settings: getCourseSettingsSchema(t),
 
-    /* todo:
+        /* todo:
       - question-order: 'shuffle, static, ...'
       - question-answer-type: 'drag-drop', 'select', ....
 
     */
-  })
-  //* Declares missing question-catgegories in `questionCategories`
-  .transform((course) => {
-    const questionCategories = course.questionCategories
-
-    // declare missing question categories
-    Array.from(new Set(course.questions.map((q) => q.category)))
-      .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
-      .forEach((missingCategoryName) => {
-        questionCategories.push({
-          id: getUUID(),
-          name: missingCategoryName,
-          prequisiteCategoryId: null,
-          skipOnMissingPrequisite: false,
-        })
       })
+      //* Declares missing question-catgegories in `questionCategories`
+      .transform((course) => {
+        const questionCategories = course.questionCategories
 
-    return course
-  })
-  .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
-    message: 'Please define question categories before assigning them to questions.',
-  })
-  .superRefine(({ openDate, closeDate }, ctx) => {
-    if (closeDate === null) return
+        // declare missing question categories
+        Array.from(new Set(course.questions.map((q) => q.category)))
+          .filter((categoryName) => !questionCategories.some((c) => c.name === categoryName))
+          .forEach((missingCategoryName) => {
+            questionCategories.push({
+              id: getUUID(),
+              name: missingCategoryName,
+              prequisiteCategoryId: null,
+              skipOnMissingPrequisite: false,
+            })
+          })
 
-    if (isBefore(closeDate, openDate)) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'The closeDate cannot be before the start date',
-        path: ['closeDate'],
+        return course
       })
-    }
-  })
+      .refine(({ questions, questionCategories }) => questions.every((question) => !!questionCategories?.find((qc) => qc.name === question.category)), {
+        message: t('schemas.Course.questionCategories.refinement_message'),
+      })
+      .superRefine(({ openDate, closeDate }, ctx) => {
+        if (closeDate === null) return
 
-export type Course = z.output<typeof CourseSchema>
+        if (isBefore(closeDate, openDate)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('schemas.Course.closeDate.superRefine_message'),
+            path: ['closeDate'],
+          })
+        }
+      })
+  )
+}
 
-const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = schemaUtilities(CourseSchema)
+export type Course = z.output<ReturnType<typeof getCourseSchema>>
+
+const { validate: validateCourse, instantiate: instantiateCourse, safeParse: safeParseCourse } = localizedSchemaUtilities(getCourseSchema)
+
 export { instantiateCourse, safeParseCourse, validateCourse }
