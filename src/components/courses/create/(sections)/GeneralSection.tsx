@@ -109,7 +109,7 @@ export default function GeneralSection({ jumpBackButton, ...config }: { jumpBack
             'dark:**:[&::-webkit-inner-spin-button]:brightness-80',
           )}>
           <Field {...baseFieldProps} name='name' type='text' label={t('name_label')} placeholder={t('name_placeholder')} />
-          <Field {...baseFieldProps} name='description' label={t('description_label')} placeholder={t('description_placeholder')} type='text' />
+          <Field {...baseFieldProps} name='description' variant='textarea' label={t('description_label')} placeholder={t('description_placeholder')} />
           <Field {...baseFieldProps} name='difficulty' label={t('difficulty_label')} min={0} type='number' onChange={({ valueAsNumber }) => valueAsNumber} />
           <Field {...baseFieldProps} label={t('openDate_label')} name='openDate' type='date' />
           <Field {...baseFieldProps} label={t('closeDate_label')} name='closeDate' type='date' />
