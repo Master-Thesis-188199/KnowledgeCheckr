@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowUpRightIcon, CopyPlusIcon, EllipsisIcon, Share2Icon, SquarePenIcon, TrashIcon } from 'lucide-react'
+import { ArrowUpRightIcon, ChartSplineIcon, CopyPlusIcon, EllipsisIcon, Share2Icon, SquarePenIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -140,6 +140,13 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
             <Link href={`/courses/edit/${id}`} className='flex flex-1 justify-between'>
               {t('edit_course.label')}
               <SquarePenIcon className='size-3.5 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem disabled={!isOwner && !isContributor} enableTooltip={!isOwner && !isContributor} tooltipOptions={{ ...baseTooltipOptions, content: t('edit_course.tooltip') }}>
+            <Link href={`/results/${id}/exam`} className='flex flex-1 justify-between'>
+              {t('show_exam_results.label')}
+              <ChartSplineIcon className='size-3.5 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='justify-between' disabled>

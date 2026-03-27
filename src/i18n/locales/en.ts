@@ -431,6 +431,9 @@ export default {
       clone_course: {
         label: 'Clone Course'
       },
+      show_exam_results: {
+        label: 'Show Examination Results'
+      },
       inspect_statistics: {
         label: 'Inspect Statistics'
       },

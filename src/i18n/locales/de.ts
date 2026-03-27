@@ -425,6 +425,9 @@ export default {
       clone_course: {
         label: 'Kurs duplizieren'
       },
+      show_exam_results: {
+        label: 'Prüfungs Ergebnisse'
+      },
       inspect_statistics: {
         label: 'Statistik anzeigen'
       },
