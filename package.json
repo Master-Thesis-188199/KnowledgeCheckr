@@ -16,6 +16,7 @@
     "build:instrumented": "next build",
     "postbuild:instrumented": "yarn postbuild && yarn de-instrument-code",
     "                                                                                                    ": "",
+    "build:dev": "__NEXT_TEST_MODE=true next build",
     "build": "next build",
     "postbuild": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "                                                                                                     ": "",
