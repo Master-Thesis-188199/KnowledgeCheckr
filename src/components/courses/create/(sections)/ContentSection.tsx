@@ -1,34 +1,33 @@
 'use client'
 
-import { generateHTML } from '@tiptap/core'
-import { Info, PenIcon, Plus, TrashIcon } from 'lucide-react'
+import { Folder, Info, Pen, Plus, Trash2 } from 'lucide-react'
 import CourseContentDialog from '@/src/components/courses/create/(sections)/CourseContentDialog'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import GenericCard from '@/src/components/Shared/Card'
 import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton'
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
-import { RichTextEditor, RichTextEditorExtensions } from '@/src/components/tiptap-examples/RichTextEditor'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { CourseContent } from '@/src/schemas/CourseContentSchema'
 
-export default function ContentSection() {
+export default function ContentSection({ jumpBackButton, disabled }: { jumpBackButton?: boolean; disabled?: boolean }) {
   const { contents } = useCourseStore((store) => store)
   const t = useScopedI18n('Courses.Create.ContentSection')
 
   return (
-    <div className='flex flex-1 flex-col gap-10'>
-      <div className='flex flex-col gap-1'>
-        <h2 className='h-fit text-xl font-semibold'>{t('title')}</h2>
-        <span className='text-muted-foreground'>{t('description')}</span>
+    <GenericCard disableInteractions className='relative flex break-inside-avoid flex-col p-3'>
+      {jumpBackButton && <CardStageJumpButton targetStage={2} />}
+      <div className='-mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
+        <div className='flex flex-col gap-0'>
+          <h2 className=''>{t('title')}</h2>
+        </div>
       </div>
 
-      {contents.length > 0 ? <CourseContentRenderer /> : <EmptyCourseContentBody />}
+      {contents.length > 0 ? <CourseContentRenderer disabled={disabled} /> : <EmptyCourseContentBody />}
 
-      <CreateContentButton />
-    </div>
+      <CreateContentButton disabled={disabled} />
+    </GenericCard>
   )
 }
 
@@ -47,45 +46,52 @@ function CreateContentButton({ disabled }: { disabled?: boolean }) {
   )
 }
 
-function CourseContentRenderer() {
+function CourseContentRenderer({ disabled }: { disabled?: boolean }) {
   const t = useScopedI18n('Courses.Create.ContentSection')
-  const { contents, removeCourseContent } = useCourseStore((store) => store)
+  const { contents, removeCourseContent, questionCategories } = useCourseStore((store) => store)
 
   return (
-    <div className='grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12'>
-      {contents.map((content) => {
-        const htmlContent = content.content ? generateHTML(content.content, RichTextEditorExtensions) : ''
+    <div className={cn('my-4 grid flex-1 grid-cols-1 gap-6')}>
+      {contents.map((content, i) => (
+        <GenericCard disableInteractions key={i + content.categoryId} className={cn('relative flex h-fit gap-3 p-2 first:mt-3 hover:bg-none')}>
+          <div className='flex flex-1 flex-col p-1'>
+            <div className='flex items-center justify-between'>
+              <h2 className='text-neutral-700 dark:text-neutral-300'>{content.title}</h2>
+              <span className='text-neutral-700 dark:text-neutral-300'>{}</span>
+            </div>
+            <div className='flex justify-between text-xs'>
+              <span className='text-neutral-500 lowercase dark:text-neutral-400'>{content.description}</span>
+              <div className='flex items-center gap-1 text-neutral-500 dark:text-neutral-400'>
+                <Folder className='size-3' />
+                <span className='lowercase'>{questionCategories.find((c) => c.id === content.categoryId)?.name}</span>
+              </div>
+            </div>
+          </div>
+          <CourseContentDialog mode='edit' courseContent={content}>
+            <Button
+              aria-label={t('Actions.edit_content_button_aria_label')}
+              size='icon'
+              variant='base'
+              type='button'
+              disabled={disabled}
+              className='group my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 p-1.5 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] hover:ring-ring-hover dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-ring-hover'>
+              <Pen className='size-4 text-orange-600/70 group-hover:stroke-3 dark:text-orange-400/70' />
+            </Button>
+          </CourseContentDialog>
 
-        return (
-          <Card key={content.categoryId} className=''>
-            <CardHeader>
-              <CardTitle>{content.title}</CardTitle>
-              <CardDescription>{content.description}</CardDescription>
-              <CardAction>
-                <CourseContentDialog mode='edit' courseContent={content}>
-                  <Button variant='link' asChild aria-label={t('Actions.edit_content_button_aria_label')} className='enabled:text-orange-400 dark:enabled:text-orange-300/80'>
-                    <PenIcon />
-                    {t('Actions.edit_content_button_label')}
-                  </Button>
-                </CourseContentDialog>
-
-                <ConfirmationDialog
-                  confirmAction={() => removeCourseContent(content.categoryId)}
-                  confirmLabel={t('Actions.delete_content_confirm_label')}
-                  body={t('Actions.delete_content_dialog_body')}>
-                  <Button variant='link' asChild aria-label={t('Actions.delete_content_button_aria_label')} className='enabled:text-destructive/80'>
-                    <TrashIcon />
-                    {t('Actions.delete_content_button_label')}
-                  </Button>
-                </ConfirmationDialog>
-              </CardAction>
-            </CardHeader>
-            <CardContent className='flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:cursor-default **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5'>
-              <RichTextEditor key={htmlContent} defaultContent={content.content} readOnly size='sm' />
-            </CardContent>
-          </Card>
-        )
-      })}
+          <ConfirmationDialog confirmAction={() => removeCourseContent(content.categoryId)} confirmLabel={t('Actions.delete_content_confirm_label')} body={t('Actions.delete_content_dialog_body')}>
+            <Button
+              size='icon'
+              variant='base'
+              aria-label={t('Actions.delete_content_button_aria_label')}
+              type='button'
+              disabled={disabled}
+              className='group my-auto flex size-7.5 items-center gap-4 rounded-lg bg-neutral-300/50 ring-1 ring-neutral-400 hover:cursor-pointer hover:ring-[1.5px] hover:ring-ring-hover dark:bg-neutral-700 dark:ring-neutral-600 dark:hover:ring-ring-hover'>
+              <Trash2 className='size-4 text-red-600/70 group-hover:stroke-[2.5] dark:text-red-400/70' />
+            </Button>
+          </ConfirmationDialog>
+        </GenericCard>
+      ))}
     </div>
   )
 }
