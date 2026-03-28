@@ -3,7 +3,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { ChevronRightIcon, UserCheckIcon, UserIcon } from 'lucide-react'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
-import { PreviewQuestionResult_QuestionItem } from '@/src/components/courses/[share_token]/results/ExamQuestionResultTable'
+import { PreviewQuestionResult_QuestionItem } from '@/src/components/results/examination/ExamQuestionResultTable'
 import { Button } from '@/src/components/shadcn/button'
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/shadcn/drawer'
 import { Input } from '@/src/components/shadcn/input'

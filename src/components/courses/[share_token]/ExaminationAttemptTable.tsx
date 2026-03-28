@@ -157,7 +157,7 @@ export function ExaminationAttemptTable({ data: initialData }: { data: ExamAttem
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className={cn('w-40', currentLocale === 'de' && 'w-48')}>
-              <Link href={`results/${row.original.id}`}>
+              <Link href={`exam/${row.original.id}`}>
                 <DropdownMenuItem className='justify-between'>
                   {t('columns.actions_menu.show_results_label')}
                   <ChartColumnIcon className='size-3.5' />
