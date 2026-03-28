@@ -448,7 +448,8 @@
         "label": "Clone Course"
       },
       "show_exam_results": {
-        "label": "Show Examination Results"
+        "label": "Show Examination Results",
+        "tooltip": "You are not allowed to view exam results!"
       },
       "inspect_statistics": {
         "label": "Inspect Statistics"

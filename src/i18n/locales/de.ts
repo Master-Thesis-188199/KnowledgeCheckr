@@ -442,7 +442,8 @@ export default {
         label: 'Kurs duplizieren'
       },
       show_exam_results: {
-        label: 'Prüfungs Ergebnisse'
+        label: 'Prüfungs Ergebnisse',
+        tooltip: 'Dir fehlen Berechtigungen um Prüfungsergebnisse einzusehen!'
       },
       inspect_statistics: {
         label: 'Statistik anzeigen'
