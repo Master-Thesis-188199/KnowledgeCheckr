@@ -397,6 +397,7 @@ export default {
       Statistics: {
         questions_label: 'Fragen',
         estimatedTime_label: 'geschätze Zeit',
+        contents_label: 'Inhalte',
         points_label: 'Punkte'
       },
       user_role: {

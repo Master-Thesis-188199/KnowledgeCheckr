@@ -44,7 +44,7 @@ export function CourseCard(course: Course) {
         <span className='line-clamp-2 text-center text-sm text-balance text-neutral-500 dark:text-neutral-400'>{course.description}</span>
       </div>
       <div className='flex flex-wrap justify-evenly gap-8 px-6'>
-        <StatisticElement label={t('Statistics.questions_label')} value={course.questions.length} />
+        <StatisticElement label={t('Statistics.contents_label')} value={course.contents.length} />
         <StatisticElement
           label={t('Statistics.estimatedTime_label')}
           value={
@@ -53,7 +53,7 @@ export function CourseCard(course: Course) {
             </>
           }
         />
-        <StatisticElement label={t('Statistics.points_label')} value={course.questions.map((q) => q.points).reduce((prev, current) => (prev += current), 0)} />
+        <StatisticElement label={t('Statistics.questions_label')} value={course.questions.length} />
       </div>
       <Footer updatedAt={course.updatedAt} />
     </Card>

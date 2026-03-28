@@ -403,6 +403,7 @@ export default {
       Statistics: {
         questions_label: 'Questions',
         estimatedTime_label: 'estimatedTime',
+        contents_label: 'Contents',
         points_label: 'Points'
       },
       user_role: {
