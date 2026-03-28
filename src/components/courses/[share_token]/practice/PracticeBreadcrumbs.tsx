@@ -7,13 +7,36 @@ export async function PracticeBreadcrumbs({
   share_token,
   selectedCategory: category,
   categories,
+  courseId,
+  courseName,
   ...props
-}: { share_token: string; selectedCategory?: string; categories: string[] } & DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>) {
+}: { share_token: string; selectedCategory?: string; categories: string[]; courseId: string; courseName: string } & DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>) {
   const t = await getScopedI18n('Shared.Breadcrumbs')
 
   return (
     <Breadcrumb {...props}>
       <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/`}>{t('root')}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/courses`}>{t('courses')}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/courses/${courseId}/edit`}>{courseName}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
         <BreadcrumbItem>{t('practice')}</BreadcrumbItem>
         <BreadcrumbSeparator />
 

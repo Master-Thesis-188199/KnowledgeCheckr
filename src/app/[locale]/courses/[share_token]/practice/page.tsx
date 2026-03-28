@@ -65,7 +65,14 @@ export default async function PracticePage({ params, searchParams }: { params: P
 
   return (
     <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id }} key={category}>
-      <PracticeBreadcrumbs className={cn('mb-2', categories.length === 1 && 'hidden')} share_token={share_token} categories={categories} selectedCategory={category} />
+      <PracticeBreadcrumbs
+        courseId={course.id}
+        courseName={course.name}
+        className={cn('mb-2', categories.length === 1 && 'hidden')}
+        share_token={share_token}
+        categories={categories}
+        selectedCategory={category}
+      />
 
       <PageHeading title='Practice' />
 
