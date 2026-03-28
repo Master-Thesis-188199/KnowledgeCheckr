@@ -1,7 +1,7 @@
 'use client'
 
 import { generateHTML } from '@tiptap/core'
-import { Info, PenIcon, PlusCircleIcon, TrashIcon } from 'lucide-react'
+import { Info, PenIcon, Plus, TrashIcon } from 'lucide-react'
 import CourseContentDialog from '@/src/components/courses/create/(sections)/CourseContentDialog'
 import { useCourseStore } from '@/src/components/courses/create/CreateCourseProvider'
 import { Button } from '@/src/components/shadcn/button'
@@ -15,7 +15,7 @@ import { cn } from '@/src/lib/Shared/utils'
 import { CourseContent } from '@/src/schemas/CourseContentSchema'
 
 export default function ContentSection() {
-  const { contents, removeCourseContent } = useCourseStore((store) => store)
+  const { contents } = useCourseStore((store) => store)
   const t = useScopedI18n('Courses.Create.ContentSection')
 
   return (
@@ -25,48 +25,76 @@ export default function ContentSection() {
         <span className='text-muted-foreground'>{t('description')}</span>
       </div>
 
-      <div className='grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12'>
-        <CourseContentDialog mode='create'>
-          <Card className='flex h-full items-center justify-center'>
-            <CardContent className='flex gap-4 text-primary'>
-              <PlusCircleIcon /> {t('Actions.create_new_button_label')}
+      {contents.length > 0 ? <CourseContentRenderer /> : <EmptyCourseContentBody />}
+
+      <CreateContentButton />
+    </div>
+  )
+}
+
+function CreateContentButton({ disabled }: { disabled?: boolean }) {
+  const t = useScopedI18n('Courses.Create.ContentSection')
+
+  return (
+    <CourseContentDialog mode='create'>
+      <div className='flex justify-center gap-8'>
+        <Button variant='outline' size='lg' disabled={disabled}>
+          <Plus className='size-5' />
+          {t('Actions.create_new_button_label')}
+        </Button>
+      </div>
+    </CourseContentDialog>
+  )
+}
+
+function CourseContentRenderer() {
+  const t = useScopedI18n('Courses.Create.ContentSection')
+  const { contents, removeCourseContent } = useCourseStore((store) => store)
+
+  return (
+    <div className='grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12'>
+      {contents.map((content) => {
+        const htmlContent = content.content ? generateHTML(content.content, RichTextEditorExtensions) : ''
+
+        return (
+          <Card key={content.categoryId} className=''>
+            <CardHeader>
+              <CardTitle>{content.title}</CardTitle>
+              <CardDescription>{content.description}</CardDescription>
+              <CardAction>
+                <CourseContentDialog mode='edit' courseContent={content}>
+                  <Button variant='link' asChild aria-label={t('Actions.edit_content_button_aria_label')} className='enabled:text-orange-400 dark:enabled:text-orange-300/80'>
+                    <PenIcon />
+                    {t('Actions.edit_content_button_label')}
+                  </Button>
+                </CourseContentDialog>
+
+                <ConfirmationDialog
+                  confirmAction={() => removeCourseContent(content.categoryId)}
+                  confirmLabel={t('Actions.delete_content_confirm_label')}
+                  body={t('Actions.delete_content_dialog_body')}>
+                  <Button variant='link' asChild aria-label={t('Actions.delete_content_button_aria_label')} className='enabled:text-destructive/80'>
+                    <TrashIcon />
+                    {t('Actions.delete_content_button_label')}
+                  </Button>
+                </ConfirmationDialog>
+              </CardAction>
+            </CardHeader>
+            <CardContent className='flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:cursor-default **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5'>
+              <RichTextEditor key={htmlContent} defaultContent={content.content} readOnly size='sm' />
             </CardContent>
           </Card>
-        </CourseContentDialog>
-        {contents.map((content) => {
-          const htmlContent = content.content ? generateHTML(content.content, RichTextEditorExtensions) : ''
+        )
+      })}
+    </div>
+  )
+}
 
-          return (
-            <Card key={content.categoryId} className=''>
-              <CardHeader>
-                <CardTitle>{content.title}</CardTitle>
-                <CardDescription>{content.description}</CardDescription>
-                <CardAction>
-                  <CourseContentDialog mode='edit' courseContent={content}>
-                    <Button variant='link' asChild aria-label={t('Actions.edit_content_button_aria_label')} className='enabled:text-orange-400 dark:enabled:text-orange-300/80'>
-                      <PenIcon />
-                      {t('Actions.edit_content_button_label')}
-                    </Button>
-                  </CourseContentDialog>
-
-                  <ConfirmationDialog
-                    confirmAction={() => removeCourseContent(content.categoryId)}
-                    confirmLabel={t('Actions.delete_content_confirm_label')}
-                    body={t('Actions.delete_content_dialog_body')}>
-                    <Button variant='link' asChild aria-label={t('Actions.delete_content_button_aria_label')} className='enabled:text-destructive/80'>
-                      <TrashIcon />
-                      {t('Actions.delete_content_button_label')}
-                    </Button>
-                  </ConfirmationDialog>
-                </CardAction>
-              </CardHeader>
-              <CardContent className='flex h-full px-4.5 **:[div]:[[role=presentation]]:max-h-42 **:[div]:[[role=presentation]]:min-h-auto **:[div]:[[role=presentation]]:cursor-default **:[div]:[[role=presentation]]:border-ring-subtle **:[div]:[[role=presentation]]:p-2.5'>
-                <RichTextEditor key={htmlContent} defaultContent={content.content} readOnly size='sm' />
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+function EmptyCourseContentBody() {
+  return (
+    <div className={cn('flex min-h-60 flex-1 flex-col items-center justify-center gap-6')}>
+      <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
+      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{'There are currently no contents associated to this course.'}</span>
     </div>
   )
 }
