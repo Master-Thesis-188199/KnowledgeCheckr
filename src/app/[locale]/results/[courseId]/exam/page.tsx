@@ -1,13 +1,14 @@
 'use server'
 
 import { forbidden, notFound } from 'next/navigation'
-import { getCourseByShareToken } from '@/database/course/select'
+import { getCourseById } from '@/database/course/select'
 import { getCourseExaminationAttempts } from '@/database/examination/select'
 import { ExaminationSuccessPieChart } from '@/src/components/charts/ExaminationSuccessPieChart'
 import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurationChart'
 import { QuestionScoresLineChartCard } from '@/src/components/charts/QuestionScoresLineChart'
 import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { ExaminationAttemptTable } from '@/src/components/courses/[share_token]/ExaminationAttemptTable'
+import { ExamResultsBreadcrumbs } from '@/src/components/results/examination/ExamResultsBreadcrumbs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
@@ -24,11 +25,11 @@ export type ExaminationAttemptTableStructure = Pick<ExaminationAttmept, 'score' 
   answerCount: number
 }
 
-export default async function ExaminationResultsPage({ params }: { params: Promise<{ share_token: string }> }) {
-  const { share_token } = await params
+export default async function ExaminationResultsPage({ params }: { params: Promise<{ courseId: string }> }) {
+  const { courseId } = await params
   const { user } = await requireAuthentication()
 
-  const course = await getCourseByShareToken(share_token)
+  const course = await getCourseById(courseId)
 
   if (!course) notFound()
   if (!hasCollaborativePermissions(course, user.id)) forbidden()
@@ -38,6 +39,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
 
   return (
     <>
+      <ExamResultsBreadcrumbs courseId={courseId} />
       <PageHeading title={t('title')} description={t('description')} />
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>

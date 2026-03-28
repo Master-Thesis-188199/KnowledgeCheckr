@@ -39,7 +39,23 @@ export default {
       'minute_label#other': 'minutes',
       minute_label: 'minutes'
     },
-    jump_back_button_label: 'Jump back'
+    jump_back_button_label: 'Jump back',
+    Breadcrumbs: {
+      root: 'Home',
+      courses: 'Courses',
+      discover: 'Discover',
+      practice: 'Practice',
+      edit: 'Edit',
+      create: 'Create',
+      account: 'Account',
+      start: 'Start',
+      results: 'Results',
+      examination_results: 'Examination Results',
+      practice_results: 'Practice',
+      'not-allowed': 'Not Allowed',
+      'attempt-limit': 'Attempt Limit Reached',
+      'attempt-not-possible': 'Attempt aborted'
+    }
   },
   Home: {
     description: 'Create your own Courses to boost your knowledge to the next level. (en)'
@@ -430,6 +446,10 @@ export default {
       },
       clone_course: {
         label: 'Clone Course'
+      },
+      show_exam_results: {
+        label: 'Show Examination Results',
+        tooltip: 'You are not allowed to view exam results!'
       },
       inspect_statistics: {
         label: 'Inspect Statistics'
