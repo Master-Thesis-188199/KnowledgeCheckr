@@ -440,6 +440,10 @@ export default {
         tooltip: 'This course has no questions, examination disabled.',
         toast: 'Unable to start Practice'
       },
+      show_course_contents: {
+        label: 'Show Course Contents',
+        tooltip: 'This course has no contents, please create one first.'
+      },
       edit_course: {
         label: 'Edit Course',
         tooltip: 'You are not allowed to edit this course!'

@@ -29,7 +29,7 @@ import { useSession } from '@/src/lib/auth/client'
 import { generateToken } from '@/src/lib/Shared/generateToken'
 import { Course } from '@/src/schemas/CourseSchema'
 
-export default function CourseActionMenu({ id, questions, share_key, owner_id, collaborators }: {} & Course) {
+export default function CourseActionMenu({ id, questions, share_key, owner_id, collaborators, contents }: {} & Course) {
   const t = useScopedI18n('Components.CourseActionMenu')
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -105,6 +105,18 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
             <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
         </DropdownMenuGroup>
+
+        <DropdownMenuItem
+          className='group justify-between'
+          enableTooltip={contents.length === 0}
+          tooltipOptions={{ ...baseTooltipOptions, content: t('show_course_contents.tooltip') }}
+          onClick={() => {
+            router.push(`${window.location.origin}/courses/contents/${id}`)
+          }}
+          disabled={contents.length === 0}>
+          {t('show_course_contents.label')}
+          <ArrowUpRightIcon className='text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
+        </DropdownMenuItem>
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger enableTooltip={!hasQuestions} tooltipOptions={{ ...baseTooltipOptions, content: 'This course has no questions, sharing disabled.' }} disabled={!hasQuestions}>

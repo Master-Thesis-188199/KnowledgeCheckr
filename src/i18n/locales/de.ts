@@ -434,6 +434,10 @@ export default {
         tooltip: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
         toast: 'Erstellen des Übungslinks fehlgeschlagen.'
       },
+      show_course_contents: {
+        label: 'Kursinhalte anzeigen',
+        tooltip: 'Dieser Kurs hat keine Inhalte die angezeigt werden können.'
+      },
       edit_course: {
         label: 'Kurs bearbeiten',
         tooltip: 'Dir fehlen die Berechtigungen um diesen Kurs zu bearbeiten.'
