@@ -9,7 +9,6 @@ import { CardStageJumpButton } from '@/src/components/Shared/CardStageJumpButton
 import ConfirmationDialog from '@/src/components/Shared/ConfirmationDialog/ConfirmationDialog'
 import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
-import { CourseContent } from '@/src/schemas/CourseContentSchema'
 
 export default function ContentSection({ jumpBackButton, disabled }: { jumpBackButton?: boolean; disabled?: boolean }) {
   const { contents } = useCourseStore((store) => store)
@@ -102,55 +101,5 @@ function EmptyCourseContentBody() {
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
       <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{'There are currently no contents associated to this course.'}</span>
     </div>
-  )
-}
-
-export function CourseContentOverview({ jumpBackButton = true }: { jumpBackButton?: boolean }) {
-  const { contents } = useCourseStore((store) => store)
-  const t = useScopedI18n('Courses.Create.ContentSection')
-
-  function Element(content: CourseContent) {
-    return (
-      <GenericCard disableInteractions className='flex flex-col gap-1 p-2'>
-        <h2 className='text-neutral-700 dark:text-neutral-300'>{content.title}</h2>
-        <p className='line-clamp-1 text-sm text-muted-foreground'>{content.description}</p>
-      </GenericCard>
-    )
-  }
-
-  if (contents.length === 0) {
-    return (
-      <GenericCard disableInteractions className='relative flex break-inside-avoid flex-col p-3'>
-        {jumpBackButton && <CardStageJumpButton targetStage={2} />}
-        <div className='-mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
-          <div className='flex items-center justify-between'>
-            <h2 className=''>{t('title')}</h2>
-          </div>
-        </div>
-        <div className={cn('flex min-h-60 flex-1 flex-col items-center justify-center gap-6')}>
-          <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
-          <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{'There are currently no contents associated to this course.'}</span>
-        </div>
-      </GenericCard>
-    )
-  }
-
-  return (
-    <GenericCard disableInteractions className='relative flex break-inside-avoid flex-col p-3'>
-      {jumpBackButton && <CardStageJumpButton targetStage={2} />}
-      <div className='-mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
-        <div className='flex items-center justify-between'>
-          <h2 className=''>{t('title')}</h2>
-        </div>
-      </div>
-
-      {contents.length === 0 && <div></div>}
-
-      <div className='mt-5 flex flex-col gap-6'>
-        {contents.map((c) => (
-          <Element key={c.categoryId} {...c} />
-        ))}
-      </div>
-    </GenericCard>
   )
 }
