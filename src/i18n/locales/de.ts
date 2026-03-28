@@ -39,7 +39,23 @@ export default {
       'minute_label#other': 'minuten',
       minute_label: 'minuten'
     },
-    jump_back_button_label: 'Bearbeiten'
+    jump_back_button_label: 'Bearbeiten',
+    Breadcrumbs: {
+      root: 'Home',
+      courses: 'Kurse',
+      discover: 'Entdecken',
+      practice: 'Üben',
+      edit: 'Bearbeiten',
+      create: 'Erstellen',
+      account: 'Account',
+      start: 'Start',
+      results: 'Ergebnisse',
+      examination_results: 'Prüfungsergebnisse',
+      practice_results: 'Üben',
+      'not-allowed': 'Nicht erlaubt',
+      'attempt-limit': 'Versuchslimit erreicht',
+      'attempt-not-possible': 'Versuch abgebrochen'
+    }
   },
   Home: {
     description: 'Create your own Course to boost your knowledge to the next level. (de)'
