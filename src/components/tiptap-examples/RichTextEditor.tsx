@@ -137,12 +137,14 @@ export function RichTextEditor({
   disabled,
   readOnly,
   size = 'md',
+  editorPaneClassname,
 }: {
   onUpdateAction?: (content: object) => void
   defaultContent?: Content
   disabled?: boolean
   readOnly?: boolean
   size?: 'sm' | 'md' | 'lg'
+  editorPaneClassname?: string
 }) {
   const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
@@ -199,7 +201,7 @@ export function RichTextEditor({
             }}
             editor={editor}
             role='presentation'
-            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto')}
+            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto', editorPaneClassname)}
           />
         </EditorContext.Provider>
       </div>
