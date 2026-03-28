@@ -8,6 +8,7 @@ import { ExamQuestionDurationChart } from '@/src/components/charts/QuestionDurat
 import { QuestionScoresLineChartCard } from '@/src/components/charts/QuestionScoresLineChart'
 import { UserTypePieChart } from '@/src/components/charts/UserTypePieChart'
 import { ExaminationAttemptTable } from '@/src/components/courses/[share_token]/ExaminationAttemptTable'
+import { ExamResultsBreadcrumbs } from '@/src/components/results/examination/ExamResultsBreadcrumbs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
@@ -38,6 +39,7 @@ export default async function ExaminationResultsPage({ params }: { params: Promi
 
   return (
     <>
+      <ExamResultsBreadcrumbs courseId={courseId} />
       <PageHeading title={t('title')} description={t('description')} />
 
       <div className='mx-6 mt-2 flex flex-col gap-16'>

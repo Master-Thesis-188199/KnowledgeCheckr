@@ -3,6 +3,7 @@ import { getCourseById } from '@/database/course/select'
 import { getExaminationAttemptById } from '@/database/examination/select'
 import { QuestionScoresLineChart } from '@/src/components/charts/QuestionScoresLineChart'
 import ExamQuestionResultTable from '@/src/components/results/examination/ExamQuestionResultTable'
+import { ExamResultAttemptResultsBreadcrumbs } from '@/src/components/results/examination/ExamResultsBreadcrumbs'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
@@ -24,6 +25,7 @@ export default async function ExamAttemptResultPage({ params }: { params: Promis
 
   return (
     <>
+      <ExamResultAttemptResultsBreadcrumbs userName={attempt.user.name} courseId={courseId} />
       <PageHeading title={t('title')} description={t('description', { name: attempt.user.name })} />
 
       <div className='flex flex-col gap-14'>
