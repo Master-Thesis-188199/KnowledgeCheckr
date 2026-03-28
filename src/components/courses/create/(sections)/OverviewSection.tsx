@@ -1,3 +1,4 @@
+import { CourseContentOverview } from '@/src/components/courses/create/(sections)/ContentSection'
 import GeneralSection from '@/src/components/courses/create/(sections)/GeneralSection'
 import QuestionsSection from '@/src/components/courses/create/(sections)/QuestionsSection'
 import SettingsSection from '@/src/components/courses/create/(sections)/SettingsSection'
@@ -14,6 +15,7 @@ export async function OverviewSection() {
       </div>
       <div className='grid gap-8 xl:grid-cols-2 **:[&_input]:ring-neutral-300/70 **:dark:[&_input]:ring-neutral-600/70 **:[&_textarea]:ring-neutral-300/70 **:dark:[&_textarea]:ring-neutral-600/70'>
         <GeneralSection disabled jumpBackButton />
+        <CourseContentOverview jumpBackButton />
         <QuestionsSection disabled jumpBackButton />
         <SettingsSection disabled jumpBackButtons className='xl:col-span-2' />
       </div>
