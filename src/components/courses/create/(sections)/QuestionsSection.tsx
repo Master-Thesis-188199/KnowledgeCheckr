@@ -14,7 +14,7 @@ export default function QuestionsSection({ jumpBackButton, disabled }: { jumpBac
 
   return (
     <Card disableInteractions className='question-section relative flex break-inside-avoid flex-col p-3'>
-      {jumpBackButton && <CardStageJumpButton targetStage={2} />}
+      {jumpBackButton && <CardStageJumpButton targetStage={3} />}
       <div className='header -mx-3 -mt-3 flex flex-col rounded-t-md border-b border-neutral-400 bg-neutral-300 p-2 px-3 text-neutral-600 dark:border-neutral-500 dark:bg-neutral-700/60 dark:text-neutral-300'>
         <div className='flex items-center justify-between'>
           <h2 className=''>{t('title')}</h2>
