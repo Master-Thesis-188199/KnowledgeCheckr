@@ -14,7 +14,11 @@ export function ContentSwitchButton({ content }: { content: Course['contents'][n
   const index = useMemo(() => contents.findIndex((c) => c.categoryId === content.categoryId), [content, contents])
 
   return (
-    <Button variant='link' className={cn('w-fit text-ellipsis', index === currentContentIndex ? 'text-primary underline' : 'text-muted-foreground')} onClick={() => setCurrentIndex(index)}>
+    <Button
+      disabled={index === -1} // index retrieval was unsuccesful -> switching not possible
+      variant='link'
+      className={cn('w-fit text-ellipsis', index === currentContentIndex ? 'text-primary underline' : 'text-muted-foreground')}
+      onClick={() => setCurrentIndex(index)}>
       <BookTextIcon />
       {content.title}
     </Button>
