@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getCourseById } from '@/database/course/select'
+import { ContentProvider } from '@/src/components/courses/contents/[courseId]/ContentProvider'
 import { Button } from '@/src/components/shadcn/button'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
@@ -16,24 +17,26 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
     <>
       <PageHeading title='Course Contents' description='Read through the course contents to prepare for practice and examinations' />
 
-      <div className='flex flex-1 flex-col gap-6'>
-        <div className='flex flex-1 gap-8'>
-          <ContentWrapper course={course} />
-          <div className='flex flex-col gap-2'>
-            <h2 className='font-semibold'>Available Contents</h2>
-            {course.contents.map((c) => (
-              <Button variant='link' className='w-fit max-w-48 text-ellipsis' key={c.categoryId}>
-                {c.title}
-              </Button>
-            ))}
+      <ContentProvider initialProps={{ contents: course.contents }}>
+        <div className='flex flex-1 flex-col gap-6'>
+          <div className='flex flex-1 gap-8'>
+            <ContentWrapper course={course} />
+            <div className='flex flex-col gap-2'>
+              <h2 className='font-semibold'>Available Contents</h2>
+              {course.contents.map((c) => (
+                <Button variant='link' className='w-fit max-w-48 text-ellipsis' key={c.categoryId}>
+                  {c.title}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className='flex justify-between'>
+            <Button variant='outline'>Go back</Button>
+            <Button variant='primary'>Continue with</Button>
           </div>
         </div>
-
-        <div className='flex justify-between'>
-          <Button variant='outline'>Go back</Button>
-          <Button variant='primary'>Continue with</Button>
-        </div>
-      </div>
+      </ContentProvider>
     </>
   )
 }
