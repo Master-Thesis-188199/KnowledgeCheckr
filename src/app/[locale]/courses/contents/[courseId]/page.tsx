@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getCourseById } from '@/database/course/select'
 import { ContentProvider } from '@/src/components/courses/contents/[courseId]/ContentProvider'
+import { ContentSwitchButton } from '@/src/components/courses/contents/[courseId]/ContentSwitchButton'
 import { Button } from '@/src/components/shadcn/button'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { RichTextEditor } from '@/src/components/tiptap-examples/RichTextEditor'
@@ -24,9 +25,7 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
             <div className='flex flex-col gap-2'>
               <h2 className='font-semibold'>Available Contents</h2>
               {course.contents.map((c) => (
-                <Button variant='link' className='w-fit max-w-48 text-ellipsis' key={c.categoryId}>
-                  {c.title}
-                </Button>
+                <ContentSwitchButton content={c} key={c.categoryId} />
               ))}
             </div>
           </div>
