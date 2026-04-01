@@ -138,6 +138,7 @@ export function RichTextEditor({
   readOnly,
   size = 'md',
   editorPaneClassname,
+  editorContainerClassname,
 }: {
   onUpdateAction?: (content: object) => void
   defaultContent?: Content
@@ -145,6 +146,7 @@ export function RichTextEditor({
   readOnly?: boolean
   size?: 'sm' | 'md' | 'lg'
   editorPaneClassname?: string
+  editorContainerClassname?: string
 }) {
   const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
@@ -182,7 +184,7 @@ export function RichTextEditor({
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col'>
+      <div data-slot='rich-text-editor-container' className={cn('@container/editor flex size-full max-h-[58dvh] flex-col', editorContainerClassname)}>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar className={cn(readOnly && 'hidden!')}>
             {mobileView === 'main' ? (
