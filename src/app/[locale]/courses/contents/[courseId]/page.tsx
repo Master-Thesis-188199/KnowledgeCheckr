@@ -30,7 +30,7 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
             </div>
           </div>
 
-          <div className='flex flex-col gap-2'>
+          <div className='hidden flex-col gap-2 @4xl:flex'>
             <h2 className='font-semibold'>{t('Navigation.title')}</h2>
             {course.contents.map((c) => (
               <ContentSwitchButton content={c} key={c.categoryId} />
