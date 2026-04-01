@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation'
 import { getCourseById } from '@/database/course/select'
+import { NextContentButton, PreviousContentButton } from '@/src/components/courses/contents/[courseId]/ContentNavigationButtons'
 import { ContentProvider } from '@/src/components/courses/contents/[courseId]/ContentProvider'
 import { ContentRenderer } from '@/src/components/courses/contents/[courseId]/ContentRenderer'
 import { ContentPageBreadcrumbs } from '@/src/components/courses/contents/[courseId]/ContentsPageBreadcrumbs'
 import { ContentSwitchButton } from '@/src/components/courses/contents/[courseId]/ContentSwitchButton'
-import { Button } from '@/src/components/shadcn/button'
 import PageHeading from '@/src/components/Shared/PageHeading'
 
 export default async function CourseContentsPage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -31,8 +31,8 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
           </div>
 
           <div className='flex justify-between'>
-            <Button variant='outline'>Go back</Button>
-            <Button variant='primary'>Continue with</Button>
+            <PreviousContentButton />
+            <NextContentButton />
           </div>
         </div>
       </ContentProvider>
