@@ -110,7 +110,8 @@ export default {
           },
           submit_create_button_label: 'Kursinhalt erstellen',
           submit_update_button_label: 'Inhalt aktualisieren'
-        }
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Fragen',

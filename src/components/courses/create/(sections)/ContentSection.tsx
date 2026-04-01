@@ -96,10 +96,11 @@ function CourseContentRenderer({ disabled }: { disabled?: boolean }) {
 }
 
 function EmptyCourseContentBody() {
+  const t = useScopedI18n('Courses.Create.ContentSection')
   return (
     <div className={cn('flex min-h-60 flex-1 flex-col items-center justify-center gap-6')}>
       <Info className='size-16 text-neutral-400 dark:text-neutral-500' />
-      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{'There are currently no contents associated to this course.'}</span>
+      <span className='text-center tracking-wide text-balance text-neutral-500 dark:text-neutral-400'>{t('empty_content_text')}</span>
     </div>
   )
 }

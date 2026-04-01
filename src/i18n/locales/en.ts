@@ -117,7 +117,8 @@ export default {
           },
           submit_create_button_label: 'Create Content',
           submit_update_button_label: 'Update Content'
-        }
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Questions',
