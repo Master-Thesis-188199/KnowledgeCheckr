@@ -346,6 +346,15 @@ export default {
         }
       },
       title: 'Ergebnisse deines Übungsversuchs'
+    },
+    Contents: {
+      title: 'Kursinhalte',
+      description: 'Lesen Sie die Kursinhalte durch, um sich auf Übungen und Prüfungen vorzubereiten',
+      Navigation: {
+        title: 'Verfügbare Inhalte',
+        next_btn_label: 'Nächster',
+        previous_btn_label: 'Vorheriger'
+      }
     }
   },
   Examination: {

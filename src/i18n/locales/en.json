@@ -353,6 +353,15 @@
           "description": "Shows a detailed list of every question of this course to review your answers."
         }
       }
+    },
+    "Contents": {
+      "title": "Course Contents",
+      "description": "Read through the course contents to prepare for practice and examinations",
+      "Navigation": {
+        "title": "Available Contents",
+        "next_btn_label": "Next",
+        "previous_btn_label": "Previous"
+      }
     }
   },
   "Examination": {

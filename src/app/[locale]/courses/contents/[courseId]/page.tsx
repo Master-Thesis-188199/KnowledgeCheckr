@@ -6,8 +6,10 @@ import { ContentRenderer } from '@/src/components/courses/contents/[courseId]/Co
 import { ContentPageBreadcrumbs } from '@/src/components/courses/contents/[courseId]/ContentsPageBreadcrumbs'
 import { ContentSwitchButton } from '@/src/components/courses/contents/[courseId]/ContentSwitchButton'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
 
 export default async function CourseContentsPage({ params }: { params: Promise<{ courseId: string }> }) {
+  const t = await getScopedI18n('Courses.Contents')
   const { courseId } = await params
   const course = await getCourseById(courseId)
 
@@ -16,7 +18,7 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
   return (
     <>
       <ContentPageBreadcrumbs course={course} />
-      <PageHeading title='Course Contents' description='Read through the course contents to prepare for practice and examinations' />
+      <PageHeading title={t('title')} description={t('description')} />
 
       <ContentProvider initialProps={{ contents: course.contents }}>
         <div className='flex flex-1 gap-8'>
@@ -29,7 +31,7 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
           </div>
 
           <div className='flex flex-col gap-2'>
-            <h2 className='font-semibold'>Available Contents</h2>
+            <h2 className='font-semibold'>{t('Navigation.title')}</h2>
             {course.contents.map((c) => (
               <ContentSwitchButton content={c} key={c.categoryId} />
             ))}
