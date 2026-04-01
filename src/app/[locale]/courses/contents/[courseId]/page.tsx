@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getCourseById } from '@/database/course/select'
 import { NextContentButton, PreviousContentButton } from '@/src/components/courses/contents/[courseId]/ContentNavigationButtons'
 import { ContentProvider } from '@/src/components/courses/contents/[courseId]/ContentProvider'
@@ -7,13 +7,24 @@ import { ContentPageBreadcrumbs } from '@/src/components/courses/contents/[cours
 import { ContentSwitchButton } from '@/src/components/courses/contents/[courseId]/ContentSwitchButton'
 import PageHeading from '@/src/components/Shared/PageHeading'
 import { getScopedI18n } from '@/src/i18n/server-localization'
+import _logger from '@/src/lib/log/Logger'
+import getReferer from '@/src/lib/Shared/getReferer'
+
+const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
 
 export default async function CourseContentsPage({ params }: { params: Promise<{ courseId: string }> }) {
   const t = await getScopedI18n('Courses.Contents')
   const { courseId } = await params
   const course = await getCourseById(courseId)
+  const referer = await getReferer()
 
   if (!course) notFound()
+  if (course.contents.length === 0) {
+    logger.info(`Course (id: ${course.id}) has no contents, redirecting user back to ${referer ?? '/courses'} page.`)
+
+    // redirects users to where they came from when redirected by the app, or to the /courses page if user navigated manually.
+    redirect(referer ?? '/courses')
+  }
 
   return (
     <>
