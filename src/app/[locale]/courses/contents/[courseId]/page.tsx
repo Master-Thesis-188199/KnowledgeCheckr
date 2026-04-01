@@ -16,9 +16,17 @@ export default async function CourseContentsPage({ params }: { params: Promise<{
     <>
       <PageHeading title='Course Contents' description='Read through the course contents to prepare for practice and examinations' />
 
-      <div className='flex flex-1 flex-col'>
-        <div className='flex flex-1'>
+      <div className='flex flex-1 flex-col gap-6'>
+        <div className='flex flex-1 gap-8'>
           <ContentWrapper course={course} />
+          <div className='flex flex-col gap-2'>
+            <h2 className='font-semibold'>Available Contents</h2>
+            {course.contents.map((c) => (
+              <Button variant='link' className='w-fit max-w-48 text-ellipsis' key={c.categoryId}>
+                {c.title}
+              </Button>
+            ))}
+          </div>
         </div>
 
         <div className='flex justify-between'>
