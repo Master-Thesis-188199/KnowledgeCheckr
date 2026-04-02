@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { isEmpty } from 'lodash'
 import { headers } from 'next/headers'
 import getDatabase from '@/database/Database'
-import { db_knowledgeCheck, db_userHasDoneKnowledgeCheck } from '@/database/drizzle/schema'
+import { db_course, db_userHasDoneCourse } from '@/database/drizzle/schema'
 import createPool from '@/database/Pool'
 import env from '@/lib/Shared/Env'
 import _logger from '@/src/lib/log/Logger'
@@ -71,12 +71,9 @@ export const auth = betterAuth({
         const db = await getDatabase()
 
         try {
-          const [{ affectedRows: updatedChecks }] = await db.update(db_knowledgeCheck).set({ owner_id: newUser.user.id }).where(eq(db_knowledgeCheck.owner_id, anonymousUser.user.id))
-          const [{ affectedRows: updatedResults }] = await db
-            .update(db_userHasDoneKnowledgeCheck)
-            .set({ userId: newUser.user.id })
-            .where(eq(db_userHasDoneKnowledgeCheck.userId, anonymousUser.user.id))
-          logger.info(`[Better-Auth]: Transferred ${updatedChecks} associated checks and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
+          const [{ affectedRows: updatedCourses }] = await db.update(db_course).set({ owner_id: newUser.user.id }).where(eq(db_course.owner_id, anonymousUser.user.id))
+          const [{ affectedRows: updatedResults }] = await db.update(db_userHasDoneCourse).set({ userId: newUser.user.id }).where(eq(db_userHasDoneCourse.userId, anonymousUser.user.id))
+          logger.info(`[Better-Auth]: Transferred ${updatedCourses} associated courses and ${updatedResults} examination-results from an Anonymous account to ${newUser.user.email}`)
         } catch (e) {
           logger.error(`[Better-Auth]: Failed to transfer data from anonymous user ${anonymousUser.user.email} to ${newUser.user.email}`, e)
         }

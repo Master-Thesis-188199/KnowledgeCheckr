@@ -39,10 +39,26 @@ export default {
       'minute_label#other': 'minutes',
       minute_label: 'minutes'
     },
-    jump_back_button_label: 'Jump back'
+    jump_back_button_label: 'Jump back',
+    Breadcrumbs: {
+      root: 'Home',
+      courses: 'Courses',
+      discover: 'Discover',
+      practice: 'Practice',
+      edit: 'Edit',
+      create: 'Create',
+      account: 'Account',
+      start: 'Start',
+      results: 'Results',
+      examination_results: 'Examination Results',
+      practice_results: 'Practice',
+      'not-allowed': 'Not Allowed',
+      'attempt-limit': 'Attempt Limit Reached',
+      'attempt-not-possible': 'Attempt aborted'
+    }
   },
   Home: {
-    description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (en)'
+    description: 'Create your own Courses to boost your knowledge to the next level. (en)'
   },
   AccountPage: {
     title: 'Account Information',
@@ -53,15 +69,15 @@ export default {
       description: 'To keep your data after signing out or closing this tab, you can sign in through a social provider like Google or GitHub.'
     }
   },
-  Checks: {
-    title: 'Your Checks',
-    no_existing_checks: 'No checks found. Create a new one',
-    no_existing_checks_action_button: 'here',
+  Courses: {
+    title: 'Your Courses',
+    no_existing_courses: 'No courses found. Create a new one',
+    no_existing_courses_action_button: 'here',
     Create: {
       GeneralSection: {
         title: 'General Section',
         name_label: 'Name',
-        name_placeholder: 'Science Fiction Check',
+        name_placeholder: 'Science Fiction Course',
         description_label: 'Description',
         description_placeholder: 'Learn about science fiction',
         difficulty_label: 'Difficulty',
@@ -75,6 +91,34 @@ export default {
           command_empty_no_users: 'No matching users found.',
           command_empty_min_input: 'You must provide at least 3 characters to find matches'
         }
+      },
+      ContentSection: {
+        title: 'Course Contents',
+        description: 'Create new contents for this course. These contents can be used by users to increase their knowledge and to understand why questions were incorrectly answered.',
+        Actions: {
+          create_new_button_label: 'Create new Content',
+          edit_content_button_label: 'Edit',
+          delete_content_confirm_label: 'Delete Content',
+          delete_content_dialog_body: 'This action cannot be undone. This will permanently delete this course content from this course and remove its data from our servers.',
+          delete_content_button_label: 'Remove',
+          edit_content_button_aria_label: 'edit course content',
+          delete_content_button_aria_label: 'delete course content'
+        },
+        CourseContentDialog: {
+          title_create: 'Create new Content',
+          title_edit: 'Edit Content',
+          Fields: {
+            title_placeholder: 'Basic History of Austria',
+            description_placeholder: 'Includes fundamental information about Austria.',
+            title_label: 'Content Title',
+            description_label: 'Short Description',
+            categoryId_label: 'Category',
+            categoryId_trigger_placerholder: 'Select a category'
+          },
+          submit_create_button_label: 'Create Content',
+          submit_update_button_label: 'Update Content'
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Questions',
@@ -123,6 +167,7 @@ export default {
       },
       MultiStages: {
         'basic-information': 'Basic Information',
+        contents: 'Contents',
         questions: 'Questions',
         settings: 'Settings',
         conclusion: 'Conclusion'
@@ -130,9 +175,9 @@ export default {
       CreateQuestionDialog: {
         Header: {
           title_create: 'Create Question',
-          description_create: 'Create your new question for your KnowledgeCheck',
+          description_create: 'Create your new question for your Course',
           title_edit: 'Edit Question',
-          description_edit: 'Edit your existing question of your KnowledgeCheck'
+          description_edit: 'Edit your existing question of your Course'
         },
         placeholders: {
           question: 'Formulate your question here',
@@ -159,12 +204,12 @@ export default {
       }
     },
     Discover: {
-      title: 'Explore new Checks',
-      no_checks_found_base: 'No checks found. Create your own KnowledgeCheck',
-      no_checks_found_link: 'here',
+      title: 'Explore new Courses',
+      no_courses_found_base: 'No courses found. Create your own Course',
+      no_courses_found_link: 'here',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operands',
-        create_check_button_label: 'Create your own Check',
+        create_course_button_label: 'Create your own Course',
         filter_input_placeholder: 'Filter by name',
         tooltips: {
           filter_case_sensitive: 'Filter is case-sensitive',
@@ -197,7 +242,7 @@ export default {
           }
         },
         title: 'Examination Attempts',
-        description: 'Shows a detailed list of all examination attempts for this check',
+        description: 'Shows a detailed list of all examination attempts for this course',
         status_done: 'Done',
         status_in_progress: 'in-progress',
         user_type_normal: 'normal',
@@ -306,25 +351,34 @@ export default {
         },
         DataTable: {
           title: 'Question Overview',
-          description: 'Shows a detailed list of every question of this check to review your answers.'
+          description: 'Shows a detailed list of every question of this course to review your answers.'
         }
+      }
+    },
+    Contents: {
+      title: 'Course Contents',
+      description: 'Read through the course contents to prepare for practice and examinations',
+      Navigation: {
+        title: 'Available Contents',
+        next_btn_label: 'Next',
+        previous_btn_label: 'Previous'
       }
     }
   },
   Examination: {
     attempt_not_possible: {
       title: 'Examination not possible',
-      checkClosed: 'Unfortunately the check was closed on {closeDate}, thus you are no longer able to start examinations beyond that day.',
-      notOpenYet: 'Unfortunately the check is not yet open for examinations, please wait until {openDate} to start an examination',
-      unavailable: 'The check you tried to access is currently not available to users.',
-      'anonymous-users-not-allowed': 'Anonymous users are not allowed in this check, please sign-in / login with a different account'
+      courseClosed: 'Unfortunately the course was closed on {closeDate}, thus you are no longer able to start examinations beyond that day.',
+      notOpenYet: 'Unfortunately the course is not yet open for examinations, please wait until {openDate} to start an examination',
+      unavailable: 'The course you tried to access is currently not available to users.',
+      'anonymous-users-not-allowed': 'Anonymous users are not allowed in this course, please sign-in / login with a different account'
     }
   },
   Practice: {
     practicing_not_allowed: {
       title: 'Practicing not allowed',
-      disabled: 'Practicing is disabled for this check, try again later or contact the owner of this check to enable practicing.',
-      toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this check.'
+      disabled: 'Practicing is disabled for this course, try again later or contact the owner of this course to enable practicing.',
+      toManyAttempts: 'You have unfortunately reached the allowed practice attempt count of {allowedAttemptCount} for this course.'
     },
     PracticeQuestionNavigation: {
       session_timer_label: 'Session',
@@ -337,12 +391,29 @@ export default {
       }
     }
   },
+  StartOptionsPage: {
+    title: 'Start practice or an examination',
+    Card: {
+      title: 'Find a Course by share token',
+      description: 'Enter a share token to start practice or an examination.'
+    },
+    ShareTokenInput: {
+      parse_token_label: 'Parsing token'
+    },
+    ShareTokenOptions: {
+      start_practice_label: 'Start Practicing',
+      start_examination_label: 'Start Examination Attempt',
+      not_found_error_message: 'Course was not found.',
+      retrieval_error_message: 'Searching for course failed unexpectedly.'
+    }
+  },
   Components: {
-    KnowledgeCheckCard: {
+    CourseCard: {
       last_modified_label: 'last modified',
       Statistics: {
         questions_label: 'Questions',
         estimatedTime_label: 'estimatedTime',
+        contents_label: 'Contents',
         points_label: 'Points'
       },
       user_role: {
@@ -351,13 +422,13 @@ export default {
         is_Guest_role: 'Guest'
       }
     },
-    ShareKnowledgeCheckButton: {
-      tooltip_message: 'Share this KnowledgeCheck',
-      tooltip_empty_message: 'This check has no questions, cannot be shared at this moment.',
+    ShareCourseButton: {
+      tooltip_message: 'Share this Course',
+      tooltip_empty_message: 'This course has no questions, cannot be shared at this moment.',
       successfully_copied_toast_message: 'Successfully saved token to your clipboard.',
       failed_copy_toast_message: 'Failed to copy share link to the clipboard.'
     },
-    KnowledgeCheckCardMenu: {
+    CourseActionMenu: {
       menu_label: 'Actions',
       invite_to_submenu_label: 'Invite users to',
       copy_practice: {
@@ -367,7 +438,7 @@ export default {
       },
       start_practice: {
         label: 'Start Practicing',
-        tooltip: 'This check has no questions, practice disabled.',
+        tooltip: 'This course has no questions, practice disabled.',
         toast: 'Unable to start Practice'
       },
       copy_examination: {
@@ -377,34 +448,42 @@ export default {
       },
       start_examination: {
         label: 'Start Examination',
-        tooltip: 'This check has no questions, examination disabled.',
+        tooltip: 'This course has no questions, examination disabled.',
         toast: 'Unable to start Practice'
       },
-      edit_check: {
-        label: 'Edit KnowledgeCheck',
-        tooltip: 'You are not allowed to edit this check!'
+      show_course_contents: {
+        label: 'Show Course Contents',
+        tooltip: 'This course has no contents, please create one first.'
       },
-      clone_check: {
-        label: 'Clone KnowledgeCheck'
+      edit_course: {
+        label: 'Edit Course',
+        tooltip: 'You are not allowed to edit this course!'
+      },
+      clone_course: {
+        label: 'Clone Course'
+      },
+      show_exam_results: {
+        label: 'Show Examination Results',
+        tooltip: 'You are not allowed to view exam results!'
       },
       inspect_statistics: {
         label: 'Inspect Statistics'
       },
       remove_share_token: {
-        tooltip: 'There is no share token associated to this check!',
-        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this KnowledgeCheck.',
+        tooltip: 'There is no share token associated to this course!',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete the share-token from this Course.',
         toast_deletion_successful: 'Successfully deleted share token',
         toast_deletion_failure: 'Removing share token was unsuccessful!'
       },
-      delete_knowledgeCheck: {
-        label: 'Delete KnowledgeCheck',
-        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this KnowledCheck from your account and remove its data from our servers.',
-        toast_deletion_successful: 'Successfully deleted knowledgeCheck',
-        toast_deletion_failure: 'Removing knowledgeCheck was unsuccessful!'
+      delete_course: {
+        label: 'Delete Course',
+        confirmation_dialog_body: 'This action cannot be undone. This will permanently delete this Course from your account and remove its data from our servers.',
+        toast_deletion_successful: 'Successfully deleted course',
+        toast_deletion_failure: 'Removing course was unsuccessful!'
       },
       Shared: {
         tooltip_not_allowed: 'You are not allowed to perform this action!',
-        toast_deletion_not_found: 'Deletion was unsuccesful, check not found!'
+        toast_deletion_not_found: 'Deletion was unsuccesful, course not found!'
       }
     },
     ConfirmationDialog: {
@@ -446,6 +525,215 @@ export default {
       question_status_incorrect: 'incorrect',
       'question_status_partly-correct': 'partly-correct',
       question_status_unanswered: 'unanswered'
+    },
+    RichTextEditor: {
+      Content: {
+        input_aria_label: 'Main content area, start typing to enter text.'
+      },
+      Toolbar: {
+        undo_tooltip_label: 'Undo',
+        redo_tooltip_label: 'Redo',
+        Headings: {
+          trigger_tooltip_label: 'Heading',
+          trigger_aria_label: 'Format text as heading',
+          heading_level_label: 'Heading {level}'
+        },
+        ListOptions: {
+          trigger_aria_label: 'List options',
+          trigger_label: 'List',
+          Options: {
+            bulletList: 'Bullet List',
+            orderedList: 'Ordered List',
+            taskList: 'Task List'
+          }
+        },
+        FontOptions: {
+          trigger_tooltip_label: 'Font Options',
+          bold_label: 'Bold',
+          italic_label: 'Italic',
+          strike_label: 'Strike',
+          code_label: 'Code',
+          underline_label: 'Underline'
+        },
+        Alignment: {
+          trigger_aria_label: 'Format text alignment',
+          trigger_tooltip_label: 'Alignment options',
+          left_label: 'Align left',
+          center_label: 'Align center',
+          right_label: 'Align right',
+          justify_label: 'Align justify'
+        }
+      }
+    }
+  },
+  schemas: {
+    Course: {
+      name: {
+        default: 'KnowledgeCheck Course',
+        description: 'The name under which the created course is associated with.'
+      },
+      description: {
+        description: 'Describe the concept of your course using a few words.'
+      },
+      difficulty: {
+        description: 'Defines the skill level needed for this course.',
+        min_max_message: 'Please specify a difficulty between 1 and 10.'
+      },
+      questions: {
+        refinement_message: 'The ids of questions must be unique!'
+      },
+      openDate: {
+        description: 'The day on which users can start to use the course.'
+      },
+      closeDate: {
+        description: 'The last day on which the course can be used by others.',
+        superRefine_message: 'The closeDate cannot be before the start date'
+      },
+      owner_id: {
+        max_message: 'Please provide a valid user-id that conforms with the `db_user`.id definition. (max-length: 36)'
+      },
+      questionCategories: {
+        refinement_message: 'Please define question categories before assigning them to questions.'
+      }
+    },
+    Authentication: {
+      email: {
+        email_constraint_message: 'Please enter a valid email address.'
+      },
+      password: {
+        'min_constraint_message#one': 'The password must be at least {count} character long.',
+        'min_constraint_message#other': 'The password must be at least {count} characters long.',
+        min_constraint_message: 'The password must be at least {count} characters long.'
+      },
+      name: {
+        'min_constraint_message#one': 'The name must be at least {count} character long.',
+        'min_constraint_message#other': 'The name must be at least {count} characters long.',
+        min_constraint_message: 'The name must be at least {count} characters long.'
+      }
+    },
+    Shared: {
+      date_nan_time: 'Invalid date value provided',
+      number: {
+        positive: 'Number must be greater than 0'
+      }
+    },
+    Category: {
+      prerequisiteCategoryId: {
+        min_constraint_message: 'A prerequisite category may not be empty!'
+      }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: "A content's title can not be empty.",
+        description: 'Used to quickly identify a given content of a category'
+      },
+      description: {
+        description: 'Describes the content associated to a given category.'
+      },
+      categoryId: {
+        uuidv4_message: 'Selecting a category is required'
+      }
+    },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Defines whether users are able to practice with this course or not.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of practice attempts users have. When set to null users have unlimited attempts'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Defines whether users are able to start an examination attempt for this course or not.'
+        },
+        startDate: {
+          description: 'The start-date on which users can start examinations.'
+        },
+        endDate: {
+          description: 'The end-date after which users can no longer start examinations. When set to null no end constraints are set.'
+        },
+        questionOrder: {
+          description: 'Defines how questions are ordered during practice / exams.'
+        },
+        answerOrder: {
+          description: 'Defines how answers are ordered during practice / exams.'
+        },
+        allowAnonymous: {
+          description: 'Specifies whether anonymous users can start an examination attempt in this course.'
+        },
+        allowFreeNavigation: {
+          description: 'Specifies whether users can switch between questions freely or not.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'The examination time frame must be at least {count} minute!',
+          'min_constraint#other': 'The examination time frame must be at least {count} minutes!',
+          min_constraint: 'The examination time frame must be at least {count} minutes!',
+          'max_constraint#one': 'The examination time frame cannot exceed more than {count} hour!',
+          'max_constraint#other': 'The examination time frame cannot exceed more than {count} hours!',
+          max_constraint: 'The examination time frame cannot exceed more than {count} hours!',
+          description: 'The max duration users have to finish their examination attempt.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Users must be allowed to have at least one attempt.',
+          description: 'The amount of examination attempts users have.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Defines whether this course is publicly accessible, thus whether users can discover this course.'
+      }
+    },
+    Question: {
+      id: {
+        uuid_message: 'An answer must have an uuid to identify it!'
+      },
+      question: {
+        'min_words_constraint#one': 'Please reformulate your question to be at least {count} word long.',
+        'min_words_constraint#other': 'Please reformulate your question to be at least {count} words long.',
+        min_words_constraint: 'Please reformulate your question to be at least {count} words long.'
+      },
+      Shared: {
+        unique_answer_text_constraint_message: 'Answers must be unique. Duplicate: {text}',
+        unique_answer_id_constraint_message: 'Answer-ids must be unique. Duplicate id: {id}',
+        default_answer_name: 'Answer {pos}'
+      },
+      MultipleChoice: {
+        answer: {
+          min_constraint: 'An answer must not be empty!'
+        },
+        answers: {
+          min_constraint: 'Please provide at least one answer',
+          min_one_correct_answer_constraint: 'At least one answer has to be correct!'
+        }
+      },
+      SingleChoice: {
+        answers: {
+          min_answer_count: 'Please provide at least one answer',
+          exactly_one_correct_answer_message: 'A single-choice question must have *one* correct answer!'
+        }
+      },
+      DragDrop: {
+        refinements: {
+          continous_order_range: 'Positions must form a continuous range: [0...{highestPosition}]; received: [{receivedPositions}]. Position {missingPosition} is missing!',
+          start_index_constraint: 'Positions must begin from 0; received: {receivedStartIndex}',
+          duplicate_position_message: 'Duplicate position: {position}'
+        }
+      }
+    },
+    QuestionInput: {
+      SingleChoice: {
+        empty_selection_message: 'Please select an answer'
+      },
+      MultipleChoice: {
+        empty_selection_message: 'Please select at least one answer'
+      },
+      OpenQuestion: {
+        empty_input_message: 'Please provide an answer'
+      },
+      DragDrop: {
+        missing_ordering_message: 'Please arrange the answers in the correct order'
+      }
     }
   }
 } as const

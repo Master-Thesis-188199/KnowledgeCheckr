@@ -4,7 +4,7 @@ import { ComponentType, createContext, Dispatch, SetStateAction, useCallback, us
 import { useInView } from 'framer-motion'
 import { isEqual } from 'lodash'
 import { LoaderCircleIcon } from 'lucide-react'
-import { DatabaseOptions, RequireOptionsLast } from '@/database/knowledgeCheck/type'
+import { DatabaseOptions, RequireOptionsLast } from '@/database/course/type'
 import SmoothPresenceTransition from '@/src/components/Shared/Animations/SmoothPresenceTransition'
 import { Any } from '@/types'
 

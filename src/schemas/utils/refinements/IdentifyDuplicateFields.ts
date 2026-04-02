@@ -1,4 +1,4 @@
-import { z, ZodIssueCode } from 'zod'
+import { z } from 'zod'
 
 type MarkMode = 'last' | 'both'
 
@@ -43,14 +43,14 @@ export default function identifyDuplicateFields<T, K extends string | number>(
     const firstIndex = firstIndexByKey.get(k)
     if (firstIndex !== undefined) {
       ctx.addIssue({
-        code: ZodIssueCode.custom,
+        code: 'custom',
         message: message(raw),
         path: [i, field],
       })
 
       if (mark === 'both') {
         ctx.addIssue({
-          code: ZodIssueCode.custom,
+          code: 'custom',
           message: message(raw),
           path: [firstIndex, field],
         })

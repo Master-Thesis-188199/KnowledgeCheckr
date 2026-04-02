@@ -1,0 +1,1 @@
+ALTER TABLE `KnowledgeCheck` ADD `contents` json DEFAULT ('[]') NOT NULL;

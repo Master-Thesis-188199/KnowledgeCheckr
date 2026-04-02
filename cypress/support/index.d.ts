@@ -34,7 +34,7 @@ declare namespace Cypress {
 
     removeDBUser(email: string, username: string): void
 
-    insertKnowledgeCheck(check: KnowledgeCheck): void
+    insertCourse(course: Course): void
 
     dragDrop(dragLocator: Cypress.Chainable<JQuery<HTMLElement>>, dropLocator: Cypress.Chainable<JQuery<HTMLElement>>): void
 

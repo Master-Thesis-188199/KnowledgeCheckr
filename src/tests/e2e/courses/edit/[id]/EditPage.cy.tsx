@@ -1,0 +1,33 @@
+describe('Edit Course page: ', () => {
+  it('Verify that users must be logged in to access the edit page', () => {
+    cy.visit('/courses/edit/12931293')
+    cy.get('main').should('contain', "You're not authorized to access this page")
+  })
+
+  it('Verify that users can access the edit page when logged in', () => {
+    cy.loginTestUser()
+    cy.visit('/courses/edit/1239')
+
+    cy.get('main').should('contain', 'This page could not be found')
+  })
+
+  it('Verify that users can edit an existing course that they own', () => {
+    cy.loginTestUser()
+
+    cy.visit('/courses/create')
+    cy.get('input[name="name"]').type('Test Course Title')
+
+    //* Switch to last stage to save course
+    cy.get('#multi-stage-list-parent').scrollIntoView().children().filter(':visible').should('have.length', 1).children().last().click()
+    cy.get('button').contains('Save').should('exist').scrollIntoView().should('be.visible').click()
+
+    //? Ensure that the course was created and the user is redirected
+    cy.wait(750)
+    cy.visit('/courses')
+
+    cy.get(`[data-slot="generic-card"]`).first().should('exist').and('be.visible').find('button[data-slot="dropdown-menu-trigger"]').click()
+    cy.get(`[data-slot="generic-card"]`).first().find('button[data-slot="dropdown-menu-trigger"]').should('have.attr', 'data-state', 'open')
+
+    cy.get('[data-slot="dropdown-menu-content"]').should('exist').find("a[href^='/courses/edit/']").should('exist')
+  })
+})

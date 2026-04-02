@@ -39,20 +39,36 @@ export default {
       'minute_label#other': 'minuten',
       minute_label: 'minuten'
     },
-    jump_back_button_label: 'Bearbeiten'
+    jump_back_button_label: 'Bearbeiten',
+    Breadcrumbs: {
+      root: 'Home',
+      courses: 'Kurse',
+      discover: 'Entdecken',
+      practice: 'Üben',
+      edit: 'Bearbeiten',
+      create: 'Erstellen',
+      account: 'Account',
+      start: 'Start',
+      results: 'Ergebnisse',
+      examination_results: 'Prüfungsergebnisse',
+      practice_results: 'Üben',
+      'not-allowed': 'Nicht erlaubt',
+      'attempt-limit': 'Versuchslimit erreicht',
+      'attempt-not-possible': 'Versuch abgebrochen'
+    }
   },
   Home: {
-    description: 'Create your own KnowledgeChecks to boost your knowledge to the next level. (de)'
+    description: 'Create your own Course to boost your knowledge to the next level. (de)'
   },
-  Checks: {
-    title: 'Deine Wissenschecks',
-    no_existing_checks: 'Keine Wissenschecks gefunden. Erstelle einen',
-    no_existing_checks_action_button: 'hier',
+  Courses: {
+    title: 'Deine Kurse',
+    no_existing_courses: 'Keine Kurse gefunden. Erstelle einen',
+    no_existing_courses_action_button: 'hier',
     Create: {
       GeneralSection: {
         title: 'Allgemein',
         name_label: 'Name',
-        name_placeholder: 'Österreich Wissenscheck',
+        name_placeholder: 'Österreich Kurs',
         description_label: 'Beschreibung',
         description_placeholder: 'Erfahren Sie mehr über Österreich',
         difficulty_label: 'Schwierigkeit',
@@ -66,6 +82,36 @@ export default {
           command_empty_no_users: 'Keine Benutzer gefunden.',
           command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden'
         }
+      },
+      ContentSection: {
+        title: 'Kursinhalte',
+        description: 'Erstellen Sie neue Inhalte für diesen Kurs. \n' +
+          'Diese Inhalte können von Benutzern genutzt werden, um ihr Wissen zu erweitern und zu verstehen, warum Fragen falsch beantwortet wurden.',
+        Actions: {
+          create_new_button_label: 'Erstelle einen neuen Inhalt',
+          edit_content_button_label: 'Bearbeiten',
+          delete_content_confirm_label: 'Inhalt löschen',
+          delete_content_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
+            'Dadurch werden dieser Kursinhalt dauerhaft aus diesem Kurs gelöscht und seine Daten von unseren Servern entfernt.',
+          delete_content_button_label: 'Löschen',
+          edit_content_button_aria_label: 'Kursinhalt bearbeiten',
+          delete_content_button_aria_label: 'Kursinhalt löschen'
+        },
+        CourseContentDialog: {
+          title_create: 'Erstellen einen neuen Inhalt',
+          title_edit: 'Inhalt bearbeiten',
+          Fields: {
+            title_placeholder: 'Grundlegende Geschichte Österreichs',
+            description_placeholder: 'Enthält grundlegende Informationen über Österreich.',
+            title_label: 'Inhaltstitel',
+            description_label: 'Kurzbeschreibung',
+            categoryId_label: 'Kategorie',
+            categoryId_trigger_placerholder: 'Wähle eine Kategorie aus'
+          },
+          submit_create_button_label: 'Kursinhalt erstellen',
+          submit_update_button_label: 'Inhalt aktualisieren'
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Fragen',
@@ -114,6 +160,7 @@ export default {
       },
       MultiStages: {
         'basic-information': 'Allgemein',
+        contents: 'Kursinhalte',
         questions: 'Fragen',
         settings: 'Einstellungen',
         conclusion: 'Zusammenfassung'
@@ -121,9 +168,9 @@ export default {
       CreateQuestionDialog: {
         Header: {
           title_create: 'Frage erstellen',
-          description_create: 'Erstellen Sie eine neue Frage für diesen KnowledgeCheck',
+          description_create: 'Erstellen Sie eine neue Frage für diesen Kurs',
           title_edit: 'Frage bearbeiten',
-          description_edit: 'Bearbeiten Sie Ihre bestehende Frage Ihres KnowledgeChecks'
+          description_edit: 'Bearbeiten Sie Ihre bestehende Frage Ihres Kurses'
         },
         placeholders: {
           question: 'Formuliere deine Frage hier',
@@ -150,13 +197,12 @@ export default {
       }
     },
     Discover: {
-      title: 'Entdecken Sie neue Wissenschecks',
-      no_checks_found_base: 'Keine Wissensüberprüfungen gefunden. \n' +
-        'Erstellen Sie Ihren eigenen KnowledgeCheck',
-      no_checks_found_link: 'hier',
+      title: 'Entdecken Sie neue Kurse',
+      no_courses_found_base: 'Keine Wissensüberprüfungen gefunden. \nErstellen Sie Ihren eigenen Kurs',
+      no_courses_found_link: 'hier',
       FilterFields: {
         filter_operand_menu_label: 'Filter Operatoren',
-        create_check_button_label: 'Erstelle deinen eigenen Check',
+        create_course_button_label: 'Erstelle deinen eigenen Kurs',
         filter_input_placeholder: 'nach Namen filtern',
         tooltips: {
           filter_case_sensitive: 'Filter beachtet die Groß-/Kleinschreibung',
@@ -301,20 +347,29 @@ export default {
         }
       },
       title: 'Ergebnisse deines Übungsversuchs'
+    },
+    Contents: {
+      title: 'Kursinhalte',
+      description: 'Lesen Sie die Kursinhalte durch, um sich auf Übungen und Prüfungen vorzubereiten',
+      Navigation: {
+        title: 'Verfügbare Inhalte',
+        next_btn_label: 'Nächster',
+        previous_btn_label: 'Vorheriger'
+      }
     }
   },
   Examination: {
     attempt_not_possible: {
       title: 'Wissensüberprüfungs nicht möglich',
-      checkClosed: 'Leider wurde die Prüfung am {closeDate} geschlossen, sodass Sie nach diesem Tag keine Prüfungen mehr starten können.',
+      courseClosed: 'Leider wurde die Prüfung am {closeDate} geschlossen, sodass Sie nach diesem Tag keine Prüfungen mehr starten können.',
       notOpenYet: 'Leider ist die Prüfung noch nicht für Prüfungen geöffnet. Bitte warten Sie bis zum {openDate}, um mit der Prüfung zu beginnen',
-      unavailable: 'Der Wissenscheck, auf den Sie zugreifen wollten, ist derzeit für Benutzer nicht verfügbar.',
+      unavailable: 'Der Kurs, auf den Sie zugreifen wollten, ist derzeit für Benutzer nicht verfügbar.',
       'anonymous-users-not-allowed': 'Anonyme Benutzer sind bei dieser Prüfung nicht zugelassen. Bitte melden Sie sich mit einem anderen Konto an'
     }
   },
   Practice: {
     practicing_not_allowed: {
-      disabled: 'Das Üben dieses KnowledgeChecks ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des KnowledgeChecks, um das Üben zu aktivieren.',
+      disabled: 'Das Üben dieses Kurses ist deaktiviert. Versuchen Sie es später erneut oder wenden Sie sich an den Besitzer des Kurses, um das Üben zu aktivieren.',
       title: 'Üben nicht erlaubt',
       toManyAttempts: 'Leider haben Sie für diese Prüfung die zulässige Anzahl an Übungsversuchen von {allowedAttemptCount} erreicht.'
     },
@@ -330,12 +385,29 @@ export default {
       }
     }
   },
+  StartOptionsPage: {
+    title: 'Übung oder Prüfungsversuch starten',
+    Card: {
+      title: 'Kurs per Share-Token finden',
+      description: 'Geben Sie einen Share-Token ein, um eine Übung oder einen Prüfungsversuch zu starten.'
+    },
+    ShareTokenInput: {
+      parse_token_label: 'Token wird überprüft'
+    },
+    ShareTokenOptions: {
+      not_found_error_message: 'Kurs wurde nicht gefunden.',
+      retrieval_error_message: 'Der Kurs konnte nicht geladen werden.',
+      start_examination_label: 'Prüfungsversuch starten',
+      start_practice_label: 'Übung starten'
+    }
+  },
   Components: {
-    KnowledgeCheckCard: {
+    CourseCard: {
       last_modified_label: 'zuletzt geändert',
       Statistics: {
         questions_label: 'Fragen',
         estimatedTime_label: 'geschätze Zeit',
+        contents_label: 'Inhalte',
         points_label: 'Punkte'
       },
       user_role: {
@@ -344,15 +416,15 @@ export default {
         is_Guest_role: 'Gast'
       }
     },
-    ShareKnowledgeCheckButton: {
-      tooltip_message: 'Teile diesen KnowledgeCheck',
-      tooltip_empty_message: 'Dieser KnowledgeCheck hat keine Fragen und kann deswegen nicht geteilt werden.',
+    ShareCourseButton: {
+      tooltip_message: 'Teile diesen Kurs',
+      tooltip_empty_message: 'Dieser Kurs hat keine Fragen und kann deswegen nicht geteilt werden.',
       successfully_copied_toast_message: 'Freigabelink erfolgreich in Zwischenablage gespeichert',
       failed_copy_toast_message: 'Der Freigabelink konnte nicht in Zwischenablage gespeichert werden.'
     },
-    KnowledgeCheckCardMenu: {
+    CourseActionMenu: {
       menu_label: 'Aktionen',
-      invite_to_submenu_label: 'Teile diesen Check',
+      invite_to_submenu_label: 'Teile diesen Kurs',
       copy_practice: {
         label: 'Kopiere Übungslink',
         toast_success: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
@@ -360,7 +432,7 @@ export default {
       },
       start_practice: {
         label: 'Beginne zu Üben',
-        tooltip: 'Dieser KnowledgeCheck hat keine Fragen, Übung deaktiviert.',
+        tooltip: 'Dieser Kurs hat keine Fragen, Übung deaktiviert.',
         toast: 'Starten der Übungsumgebung fehlgeschlagen.'
       },
       copy_examination: {
@@ -373,33 +445,41 @@ export default {
         tooltip: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
         toast: 'Erstellen des Übungslinks fehlgeschlagen.'
       },
-      edit_check: {
-        label: 'Check bearbeiten',
-        tooltip: 'Dir fehlen die Berechtigungen um diese Check zu bearbeiten.'
+      show_course_contents: {
+        label: 'Kursinhalte anzeigen',
+        tooltip: 'Dieser Kurs hat keine Inhalte die angezeigt werden können.'
       },
-      clone_check: {
-        label: 'Check duplizieren'
+      edit_course: {
+        label: 'Kurs bearbeiten',
+        tooltip: 'Dir fehlen die Berechtigungen um diesen Kurs zu bearbeiten.'
+      },
+      clone_course: {
+        label: 'Kurs duplizieren'
+      },
+      show_exam_results: {
+        label: 'Prüfungs Ergebnisse',
+        tooltip: 'Dir fehlen Berechtigungen um Prüfungsergebnisse einzusehen!'
       },
       inspect_statistics: {
         label: 'Statistik anzeigen'
       },
       remove_share_token: {
-        tooltip: 'Dieser Check hat keinen Freigabe schlüssel.',
+        tooltip: 'Dieser Kurs hat keinen Freigabe schlüssel.',
         confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird das Share-Token dauerhaft aus diesem KnowledgeCheck gelöscht.',
+          'Dadurch wird das Share-Token dauerhaft aus diesem Kurs gelöscht.',
         toast_deletion_successful: 'Freigabe token erfolgreich gelöscht',
         toast_deletion_failure: 'Löschen des freigabge tokens fehlgeschlagen!'
       },
-      delete_knowledgeCheck: {
-        label: 'Check löschen',
+      delete_course: {
+        label: 'Kurs löschen',
         confirmation_dialog_body: 'Diese Aktion kann nicht rückgängig gemacht werden. \n' +
-          'Dadurch wird dieser KnowledCheck dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
-        toast_deletion_successful: 'KnowledgeCheck erfolgreich gelöscht',
-        toast_deletion_failure: 'Löschen des KnowledgeChecks fehlgeschlagen!'
+          'Dadurch wird dieser Kurs dauerhaft aus Ihrem Konto gelöscht und seine Daten von unseren Servern entfernt.',
+        toast_deletion_successful: 'Kurs erfolgreich gelöscht',
+        toast_deletion_failure: 'Löschen des Kurses fehlgeschlagen!'
       },
       Shared: {
         tooltip_not_allowed: 'Dir fehlen die Berechtigungen um diese Aktion durchzuführen.',
-        toast_deletion_not_found: 'Löschvorgang fehlgeschlagen, Check nicht gefunden.'
+        toast_deletion_not_found: 'Löschvorgang fehlgeschlagen, Kurs nicht gefunden.'
       }
     },
     ConfirmationDialog: {
@@ -442,6 +522,45 @@ export default {
       question_status_incorrect: 'falsch',
       'question_status_partly-correct': 'fast richtig',
       question_status_unanswered: 'unbeantwortet'
+    },
+    RichTextEditor: {
+      Content: {
+        input_aria_label: 'Text Bereichm, beginne mit dem Schreiben.'
+      },
+      Toolbar: {
+        undo_tooltip_label: 'Rückgängig',
+        redo_tooltip_label: 'Wiederholen',
+        Headings: {
+          trigger_tooltip_label: 'Überschrift',
+          trigger_aria_label: 'Text als Überschrift formatieren',
+          heading_level_label: 'Überschrift {level}'
+        },
+        ListOptions: {
+          trigger_label: 'Liste',
+          trigger_aria_label: 'Listenoptionen',
+          Options: {
+            bulletList: 'Aufzählungsliste',
+            orderedList: 'Geordnete Liste',
+            taskList: 'Aufgabenliste'
+          }
+        },
+        FontOptions: {
+          trigger_tooltip_label: 'Schriftartoptionen',
+          bold_label: 'Fett',
+          italic_label: 'Kursiv',
+          strike_label: 'Durchstreichen',
+          code_label: 'Code',
+          underline_label: 'Unterstreichen'
+        },
+        Alignment: {
+          trigger_aria_label: 'Textausrichtung formatieren',
+          trigger_tooltip_label: 'Ausrichtungs Optionen',
+          left_label: 'Links ausrichten',
+          center_label: 'Mittig ausrichten',
+          right_label: 'Rechts ausrichten',
+          justify_label: 'Ausrichten'
+        }
+      }
     }
   },
   AccountPage: {
@@ -452,5 +571,176 @@ export default {
     signout_button_label: 'Abmelden',
     signout_delete_notice: 'Daten löschen',
     title: 'Kontoinformationen'
+  },
+  schemas: {
+    Course: {
+      name: {
+        default: 'Wissenskurs',
+        description: 'Der Name, unter dem der erstellte Kurs zugeordnet wird.'
+      },
+      description: {
+        description: 'Beschreiben Sie das Konzept Ihres Kurses mit ein paar Worten.'
+      },
+      difficulty: {
+        description: 'Legt das für diesen Kurs erforderliche Kenntnisniveau fest.',
+        min_max_message: 'Bitte geben Sie einen Schwierigkeitsgrad zwischen 1 und 10 an.'
+      },
+      questions: {
+        refinement_message: 'Die IDs der Fragen müssen eindeutig sein!'
+      },
+      openDate: {
+        description: 'Der Tag, an dem Benutzer den Kurs nutzen können.'
+      },
+      closeDate: {
+        description: 'Der letzte Tag, an dem der Kurs von anderen genutzt werden kann.'
+      },
+      owner_id: {
+        max_message: 'Bitte geben Sie eine gültige Benutzer-ID an, die der Definition von `db_user`.id entspricht. (maximale Länge: 36)'
+      }
+    },
+    Authentication: {
+      email: {
+        email_constraint_message: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+      },
+      password: {
+        'min_constraint_message#one': 'Das Passwort muss mindestens {count} Zeichen lang sein.',
+        'min_constraint_message#other': 'Das Passwort muss mindestens {count} Zeichen lang sein.',
+        min_constraint_message: 'Das Passwort muss mindestens {count} Zeichen lang sein.'
+      },
+      name: {
+        'min_constraint_message#one': 'Der Name muss mindestens {count} Zeichen lang sein.',
+        'min_constraint_message#other': 'Der Name muss mindestens {count} Zeichen lang sein.',
+        min_constraint_message: 'Der Name muss mindestens {count} Zeichen lang sein.'
+      }
+    },
+    Category: {
+      prerequisiteCategoryId: {
+        min_constraint_message: 'Eine Voraussetzungskategorie darf nicht leer sein!'
+      }
+    },
+    CourseContent: {
+      title: {
+        nonempty_message: 'Der Titel eines Inhalts darf nicht leer sein.',
+        description: 'Wird verwendet, um einen bestimmten Inhalt einer Kategorie schnell zu identifizieren'
+      },
+      description: {
+        description: 'Beschreibt den Inhalt, der einer bestimmten Kategorie zugeordnet ist.'
+      },
+      categoryId: {
+        uuidv4_message: 'Die Auswahl einer Kategorie ist erforderlich'
+      }
+    },
+    CourseSettings: {
+      practice: {
+        enablePracticing: {
+          description: 'Legt fest, ob Benutzer mit diesem Kurs üben können oder nicht.'
+        },
+        allowedPracticeCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Übungsversuche, die Benutzer haben. \n' +
+            'Wenn der Wert auf null gesetzt ist, haben Benutzer unbegrenzte Versuche'
+        }
+      },
+      examination: {
+        enableExaminations: {
+          description: 'Legt fest, ob Benutzer einen Prüfungsversuch für diesen Kurs starten können oder nicht.'
+        },
+        startDate: {
+          description: 'Das Startdatum, an dem Benutzer mit Prüfungen beginnen können.'
+        },
+        endDate: {
+          description: 'Das Enddatum, nach dem Benutzer keine Prüfungen mehr starten können. \n' +
+            'Bei Null werden keine Endbeschränkungen festgelegt.'
+        },
+        questionOrder: {
+          description: 'Definiert die Reihenfolge der Fragen während der Übung/Prüfung.'
+        },
+        answerOrder: {
+          description: 'Definiert die Reihenfolge der Antworten während der Übung/Prüfung.'
+        },
+        allowAnonymous: {
+          description: 'Gibt an, ob anonyme Benutzer eine Prüfung starten können.'
+        },
+        allowFreeNavigation: {
+          description: 'Gibt an, ob Benutzer frei zwischen den Fragen wechseln können oder nicht.'
+        },
+        examTimeFrameSeconds: {
+          'min_constraint#one': 'Der Prüfungszeitraum muss mindestens {count} Minute betragen!',
+          'min_constraint#other': 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          min_constraint: 'Der Prüfungszeitraum muss mindestens {count} Minuten betragen!',
+          'max_constraint#one': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunde überschreiten!',
+          'max_constraint#other': 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          max_constraint: 'Der Prüfungszeitraum darf nicht mehr als {count} Stunden überschreiten!',
+          description: 'Die maximale Dauer, die einem Benutzer für einen Prüfungsversuch zur Verfügung steht.'
+        },
+        examinationAttemptCount: {
+          min_constraint: 'Benutzern muss mindestens ein Versuch erlaubt sein.',
+          description: 'Die Anzahl der Prüfungsversuche, die Benutzer haben.'
+        }
+      },
+      shareAccessibility: {
+        description: 'Definiert, ob dieser Kurs öffentlich zugänglich ist, also ob Benutzer diesen Kurs entdecken können.'
+      }
+    },
+    Question: {
+      id: {
+        uuid_message: 'Eine Antwort muss eine id haben, um sie zu identifizieren!'
+      },
+      question: {
+        'min_words_constraint#one': 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.',
+        'min_words_constraint#other': 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.',
+        min_words_constraint: 'Bitte formulieren Sie Ihre Frage so um, dass sie mindestens {count} Wörter lang ist.'
+      },
+      Shared: {
+        unique_answer_text_constraint_message: 'Antworten müssen eindeutig sein. \nDuplikat: {text}',
+        unique_answer_id_constraint_message: 'Antwort-IDs müssen eindeutig sein. \nDoppelte ID: {id}',
+        default_answer_name: 'Antwort {pos}'
+      },
+      MultipleChoice: {
+        answer: {
+          min_constraint: 'Eine Antwort darf nicht leer sein!'
+        },
+        answers: {
+          min_constraint: 'Bitte erstelle mindestens eine Antwort',
+          min_one_correct_answer_constraint: 'Mindestens eine Antwort muss richtig sein!'
+        }
+      },
+      SingleChoice: {
+        answers: {
+          min_answer_count: 'Bitte erstelle mindestens eine Antwort',
+          exactly_one_correct_answer_message: 'Eine Einzelauswahl Frage kann genau *eine* richtige Antwort haben!'
+        }
+      },
+      DragDrop: {
+        refinements: {
+          continous_order_range: 'Positionen müssen einen kontinuierlichen Reihenfolge bilden: [0...{highestPosition}]; \n' +
+            'erhalten: [{receivedPositions}]. \n' +
+            'Position {missingPosition} fehlt!',
+          start_index_constraint: 'Antwort Positionen müssen bei 0 beginnen; \n' +
+            'erhalten: {receivedStartIndex}',
+          duplicate_position_message: 'Doppelte Position: {position}'
+        }
+      }
+    },
+    QuestionInput: {
+      SingleChoice: {
+        empty_selection_message: 'Bitte wählen eine Antwort aus'
+      },
+      MultipleChoice: {
+        empty_selection_message: 'Bitte wähle mindestens eine Antwort aus'
+      },
+      OpenQuestion: {
+        empty_input_message: 'Bitte gib eine Antwort'
+      },
+      DragDrop: {
+        missing_ordering_message: 'Ordne die Antworten in der richtigen Reihenfolge an'
+      }
+    },
+    Shared: {
+      date_nan_time: 'Ungültiger Datumswert angegeben',
+      number: {
+        positive: 'Diese Zahl muss größer als 0 sein'
+      }
+    }
   }
 } as const

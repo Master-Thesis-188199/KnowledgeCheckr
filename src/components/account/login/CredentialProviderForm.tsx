@@ -8,9 +8,9 @@ import FormFieldError from '@/src/components/Shared/form/FormFieldError'
 import { RHFBaseReturn, RHFServerAction, UseRHFFormProps } from '@/src/hooks/Shared/form/react-hook-form/type'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
 import { cn } from '@/src/lib/Shared/utils'
-import { LoginSchema } from '@/src/schemas/AuthenticationSchema'
+import { getLoginSchema } from '@/src/schemas/AuthenticationSchema'
 
-export default function CredentialProviderForm<Schema extends z.ZodSchema = typeof LoginSchema>({
+export default function CredentialProviderForm<Schema extends z.ZodObject = ReturnType<typeof getLoginSchema>>({
   schema,
   formAction,
   formProps,
@@ -20,10 +20,10 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
 }: {
   currentMode: 'signUp' | 'login'
   schema: Schema
-  formProps?: UseRHFFormProps<z.infer<Schema>>
-  formAction: RHFServerAction<z.infer<Schema>>
+  formProps?: UseRHFFormProps<z.output<Schema>>
+  formAction: RHFServerAction<z.output<Schema>>
   refererCallbackUrl?: string
-  renderFields: (args: { form: RHFBaseReturn<z.infer<Schema>>['form'] }) => React.ReactNode
+  renderFields: (args: { form: RHFBaseReturn<z.output<Schema>>['form'] }) => React.ReactNode
 }) {
   const { form, runServerValidation, isServerValidationPending } = useRHF<Schema>(
     schema,
@@ -40,7 +40,7 @@ export default function CredentialProviderForm<Schema extends z.ZodSchema = type
     formState: { isValid, isLoading, isSubmitting, isValidating, errors },
   } = form
 
-  const onSubmit = (data: z.infer<Schema>) => runServerValidation(data)
+  const onSubmit = (data: z.output<Schema>) => runServerValidation(data)
 
   return (
     <Form {...form}>
