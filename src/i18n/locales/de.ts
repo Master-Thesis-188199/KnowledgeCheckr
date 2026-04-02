@@ -54,6 +54,7 @@ export default {
       account: 'Account',
       start: 'Start',
       results: 'Ergebnisse',
+      contents: 'Inhalte',
       examination_results: 'Prüfungsergebnisse',
       practice_results: 'Üben',
       'not-allowed': 'Nicht erlaubt',

@@ -56,6 +56,7 @@ export default {
       results: 'Results',
       examination_results: 'Examination Results',
       practice_results: 'Practice',
+      contents: 'Contents',
       'not-allowed': 'Not Allowed',
       'attempt-limit': 'Attempt Limit Reached',
       'attempt-not-possible': 'Attempt aborted'
