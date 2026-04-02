@@ -121,7 +121,8 @@ export default {
           },
           submit_create_button_label: 'Create Content',
           submit_update_button_label: 'Update Content'
-        }
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Questions',
@@ -357,6 +358,15 @@ export default {
           description: 'Shows a detailed list of every question of this course to review your answers.'
         }
       }
+    },
+    Contents: {
+      title: 'Course Contents',
+      description: 'Read through the course contents to prepare for practice and examinations',
+      Navigation: {
+        title: 'Available Contents',
+        next_btn_label: 'Next',
+        previous_btn_label: 'Previous'
+      }
     }
   },
   Examination: {
@@ -407,6 +417,7 @@ export default {
       Statistics: {
         questions_label: 'Questions',
         estimatedTime_label: 'estimatedTime',
+        contents_label: 'Contents',
         points_label: 'Points'
       },
       user_role: {
@@ -443,6 +454,10 @@ export default {
         label: 'Start Examination',
         tooltip: 'This course has no questions, examination disabled.',
         toast: 'Unable to start Practice'
+      },
+      show_course_contents: {
+        label: 'Show Course Contents',
+        tooltip: 'This course has no contents, please create one first.'
       },
       edit_course: {
         label: 'Edit Course',
