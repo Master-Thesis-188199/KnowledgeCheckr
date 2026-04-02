@@ -110,7 +110,8 @@ export default {
           },
           submit_create_button_label: 'Kursinhalt erstellen',
           submit_update_button_label: 'Inhalt aktualisieren'
-        }
+        },
+        empty_content_text: 'There are currently no contents associated to this course.'
       },
       QuestionSection: {
         title: 'Fragen',
@@ -346,6 +347,15 @@ export default {
         }
       },
       title: 'Ergebnisse deines Übungsversuchs'
+    },
+    Contents: {
+      title: 'Kursinhalte',
+      description: 'Lesen Sie die Kursinhalte durch, um sich auf Übungen und Prüfungen vorzubereiten',
+      Navigation: {
+        title: 'Verfügbare Inhalte',
+        next_btn_label: 'Nächster',
+        previous_btn_label: 'Vorheriger'
+      }
     }
   },
   Examination: {
@@ -397,6 +407,7 @@ export default {
       Statistics: {
         questions_label: 'Fragen',
         estimatedTime_label: 'geschätze Zeit',
+        contents_label: 'Inhalte',
         points_label: 'Punkte'
       },
       user_role: {
@@ -433,6 +444,10 @@ export default {
         label: 'Starte Prüfung',
         tooltip: 'Übungs freigabelink erfolgreich in Zwischenablage kopiert.',
         toast: 'Erstellen des Übungslinks fehlgeschlagen.'
+      },
+      show_course_contents: {
+        label: 'Kursinhalte anzeigen',
+        tooltip: 'Dieser Kurs hat keine Inhalte die angezeigt werden können.'
       },
       edit_course: {
         label: 'Kurs bearbeiten',

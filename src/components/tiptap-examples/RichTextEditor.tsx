@@ -137,12 +137,16 @@ export function RichTextEditor({
   disabled,
   readOnly,
   size = 'md',
+  editorPaneClassname,
+  editorContainerClassname,
 }: {
   onUpdateAction?: (content: object) => void
   defaultContent?: Content
   disabled?: boolean
   readOnly?: boolean
   size?: 'sm' | 'md' | 'lg'
+  editorPaneClassname?: string
+  editorContainerClassname?: string
 }) {
   const t = useScopedI18n('Components.RichTextEditor')
   const isMobile = useIsBreakpoint()
@@ -180,7 +184,7 @@ export function RichTextEditor({
 
   return (
     <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className='@container/editor flex size-full max-h-[58dvh] flex-col'>
+      <div data-slot='rich-text-editor-container' className={cn('@container/editor flex size-full max-h-[58dvh] flex-col', editorContainerClassname)}>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar className={cn(readOnly && 'hidden!')}>
             {mobileView === 'main' ? (
@@ -199,7 +203,7 @@ export function RichTextEditor({
             }}
             editor={editor}
             role='presentation'
-            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto')}
+            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto', editorPaneClassname)}
           />
         </EditorContext.Provider>
       </div>
