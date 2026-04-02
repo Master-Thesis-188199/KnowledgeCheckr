@@ -34,14 +34,14 @@ function CreateContentButton({ disabled }: { disabled?: boolean }) {
   const t = useScopedI18n('Courses.Create.ContentSection')
 
   return (
-    <CourseContentDialog mode='create'>
-      <div className='flex justify-center gap-8'>
+    <div className='flex justify-center gap-8'>
+      <CourseContentDialog mode='create'>
         <Button variant='outline' size='lg' disabled={disabled}>
           <Plus className='size-5' />
           {t('Actions.create_new_button_label')}
         </Button>
-      </div>
-    </CourseContentDialog>
+      </CourseContentDialog>
+    </div>
   )
 }
 
