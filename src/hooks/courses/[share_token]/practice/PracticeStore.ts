@@ -1,5 +1,6 @@
 import { savePracticeResults } from '@/database/practice'
 import { createZustandStore } from '@/src/hooks/Shared/zustand/createZustandStore'
+import { Course } from '@/src/schemas/CourseSchema'
 import { instantiatePracticeData, PracticeData } from '@/src/schemas/practice/PracticeSchema'
 import { Question } from '@/src/schemas/QuestionSchema'
 import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
@@ -7,6 +8,8 @@ import { WithCaching, ZustandStore } from '@/types/Shared/ZustandStore'
 export type PracticeState = PracticeData & {
   practiceQuestions: Question[]
   currentQuestionIndex: number
+  contents: Course['contents']
+  categories: Course['questionCategories']
 }
 
 export type PracticeActions = {
@@ -33,6 +36,8 @@ export const createPracticeStore: WithCaching<ZustandStore<PracticeStore, Partia
     ...instantiatePracticeData(translator),
     startedAt: new Date(Date.now()),
     practiceQuestions: [],
+    contents: [],
+    categories: [],
     currentQuestionIndex: 0,
   }
 

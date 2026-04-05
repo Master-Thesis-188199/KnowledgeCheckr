@@ -3,6 +3,7 @@ export default {
   Shared: {
     navigation_button_next: 'Next',
     navigation_button_previous: 'Previous',
+    close_label: 'Close',
     Question: {
       question_label: 'Question',
       type_label: 'Question Type',
@@ -45,6 +46,10 @@ export default {
       courses: 'Courses',
       discover: 'Discover',
       practice: 'Practice',
+      practice_category_all_label: 'Combined Questions',
+      practice_category_all_sr_only: 'switch category',
+      practice_page: 'Questions',
+      practice_category: 'Category',
       edit: 'Edit',
       create: 'Create',
       account: 'Account',
@@ -52,6 +57,7 @@ export default {
       results: 'Results',
       examination_results: 'Examination Results',
       practice_results: 'Practice',
+      contents: 'Contents',
       'not-allowed': 'Not Allowed',
       'attempt-limit': 'Attempt Limit Reached',
       'attempt-not-possible': 'Attempt aborted'
@@ -564,6 +570,11 @@ export default {
           justify_label: 'Align justify'
         }
       }
+    },
+    RenderPracticeQuestion: {
+      check_answer_button_label: 'Check Answer',
+      continue_button_label: 'Continue',
+      contents_button_label: 'Help'
     }
   },
   schemas: {

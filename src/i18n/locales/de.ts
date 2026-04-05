@@ -3,6 +3,7 @@ export default {
   Shared: {
     navigation_button_next: 'Weiter',
     navigation_button_previous: 'Zurück',
+    close_label: 'Schließen',
     Question: {
       question_label: 'Frage',
       type_label: 'Art der Frage',
@@ -45,11 +46,16 @@ export default {
       courses: 'Kurse',
       discover: 'Entdecken',
       practice: 'Üben',
+      practice_category_all_label: 'alle Fragen',
+      practice_category_all_sr_only: 'wechsle kategorie',
+      practice_page: 'Fragen',
+      practice_category: 'Kategorie',
       edit: 'Bearbeiten',
       create: 'Erstellen',
       account: 'Account',
       start: 'Start',
       results: 'Ergebnisse',
+      contents: 'Inhalte',
       examination_results: 'Prüfungsergebnisse',
       practice_results: 'Üben',
       'not-allowed': 'Nicht erlaubt',
@@ -561,6 +567,11 @@ export default {
           justify_label: 'Ausrichten'
         }
       }
+    },
+    RenderPracticeQuestion: {
+      check_answer_button_label: 'Antwort prüfen',
+      continue_button_label: 'Weiter',
+      contents_button_label: 'Hilfe'
     }
   },
   AccountPage: {

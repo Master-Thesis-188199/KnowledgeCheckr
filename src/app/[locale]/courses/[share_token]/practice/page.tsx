@@ -64,8 +64,17 @@ export default async function PracticePage({ params, searchParams }: { params: P
   }
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id }} key={category}>
-      <PracticeBreadcrumbs className={cn('mb-2', categories.length === 1 && 'hidden')} share_token={share_token} categories={categories} selectedCategory={category} />
+    <PracticeStoreProvider
+      initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id, contents: course.contents, categories: course.questionCategories }}
+      key={category}>
+      <PracticeBreadcrumbs
+        courseId={course.id}
+        courseName={course.name}
+        className={cn('mb-2', categories.length === 1 && 'hidden')}
+        share_token={share_token}
+        categories={categories}
+        selectedCategory={category}
+      />
 
       <PageHeading title='Practice' />
 
@@ -74,7 +83,7 @@ export default async function PracticePage({ params, searchParams }: { params: P
           <PracticeQuestionNavigation />
         </div>
         <div className='flex justify-center @[60rem]:order-first'>
-          <div className='flex max-w-11/12 flex-1 flex-col 2xl:max-w-4/5'>
+          <div className='flex max-w-11/12 flex-1 flex-col 2xl:max-w-[50vw]'>
             <PracticeProgress />
             <RenderPracticeQuestion />
             <div className={cn('flex justify-between', practiceQuestions.length <= 1 && 'hidden')}>

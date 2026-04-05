@@ -6,6 +6,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "predev": "yarn de-instrument-code",
+    "sync-translations": "yarn tsx --conditions=react-server src/i18n/scripts/prepare-i18n_ally-locales.ts",
     "dev": "concurrently 'NEXT_PUBLIC_MODE=development next dev --turbopack' 'nodemon --exec \"yarn tsx --conditions=react-server src/i18n/scripts/prepare-i18n_ally-locales.ts\" --watch src/i18n/locales/*.json'",
     "-------- build & start --------": "--------",
     "instrument-code": "cp ./config/.babelrc.json .babelrc.json",
@@ -15,6 +16,7 @@
     "build:instrumented": "next build",
     "postbuild:instrumented": "yarn postbuild && yarn de-instrument-code",
     "                                                                                                    ": "",
+    "build:dev": "__NEXT_TEST_MODE=true next build",
     "build": "next build",
     "postbuild": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "                                                                                                     ": "",

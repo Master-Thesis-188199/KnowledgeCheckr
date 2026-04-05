@@ -4,21 +4,23 @@ import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
 import cloneDeep from 'lodash/cloneDeep'
-import { MessageCircleQuestionIcon } from 'lucide-react'
+import { CircleQuestionMarkIcon, MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
 import { UseFormRegister } from 'react-hook-form'
 import { FeedbackOpenQuestion } from '@/src/components/courses/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/courses/[share_token]/practice/DragDropAnswerOptions'
 import DisplayFeedbackText from '@/src/components/courses/[share_token]/practice/FeedbackText'
+import { PracticeContentDrawer } from '@/src/components/courses/[share_token]/practice/PracticeContentDrawer'
 import { usePracticeStore } from '@/src/components/courses/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { usePracticeFeeback } from '@/src/hooks/courses/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import { RHFProvider, useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
 import useRHF from '@/src/hooks/Shared/form/useRHF'
-import { useI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import { EvaluateAnswer } from '@/src/lib/courses/[share_token]/practice/EvaluateAnswer'
 import { cn } from '@/src/lib/Shared/utils'
 import { ChoiceQuestion, Question } from '@/src/schemas/QuestionSchema'
@@ -26,8 +28,9 @@ import { getQuestionInputSchema, QuestionInput } from '@/src/schemas/UserQuestio
 import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
-  const t = useI18n()
-  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const tAll = useI18n()
+  const t = useScopedI18n('Components.RenderPracticeQuestion')
+  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer, contents, categories } = usePracticeStore((store) => store)
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
@@ -39,9 +42,10 @@ export function RenderPracticeQuestion() {
   } else if (!question) {
     notFound()
   }
+  const categoryId = categories.find((c) => c.name === question.category)!.id
 
   const RHFForm = useRHF(
-    getQuestionInputSchema(t),
+    getQuestionInputSchema(tAll),
     {
       // Warning: Type assertion is intentional.
       // By setting the question_id and type, the form-values are (re-) set when the question changes, setting `values` makes the form controlled.
@@ -103,7 +107,7 @@ export function RenderPracticeQuestion() {
           show={isValidationComplete && (question.type === 'single-choice' || question.type === 'multiple-choice')}
         />
 
-        <div className='flex justify-center'>
+        <div className='@container/actions relative mb-4 flex justify-center'>
           <Button
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
@@ -112,12 +116,27 @@ export function RenderPracticeQuestion() {
             variant='base'
             isLoading={isSubmitting || isPending}
             type='submit'>
-            Check Answer
+            {t('check_answer_button_label')}
           </Button>
 
           <Button hidden={!isValidationComplete} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
-            Continue
+            {t('continue_button_label')}
           </Button>
+
+          <Tooltip content={`Show '${question.category}' learning materials`}>
+            <PracticeContentDrawer content={contents.find((c) => c.categoryId === categoryId)}>
+              <Button
+                aria-label={`show ${question.category} content`}
+                hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
+                variant='base'
+                className='absolute top-2 right-0 text-warning-300'
+                type='button'
+                size='sm'>
+                <CircleQuestionMarkIcon className='text-warning' />
+                <span className='hidden @md/actions:block'>{t('contents_button_label')}</span>
+              </Button>
+            </PracticeContentDrawer>
+          </Tooltip>
         </div>
       </form>
     </RHFProvider>
