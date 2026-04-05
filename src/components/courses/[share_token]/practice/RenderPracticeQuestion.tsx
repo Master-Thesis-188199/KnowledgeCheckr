@@ -11,6 +11,7 @@ import { UseFormRegister } from 'react-hook-form'
 import { FeedbackOpenQuestion } from '@/src/components/courses/[share_token]/(shared)/(questions)/OpenQuestionAnswer'
 import DragDropAnswers from '@/src/components/courses/[share_token]/practice/DragDropAnswerOptions'
 import DisplayFeedbackText from '@/src/components/courses/[share_token]/practice/FeedbackText'
+import { PracticeContentDrawer } from '@/src/components/courses/[share_token]/practice/PracticeContentDrawer'
 import { usePracticeStore } from '@/src/components/courses/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
@@ -122,16 +123,18 @@ export function RenderPracticeQuestion() {
           </Button>
 
           <Tooltip content={`Show '${question.category}' learning materials`}>
-            <Button
-              aria-label={`show ${question.category} content`}
-              hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
-              variant='base'
-              className='absolute top-2 right-0 text-warning-300'
-              type='button'
-              size='sm'>
-              <CircleQuestionMarkIcon className='text-warning' />
-              Content
-            </Button>
+            <PracticeContentDrawer content={contents.find((c) => c.categoryId === categoryId)}>
+              <Button
+                aria-label={`show ${question.category} content`}
+                hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
+                variant='base'
+                className='absolute top-2 right-0 text-warning-300'
+                type='button'
+                size='sm'>
+                <CircleQuestionMarkIcon className='text-warning' />
+                <span>Content</span>
+              </Button>
+            </PracticeContentDrawer>
           </Tooltip>
         </div>
       </form>
