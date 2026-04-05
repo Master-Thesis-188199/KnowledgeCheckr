@@ -124,7 +124,7 @@ export default function CourseContentDialog({ children, ...rest }: ContentDialog
                   'grid-cols-1 items-baseline justify-baseline gap-3 *:last:mb-0 *:odd:mt-3 *:odd:first:mt-0',
                   '@md:grid-cols-[auto_1fr] @md:gap-7 @md:gap-x-7 @md:*:last:mb-0 @md:*:odd:mt-0',
                 )}>
-                <Field {...baseFieldProps} name='description' label={t('Fields.description_label')} placeholder={t('Fields.description_placeholder')} />
+                <Field {...baseFieldProps} name='description' variant='textarea' label={t('Fields.description_label')} placeholder={t('Fields.description_placeholder')} />
               </div>
             </div>
 

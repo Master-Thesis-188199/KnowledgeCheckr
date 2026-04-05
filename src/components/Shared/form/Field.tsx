@@ -1,27 +1,15 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, ComponentProps, JSX, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react'
 import { FieldValues, UseFormReturn } from 'react-hook-form'
 import { FormControl, FormField, FormLabel, FormMessage } from '@/src/components/shadcn/form'
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
+import { Textarea } from '@/src/components/shadcn/textarea'
 import Tooltip from '@/src/components/Shared/Tooltip'
 import { cn } from '@/src/lib/Shared/utils'
 import { DescriptionMap, getDescriptionForRhfName } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
-
-export default function Field<Values extends FieldValues>({
-  form,
-  name,
-  onChange,
-  label,
-  descriptions,
-  showLabel = true,
-  labelClassname,
-  containerClassname,
-  children,
-  modifyValue,
-  ...props
-}: {
+type BaseFieldProps<Values extends FieldValues> = {
   form: UseFormReturn<Values>
   name: Parameters<typeof FormField<Values>>['0']['name']
   label?: string
@@ -30,9 +18,37 @@ export default function Field<Values extends FieldValues>({
   labelClassname?: string
   children?: React.ReactNode
   containerClassname?: string
-  onChange?: (values: ChangeEvent<HTMLInputElement>['target']) => unknown
   modifyValue?: (value: Any) => Any
-} & Omit<React.ComponentProps<'input'>, 'onChange' | 'name' | 'form'>) {
+}
+
+type InputFieldProps = {
+  variant?: 'input'
+  onChange?: (values: ChangeEvent<HTMLInputElement>['target']) => unknown
+} & Omit<ComponentProps<'input'>, 'onChange' | 'name' | 'form'>
+
+type TextareaFieldProps = {
+  variant: 'textarea'
+  onChange?: (values: ChangeEvent<HTMLTextAreaElement>['target']) => unknown
+} & Omit<ComponentProps<typeof Textarea>, 'onChange' | 'name' | 'form' | 'children' | 'type'>
+
+type FieldProps<Values extends FieldValues> = BaseFieldProps<Values> & (InputFieldProps | TextareaFieldProps)
+
+export default function Field<Values extends FieldValues>(props: BaseFieldProps<Values> & InputFieldProps): JSX.Element
+export default function Field<Values extends FieldValues>(props: BaseFieldProps<Values> & TextareaFieldProps): JSX.Element
+export default function Field<Values extends FieldValues>({
+  form,
+  name,
+  onChange,
+  variant = 'input',
+  label,
+  descriptions,
+  showLabel = true,
+  labelClassname,
+  containerClassname,
+  children,
+  modifyValue,
+  ...props
+}: FieldProps<Values>) {
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const previousFocusState = useRef(false)
@@ -53,21 +69,23 @@ export default function Field<Values extends FieldValues>({
         const showDescription = (isFocused && !hasError) || isHovered
         const description = descriptions ? getDescriptionForRhfName(descriptions, field.name) : undefined
 
+        const ControlledComponent = variant === 'textarea' ? Textarea : ShadcnInput
+
         // when true --> prevents layout shifts when switching between error / description by setting min-h to animation-container. Note this "feature" is only enabled when there is something to switch between (thus, when there is a description (&& !!description))
         const keepAnimationContainerSize = previousFocusState.current && (showDescription || hasError) && !!description
 
-        const fieldOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const fieldOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
           // use 'custom' onChange to override value
           if (onChange) {
             return field.onChange({
               ...e,
-              target: { value: onChange(e.target) },
+              target: { value: onChange(e.target as Any) },
             })
           }
 
           // auto-support number inputs to use `valueAsNumber`
-          if (props.type === 'number') {
-            return field.onChange({ ...e, target: { ...e.target, value: e.target.valueAsNumber } })
+          if (variant === 'input' && (props as InputFieldProps).type === 'number') {
+            return field.onChange({ ...e, target: { ...e.target, value: (e as ChangeEvent<HTMLInputElement>).target.valueAsNumber } })
           }
 
           return field.onChange(e)
@@ -79,22 +97,19 @@ export default function Field<Values extends FieldValues>({
 
             <div className={cn('relative grid', containerClassname)}>
               <FormControl>
-                <ShadcnInput
-                  autoComplete={field.name.includes('password') ? 'current-password' : field.name}
-                  // 'pr-8' moves input indicators like 'number' | 'date' to the left to make room for the info / error icon and ensures text does not cover info icon
-                  className={cn('peer hover:cursor-text', (description || hasError) && 'pr-8')}
+                <ControlledComponent
                   {...field}
+                  {...(props as Any)}
                   value={modifyValue ? modifyValue(field.value) : field.value}
-                  {...props}
                   disabled={field.disabled || props.disabled}
+                  className={cn('peer hover:cursor-text', (description || hasError) && 'pr-8', props.className)}
                   onFocus={(e) => {
-                    // this prevents the description from being shown when the checkbox is clicked --> thus has focus
-                    if (props.type !== 'checkbox') setIsFocused(true)
-                    props.onFocus?.(e)
+                    setIsFocused(true)
+                    props.onFocus?.(e as Any)
                   }}
                   onBlur={(e) => {
                     setIsFocused(false)
-                    props.onBlur?.(e)
+                    props.onBlur?.(e as Any)
                     field.onBlur()
                   }}
                   onChange={fieldOnChange}
@@ -103,7 +118,7 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <Tooltip disabled={hasError || !description} content={description}>
+                  <Tooltip disabled={hasError || !description} content={description} pinnable>
                     <motion.div
                       data-disabled={field.disabled || props.disabled}
                       exit={{ opacity: 0 }}
@@ -120,7 +135,7 @@ export default function Field<Values extends FieldValues>({
                         // disabled state styles
                         'data-[disabled=true]:text-muted-foreground/60 data-[disabled=true]:hover:text-muted-foreground/70 dark:data-[disabled=true]:hover:text-muted-foreground',
                         // positions the icon next to the checkbox
-                        props.type === 'checkbox' && 'inset-y-0 right-auto left-7 items-center',
+                        variant === 'input' && (props as InputFieldProps).type === 'checkbox' && 'inset-y-0 right-auto left-7 items-center',
                         !description && 'hidden',
                       )}>
                       <InfoIcon className={cn('size-4')} />
@@ -137,7 +152,7 @@ export default function Field<Values extends FieldValues>({
                     className={cn(
                       'absolute inset-y-0 top-2.5 right-3 z-10 flex items-baseline text-destructive',
                       // positions the icon next to the checkbox
-                      props.type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
+                      variant === 'input' && (props as InputFieldProps).type === 'checkbox' && 'top-0.5 right-auto bottom-0 left-7 items-baseline',
                     )}>
                     <TriangleAlertIcon className={cn('size-4')} />
                   </motion.div>

@@ -162,7 +162,6 @@ export default function schemaDefaults<Schema extends z.ZodTypeAny>(schema: Sche
     case 'undefined':
     case 'unknown':
     case 'any':
-      console.log('unknown schema type...')
       return undefined as z.output<Schema>
 
     case 'array': {

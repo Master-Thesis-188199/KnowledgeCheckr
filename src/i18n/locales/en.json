@@ -44,6 +44,11 @@
       "courses": "Courses",
       "discover": "Discover",
       "practice": "Practice",
+      "practice_category_all_label": "Combined Questions",
+      "practice_category_all_sr_only": "switch category",
+      "practice_page": "Questions",
+      "practice_category": "Category",
+
       "edit": "Edit",
       "create": "Create",
       "account": "Account",
@@ -51,6 +56,8 @@
       "results": "Results",
       "examination_results": "Examination Results",
       "practice_results": "Practice",
+
+      "contents": "Contents",
 
       "not-allowed": "Not Allowed",
       "attempt-limit": "Attempt Limit Reached",
