@@ -106,7 +106,7 @@ export function RenderPracticeQuestion() {
           show={isValidationComplete && (question.type === 'single-choice' || question.type === 'multiple-choice')}
         />
 
-        <div className='relative mb-4 flex justify-center'>
+        <div className='@container/actions relative mb-4 flex justify-center'>
           <Button
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
@@ -132,7 +132,7 @@ export function RenderPracticeQuestion() {
                 type='button'
                 size='sm'>
                 <CircleQuestionMarkIcon className='text-warning' />
-                <span>Content</span>
+                <span className='hidden @md/actions:block'>Content</span>
               </Button>
             </PracticeContentDrawer>
           </Tooltip>
