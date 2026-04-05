@@ -26,9 +26,7 @@ export async function PracticeResultsBreadcrumbs({ share_token, ...props }: { sh
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbPage>
-          <BreadcrumbItem>{t('results')}</BreadcrumbItem>
-        </BreadcrumbPage>
+        <BreadcrumbPage>{t('results')}</BreadcrumbPage>
       </BreadcrumbList>
     </Breadcrumb>
   )
