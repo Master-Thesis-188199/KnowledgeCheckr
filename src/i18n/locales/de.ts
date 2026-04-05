@@ -3,6 +3,7 @@ export default {
   Shared: {
     navigation_button_next: 'Weiter',
     navigation_button_previous: 'Zurück',
+    close_label: 'Schließen',
     Question: {
       question_label: 'Frage',
       type_label: 'Art der Frage',
