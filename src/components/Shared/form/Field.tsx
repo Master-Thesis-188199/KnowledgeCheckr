@@ -118,7 +118,7 @@ export default function Field<Values extends FieldValues>({
 
               <AnimatePresence mode='wait'>
                 {!hasError && (
-                  <Tooltip disabled={hasError || !description} content={description}>
+                  <Tooltip disabled={hasError || !description} content={description} pinnable>
                     <motion.div
                       data-disabled={field.disabled || props.disabled}
                       exit={{ opacity: 0 }}

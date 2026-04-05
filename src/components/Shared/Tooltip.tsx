@@ -10,9 +10,10 @@ export type TooltipProps = Omit<React.ComponentProps<typeof TooltipPrimitive.Con
   variant?: 'normal' | 'destructive' | 'warning'
   content: React.ReactNode | React.ReactElement | Any
   disabled?: boolean
+  pinnable?: boolean
 }
 
-export default function Tooltip({ disabled, config = {}, delay = 250, variant = 'normal', content, children, ...props }: TooltipProps) {
+export default function Tooltip({ disabled, pinnable, config = {}, delay = 250, variant = 'normal', content, children, ...props }: TooltipProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isPinned, setPinned] = useState(config.open ?? false)
 
@@ -33,7 +34,7 @@ export default function Tooltip({ disabled, config = {}, delay = 250, variant = 
 
         config.onOpenChange?.(isOpen)
       }}>
-      <TooltipTrigger asChild onClick={() => setPinned((prev) => !prev)} aria-label='toggle tooltip'>
+      <TooltipTrigger asChild onClick={pinnable ? () => setPinned((prev) => !prev) : undefined} aria-label='toggle tooltip'>
         {children}
       </TooltipTrigger>
       <TooltipContent
