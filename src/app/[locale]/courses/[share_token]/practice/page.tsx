@@ -64,7 +64,9 @@ export default async function PracticePage({ params, searchParams }: { params: P
   }
 
   return (
-    <PracticeStoreProvider initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id }} key={category}>
+    <PracticeStoreProvider
+      initialStoreProps={{ questions: unfilteredQuestions, practiceQuestions, courseId: course.id, contents: course.contents, categories: course.questionCategories }}
+      key={category}>
       <PracticeBreadcrumbs
         courseId={course.id}
         courseName={course.name}

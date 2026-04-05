@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import React, { HTMLProps } from 'react'
 import { motion, Variants } from 'framer-motion'
 import cloneDeep from 'lodash/cloneDeep'
-import { MessageCircleQuestionIcon } from 'lucide-react'
+import { CircleQuestionMarkIcon, MessageCircleQuestionIcon } from 'lucide-react'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { notFound, redirect, usePathname } from 'next/navigation'
 import { UseFormRegister } from 'react-hook-form'
@@ -27,7 +27,7 @@ import { Any } from '@/types'
 
 export function RenderPracticeQuestion() {
   const t = useI18n()
-  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer } = usePracticeStore((store) => store)
+  const { practiceQuestions: questions, questions: unfilteredQuestions, currentQuestionIndex, navigateToQuestion, storeAnswer, contents, categories } = usePracticeStore((store) => store)
   const pathname = usePathname()
   const logger = useLogger('RenderPracticeQuestion')
 
@@ -39,6 +39,7 @@ export function RenderPracticeQuestion() {
   } else if (!question) {
     notFound()
   }
+  const categoryId = categories.find((c) => c.name === question.category)!.id
 
   const RHFForm = useRHF(
     getQuestionInputSchema(t),
@@ -103,7 +104,7 @@ export function RenderPracticeQuestion() {
           show={isValidationComplete && (question.type === 'single-choice' || question.type === 'multiple-choice')}
         />
 
-        <div className='flex justify-center'>
+        <div className='relative mb-4 flex justify-center'>
           <Button
             title={!isValid ? 'Before checking this question you must first answer it' : undefined}
             disabled={!isValid}
@@ -117,6 +118,17 @@ export function RenderPracticeQuestion() {
 
           <Button hidden={!isValidationComplete} className='mx-auto mt-2' variant='success' onClick={nextRandomQuestion} type='button'>
             Continue
+          </Button>
+
+          <Button
+            aria-label={`show ${question.category} content`}
+            hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
+            variant='base'
+            className='absolute top-2 right-0 text-warning-300'
+            type='button'
+            size='sm'>
+            <CircleQuestionMarkIcon className='text-warning' />
+            Content
           </Button>
         </div>
       </form>
