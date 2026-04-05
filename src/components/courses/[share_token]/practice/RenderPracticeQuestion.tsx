@@ -14,6 +14,7 @@ import DisplayFeedbackText from '@/src/components/courses/[share_token]/practice
 import { usePracticeStore } from '@/src/components/courses/[share_token]/practice/PracticeStoreProvider'
 import { Button } from '@/src/components/shadcn/button'
 import FormFieldError from '@/src/components/Shared/form/FormFieldError'
+import Tooltip from '@/src/components/Shared/Tooltip'
 import { usePracticeFeeback } from '@/src/hooks/courses/[share_token]/practice/usePracticeFeedback'
 import { useLogger } from '@/src/hooks/log/useLogger'
 import { RHFProvider, useRHFContext } from '@/src/hooks/Shared/form/react-hook-form/RHFProvider'
@@ -120,16 +121,18 @@ export function RenderPracticeQuestion() {
             Continue
           </Button>
 
-          <Button
-            aria-label={`show ${question.category} content`}
-            hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
-            variant='base'
-            className='absolute top-2 right-0 text-warning-300'
-            type='button'
-            size='sm'>
-            <CircleQuestionMarkIcon className='text-warning' />
-            Content
-          </Button>
+          <Tooltip content={`Show '${question.category}' learning materials`}>
+            <Button
+              aria-label={`show ${question.category} content`}
+              hidden={contents.length === 0 || !contents.find((c) => c.categoryId === categoryId)}
+              variant='base'
+              className='absolute top-2 right-0 text-warning-300'
+              type='button'
+              size='sm'>
+              <CircleQuestionMarkIcon className='text-warning' />
+              Content
+            </Button>
+          </Tooltip>
         </div>
       </form>
     </RHFProvider>
