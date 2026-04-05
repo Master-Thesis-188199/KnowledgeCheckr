@@ -567,6 +567,11 @@ export default {
           justify_label: 'Ausrichten'
         }
       }
+    },
+    RenderPracticeQuestion: {
+      check_answer_button_label: 'Antwort prüfen',
+      continue_button_label: 'Weiter',
+      contents_button_label: 'Hilfe'
     }
   },
   AccountPage: {

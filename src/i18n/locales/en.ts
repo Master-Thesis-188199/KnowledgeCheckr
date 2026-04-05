@@ -570,6 +570,11 @@ export default {
           justify_label: 'Align justify'
         }
       }
+    },
+    RenderPracticeQuestion: {
+      check_answer_button_label: 'Check Answer',
+      continue_button_label: 'Continue',
+      contents_button_label: 'Help'
     }
   },
   schemas: {
