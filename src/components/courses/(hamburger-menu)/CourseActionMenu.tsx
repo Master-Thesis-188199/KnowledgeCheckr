@@ -165,11 +165,6 @@ export default function CourseActionMenu({ id, questions, share_key, owner_id, c
             {t('clone_course.label')}
             <CopyPlusIcon className='size-4 text-neutral-600 group-data-disabled:text-inherit dark:text-neutral-400 dark:group-data-disabled:text-inherit' />
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href={`/checks/${share_key}/results`} className='flex flex-1 justify-between'>
-              {t('inspect_statistics.label')}
-            </Link>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
