@@ -566,6 +566,11 @@ export default {
           justify_label: 'Ausrichten'
         }
       }
+    },
+    Field: {
+      Input: {
+        aria_label: '{name} eingabe'
+      }
     }
   },
   AccountPage: {

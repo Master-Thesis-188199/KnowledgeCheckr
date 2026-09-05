@@ -569,6 +569,11 @@ export default {
           justify_label: 'Align justify'
         }
       }
+    },
+    Field: {
+      Input: {
+        aria_label: '{name} input'
+      }
     }
   },
   schemas: {

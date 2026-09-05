@@ -6,6 +6,7 @@ import { FormControl, FormField, FormLabel, FormMessage } from '@/src/components
 import { Input as ShadcnInput } from '@/src/components/shadcn/input'
 import { Textarea } from '@/src/components/shadcn/textarea'
 import Tooltip from '@/src/components/Shared/Tooltip'
+import { useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
 import { DescriptionMap, getDescriptionForRhfName } from '@/src/schemas/utils/extractDescriptions'
 import { Any } from '@/types'
@@ -52,6 +53,7 @@ export default function Field<Values extends FieldValues>({
   const [isFocused, setIsFocused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const previousFocusState = useRef(false)
+  const t = useScopedI18n('Components.Field')
 
   // smooth animations when focussed, quicker animations when hovering ---> affects only description animation that is shown onHover
   const animationDuration = isHovered && !isFocused ? 0.3 : 0.6
@@ -98,6 +100,7 @@ export default function Field<Values extends FieldValues>({
             <div className={cn('relative grid', containerClassname)}>
               <FormControl>
                 <ControlledComponent
+                  aria-label={t('Input.aria_label', { name: field.name })}
                   {...field}
                   {...(props as Any)}
                   value={modifyValue ? modifyValue(field.value) : field.value}
