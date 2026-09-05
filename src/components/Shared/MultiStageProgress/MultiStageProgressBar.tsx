@@ -25,14 +25,14 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
       @[48rem]/stages:flex (8 stages)
       @[52rem]/stages:flex (9 stages)
       */}
-      <ol className={cn(sharedStageListClasses, `hidden @[${stages.length * 6}rem]/stages:flex`, className)}>
+      <nav className={cn(sharedStageListClasses, `hidden @[${stages.length * 6}rem]/stages:flex`, className)}>
         {stages.map((stage, i) => (
           <Fragment key={`Stage-${i}`}>
             <ProgressRing {...stage} />
             <RingConnector {...stage} />
           </Fragment>
         ))}
-      </ol>
+      </nav>
 
       {/* //* classes needed at build-time to dynamically construct them at runtime
       @[6rem]/stages:hidden  (1 stage)
@@ -46,7 +46,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
       @[52rem]/stages:hidden (9 stages)
       */}
       {/* eslint-disable-next-line better-tailwindcss/no-unknown-classes */}
-      <ol id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden`, className)}>
+      <nav id='condensed-stage-list' className={cn(sharedStageListClasses, `flex @[${stages.length * 6}rem]/stages:hidden`, className)}>
         {stages
           .filter((s) => condensedStages.includes(s.stage))
           .map((stage, i) => (
@@ -55,7 +55,7 @@ export function MultiStageProgressBar({ className }: { className?: string }) {
               <RingConnector {...stage} dashed />
             </Fragment>
           ))}
-      </ol>
+      </nav>
     </div>
   )
 }
