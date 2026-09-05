@@ -48,7 +48,6 @@
       "practice_category_all_sr_only": "switch category",
       "practice_page": "Questions",
       "practice_category": "Category",
-
       "edit": "Edit",
       "create": "Create",
       "account": "Account",
@@ -56,9 +55,7 @@
       "results": "Results",
       "examination_results": "Examination Results",
       "practice_results": "Practice",
-
       "contents": "Contents",
-
       "not-allowed": "Not Allowed",
       "attempt-limit": "Attempt Limit Reached",
       "attempt-not-possible": "Attempt aborted"
@@ -96,7 +93,8 @@
           "command_input_placeholder": "Search users...",
           "command_loading_message": "Loading more users",
           "command_empty_no_users": "No matching users found.",
-          "command_empty_min_input": "You must provide at least 3 characters to find matches"
+          "command_empty_min_input": "You must provide at least 3 characters to find matches",
+          "button_aria_label": "modify collaborators"
         }
       },
       "ContentSection": {

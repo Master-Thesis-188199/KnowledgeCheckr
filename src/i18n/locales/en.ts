@@ -94,7 +94,8 @@ export default {
           command_input_placeholder: 'Search users...',
           command_loading_message: 'Loading more users',
           command_empty_no_users: 'No matching users found.',
-          command_empty_min_input: 'You must provide at least 3 characters to find matches'
+          command_empty_min_input: 'You must provide at least 3 characters to find matches',
+          button_aria_label: 'modify collaborators'
         }
       },
       ContentSection: {

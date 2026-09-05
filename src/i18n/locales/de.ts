@@ -85,7 +85,8 @@ export default {
           command_input_placeholder: 'Benutzer suchen...',
           command_loading_message: 'Benutzer werden geladen',
           command_empty_no_users: 'Keine Benutzer gefunden.',
-          command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden'
+          command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden',
+          button_aria_label: 'co-authoren ändern'
         }
       },
       ContentSection: {
