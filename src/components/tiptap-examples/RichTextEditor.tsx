@@ -131,6 +131,13 @@ export const RichTextEditorExtensions: Extensions = [
   Selection,
 ]
 
+/**
+ * Renders a rich-text-editor that comes with several different format styles (heading, lists, ...).
+ * It also supports different size(-ing) variants for its texts and text-margins.
+ * @param size Defines the text-size and margins between texts, paragraphs, headings, ...
+ * @param growth Defines how the height of the container that wraps the editor should behave, either grow by content or fill the remaining space.
+ * @returns
+ */
 export function RichTextEditor({
   onUpdateAction,
   defaultContent,
@@ -139,12 +146,14 @@ export function RichTextEditor({
   size = 'md',
   editorPaneClassname,
   editorContainerClassname,
+  growth,
 }: {
   onUpdateAction?: (content: object) => void
   defaultContent?: Content
   disabled?: boolean
   readOnly?: boolean
   size?: 'sm' | 'md' | 'lg'
+  growth?: 'content' | 'fill'
   editorPaneClassname?: string
   editorContainerClassname?: string
 }) {
@@ -183,30 +192,28 @@ export function RichTextEditor({
   }, [isMobile, mobileView])
 
   return (
-    <div data-slot='rich-text-editor-wrapper' className='flex flex-1 flex-col items-center'>
-      <div data-slot='rich-text-editor-container' className={cn('@container/editor flex size-full max-h-[58dvh] flex-col', editorContainerClassname)}>
-        <EditorContext.Provider value={{ editor }}>
-          <Toolbar className={cn(readOnly && 'hidden!')}>
-            {mobileView === 'main' ? (
-              <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
-            ) : (
-              <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} />
-            )}
-          </Toolbar>
+    <div data-slot='rich-text-editor-container' className={cn('@container/editor flex min-h-72 flex-col', growth === 'fill' && 'flex-1', editorContainerClassname)}>
+      <EditorContext.Provider value={{ editor }}>
+        <Toolbar className={cn(readOnly && 'hidden!')}>
+          {mobileView === 'main' ? (
+            <MainToolbarContent onFontClick={() => setMobileView('font')} onHighlighterClick={() => setMobileView('highlighter')} isMobile={isMobile} />
+          ) : (
+            <MobileToolbarContent type={mobileView} onBack={() => setMobileView('main')} onHighlighterClick={() => setMobileView('highlighter')} />
+          )}
+        </Toolbar>
 
-          <EditorContent
-            onClick={(e) => {
-              // Only focus at end if clicking outside the actual content area
-              if (e.target === e.currentTarget && editor) {
-                editor.commands.focus('end')
-              }
-            }}
-            editor={editor}
-            role='presentation'
-            className={cn('rounded-md border border-input-ring', 'flex flex-1 flex-col', 'min-h-72 p-5', 'cursor-text overflow-auto', editorPaneClassname)}
-          />
-        </EditorContext.Provider>
-      </div>
+        <EditorContent
+          onClick={(e) => {
+            // Only focus at end if clicking outside the actual content area
+            if (e.target === e.currentTarget && editor) {
+              editor.commands.focus('end')
+            }
+          }}
+          editor={editor}
+          role='presentation'
+          className={cn('rounded-md border border-input-ring', 'flex max-h-[30dvh] flex-1 flex-col', 'p-5', 'cursor-text overflow-auto', editorPaneClassname)}
+        />
+      </EditorContext.Provider>
     </div>
   )
 }

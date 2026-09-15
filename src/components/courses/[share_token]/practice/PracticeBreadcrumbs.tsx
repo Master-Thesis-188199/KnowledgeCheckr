@@ -2,21 +2,47 @@ import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import Link from 'next/link'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/src/components/shadcn/breadcrumb'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
-export function PracticeBreadcrumbs({
+import { getScopedI18n } from '@/src/i18n/server-localization'
+export async function PracticeBreadcrumbs({
   share_token,
   selectedCategory: category,
   categories,
+  courseId,
+  courseName,
   ...props
-}: { share_token: string; selectedCategory?: string; categories: string[] } & DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>) {
+}: { share_token: string; selectedCategory?: string; categories: string[]; courseId: string; courseName: string } & DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>) {
+  const t = await getScopedI18n('Shared.Breadcrumbs')
+
   return (
     <Breadcrumb {...props}>
       <BreadcrumbList>
-        <BreadcrumbItem>Practice</BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/`}>{t('root')}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href={`/courses/${share_token}/practice/category`}>Category</Link>
+            <Link href={`/courses`}>{t('courses')}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/courses/${courseId}/edit`}>{courseName}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>{t('practice')}</BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={`/courses/${share_token}/practice/category`}>{t('practice_category')}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
@@ -24,8 +50,8 @@ export function PracticeBreadcrumbs({
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger className='flex items-center gap-1' id='category-switcher'>
-              <BreadcrumbPage>{category === '_none_' || category === undefined ? 'combined-questions' : category}</BreadcrumbPage>
-              <span className='sr-only'>Toggle menu</span>
+              <BreadcrumbPage>{category === '_none_' || category === undefined ? t('practice_category_all_label').toLowerCase().replace(/ /g, '-') : category}</BreadcrumbPage>
+              <span className='sr-only'>{t('practice_category_all_sr_only')}</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='start'>
               <Link
@@ -35,7 +61,7 @@ export function PracticeBreadcrumbs({
                   pathname: `/courses/${share_token}/practice`,
                   query: { category: '_none_' },
                 }}>
-                <DropdownMenuItem className='rounded-b-none border-b border-b-neutral-500'>Combined Questions</DropdownMenuItem>
+                <DropdownMenuItem className='rounded-b-none border-b border-b-neutral-500'>{t('practice_category_all_label')}</DropdownMenuItem>
               </Link>
               {categories.map((categoryName) => (
                 <Link
@@ -54,7 +80,7 @@ export function PracticeBreadcrumbs({
         </BreadcrumbItem>
 
         <BreadcrumbSeparator />
-        <BreadcrumbItem>Questions</BreadcrumbItem>
+        <BreadcrumbItem>{t('practice_page')}</BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
   )

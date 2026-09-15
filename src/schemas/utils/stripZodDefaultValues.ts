@@ -104,8 +104,32 @@ export function stripZodDefault<Schema extends z.ZodTypeAny>(schema: Schema): St
       const def = getDef(schema)
       const element = (schema as any).element ?? def?.element ?? def?.items
       const elementStripped = stripZodDefault(element)
-      console.warn('Warning stripping all checks and effects from array, while removing nested default-values.')
-      return z.array(elementStripped) as StripZodDefault<Schema>
+
+      let arrSchema = z.array(elementStripped) as z.ZodArray<any>
+      const checks = (def?.checks ?? []) as any[]
+
+      for (const check of checks) {
+        switch (check.kind) {
+          case 'min':
+            arrSchema = arrSchema.min(check.value, { message: check.message })
+            break
+          case 'max':
+            arrSchema = arrSchema.max(check.value, { message: check.message })
+            break
+          case 'length':
+            arrSchema = arrSchema.length(check.value, { message: check.message })
+            break
+          case 'nonempty':
+            arrSchema = arrSchema.nonempty({ message: check.message })
+            break
+          default:
+            if (typeof check.refinement === 'function') {
+              arrSchema = arrSchema.refine(check.refinement as any, { message: check.message })
+            }
+        }
+      }
+
+      return arrSchema as unknown as StripZodDefault<Schema>
     }
 
     case 'optional': {

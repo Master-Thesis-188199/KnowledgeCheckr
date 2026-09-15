@@ -5,11 +5,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Fragment } from 'react/jsx-runtime'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/src/components/shadcn/breadcrumb'
-import { useCurrentLocale } from '@/src/i18n/client-localization'
+import { useCurrentLocale, useScopedI18n } from '@/src/i18n/client-localization'
 import { cn } from '@/src/lib/Shared/utils'
+import { Any } from '@/types'
 
 export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
   const [breadcrumbExists, setBreadcrumbExists] = useState(false)
+  const t = useScopedI18n('Shared.Breadcrumbs')
   const locale = useCurrentLocale()
   const pathname = usePathname()
   const pages = pathname.split('?').at(0)!.split('/')!
@@ -34,20 +36,20 @@ export function GenericBreadcrumb({ show = true }: { show?: boolean }) {
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link href={'/'} className='capitalize'>
-              Home
+              {t('root')}
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
 
-        {pages?.map((p, i) => (
-          <Fragment key={p + i}>
+        {pages?.map((segment, i) => (
+          <Fragment key={segment + i}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className='capitalize'>
               {isCurrentPage(i) ? (
-                <BreadcrumbPage>{p}</BreadcrumbPage>
+                <BreadcrumbPage>{t(segment as Any)}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link href={'/' + pages.slice(0, i + 1).join('/')}>{p}</Link>
+                  <Link href={'/' + pages.slice(0, i + 1).join('/')}>{t(segment as Any)}</Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

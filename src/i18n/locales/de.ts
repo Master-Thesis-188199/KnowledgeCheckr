@@ -45,11 +45,16 @@ export default {
       courses: 'Kurse',
       discover: 'Entdecken',
       practice: 'Üben',
+      practice_category_all_label: 'alle Fragen',
+      practice_category_all_sr_only: 'wechsle kategorie',
+      practice_page: 'Fragen',
+      practice_category: 'Kategorie',
       edit: 'Bearbeiten',
       create: 'Erstellen',
       account: 'Account',
       start: 'Start',
       results: 'Ergebnisse',
+      contents: 'Inhalte',
       examination_results: 'Prüfungsergebnisse',
       practice_results: 'Üben',
       'not-allowed': 'Nicht erlaubt',
@@ -80,7 +85,8 @@ export default {
           command_input_placeholder: 'Benutzer suchen...',
           command_loading_message: 'Benutzer werden geladen',
           command_empty_no_users: 'Keine Benutzer gefunden.',
-          command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden'
+          command_empty_min_input: 'Sie müssen mindestens 3 Zeichen angeben, um Übereinstimmungen zu finden',
+          button_aria_label: 'co-authoren ändern'
         }
       },
       ContentSection: {
@@ -560,6 +566,11 @@ export default {
           right_label: 'Rechts ausrichten',
           justify_label: 'Ausrichten'
         }
+      }
+    },
+    Field: {
+      Input: {
+        aria_label: '{name} eingabe'
       }
     }
   },

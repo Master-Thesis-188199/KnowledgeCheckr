@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { differenceInMilliseconds, formatDuration } from 'date-fns'
+import { de, enUS } from 'date-fns/locale'
+import { useCurrentLocale } from '@/src/i18n/client-localization'
 
 /**
  * This component essentially returns / displays the time that a user e.g. spents on a page.
@@ -10,6 +12,7 @@ import { differenceInMilliseconds, formatDuration } from 'date-fns'
  * @returns The time that has passed since the `start`
  */
 export function StopwatchTime({ start: rawStartDate, delimiter = ' and ' }: { start: Date; delimiter?: string }) {
+  const currentLocale = useCurrentLocale()
   const [timeSpent, setTimeSpent] = useState<string | null>(null)
   const [startDate] = useState(new Date(Date.parse(rawStartDate.toString()))) //* ensure date-object even if stringified
 
@@ -18,9 +21,12 @@ export function StopwatchTime({ start: rawStartDate, delimiter = ' and ' }: { st
     const differenceDate = new Date(difference)
 
     setTimeSpent(
-      formatDuration({ seconds: differenceDate.getSeconds(), minutes: differenceDate.getMinutes() || undefined, hours: differenceDate.getHours() - 1 || undefined }, { zero: true, delimiter }),
+      formatDuration(
+        { seconds: differenceDate.getSeconds(), minutes: differenceDate.getMinutes() || undefined, hours: differenceDate.getHours() - 1 || undefined },
+        { zero: true, delimiter, locale: currentLocale === 'de' ? de : enUS },
+      ),
     )
-  }, [startDate, setTimeSpent, delimiter])
+  }, [startDate, setTimeSpent, delimiter, currentLocale])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

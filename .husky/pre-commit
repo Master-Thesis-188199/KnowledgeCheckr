@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+yarn sync-translations 
+git add src/i18n/locales/*.ts
 npx lint-staged --allow-empty

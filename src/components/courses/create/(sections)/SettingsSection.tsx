@@ -38,7 +38,7 @@ export default function SettingsSection({
     <Form {...form}>
       <form onChange={() => updateSettings(getValues())} className={cn('@container my-4 grid grid-cols-1 gap-10 @[700px]:grid-cols-[repeat(auto-fill,minmax(600px,1fr))]', className)}>
         <Card className='relative row-span-2' disableInteractions>
-          {jumpBackButtons && <CardStageJumpButton targetStage={3} />}
+          {jumpBackButtons && <CardStageJumpButton targetStage={4} />}
           <CardHeading title={t('ExaminationSettings.title')} Icon={GraduationCapIcon} />
           <ExaminationSettings baseFieldProps={baseFieldProps} />
         </Card>

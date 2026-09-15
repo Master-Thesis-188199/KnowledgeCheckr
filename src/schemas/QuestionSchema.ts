@@ -111,6 +111,7 @@ function getDragDropAnswerSchema(t: Translator) {
           position: z.number().min(0, t('schemas.Shared.number.positive')),
         }),
       )
+      .min(1, t('schemas.Question.SingleChoice.answers.min_answer_count'))
       .superRefine((answers, ctx) => {
         const n = answers.length
         const seen = new Set<number>()
