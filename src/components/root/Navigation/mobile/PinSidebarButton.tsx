@@ -13,7 +13,7 @@ export function PinSidebarButton() {
       aria-label='pin sidebar'
       initial={{ opacity: !isPinned ? 0 : 1 }}
       animate={{ opacity: !isPinned ? (isOpen ? 1 : 0) : 1, rotate: !isPinned ? 45 : 0 }}
-      className={tw('absolute top-1.5 right-1.5 flex', !canDeviceHover && 'hidden')}
+      className={tw('absolute top-1.5 right-1.5 md:flex hidden', !canDeviceHover && 'hidden')}
       onClick={togglePinned}>
       <Pin className={tw('size-5 stroke-1', isPinned && 'stroke-2')} />
     </motion.button>
