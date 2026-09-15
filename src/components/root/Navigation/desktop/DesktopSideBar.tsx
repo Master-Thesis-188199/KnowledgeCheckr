@@ -9,6 +9,7 @@ import ThemeSwitcher from '@/components/root/ThemeSwitcher'
 import AppVersion from '@/components/Shared/AppVersion'
 import KnowledgeCheckrIcon from '@/public/KnowledgeCheckr.png'
 import LanguageSwitcher from '@/src/components/i18n/LanguageSwitcher'
+import DefaultOpenDetection from '@/src/components/root/Navigation/desktop/DefaultOpenDetection'
 import ToggleSidebarButton from '@/src/components/root/Navigation/ToggleSidebarButton'
 import { Separator } from '@/src/components/shadcn/separator'
 
@@ -27,6 +28,7 @@ export const DesktopSidebar = ({ className, children }: { children: React.ReactN
 
         <SidebarContentPanel children={children} />
         <SidebarHoverabilityDetection />
+        <DefaultOpenDetection />
       </div>
     </div>
   )
