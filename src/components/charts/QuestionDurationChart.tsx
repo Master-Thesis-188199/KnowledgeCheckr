@@ -4,7 +4,7 @@ import React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/shadcn/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/src/components/shadcn/chart'
-import { useScopedI18n } from '@/src/i18n/client-localization'
+import { useI18n, useScopedI18n } from '@/src/i18n/client-localization'
 import randomRange from '@/src/lib/Shared/randomRange'
 import { cn } from '@/src/lib/Shared/utils'
 import { instantiateQuestion, Question } from '@/src/schemas/QuestionSchema'
@@ -12,11 +12,12 @@ import { Any } from '@/types'
 
 export function ExamQuestionDurationChart({ title, description, questions }: { title: string; description?: string; questions?: Question[] }) {
   const tShared = useScopedI18n('Shared.Timestamp')
-  const t = useScopedI18n('Checks.ExaminatonResults.Charts.ExamQuestionDurationChart')
-  if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion())
+  const translator = useI18n()
+  const t = useScopedI18n('Courses.ExaminatonResults.Charts.ExamQuestionDurationChart')
+  if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion(translator))
 
   const dataQuestions = React.useMemo(() => {
-    if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion())
+    if (!questions || questions.length === 0) questions = Array.from({ length: 15 }, () => instantiateQuestion(translator))
 
     const data: { name: string; actualTime: number; difference: number; estimated: number }[] = []
 

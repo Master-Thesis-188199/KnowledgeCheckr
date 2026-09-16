@@ -1,0 +1,54 @@
+'use client'
+import { useMemo } from 'react'
+import Link from 'next/link'
+import Card from '@/src/components/Shared/Card'
+import { cn } from '@/src/lib/Shared/utils'
+import { Course } from '@/src/schemas/CourseSchema'
+import { Question } from '@/src/schemas/QuestionSchema'
+
+export function PracticeCategorySelection({ questions, share_token }: { questions: Question[]; share_token: Course['share_key'] }) {
+  const categories = useMemo(() => Array.from(new Set(questions.map((q) => q.category))), [questions])
+
+  const optionClasses = cn(
+    'cursor-pointer px-3 py-1.5 dark:ring-neutral-400/70 hocus:rounded-md hocus:bg-neutral-200/90 hocus:ring-1 dark:hocus:bg-neutral-800',
+    'active:bg-neutral-300/80 dark:active:bg-neutral-700',
+    'hocus:ring-ring-hover dark:hocus:ring-ring-hover',
+    'border-b border-ring-subtle first:border-b-3 last:border-b-0 dark:border-neutral-600 first:hocus:border-b-transparent',
+    'outline-0',
+  )
+
+  return (
+    <Card className='mx-auto flex flex-col gap-6 p-6 md:my-auto md:mt-32' disableInteractions>
+      <div>
+        <h2 className='text-lg font-semibold'>Select practice category</h2>
+        <p className='text-neutral-500 dark:text-neutral-400'>Choose the question-category you want to practice with.</p>
+      </div>
+      <ul className='flex flex-col rounded-md text-neutral-700 ring-2 ring-ring-subtle select-none dark:text-neutral-300 dark:ring-ring-subtle' id='category-selection'>
+        <Link
+          data-category='all'
+          className={cn(
+            optionClasses,
+            'rounded-t-md bg-neutral-200 focus-visible:bg-neutral-300/80 dark:bg-neutral-700/50 dark:focus-visible:bg-neutral-700 hocus:bg-neutral-300/80 dark:hocus:bg-neutral-700',
+          )}
+          href={{
+            pathname: `/courses/${share_token}/practice`,
+            query: { category: '_none_' },
+          }}>
+          Combine all category questions
+        </Link>
+        {categories.map((category) => (
+          <Link
+            key={category}
+            data-category={category}
+            className={optionClasses}
+            href={{
+              pathname: `/courses/${share_token}/practice`,
+              query: { category },
+            }}>
+            {category}
+          </Link>
+        ))}
+      </ul>
+    </Card>
+  )
+}

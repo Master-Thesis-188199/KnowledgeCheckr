@@ -8,7 +8,7 @@ import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTool
 import { useScopedI18n } from '@/src/i18n/client-localization'
 
 export function QuestionCorrectnessPieChart({ title, description }: { title: string; description?: string }) {
-  const t = useScopedI18n('Checks.PracticeResults.Charts.QuestionCorrectnessPieChart')
+  const t = useScopedI18n('Courses.PracticeResults.Charts.QuestionCorrectnessPieChart')
   const totalQuestionsCount = Math.max(Math.round(Math.random() * 150), Math.round(Math.max(48, Math.random() * 120)))
 
   const passedRate = Math.min(0.6, Math.max(0.4, Math.random()))

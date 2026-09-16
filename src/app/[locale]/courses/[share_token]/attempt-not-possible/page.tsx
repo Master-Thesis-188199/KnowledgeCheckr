@@ -1,0 +1,29 @@
+import { notFound, redirect, RedirectType } from 'next/navigation'
+import { getCourseByShareToken } from '@/database/course/select'
+import PageHeading from '@/src/components/Shared/PageHeading'
+import { getScopedI18n } from '@/src/i18n/server-localization'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import isExaminationAllowed from '@/src/lib/courses/[share_token]/isExaminationAllowed'
+
+export default async function ClosedExaminationPage({ params }: { params: Promise<{ share_token: string }> }) {
+  const { share_token } = await params
+  const { user } = await requireAuthentication()
+
+  const course = await getCourseByShareToken(share_token)
+
+  if (!course) notFound()
+
+  const t = await getScopedI18n('Examination.attempt_not_possible')
+
+  const { reason, allowed } = await isExaminationAllowed(course, user)
+
+  if (allowed) redirect(`/courses/${share_token}`, RedirectType.replace)
+
+  return (
+    <>
+      <PageHeading title={t('title')} />
+
+      <p>{reason}</p>
+    </>
+  )
+}

@@ -1,8 +1,11 @@
 'use client'
 
+import { useEffect } from 'react'
 import DE from 'country-flag-icons/react/3x2/DE'
 import US from 'country-flag-icons/react/3x2/US'
 import { FileQuestionIcon } from 'lucide-react'
+import z from 'zod'
+import * as zodLocales from 'zod/locales'
 import { Button } from '@/src/components/shadcn/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/src/components/shadcn/dropdown-menu'
 import { useChangeLocale, useCurrentLocale } from '@/src/i18n/client-localization'
@@ -11,6 +14,10 @@ import { i18nLocale, locales } from '@/src/i18n/i18nConfig'
 export default function LanguageSwitcher() {
   const currentLocale = useCurrentLocale()
   const { Icon } = useLocale(currentLocale, 'size-6')
+
+  useEffect(() => {
+    z.config(zodLocales[currentLocale]())
+  }, [currentLocale])
 
   return (
     <DropdownMenu>

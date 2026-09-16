@@ -1,12 +1,13 @@
-import insertKnowledgeCheck from '@/database/knowledgeCheck/insert'
+import insertCourse from '@/database/course/insert'
 import { Button } from '@/src/components/shadcn/button'
 import Card from '@/src/components/Shared/Card'
 import PageHeading from '@/src/components/Shared/PageHeading'
+import { getI18n } from '@/src/i18n/server-localization'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { getUUID } from '@/src/lib/Shared/getUUID'
 import { instantiateCategory } from '@/src/schemas/CategorySchema'
-import { instantiateKnowledgeCheck } from '@/src/schemas/KnowledgeCheck'
+import { instantiateCourse } from '@/src/schemas/CourseSchema'
 import { instantiateDragDropQuestion, instantiateMultipleChoice, instantiateOpenQuestion, instantiateSingleChoice } from '@/src/schemas/QuestionSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -16,35 +17,36 @@ export default function DummyDataPage() {
     <>
       <PageHeading title='Create Dummy Data' />
       <Card as='form' className='flex max-w-lg flex-col gap-6'>
-        <h1 className='text-lg font-semibold'>Create Practice Check</h1>
-        <Button className='mx-auto min-w-3xs' formAction={createPracticeCheck}>
-          Create Check
+        <h1 className='text-lg font-semibold'>Create Practice Course</h1>
+        <Button className='mx-auto min-w-3xs' formAction={createPracticeCourse}>
+          Create Course
         </Button>
       </Card>
     </>
   )
 }
 
-async function createPracticeCheck() {
+async function createPracticeCourse() {
   'use server'
   await requireAuthentication()
+  const t = await getI18n()
 
-  const check = instantiateKnowledgeCheck()
+  const course = instantiateCourse(t)
 
-  check.name = `Practice Knowledge ${Math.floor(Math.random() * 1000)}`
-  check.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'
-  check.difficulty = 6
+  course.name = `Practice Course ${Math.floor(Math.random() * 1000)}`
+  course.description = 'Increase your knowledge by learning about Design, Tech, Daily and General things'
+  course.difficulty = 6
 
-  check.questionCategories = [
-    { ...instantiateCategory(), name: 'Design' },
-    { ...instantiateCategory(), name: 'Tech' },
-    { ...instantiateCategory(), name: 'Daily' },
-    { ...instantiateCategory(), name: 'general' },
+  course.questionCategories = [
+    { ...instantiateCategory(t), name: 'Design' },
+    { ...instantiateCategory(t), name: 'Tech' },
+    { ...instantiateCategory(t), name: 'Daily' },
+    { ...instantiateCategory(t), name: 'general' },
   ]
 
-  check.questions = [
+  course.questions = [
     {
-      ...instantiateSingleChoice(),
+      ...instantiateSingleChoice(t),
       question: 'What does RGB stand for?',
       category: 'Design',
       points: 7,
@@ -56,7 +58,7 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateSingleChoice(),
+      ...instantiateSingleChoice(t),
       question: 'What does USB stand for?',
       category: 'Tech',
       points: 9,
@@ -68,7 +70,7 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateMultipleChoice(),
+      ...instantiateMultipleChoice(t),
       question: 'Which of these colors exist?',
       category: 'Design',
       points: 4,
@@ -81,7 +83,7 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateMultipleChoice(),
+      ...instantiateMultipleChoice(t),
       question: 'Which of these statements are true?',
       category: 'general',
       points: 4,
@@ -94,7 +96,7 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateDragDropQuestion(),
+      ...instantiateDragDropQuestion(t),
       question: 'Order these activities by the occurence',
       category: 'Daily',
       points: 4,
@@ -107,7 +109,7 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateDragDropQuestion(),
+      ...instantiateDragDropQuestion(t),
       question: 'Order these statements by the importance',
       category: 'Daily',
       points: 4,
@@ -119,14 +121,14 @@ async function createPracticeCheck() {
       ],
     },
     {
-      ...instantiateOpenQuestion(),
+      ...instantiateOpenQuestion(t),
       question: 'Describe the acronym RGB and its use-cases',
       category: 'Design',
       points: 4,
       expectation: 'Used to define colors through by setting the intensity of the three main colors (Red, Green, Blue).',
     },
     {
-      ...instantiateOpenQuestion(),
+      ...instantiateOpenQuestion(t),
       question: 'Describe the term web-dev',
       category: 'Tech',
       points: 4,
@@ -134,6 +136,6 @@ async function createPracticeCheck() {
     },
   ]
 
-  logger.info('Inserting new check...')
-  await insertKnowledgeCheck(check) //.then(() => redirect('/checks'))
+  logger.info('Inserting new course...')
+  await insertCourse(course) //.then(() => redirect('/courses'))
 }

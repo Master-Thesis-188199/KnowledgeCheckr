@@ -1,19 +1,22 @@
 import { z } from 'zod'
-import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
-import { QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
-import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
+import { Translator } from '@/src/i18n/locales/types'
+import { getCourseSchema } from '@/src/schemas/CourseSchema'
+import { getStringDate } from '@/src/schemas/CustomZodTypes'
+import { getQuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'
 
-export const ExaminationSchema = z.object({
-  knowledgeCheck: stripEffects(KnowledgeCheckSchema),
-  startedAt: StringDate.default(new Date(Date.now())),
-  finishedAt: StringDate.nullable().default(null),
-  score: z.number().default(0),
-  results: z.array(QuestionInputSchema).default([]),
-})
+export function getExaminationSchema(t: Translator) {
+  return z.object({
+    course: stripEffects(getCourseSchema(t)),
+    startedAt: getStringDate(t).default(new Date(Date.now())),
+    finishedAt: getStringDate(t).nullable().default(null),
+    score: z.number().default(0),
+    results: z.array(getQuestionInputSchema(t)).default([]),
+  })
+}
 
-export type ExaminationSchema = z.infer<typeof ExaminationSchema>
+export type ExaminationSchema = z.output<ReturnType<typeof getExaminationSchema>>
 
-const { validate: validateExaminationSchema, instantiate: instantiateExaminationSchema, safeParse: safeParseExaminationSchema } = schemaUtilities(ExaminationSchema)
+const { validate: validateExaminationSchema, instantiate: instantiateExaminationSchema, safeParse: safeParseExaminationSchema } = localizedSchemaUtilities(getExaminationSchema)
 export { instantiateExaminationSchema, safeParseExaminationSchema, validateExaminationSchema }

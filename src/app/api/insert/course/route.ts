@@ -1,0 +1,27 @@
+import { NextRequest, NextResponse } from 'next/server'
+import insertCourse from '@/database/course/insert'
+import { getI18n } from '@/src/i18n/server-localization'
+import requireAuthentication from '@/src/lib/auth/requireAuthentication'
+import { safeParseCourse } from '@/src/schemas/CourseSchema'
+
+export async function POST(req: NextRequest) {
+  const t = await getI18n()
+
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ message: 'Please provide a valid json body!' }, { status: 400 })
+  }
+
+  const { user } = await requireAuthentication()
+
+  if (!body) return NextResponse.json({ message: 'Body must not be empty!' }, { status: 400 })
+
+  const { success, error, data: course } = safeParseCourse(t, Object.assign(body, { owner_id: user.id }))
+  if (!success) return NextResponse.json({ message: 'Please provide a valid course instance!', errors: error, timestamp: Date.now() }, { status: 400 })
+
+  await insertCourse(course)
+
+  return NextResponse.json({ success: true }, { status: 200 })
+}

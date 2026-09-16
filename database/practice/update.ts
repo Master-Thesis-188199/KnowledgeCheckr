@@ -2,8 +2,8 @@
 
 import { and, eq } from 'drizzle-orm'
 import getDatabase from '@/database/Database'
-import { db_userHasDoneKnowledgeCheck } from '@/database/drizzle'
-import { PracticeState } from '@/src/hooks/checks/[share_token]/practice/PracticeStore'
+import { db_userHasDoneCourse } from '@/database/drizzle'
+import { PracticeState } from '@/src/hooks/courses/[share_token]/practice/PracticeStore'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
 import { formatDatetime } from '@/src/lib/Shared/formatDatetime'
@@ -14,10 +14,7 @@ export async function updatePracticeResults({
   startedAt,
   results,
   ...values
-}: { results: PracticeState['results']; startedAt: PracticeState['startedAt'] } & Omit<
-  typeof db_userHasDoneKnowledgeCheck.$inferInsert,
-  'startedAt' | 'results' | 'finishedAt' | 'id' | 'userId' | 'type'
->) {
+}: { results: PracticeState['results']; startedAt: PracticeState['startedAt'] } & Omit<typeof db_userHasDoneCourse.$inferInsert, 'startedAt' | 'results' | 'finishedAt' | 'id' | 'userId' | 'type'>) {
   const {
     user: { id: userId },
   } = await requireAuthentication()
@@ -27,7 +24,7 @@ export async function updatePracticeResults({
   logger.info(`Updating practice results for user: ${userId}`)
 
   const result = await db
-    .update(db_userHasDoneKnowledgeCheck)
+    .update(db_userHasDoneCourse)
     .set({
       results: results,
       score: values.score,
@@ -35,10 +32,10 @@ export async function updatePracticeResults({
     })
     .where(
       and(
-        eq(db_userHasDoneKnowledgeCheck.knowledgeCheckId, values.knowledgeCheckId),
-        eq(db_userHasDoneKnowledgeCheck.startedAt, formatDatetime(startedAt)),
-        eq(db_userHasDoneKnowledgeCheck.userId, userId),
-        eq(db_userHasDoneKnowledgeCheck.type, 'practice'),
+        eq(db_userHasDoneCourse.knowledgeCheckId, values.knowledgeCheckId),
+        eq(db_userHasDoneCourse.startedAt, formatDatetime(startedAt)),
+        eq(db_userHasDoneCourse.userId, userId),
+        eq(db_userHasDoneCourse.type, 'practice'),
       ),
     )
     .limit(1)

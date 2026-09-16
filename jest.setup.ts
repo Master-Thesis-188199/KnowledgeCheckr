@@ -1,4 +1,5 @@
 import console from 'console'
+import { createTranslator } from '@/cypress/support/i18n'
 
 jest.mock('./src/lib/auth/requireAuthentication', () => ({
   __esModule: true, // Indicates that the module uses ES modules
@@ -7,3 +8,9 @@ jest.mock('./src/lib/auth/requireAuthentication', () => ({
 
 //* Removes jest test console.log annotations
 global.console = console
+
+jest.mock('./src/i18n/server-localization', () => ({
+  __esModule: true, // Indicates that the module uses ES modules
+  getI18n: createTranslator,
+  getScopedI18n: createTranslator,
+}))

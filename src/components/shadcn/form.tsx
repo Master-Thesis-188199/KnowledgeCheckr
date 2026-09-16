@@ -6,7 +6,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { Controller, type ControllerProps, type FieldPath, type FieldValues, FormProvider, useFormContext, useFormState } from 'react-hook-form'
 import { Label } from '@/components/shadcn/label'
 import { cn } from '@/lib/Shared/utils'
-import { getUUID } from '@/src/lib/Shared/getUUID'
 
 const Form = FormProvider
 
@@ -37,7 +36,7 @@ const useFormField = () => {
 
   const { id: fieldId } = itemContext
 
-  const id = fieldId ?? getUUID()
+  const id = fieldId ?? fieldContext.name
 
   return {
     id,
@@ -66,9 +65,9 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  const { error, formItemId } = useFormField()
+  const { error, formItemId, formDescriptionId } = useFormField()
 
-  return <Label data-slot='form-label' data-error={!!error} className={cn('data-[error=true]:text-destructive', className)} htmlFor={formItemId} {...props} />
+  return <Label data-slot='form-label' data-error={!!error} className={cn('data-[error=true]:text-destructive', className)} id={formDescriptionId} htmlFor={formItemId} {...props} />
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {

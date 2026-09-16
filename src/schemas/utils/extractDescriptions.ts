@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { Any } from '@/types'
 
 export type DescriptionMap = Record<string, string | undefined>
 
@@ -87,7 +88,7 @@ export function getDescriptionForRhfName(map: DescriptionMap, rhfName: string, w
  * - Writes description for the current node at `path` (if any).
  * - Traverses children using an unwrapped view for structural correctness.
  */
-function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Required<ExtractDescriptionMapOptions>): void {
+function walk(schema: Any, path: string, out: DescriptionMap, opt: Required<ExtractDescriptionMapOptions>): void {
   // Description is read from the *outer wrapper chain* (not the unwrapped traversal schema).
   write(out, path, findDescription(schema), opt.prefer)
 
@@ -107,8 +108,8 @@ function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Require
     const leftMap: DescriptionMap = {}
     const rightMap: DescriptionMap = {}
 
-    walk(structural._def.left, path, leftMap, opt)
-    walk(structural._def.right, path, rightMap, opt)
+    walk(structural._zod.def.left, path, leftMap, opt)
+    walk(structural._zod.def.right, path, rightMap, opt)
 
     merge(out, leftMap, opt.prefer)
     merge(out, rightMap, opt.prefer)
@@ -116,7 +117,7 @@ function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Require
   }
 
   if (structural instanceof z.ZodDiscriminatedUnion || structural instanceof z.ZodUnion) {
-    const options = (structural._def.options as AnySchema[]) ?? []
+    const options = (structural._zod.def.options as AnySchema[]) ?? []
 
     for (const variant of options) {
       const variantMap: DescriptionMap = {}
@@ -128,13 +129,13 @@ function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Require
 
   if (structural instanceof z.ZodArray) {
     // Any index: `items.*`
-    walk(structural._def.type, join(path, opt.wildcard), out, opt)
+    walk(structural._zod.def.type, join(path, opt.wildcard), out, opt)
     return
   }
 
   if (structural instanceof z.ZodTuple) {
     // Tuple indices are fixed: `tuple.0`, `tuple.1`, ...
-    ;(structural._def.items as AnySchema[]).forEach((item, idx) => {
+    ;(structural._zod.def.items as AnySchema[]).forEach((item, idx) => {
       walk(item, join(path, String(idx)), out, opt)
     })
     return
@@ -142,7 +143,7 @@ function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Require
 
   if (structural instanceof z.ZodRecord) {
     // Any key: `record.*`
-    walk(structural._def.valueType, join(path, opt.wildcard), out, opt)
+    walk(structural._zod.def.valueType, join(path, opt.wildcard), out, opt)
     return
   }
 
@@ -153,16 +154,14 @@ function walk(schema: AnySchema, path: string, out: DescriptionMap, opt: Require
  * Returns the *first* description found while walking outer → inner across wrapper schemas.
  * This is intentionally separate from traversal unwrapping so we don't lose metadata.
  */
-function findDescription(schema: AnySchema): string | undefined {
+function findDescription(schema: Any): string | undefined {
   const own = readDescription(schema)
   if (own) return own
 
-  if (schema instanceof z.ZodEffects) return findDescription(schema._def.schema)
   if (schema instanceof z.ZodOptional || schema instanceof z.ZodNullable) return findDescription(schema.unwrap())
-  if (schema instanceof z.ZodDefault) return findDescription(schema._def.innerType)
-  if (schema instanceof z.ZodCatch) return findDescription(schema._def.innerType)
-  if (schema instanceof z.ZodReadonly) return findDescription(schema._def.innerType)
-  if (schema instanceof z.ZodBranded) return findDescription(schema._def.type)
+  if (schema instanceof z.ZodDefault) return findDescription(schema._zod.def.innerType)
+  if (schema instanceof z.ZodCatch) return findDescription(schema._zod.def.innerType)
+  if (schema instanceof z.ZodReadonly) return findDescription(schema._zod.def.innerType)
 
   // Add wrapper types you use here (pipeline, lazy, promise, etc.) if needed.
   return undefined
@@ -172,20 +171,19 @@ function findDescription(schema: AnySchema): string | undefined {
  * Unwraps wrappers solely for structural traversal (to reach objects/arrays/unions/etc.).
  * This intentionally does *not* attempt to preserve descriptions; that's handled by findDescription().
  */
-function unwrapForTraversal(schema: AnySchema): AnySchema {
-  if (schema instanceof z.ZodEffects) return unwrapForTraversal(schema._def.schema)
+function unwrapForTraversal(schema: Any): Any {
+  if (schema instanceof z.ZodPipe) return unwrapForTraversal(schema._zod.def.in)
   if (schema instanceof z.ZodOptional || schema instanceof z.ZodNullable) return unwrapForTraversal(schema.unwrap())
-  if (schema instanceof z.ZodDefault) return unwrapForTraversal(schema._def.innerType)
-  if (schema instanceof z.ZodCatch) return unwrapForTraversal(schema._def.innerType)
-  if (schema instanceof z.ZodReadonly) return unwrapForTraversal(schema._def.innerType)
-  if (schema instanceof z.ZodBranded) return unwrapForTraversal(schema._def.type)
+  if (schema instanceof z.ZodDefault) return unwrapForTraversal(schema._zod.def.innerType)
+  if (schema instanceof z.ZodCatch) return unwrapForTraversal(schema._zod.def.innerType)
+  if (schema instanceof z.ZodReadonly) return unwrapForTraversal(schema._zod.def.innerType)
 
   return schema
 }
 
 /**
  * Reads the schema's own description in a way that works across Zod versions.
- * Prefer the public `.description` accessor when available, fall back to `_def.description`.
+ * Prefer the public `.description` accessor when available, fall back to `_zod.def.description`.
  */
 function readDescription(schema: AnySchema): string | undefined {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

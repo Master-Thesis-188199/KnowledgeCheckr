@@ -12,8 +12,14 @@ const config: Config = {
   testMatch: [
     '<rootDir>/src/tests/unit/**/*.test.tsx',
     '<rootDir>/src/tests/unit/**/*.test.ts',
+    '<rootDir>/src/tests/unit/**/*.tsx',
+    '<rootDir>/src/tests/unit/**/*.ts',
+
     '<rootDir>/src/tests/integration/**/*.test.tsx',
     '<rootDir>/src/tests/integration/**/*.test.ts',
+    '<rootDir>/src/tests/integration/**/*.tsx',
+    '<rootDir>/src/tests/integration/**/*.ts',
+
     '<rootDir>/config/**/tests/*.test.ts',
   ],
   testEnvironment: 'node',

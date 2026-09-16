@@ -1,9 +1,10 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { getI18n } from '@/src/i18n/server-localization'
 import { auth } from '@/src/lib/auth/server'
 import _logger from '@/src/lib/log/Logger'
-import { LoginProps, LoginSchema, SignupProps, SignupSchema } from '@/src/schemas/AuthenticationSchema'
+import { LoginProps, safeParseLoginProps, safeParseSignupProps, SignupProps } from '@/src/schemas/AuthenticationSchema'
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import { Any } from '@/types'
 
@@ -25,8 +26,8 @@ export type LoginAuthState = {
 
 export async function loginAction(_: LoginAuthState, values: LoginProps): Promise<LoginAuthState> {
   'use server'
-
-  const parsed = LoginSchema.safeParse(values)
+  const t = await getI18n()
+  const parsed = safeParseLoginProps(t, values)
 
   if (!parsed.success) {
     const { fieldErrors } = parsed.error.flatten()
@@ -53,7 +54,8 @@ export async function loginAction(_: LoginAuthState, values: LoginProps): Promis
 export async function signupAction(_: SignupAuthState, values: SignupProps): Promise<SignupAuthState> {
   'use server'
 
-  const parsed = SignupSchema.safeParse(values)
+  const t = await getI18n()
+  const parsed = safeParseSignupProps(t, values)
 
   if (!parsed.success) {
     const { fieldErrors } = parsed.error.flatten()

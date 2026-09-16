@@ -1,1 +1,2 @@
 /config/eslint_rules/color-mode-styles/*.js
+src/i18n/locales/*.ts

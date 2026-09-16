@@ -16,8 +16,8 @@ export interface ModuleLogger extends WinstonLogger {
    *
    * @example
    * ```ts
-   * const log = logger.createModuleLogger("checks")
-   * log.info("Fetch checks...")
+   * const log = logger.createModuleLogger("courses")
+   * log.info("Fetch courses...")
    * ```
    */
   createModuleLogger(context: string): ModuleLogger

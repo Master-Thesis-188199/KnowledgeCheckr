@@ -1,20 +1,26 @@
 import { z } from 'zod'
-import { StringDate } from '@/src/schemas/CustomZodTypes'
-import { KnowledgeCheckSchema } from '@/src/schemas/KnowledgeCheck'
-import { QuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
-import { schemaUtilities } from '@/src/schemas/utils/schemaUtilities'
+import { Translator } from '@/src/i18n/locales/types'
+import { getCourseSchema } from '@/src/schemas/CourseSchema'
+import { getStringDate } from '@/src/schemas/CustomZodTypes'
+import { getQuestionInputSchema } from '@/src/schemas/UserQuestionInputSchema'
+import { localizedSchemaUtilities } from '@/src/schemas/utils/localizedSchemaUtilities'
 import { stripEffects } from '@/src/schemas/utils/stripEffects'
 import { stripZodDefault } from '@/src/schemas/utils/stripZodDefaultValues'
 
-export const PracticeSchema = z.object({
-  checkId: stripZodDefault(stripEffects(KnowledgeCheckSchema)).shape.id,
-  startedAt: StringDate,
-  score: z.number().default(0),
-  questions: stripZodDefault(stripEffects(KnowledgeCheckSchema)).shape.questions.default([]),
-  results: z.array(QuestionInputSchema).default([]),
-})
+export function getPracticeSchema(translator: Translator) {
+  const courseSchema = getCourseSchema(translator)
+  const pureCourseSchema = stripZodDefault(stripEffects(courseSchema))
 
-export type PracticeData = z.infer<typeof PracticeSchema>
+  return z.object({
+    courseId: pureCourseSchema.shape.id,
+    startedAt: getStringDate(translator),
+    score: z.number().default(0),
+    questions: pureCourseSchema.shape.questions.default([]),
+    results: z.array(getQuestionInputSchema(translator)).default([]),
+  })
+}
 
-const { validate: validatePracticeData, instantiate: instantiatePracticeData, safeParse: safeParsePracticeData } = schemaUtilities(PracticeSchema)
+export type PracticeData = z.output<ReturnType<typeof getPracticeSchema>>
+
+const { validate: validatePracticeData, instantiate: instantiatePracticeData, safeParse: safeParsePracticeData } = localizedSchemaUtilities(getPracticeSchema)
 export { instantiatePracticeData, safeParsePracticeData, validatePracticeData }

@@ -43,7 +43,7 @@ export const DummyUserSchema = z
       name: `${user.name.first} ${user.name.last}`,
     }),
   )
-export type DummyUser = z.infer<typeof DummyUserSchema>
+export type DummyUser = z.output<typeof DummyUserSchema>
 
 const { validate: validateDummyUser, instantiate } = schemaUtilities(DummyUserSchema)
 

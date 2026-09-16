@@ -66,7 +66,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className='flex flex-col gap-6'>
           <FormHeader
             title={type === 'signup' ? 'Create an account' : 'Welcome back'}
-            subTitle={type === 'signup' ? 'Increase your knowledge by creating KnowledgeChecks' : 'Jump right back to where you left of'}
+            subTitle={type === 'signup' ? 'Increase your knowledge by creating Courses' : 'Jump right back to where you left of'}
           />
           {type === 'signup' ? <SignupForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} /> : <LoginForm callbackUrl={callbackURL} refererCallbackUrl={refererCallback} />}
         </div>
@@ -95,7 +95,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 function FormHeader({ title, subTitle }: { title: string; subTitle?: string }) {
   return (
     <div className='mb-2 flex flex-col items-center gap-2'>
-      <Image src={KnowledgeCheckrIcon} alt='KnowledgeCheck-Icon' className='size-12' />
+      <Image src={KnowledgeCheckrIcon} alt='Course-Icon' className='size-12' />
       <h1 className='text-xl font-semibold text-neutral-700 dark:text-neutral-200'>{title}</h1>
       <span className='-mt-1 text-sm text-gray-600/70 dark:text-gray-300/70'>{subTitle}</span>
     </div>

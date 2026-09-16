@@ -1,16 +1,5 @@
 import { relations } from 'drizzle-orm/relations'
-import {
-  db_account,
-  db_answer,
-  db_category,
-  db_knowledgeCheck,
-  db_knowledgeCheckSettings,
-  db_question,
-  db_session,
-  db_user,
-  db_userContributesToKnowledgeCheck,
-  db_userHasDoneKnowledgeCheck,
-} from '@/database/drizzle/schema'
+import { db_account, db_answer, db_category, db_course, db_courseSettings, db_question, db_session, db_user, db_userContributesToCourse, db_userHasDoneCourse } from '@/database/drizzle/schema'
 
 export const accountRelations = relations(db_account, ({ one }) => ({
   user: one(db_user, {
@@ -21,10 +10,10 @@ export const accountRelations = relations(db_account, ({ one }) => ({
 
 export const userRelations = relations(db_user, ({ many }) => ({
   accounts: many(db_account),
-  knowledgeChecks: many(db_knowledgeCheck),
+  knowledgeChecks: many(db_course),
   sessions: many(db_session),
-  userContributesToKnowledgeChecks: many(db_userContributesToKnowledgeCheck),
-  userHasDoneKnowledgeChecks: many(db_userHasDoneKnowledgeCheck),
+  userContributesToKnowledgeChecks: many(db_userContributesToCourse),
+  userHasDoneKnowledgeChecks: many(db_userHasDoneCourse),
 }))
 
 export const answerRelations = relations(db_answer, ({ one }) => ({
@@ -40,16 +29,16 @@ export const questionRelations = relations(db_question, ({ one, many }) => ({
     fields: [db_question.categoryId],
     references: [db_category.id],
   }),
-  knowledgeCheck: one(db_knowledgeCheck, {
+  knowledgeCheck: one(db_course, {
     fields: [db_question.knowledgecheckId],
-    references: [db_knowledgeCheck.id],
+    references: [db_course.id],
   }),
 }))
 
 export const categoryRelations = relations(db_category, ({ one, many }) => ({
-  knowledgeCheck: one(db_knowledgeCheck, {
+  knowledgeCheck: one(db_course, {
     fields: [db_category.knowledgecheckId],
-    references: [db_knowledgeCheck.id],
+    references: [db_course.id],
   }),
 
   category: one(db_category, {
@@ -63,22 +52,22 @@ export const categoryRelations = relations(db_category, ({ one, many }) => ({
   questions: many(db_question),
 }))
 
-export const knowledgeCheckRelations = relations(db_knowledgeCheck, ({ one, many }) => ({
+export const courseRelations = relations(db_course, ({ one, many }) => ({
   user: one(db_user, {
-    fields: [db_knowledgeCheck.owner_id],
+    fields: [db_course.owner_id],
     references: [db_user.id],
   }),
   categories: many(db_category),
-  knowledgeCheckSettings: one(db_knowledgeCheckSettings),
+  knowledgeCheckSettings: one(db_courseSettings),
   questions: many(db_question),
-  userContributesToKnowledgeChecks: many(db_userContributesToKnowledgeCheck),
-  userHasDoneKnowledgeChecks: many(db_userHasDoneKnowledgeCheck),
+  userContributesToKnowledgeChecks: many(db_userContributesToCourse),
+  userHasDoneKnowledgeChecks: many(db_userHasDoneCourse),
 }))
 
-export const knowledgeCheckSettingsRelations = relations(db_knowledgeCheckSettings, ({ one }) => ({
-  knowledgeCheck: one(db_knowledgeCheck, {
-    fields: [db_knowledgeCheckSettings.knowledgecheckId],
-    references: [db_knowledgeCheck.id],
+export const courseSettingsRelations = relations(db_courseSettings, ({ one }) => ({
+  knowledgeCheck: one(db_course, {
+    fields: [db_courseSettings.knowledgecheckId],
+    references: [db_course.id],
   }),
 }))
 
@@ -89,24 +78,24 @@ export const sessionRelations = relations(db_session, ({ one }) => ({
   }),
 }))
 
-export const userContributesToKnowledgeCheckRelations = relations(db_userContributesToKnowledgeCheck, ({ one }) => ({
-  knowledgeCheck: one(db_knowledgeCheck, {
-    fields: [db_userContributesToKnowledgeCheck.knowledgecheckId],
-    references: [db_knowledgeCheck.id],
+export const userContributesToCourseRelations = relations(db_userContributesToCourse, ({ one }) => ({
+  knowledgeCheck: one(db_course, {
+    fields: [db_userContributesToCourse.knowledgecheckId],
+    references: [db_course.id],
   }),
   user: one(db_user, {
-    fields: [db_userContributesToKnowledgeCheck.userId],
+    fields: [db_userContributesToCourse.userId],
     references: [db_user.id],
   }),
 }))
 
-export const userHasDoneKnowledgeCheckRelations = relations(db_userHasDoneKnowledgeCheck, ({ one }) => ({
-  knowledgeCheck: one(db_knowledgeCheck, {
-    fields: [db_userHasDoneKnowledgeCheck.knowledgeCheckId],
-    references: [db_knowledgeCheck.id],
+export const userHasDoneCourseRelations = relations(db_userHasDoneCourse, ({ one }) => ({
+  knowledgeCheck: one(db_course, {
+    fields: [db_userHasDoneCourse.knowledgeCheckId],
+    references: [db_course.id],
   }),
   user: one(db_user, {
-    fields: [db_userHasDoneKnowledgeCheck.userId],
+    fields: [db_userHasDoneCourse.userId],
     references: [db_user.id],
   }),
 }))
