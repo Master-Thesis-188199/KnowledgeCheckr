@@ -10,6 +10,7 @@ import { getCourseById } from '@/database/course/select'
 import { updateCourse } from '@/database/course/update'
 import requireAuthentication from '@/src/lib/auth/requireAuthentication'
 import _logger from '@/src/lib/log/Logger'
+import env from '@/src/lib/Shared/Env'
 import { Course } from '@/src/schemas/CourseSchema'
 
 const logger = _logger.createModuleLogger('/' + import.meta.url.split('/').reverse().slice(0, 2).reverse().join('/')!)
@@ -20,6 +21,8 @@ export type LodashDifferences<T> = {
 
 export async function saveAction({ course: modifiedCourse, callbackPath }: { course: Course; callbackPath: string }) {
   await requireAuthentication()
+  logger.verbose(`Save Action received callbackPath: ${callbackPath} appending it to base-url when redirecting`)
+  const path = env.NEXT_PUBLIC_BASE_URL + callbackPath
 
   try {
     const originCourse = await getCourseById(modifiedCourse.id)
@@ -37,7 +40,7 @@ export async function saveAction({ course: modifiedCourse, callbackPath }: { cou
       await insertCourse(modifiedCourse)
     }
 
-    redirect(callbackPath)
+    redirect(path)
   } catch (err) {
     if (isRedirectError(err)) {
       throw err
