@@ -39,7 +39,7 @@ COPY --from=builder app/node_modules/zod /app/node_modules/zod
 COPY --from=builder app/node_modules/process /app/node_modules/process
 COPY --from=builder app/node_modules/@types/node /app/node_modules/@types/node
 
-RUN ["npm", "install", "ts-node", "-g"]
+RUN ["npm", "install", "ts-node@10.9.2", "-g"]
 
 
 EXPOSE 3000
