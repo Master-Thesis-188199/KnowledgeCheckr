@@ -21,8 +21,8 @@ export type LodashDifferences<T> = {
 
 export async function saveAction({ course: modifiedCourse, callbackPath }: { course: Course; callbackPath: string }) {
   await requireAuthentication()
-  logger.verbose(`Save Action received callbackPath: ${callbackPath} appending it to base-url when redirecting`)
   const path = env.NEXT_PUBLIC_BASE_URL + callbackPath
+  logger.verbose(`Save Action received callbackPath: ${callbackPath} appending it to base-url when redirecting resulting in ${path}`)
 
   try {
     const originCourse = await getCourseById(modifiedCourse.id)
